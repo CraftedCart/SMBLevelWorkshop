@@ -321,29 +321,49 @@ public class MainScreen extends FluidUIScreen {
                 cameraPos = cameraPos.subtract(rightVector.multiply(UIUtils.getDelta()).multiply(speed));
             }
             //</editor-fold>
-        } else if (mode == EnumMode.GRAB) {
-            for (String key : clientLevelData.getSelectedPlaceables()) {
-                Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+        } else if (clientLevelData != null) {
+            if (mode == EnumMode.GRAB) {
+                //<editor-fold desc="Grab">
+                for (String key : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
-                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
-                } else {
-                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                    } else {
+                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    }
                 }
-            }
-        } else if (mode == EnumMode.ROTATE) {
-            for (String key : clientLevelData.getSelectedPlaceables()) {
-                Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+                //</editor-fold>
+            } else if (mode == EnumMode.ROTATE) {
+                //<editor-fold desc="Rotate">
+                for (String key : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
-                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
-                } else {
-                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                    } else {
+                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    }
                 }
+                //</editor-fold>
+            } else if (mode == EnumMode.SCALE) {
+                //<editor-fold desc="Scale">
+                for (String key : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                    } else {
+                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    }
+                }
+                //</editor-fold>
             }
         }
 
@@ -375,11 +395,13 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Mode Direction Label">
         String modeDirectionString;
         if (modeDirection.equals(new PosXYZ(1, 0, 0))) {
-            modeDirectionString = "X";
+            modeDirectionString = LangManager.getItem("axisX");
         } else if (modeDirection.equals(new PosXYZ(0, 1, 0))) {
-            modeDirectionString = "Y";
+            modeDirectionString = LangManager.getItem("axisY");
         } else if (modeDirection.equals(new PosXYZ(0, 0, 1))) {
-            modeDirectionString = "Z";
+            modeDirectionString = LangManager.getItem("axisZ");
+        } else if (modeDirection.equals(new PosXYZ(1, 1, 1))) {
+            modeDirectionString = LangManager.getItem("axisUniform");
         } else {
             modeDirectionString = String.format("%.2f, %.2f, %.2f", modeDirection.x, modeDirection.y, modeDirection.z);
         }
@@ -544,15 +566,18 @@ public class MainScreen extends FluidUIScreen {
                     mode = EnumMode.SCALE;
                 }
 
-            } else if (key == Keyboard.KEY_X) {
+            } else if (key == Keyboard.KEY_X) { //X Axis
                 modeDirection = new PosXYZ(1, 0, 0);
                 modeCursor.setColor(UIColor.matRed());
-            } else if (key == Keyboard.KEY_Y) {
+            } else if (key == Keyboard.KEY_Y) { //Y Axis
                 modeDirection = new PosXYZ(0, 1, 0);
                 modeCursor.setColor(UIColor.matGreen());
-            } else if (key == Keyboard.KEY_Z) {
+            } else if (key == Keyboard.KEY_Z) { //Z Axis
                 modeDirection = new PosXYZ(0, 0, 1);
                 modeCursor.setColor(UIColor.matBlue());
+            } else if (key == Keyboard.KEY_U) { //XYZ (Uniform)
+                modeDirection = new PosXYZ(1, 1, 1);
+                modeCursor.setColor(UIColor.matWhite());
 
             } else {
                 super.onKey(key, keyChar);

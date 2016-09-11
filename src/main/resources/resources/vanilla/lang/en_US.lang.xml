@@ -11,6 +11,12 @@
     <entry key="rotate" val="Rotate" />
     <entry key="scale" val="Scale" />
 
+    <!-- Axis directions -->
+    <entry key="axisX" val="X" />
+    <entry key="axisY" val="Y" />
+    <entry key="axisZ" val="Z" />
+    <entry key="axisUniform" val="XYZ (Uniform)" />
+
     <entry key="invalid" val="Invalid" />
 
     <!-- Assets -->
