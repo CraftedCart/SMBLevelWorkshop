@@ -299,6 +299,7 @@ public class MainScreen extends FluidUIScreen {
         super.preDraw();
 
         if (clientLevelData != null) {
+            //<editor-fold desc="Darken selected placeables in the outliner">
             for (Map.Entry<String, Component> entry : outlinerListBox.childComponents.entrySet()) {
                 assert entry.getValue() instanceof TextButton;
                 TextButton button = (TextButton) entry.getValue();
@@ -309,6 +310,7 @@ public class MainScreen extends FluidUIScreen {
                     button.setBackgroundIdleColor(UIColor.matBlue());
                 }
             }
+            //</editor-fold>
         }
 
         if (Mouse.isButtonDown(2)) { //If MMB down
@@ -499,13 +501,28 @@ public class MainScreen extends FluidUIScreen {
         GLU.gluPerspective(90, Display.getWidth() / (float) Display.getHeight(), 0.01f, 1000f);
         //</editor-fold>
 
-        GL11.glColor3f(1f, 1f, 1f);
-
         GL11.glRotated(cameraRot.y, 1, 0, 0);
         GL11.glRotated(cameraRot.x, 0, 1, 0);
 
         GL11.glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
+        //<editor-fold desc="Draw X line">
+        UIColor.matRed().bindColor();
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex3d(-10000, 0, 0);
+        GL11.glVertex3d(10000, 0, 0);
+        GL11.glEnd();
+        //</editor-fold>
+
+        //<editor-fold desc="Draw Z line">
+        UIColor.matBlue().bindColor();
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex3d(0, 0, -10000);
+        GL11.glVertex3d(0, 0, 10000);
+        GL11.glEnd();
+        //</editor-fold>
+
+        UIColor.pureWhite().bindColor();
 
         if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
             //<editor-fold desc="Draw model with wireframes">
@@ -527,6 +544,7 @@ public class MainScreen extends FluidUIScreen {
                 String name = placeableEntry.getKey();
                 Placeable placeable = placeableEntry.getValue();
                 ResourceModel model = placeable.getAsset().getModel();
+                boolean isSelected = clientLevelData.isPlaceableSelected(name);
 
                 GL11.glPushMatrix();
 
@@ -543,21 +561,61 @@ public class MainScreen extends FluidUIScreen {
                 ResourceModel.drawModel(model);
                 GL20.glUseProgram(0);
 
-                if (clientLevelData.isPlaceableSelected(name)) {
-                    GL11.glColor4d(UIColor.matBlue().r, UIColor.matBlue().g, UIColor.matBlue().b, 1);
+                //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
+                if (isSelected) {
+                    if (mode != EnumMode.NONE) {
+                        GL11.glPushMatrix();
+
+                        GL11.glRotated(-placeable.getRotation().x, 1, 0, 0);
+                        GL11.glRotated(-placeable.getRotation().y, 0, 1, 0);
+                        GL11.glRotated(-placeable.getRotation().z, 0, 0, 1);
+
+                        if (modeDirection.equals(new PosXYZ(1, 0, 0))) {
+                            //<editor-fold desc="Draw X line">
+                            UIColor.matRed(0.75).bindColor();
+                            GL11.glBegin(GL11.GL_LINES);
+                            GL11.glVertex3d(-10000, 0, 0);
+                            GL11.glVertex3d(10000, 0, 0);
+                            GL11.glEnd();
+                            //</editor-fold>
+                        } else if (modeDirection.equals(new PosXYZ(0, 1, 0))) {
+                            //<editor-fold desc="Draw Y line">
+                            UIColor.matGreen(0.75).bindColor();
+                            GL11.glBegin(GL11.GL_LINES);
+                            GL11.glVertex3d(0, -10000, 0);
+                            GL11.glVertex3d(0, 10000, 0);
+                            GL11.glEnd();
+                            //</editor-fold>
+                        } else if (modeDirection.equals(new PosXYZ(0, 0, 1))) {
+                            //<editor-fold desc="Draw Z line">
+                            UIColor.matBlue(0.75).bindColor();
+                            GL11.glBegin(GL11.GL_LINES);
+                            GL11.glVertex3d(0, 0, -10000);
+                            GL11.glVertex3d(0, 0, 10000);
+                            GL11.glEnd();
+                            //</editor-fold>
+                        }
+
+                        GL11.glPopMatrix();
+                    }
+
+                    UIColor.matBlue().bindColor();
                 } else {
-                    GL11.glColor4d(UIColor.matOrange().r, UIColor.matOrange().g, UIColor.matOrange().b, 1);
+                    UIColor.matOrange().bindColor();
                 }
                 ResourceModel.drawModelWireframe(model);
+                //</editor-fold>
 
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-                if (clientLevelData.isPlaceableSelected(name)) {
-                    GL11.glColor4d(UIColor.matBlue().r, UIColor.matBlue().g, UIColor.matBlue().b, 0.05);
+                //<editor-fold desc="Draw blue wireframe if selected, else draw orange wireframe (Ignores depth test - Is semi transparent)">
+                if (isSelected) {
+                    UIColor.matBlue(0.05).bindColor();
                 } else {
-                    GL11.glColor4d(UIColor.matOrange().r, UIColor.matOrange().g, UIColor.matOrange().b, 0.02);
+                    UIColor.matOrange(0.02).bindColor();
                 }
                 ResourceModel.drawModelWireframe(model);
+                //</editor-fold>
 
                 GL11.glPopMatrix();
 
@@ -758,9 +816,7 @@ public class MainScreen extends FluidUIScreen {
             assert clientLevelData != null;
 
             if (Window.isShiftDown()) { //Add to selection on shift
-                if (!clientLevelData.isPlaceableSelected(name)) {
-                    clientLevelData.addSelectedPlaceable(name);
-                }
+                clientLevelData.addSelectedPlaceable(name);
             } else {
                 clientLevelData.clearSelectedPlaceables();
                 clientLevelData.addSelectedPlaceable(name);
