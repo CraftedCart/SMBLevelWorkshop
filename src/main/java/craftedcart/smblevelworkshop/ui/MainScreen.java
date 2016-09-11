@@ -54,8 +54,7 @@ public class MainScreen extends FluidUIScreen {
     //Camera
     @NotNull private PosXYZ cameraPos = new PosXYZ();
     @NotNull private PosXY cameraRot = new PosXY();
-    private final double cameraSpeed = 20;
-    private final double cameraSprintSpeedMultiplier = 5;
+
 
     //UI
     private final Image modeCursor = new Image();
@@ -305,7 +304,7 @@ public class MainScreen extends FluidUIScreen {
             PosXYZ forwardVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x)), 0, -Math.cos(Math.toRadians(cameraRot.x)));
             PosXYZ rightVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x + 90)), 0, -Math.cos(Math.toRadians(cameraRot.x + 90)));
 
-            double speed = Window.isShiftDown() ? cameraSprintSpeedMultiplier * cameraSpeed : cameraSpeed;
+            double speed = Window.isShiftDown() ? SMBLWSettings.cameraSprintSpeedMultiplier * SMBLWSettings.cameraSpeed : SMBLWSettings.cameraSpeed;
 
             if (Keyboard.isKeyDown(Keyboard.KEY_Q)) { //Q: Go Down
                 cameraPos = cameraPos.add(0, -UIUtils.getDelta() * speed, 0);
