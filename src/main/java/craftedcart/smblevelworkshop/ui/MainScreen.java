@@ -22,6 +22,7 @@ import io.github.craftedcart.fluidui.component.Component;
 import io.github.craftedcart.fluidui.component.Image;
 import io.github.craftedcart.fluidui.component.Label;
 import io.github.craftedcart.fluidui.component.Panel;
+import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,10 +63,14 @@ public class MainScreen extends FluidUIScreen {
     private final Label modeLabel = new Label();
     private final Label modeDirectionLabel = new Label();
     private final ListBox outlinerListBox = new ListBox();
+    private final Panel notifPanel = new Panel();
 
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
     @NotNull private List<UndoCommand> redoCommandList = new ArrayList<>();
+
+    //Notifications
+    private int notificationID = 0;
 
 
     public MainScreen() {
@@ -269,6 +274,16 @@ public class MainScreen extends FluidUIScreen {
             propertiesLabel.setBottomRightAnchor(1, 0);
         });
         rightPanel.addChildComponent("propertiesLabel", propertiesLabel);
+
+        //Defined at class level
+        notifPanel.setOnInitAction(() -> {
+            notifPanel.setTopLeftPos(0, 0);
+            notifPanel.setBottomRightPos(0, 0);
+            notifPanel.setTopLeftAnchor(0, 0);
+            notifPanel.setBottomRightAnchor(1, 1);
+            notifPanel.setBackgroundColor(UIColor.transparent());
+        });
+        mainUI.addChildComponent("notifPanel", notifPanel);
 
         try {
             Window.drawable.releaseContext();
@@ -624,8 +639,35 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void notify(String message) {
-        //TODO
-        LogHelper.info(getClass(), message);
+        for (Map.Entry<String, Component> entry : notifPanel.childComponents.entrySet()) {
+            assert entry.getValue().plugins.get(1) instanceof NotificationPlugin;
+            ((NotificationPlugin) entry.getValue().plugins.get(1)).time = 1.5;
+        }
+
+        final Panel panel = new Panel();
+        panel.setOnInitAction(() -> {
+            panel.setTopLeftPos(260, -80);
+            panel.setBottomRightPos(-260, -56);
+            panel.setTopLeftAnchor(0, 1.2);
+            panel.setBottomRightAnchor(1, 1.2);
+            panel.setBackgroundColor(UIColor.matGrey900(0.75));
+        });
+        PluginSmoothAnimateAnchor animateAnchor = new PluginSmoothAnimateAnchor();
+        panel.addPlugin(animateAnchor);
+        panel.addPlugin(new NotificationPlugin(animateAnchor));
+        notifPanel.addChildComponent("notificationPanel" + String.valueOf(notificationID), panel);
+
+        final Label label = new Label();
+        label.setOnInitAction(() -> {
+            label.setTopLeftPos(4, 0);
+            label.setBottomRightPos(-4, 0);
+            label.setTopLeftAnchor(0, 0);
+            label.setBottomRightAnchor(1, 1);
+            label.setText(message);
+        });
+        panel.addChildComponent("label", label);
+
+        notificationID++;
     }
 
     private void addPlaceable(Placeable placeable) {
@@ -650,8 +692,7 @@ public class MainScreen extends FluidUIScreen {
 
     private void newLevelData(FileInputStream fileInputStream) throws IOException {
         //Clear outliner list box
-        outlinerListBox.childComponents.clear();
-        outlinerListBox.childComponentOrder.clear();
+        outlinerListBox.clearChildComponents();
 
         //Reset undo history
         undoCommandList.clear();
@@ -678,7 +719,6 @@ public class MainScreen extends FluidUIScreen {
 
     private void redo() {
         if (redoCommandList.size() > 0) {
-
             undoCommandList.add(redoCommandList.get(redoCommandList.size() - 1).getRedoCommand());
             redoCommandList.get(redoCommandList.size() - 1).undo();
             notify(redoCommandList.get(redoCommandList.size() - 1).getRedoMessage());

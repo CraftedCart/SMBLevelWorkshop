@@ -29,6 +29,7 @@ public class UndoAddPlaceable extends UndoCommand {
     @Override
     public void undo() {
         clientLevelData.getLevelData().removePlaceable(name);
+        clientLevelData.removeSelectedPlaceable(name);
     }
 
     @Override
