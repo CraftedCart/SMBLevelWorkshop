@@ -6,6 +6,7 @@ import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.undo.UndoAddPlaceable;
 import craftedcart.smblevelworkshop.undo.UndoAssetTransform;
 import craftedcart.smblevelworkshop.undo.UndoCommand;
+import craftedcart.smblevelworkshop.undo.UndoRemovePlaceable;
 import craftedcart.smblevelworkshop.util.EnumMode;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.AssetManager;
@@ -62,7 +63,7 @@ public class MainScreen extends FluidUIScreen {
     private final Component mainUI = new Component();
     private final Label modeLabel = new Label();
     private final Label modeDirectionLabel = new Label();
-    private final ListBox outlinerListBox = new ListBox();
+    public final ListBox outlinerListBox = new ListBox();
     private final Panel notifPanel = new Panel();
 
     //Undo
@@ -676,15 +677,23 @@ public class MainScreen extends FluidUIScreen {
             clientLevelData.clearSelectedPlaceables();
             clientLevelData.addSelectedPlaceable(name);
 
-            addUndoCommand(new UndoAddPlaceable(clientLevelData, name, placeable));
+            addUndoCommand(new UndoAddPlaceable(clientLevelData, this, name, placeable));
 
-            final TextButton placeableButton = new TextButton();
-            placeableButton.setOnInitAction(() -> {
-                placeableButton.setTopLeftPos(0, 0);
-                placeableButton.setBottomRightPos(0, 18);
-                placeableButton.setText(name);
-            });
-            outlinerListBox.addChildComponent(name + "outlinerPlaceable", placeableButton);
+            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+        } else {
+            notify(LangManager.getItem("noLevelLoaded"));
+        }
+    }
+
+    private void removePlaceable(String name) {
+        if (clientLevelData != null) {
+
+            addUndoCommand(new UndoRemovePlaceable(clientLevelData, this, name, clientLevelData.getLevelData().getPlaceable(name)));
+
+            clientLevelData.removeSelectedPlaceable(name);
+            clientLevelData.getLevelData().removePlaceable(name);
+
+            outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
         } else {
             notify(LangManager.getItem("noLevelLoaded"));
         }
@@ -724,6 +733,18 @@ public class MainScreen extends FluidUIScreen {
             notify(redoCommandList.get(redoCommandList.size() - 1).getRedoMessage());
             redoCommandList.remove(redoCommandList.size() - 1);
         }
+    }
+
+    public Component getOutlinerPlaceableComponent(String name) {
+        final TextButton placeableButton = new TextButton();
+        placeableButton.setOnInitAction(() -> {
+            placeableButton.setTopLeftPos(0, 0);
+            placeableButton.setBottomRightPos(0, 18);
+            placeableButton.setText(name);
+        });
+        placeableButton.setName(name + "OutlinerPlaceable");
+
+        return placeableButton;
     }
 
 }

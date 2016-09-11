@@ -3,6 +3,7 @@ package craftedcart.smblevelworkshop.undo;
 import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.resource.LangManager;
+import craftedcart.smblevelworkshop.ui.MainScreen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,23 +19,26 @@ public class UndoAddPlaceable extends UndoCommand {
 
     @NotNull private String name;
     @NotNull private Placeable placeable;
+    @NotNull private MainScreen mainScreen;
 
-    public UndoAddPlaceable(@NotNull ClientLevelData clientLevelData, @NotNull String name, @NotNull Placeable placeable) {
+    public UndoAddPlaceable(@NotNull ClientLevelData clientLevelData, MainScreen mainScreen, @NotNull String name, @NotNull Placeable placeable) {
         super(clientLevelData);
 
         this.name = name;
         this.placeable = placeable.getCopy();
+        this.mainScreen = mainScreen;
     }
 
     @Override
     public void undo() {
         clientLevelData.getLevelData().removePlaceable(name);
         clientLevelData.removeSelectedPlaceable(name);
+        mainScreen.outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
     }
 
     @Override
     public UndoCommand getRedoCommand() {
-        return new UndoRemovePlaceable(clientLevelData, name, placeable.getCopy());
+        return new UndoRemovePlaceable(clientLevelData, mainScreen, name, placeable.getCopy());
     }
 
     @Nullable
