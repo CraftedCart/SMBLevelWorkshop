@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<langPack locale="en_US">
+    <entry key="importObj" val="Import OBJ" />
+    <entry key="export" val="Export" />
+
+    <!-- Modes -->
+    <entry key="modeLabelFormat" val="Mode: %s" />
+    <entry key="modeDirectionLabelFormat" val="Working Direction: %s" />
+    <entry key="none" val="None" />
+    <entry key="grab" val="Grab" />
+    <entry key="rotate" val="Rotate" />
+    <entry key="scale" val="Scale" />
+
+    <entry key="invalid" val="Invalid" />
+
+    <!-- Assets -->
+    <entry key="assetGoal" val="Goal" />
+    <entry key="assetBumper" val="Bumper" />
+    <entry key="assetJamabar" val="Jamabar" />
+    <entry key="assetBanana" val="Banana" />
+
+    <!-- Types -->
+    <entry key="singleBanana" val="Single (x1)" />
+    <entry key="bunchBanana" val="Bunch (x10)" />
+    <entry key="blueGoal" val="Blue" />
+    <entry key="greenGoal" val="Green (Warp 1)" />
+    <entry key="redGoal" val="Red (Warp 2)" />
+
+    <entry key="addPlaceable" val="Add Placeable" />
+    <entry key="outliner" val="Outliner" />
+
+    <entry key="properties" val="Properties (TODO!)" />
+
+    <entry key="noLevelLoaded" val="No level has been loaded!" />
+</langPack>

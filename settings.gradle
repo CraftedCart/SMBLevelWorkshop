@@ -1,0 +1,3 @@
+rootProject.name = 'smblevelworkshop'
+include ':FluidUI'
+project(":FluidUI").projectDir = new File(settingsDir, 'lib/FluidUI')

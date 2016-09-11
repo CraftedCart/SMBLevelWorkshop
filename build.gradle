@@ -1,0 +1,56 @@
+group 'craftedcart'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.lwjgl.lwjgl:lwjgl:2.9.3' //LWJGL
+    compile 'org.lwjgl.lwjgl:lwjgl_util:2.9.3' //LWJGL
+    compile 'org.slick2d:slick2d-core:1.0.1' //Slick2D
+    compile 'com.googlecode.json-simple:json-simple:1.1.1' //JSON Simple
+    compile 'com.intellij:annotations:12.0' //IntelliJ Annotations
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5' //Log4J 2 API
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5' //Log4J 2 Core
+
+    compile project(':FluidUI')
+
+    //testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+def resolvedArtifacts = configurations.compile.resolvedConfiguration.resolvedArtifacts
+def platforms = ['windows', 'linux', 'osx']
+platforms.each {
+    def platform = it
+    tasks.create(name: "$platform" + 'Natives', type: Copy) {
+        from platformNatives(platform, resolvedArtifacts).toArray()
+        into "$buildDir/natives-" + platform
+    }
+}
+
+task natives {
+    description "Copies native libraries to an appropriate directory."
+    dependsOn tasks.matching { it.name.contains('Natives') }
+}
+
+def platformNatives(platform, artifacts) {
+    def classifier = 'natives-' + platform
+    def matches = artifacts.findAll { it.classifier == classifier }
+    matches.collect { it.file }.collect { zipTree(it) }
+}
+
+jar {
+    manifest {
+        attributes (
+            'Main-Class': 'craftedcart.smblevelworkshop.SMBLevelWorkshop'
+        )
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}

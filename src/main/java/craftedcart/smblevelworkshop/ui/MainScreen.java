@@ -1,0 +1,594 @@
+package craftedcart.smblevelworkshop.ui;
+
+import craftedcart.smblevelworkshop.SMBLWSettings;
+import craftedcart.smblevelworkshop.asset.Placeable;
+import craftedcart.smblevelworkshop.level.ClientLevelData;
+import craftedcart.smblevelworkshop.util.EnumMode;
+import craftedcart.smblevelworkshop.Window;
+import craftedcart.smblevelworkshop.asset.AssetManager;
+import craftedcart.smblevelworkshop.asset.IAsset;
+import craftedcart.smblevelworkshop.resource.model.ResourceModel;
+import craftedcart.smblevelworkshop.resource.model.OBJLoader;
+import craftedcart.smblevelworkshop.resource.LangManager;
+import craftedcart.smblevelworkshop.resource.ResourceManager;
+import craftedcart.smblevelworkshop.util.LogHelper;
+import craftedcart.smblevelworkshop.util.PosXYZ;
+import io.github.craftedcart.fluidui.FluidUIScreen;
+import io.github.craftedcart.fluidui.component.*;
+import io.github.craftedcart.fluidui.component.Component;
+import io.github.craftedcart.fluidui.component.Image;
+import io.github.craftedcart.fluidui.component.Label;
+import io.github.craftedcart.fluidui.component.Panel;
+import io.github.craftedcart.fluidui.util.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.glu.GLU;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+
+/**
+ * @author CraftedCart
+ * Created on 02/04/2016 (DD/MM/YYYY)
+ */
+public class MainScreen extends FluidUIScreen {
+
+    //Level
+    @Nullable private ClientLevelData clientLevelData;
+    @NotNull private EnumMode mode = EnumMode.NONE;
+    @NotNull private PosXYZ modeDirection = new PosXYZ(0, 1, 0);
+
+    //Camera
+    @NotNull private PosXYZ cameraPos = new PosXYZ();
+    @NotNull private PosXY cameraRot = new PosXY();
+    private final double cameraSpeed = 20;
+    private final double cameraSprintSpeedMultiplier = 5;
+
+    //UI
+    private final Image modeCursor = new Image();
+    private final Component mainUI = new Component();
+    private final Label modeLabel = new Label();
+    private final Label modeDirectionLabel = new Label();
+    private final ListBox outlinerListBox = new ListBox();
+
+
+    public MainScreen() {
+        init();
+    }
+
+    private void init() {
+
+        try {
+            Window.drawable.makeCurrent();
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        }
+
+        //Defined at class level
+        modeCursor.setOnInitAction(() -> {
+            modeCursor.setTopLeftPos(-16, -16);
+            modeCursor.setBottomRightPos(16, 16);
+            modeCursor.setTopLeftAnchor(0.5, 0.5);
+            modeCursor.setBottomRightAnchor(0.5, 0.5);
+            modeCursor.setVisible(false);
+            modeCursor.setTexture(ResourceManager.getTexture("image/modeEditCursor").getTexture());
+            modeCursor.setColor(UIColor.matGreen());
+        });
+        addChildComponent("modeCursor", modeCursor);
+
+        //Defined at class level
+        mainUI.setOnInitAction(() -> {
+            mainUI.setTopLeftPos(0, 0);
+            mainUI.setBottomRightPos(0, 0);
+            mainUI.setTopLeftAnchor(0, 0);
+            mainUI.setBottomRightAnchor(1, 1);
+            mainUI.setTheme(new DefaultUITheme());
+        });
+        addChildComponent("mainUI", mainUI);
+
+        //<editor-fold desc="ImportObj TextButton">
+        final TextButton importObjButton = new TextButton();
+        importObjButton.setOnInitAction(() -> {
+            importObjButton.setText(LangManager.getItem("importObj"));
+            importObjButton.setTopLeftPos(-132, 4);
+            importObjButton.setBottomRightPos(-4, 28);
+            importObjButton.setTopLeftAnchor(0.5, 0);
+            importObjButton.setBottomRightAnchor(0.5, 0);
+        });
+        importObjButton.setOnLMBAction(() -> new Thread(() -> {
+                FileDialog fd = new FileDialog((Frame) null);
+                fd.setMode(FileDialog.LOAD);
+                fd.setFile("*.obj");
+                fd.setVisible(true);
+
+                File[] files = fd.getFiles();
+                if (files != null && files.length > 0) {
+                    File file = files[0];
+                    LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
+
+                    try {
+                        newLevelData(new FileInputStream(file));
+                    } catch (IOException e) {
+                        LogHelper.error(getClass(), "Failed to open file");
+                        LogHelper.error(getClass(), e);
+                    }
+                }
+            }, "ObjFileOpenThread").start());
+        mainUI.addChildComponent("importObjButton", importObjButton);
+        //</editor-fold>
+
+        //<editor-fold desc="Export TextButton">
+        final TextButton exportButton = new TextButton();
+        exportButton.setOnInitAction(() -> {
+            exportButton.setText(LangManager.getItem("export"));
+            exportButton.setTopLeftPos(4, 4);
+            exportButton.setBottomRightPos(132, 28);
+            exportButton.setTopLeftAnchor(0.5, 0);
+            exportButton.setBottomRightAnchor(0.5, 0);
+        });
+        exportButton.setOnLMBAction(() -> LogHelper.info(getClass(), "TODO"));
+        mainUI.addChildComponent("exportButton", exportButton);
+        //</editor-fold>
+
+        //<editor-fold desc="Bottom Panel">
+        final Panel bottomPanel = new Panel();
+        bottomPanel.setOnInitAction(() -> {
+            bottomPanel.setBackgroundColor(UIColor.matGrey900(0.75));
+            bottomPanel.setTopLeftPos(260, -50);
+            bottomPanel.setBottomRightPos(-260, -4);
+            bottomPanel.setTopLeftAnchor(0, 1);
+            bottomPanel.setBottomRightAnchor(1, 1);
+        });
+        mainUI.addChildComponent("bottomPanel", bottomPanel);
+        //</editor-fold>
+
+        //<editor-fold desc="Mode Label">
+        //Defined at class level
+        modeLabel.setOnInitAction(() -> {
+            modeLabel.setTopLeftPos(4, 0);
+            modeLabel.setBottomRightPos(-4, 24);
+            modeLabel.setTopLeftAnchor(0, 0);
+            modeLabel.setBottomRightAnchor(1, 0);
+            modeLabel.setTextColor(UIColor.matWhite());
+        });
+        bottomPanel.addChildComponent("modeLabel", modeLabel);
+        //</editor-fold>
+
+        //<editor-fold desc="Mode Direction Label">
+        //Defined at class level
+        modeDirectionLabel.setOnInitAction(() -> {
+            modeDirectionLabel.setTopLeftPos(4, 24);
+            modeDirectionLabel.setBottomRightPos(-4, 48);
+            modeDirectionLabel.setTopLeftAnchor(0, 0);
+            modeDirectionLabel.setBottomRightAnchor(1, 0);
+        });
+        bottomPanel.addChildComponent("modeDirectionLabel", modeDirectionLabel);
+        //</editor-fold>
+
+        final Panel leftPanel = new Panel();
+        leftPanel.setOnInitAction(() -> {
+            leftPanel.setBackgroundColor(UIColor.matGrey900(0.75));
+            leftPanel.setTopLeftPos(0, 0);
+            leftPanel.setBottomRightPos(256, 0);
+            leftPanel.setTopLeftAnchor(0, 0);
+            leftPanel.setBottomRightAnchor(0, 1);
+        });
+        mainUI.addChildComponent("leftPanel", leftPanel);
+
+        final Label addPlaceableLabel = new Label();
+        addPlaceableLabel.setOnInitAction(() -> {
+            addPlaceableLabel.setText(LangManager.getItem("addPlaceable"));
+            addPlaceableLabel.setHorizontalAlign(EnumHAlignment.centre);
+            addPlaceableLabel.setVerticalAlign(EnumVAlignment.centre);
+            addPlaceableLabel.setTopLeftPos(4, 4);
+            addPlaceableLabel.setBottomRightPos(-4, 28);
+            addPlaceableLabel.setTopLeftAnchor(0, 0);
+            addPlaceableLabel.setBottomRightAnchor(1, 0);
+        });
+        leftPanel.addChildComponent("addPlaceableLabel", addPlaceableLabel);
+
+        final ListBox addPlaceableListBox = new ListBox();
+        addPlaceableListBox.setOnInitAction(() -> {
+            addPlaceableListBox.setBackgroundColor(UIColor.transparent());
+            addPlaceableListBox.setTopLeftPos(0, 28);
+            addPlaceableListBox.setBottomRightPos(0, 0);
+            addPlaceableListBox.setTopLeftAnchor(0, 0);
+            addPlaceableListBox.setBottomRightAnchor(1, 0.25);
+        });
+        leftPanel.addChildComponent("addPlaceableListBox", addPlaceableListBox);
+
+        for (IAsset asset : AssetManager.getAvaliableAssets()) {
+            final TextButton placeableButton = new TextButton();
+            placeableButton.setOnInitAction(() -> {
+                placeableButton.setText(LangManager.getItem(asset.getName()));
+                placeableButton.setTopLeftPos(0, 0);
+                placeableButton.setBottomRightPos(0, 18);
+            });
+            placeableButton.setOnLMBAction(() -> addPlaceable(new Placeable(asset)));
+            addPlaceableListBox.addChildComponent(asset.getName() + "AddPlaceableButton", placeableButton);
+        }
+
+        final Label outlinerLabel = new Label();
+        outlinerLabel.setOnInitAction(() -> {
+            outlinerLabel.setText(LangManager.getItem("outliner"));
+            outlinerLabel.setHorizontalAlign(EnumHAlignment.centre);
+            outlinerLabel.setVerticalAlign(EnumVAlignment.centre);
+            outlinerLabel.setTopLeftPos(4, 4);
+            outlinerLabel.setBottomRightPos(-4, 28);
+            outlinerLabel.setTopLeftAnchor(0, 0.25);
+            outlinerLabel.setBottomRightAnchor(1, 0.25);
+        });
+        leftPanel.addChildComponent("outlinerLabel", outlinerLabel);
+
+        //Defined at class level
+        outlinerListBox.setOnInitAction(() -> {
+            outlinerListBox.setBackgroundColor(UIColor.transparent());
+            outlinerListBox.setTopLeftPos(0, 28);
+            outlinerListBox.setBottomRightPos(0, 0);
+            outlinerListBox.setTopLeftAnchor(0, 0.25);
+            outlinerListBox.setBottomRightAnchor(1, 1);
+        });
+        leftPanel.addChildComponent("outlinerListBox", outlinerListBox);
+
+        final Panel rightPanel = new Panel();
+        rightPanel.setOnInitAction(() -> {
+            rightPanel.setBackgroundColor(UIColor.matGrey900(0.75));
+            rightPanel.setTopLeftPos(-256, 0);
+            rightPanel.setBottomRightPos(0, 0);
+            rightPanel.setTopLeftAnchor(1, 0);
+            rightPanel.setBottomRightAnchor(1, 1);
+        });
+        mainUI.addChildComponent("rightPanel", rightPanel);
+
+        final Label propertiesLabel = new Label();
+        propertiesLabel.setOnInitAction(() -> {
+            propertiesLabel.setText(LangManager.getItem("properties"));
+            propertiesLabel.setHorizontalAlign(EnumHAlignment.centre);
+            propertiesLabel.setVerticalAlign(EnumVAlignment.centre);
+            propertiesLabel.setTopLeftPos(4, 4);
+            propertiesLabel.setBottomRightPos(-4, 28);
+            propertiesLabel.setTopLeftAnchor(0, 0);
+            propertiesLabel.setBottomRightAnchor(1, 0);
+        });
+        rightPanel.addChildComponent("propertiesLabel", propertiesLabel);
+
+        try {
+            Window.drawable.releaseContext();
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void preDraw() {
+        super.preDraw();
+
+
+        if (Mouse.isButtonDown(2)) { //If MMB down
+            //<editor-fold desc="Rotate camera on MMB & Move camera with MMB & WASDQE">
+            cameraRot = cameraRot.add(UIUtils.getMouseDelta().toPosXY());
+
+            //X
+            if (cameraRot.x >= 360) {
+                cameraRot.x -= 360;
+            } else if (cameraRot.x <= -360) {
+                cameraRot.x += 360;
+            }
+
+            //Y
+            if (cameraRot.y > 90) {
+                cameraRot.y = 90;
+            } else if (cameraRot.y < -90) {
+                cameraRot.y = -90;
+            }
+
+            PosXYZ forwardVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x)), 0, -Math.cos(Math.toRadians(cameraRot.x)));
+            PosXYZ rightVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x + 90)), 0, -Math.cos(Math.toRadians(cameraRot.x + 90)));
+
+            double speed = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? cameraSprintSpeedMultiplier * cameraSpeed : cameraSpeed;
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_Q)) { //Q: Go Down
+                cameraPos = cameraPos.add(0, -UIUtils.getDelta() * speed, 0);
+            }
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_E)) { //E: Go Up
+                cameraPos = cameraPos.add(0, UIUtils.getDelta() * speed, 0);
+            }
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_W)) { //W: Go Forwards
+                cameraPos = cameraPos.add(forwardVector.multiply(UIUtils.getDelta()).multiply(speed));
+            }
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_S)) { //S: Go Backwards
+                cameraPos = cameraPos.subtract(forwardVector.multiply(UIUtils.getDelta()).multiply(speed));
+            }
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_D)) { //D: Go Right
+                cameraPos = cameraPos.add(rightVector.multiply(UIUtils.getDelta()).multiply(speed));
+            }
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_A)) { //A: Go Left
+                cameraPos = cameraPos.subtract(rightVector.multiply(UIUtils.getDelta()).multiply(speed));
+            }
+            //</editor-fold>
+        } else if (mode == EnumMode.GRAB) {
+            for (String key : clientLevelData.getSelectedPlaceables()) {
+                Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                } else {
+                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                    placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                }
+            }
+        } else if (mode == EnumMode.ROTATE) {
+            for (String key : clientLevelData.getSelectedPlaceables()) {
+                Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                } else {
+                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                    placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                }
+            }
+        }
+
+
+        //<editor-fold desc="Set Mode Label">
+        String modeStringKey;
+        switch (mode) {
+            case NONE:
+                modeStringKey = "none";
+                break;
+            case GRAB:
+                modeStringKey = "grab";
+                break;
+            case ROTATE:
+                modeStringKey = "rotate";
+                break;
+            case SCALE:
+                modeStringKey = "scale";
+                break;
+            default:
+                //This shouldn't happen
+                modeStringKey = "invalid";
+                break;
+        }
+
+        modeLabel.setText(String.format(LangManager.getItem("modeLabelFormat"), LangManager.getItem(modeStringKey)));
+        //</editor-fold>
+
+        //<editor-fold desc="Mode Direction Label">
+        String modeDirectionString;
+        if (modeDirection.equals(new PosXYZ(1, 0, 0))) {
+            modeDirectionString = "X";
+        } else if (modeDirection.equals(new PosXYZ(0, 1, 0))) {
+            modeDirectionString = "Y";
+        } else if (modeDirection.equals(new PosXYZ(0, 0, 1))) {
+            modeDirectionString = "Z";
+        } else {
+            modeDirectionString = String.format("%.2f, %.2f, %.2f", modeDirection.x, modeDirection.y, modeDirection.z);
+        }
+
+        modeDirectionLabel.setText(String.format(LangManager.getItem("modeDirectionLabelFormat"), modeDirectionString));
+        //</editor-fold>
+
+        if (mode == EnumMode.NONE) {
+            modeCursor.setVisible(false);
+        } else {
+            modeCursor.setVisible(true);
+        }
+
+        if (Mouse.isButtonDown(2) ||
+                mode != EnumMode.NONE) {
+            if (!Mouse.isGrabbed()) {
+                Mouse.setGrabbed(true);
+            }
+        } else {
+            if (Mouse.isGrabbed()) {
+                Mouse.setGrabbed(false);
+            }
+        }
+
+    }
+
+    @Override
+    public void draw() {
+        topLeftPos = new PosXY(0, 0);
+        topLeftPx = new PosXY(0, 0);
+        bottomRightPos = new PosXY(Display.getWidth(), Display.getHeight());
+        bottomRightPx = new PosXY(Display.getWidth(), Display.getHeight());
+
+        if (overlayUiScreen == null) {
+            getParentMousePos();
+        } else {
+            mousePos = null;
+        }
+
+        preDraw();
+        drawViewport();
+        postDraw();
+
+        if (overlayUiScreen != null) {
+            overlayUiScreen.draw();
+        }
+    }
+
+    private void drawViewport() {
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+        GL11.glPushMatrix();
+
+        //<editor-fold desc="Setup the matrix">
+        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GLU.gluPerspective(90, Display.getWidth() / (float) Display.getHeight(), 0.01f, 1000f);
+        //</editor-fold>
+
+        GL11.glColor3f(1f, 1f, 1f);
+
+        GL11.glRotated(cameraRot.y, 1, 0, 0);
+        GL11.glRotated(cameraRot.x, 0, 1, 0);
+
+        GL11.glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
+
+        if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+            //<editor-fold desc="Draw model with wireframes">
+            GL20.glUseProgram(ResourceManager.getShaderProgram("tileShaderProgram").getProgramID());
+            ResourceModel.drawModel(clientLevelData.getLevelData().getModel());
+            GL20.glUseProgram(0);
+
+            GL11.glLineWidth(2);
+            GL11.glColor4f(0, 0, 0, 1);
+            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+            GL11.glColor4f(0, 0, 0, 0.02f);
+            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+            //</editor-fold>
+
+            for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                String name = placeableEntry.getKey();
+                Placeable placeable = placeableEntry.getValue();
+                ResourceModel model = placeable.getAsset().getModel();
+
+                GL11.glPushMatrix();
+
+                GL11.glTranslated(placeable.getPosition().x, placeable.getPosition().y, placeable.getPosition().z);
+                GL11.glRotated(placeable.getRotation().z, 0, 0, 1);
+                GL11.glRotated(placeable.getRotation().y, 0, 1, 0);
+                GL11.glRotated(placeable.getRotation().x, 1, 0, 0);
+                GL11.glColor4d(placeable.getAsset().getColor().r, placeable.getAsset().getColor().g, placeable.getAsset().getColor().b, placeable.getAsset().getColor().a);
+
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+                GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
+                GL20.glUseProgram(ResourceManager.getShaderProgram("tileShaderProgram").getProgramID());
+                ResourceModel.drawModel(model);
+                GL20.glUseProgram(0);
+
+                if (clientLevelData.isPlaceableSelected(name)) {
+                    GL11.glColor4d(UIColor.matBlue().r, UIColor.matBlue().g, UIColor.matBlue().b, 1);
+                } else {
+                    GL11.glColor4d(UIColor.matOrange().r, UIColor.matOrange().g, UIColor.matOrange().b, 1);
+                }
+                ResourceModel.drawModelWireframe(model);
+
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+                if (clientLevelData.isPlaceableSelected(name)) {
+                    GL11.glColor4d(UIColor.matBlue().r, UIColor.matBlue().g, UIColor.matBlue().b, 0.05);
+                } else {
+                    GL11.glColor4d(UIColor.matOrange().r, UIColor.matOrange().g, UIColor.matOrange().b, 0.02);
+                }
+                ResourceModel.drawModelWireframe(model);
+
+                GL11.glPopMatrix();
+
+            }
+        }
+
+        GL11.glPopMatrix();
+
+        GL11.glColor3f(1, 1, 1);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        Window.setMatrix();
+    }
+
+    @Override
+    public void onClick(int button, PosXY mousePos) {
+        if (button == 0 && mode != EnumMode.NONE) {
+            mode = EnumMode.NONE;
+        } else {
+            super.onClick(button, mousePos);
+        }
+    }
+
+    @Override
+    public void onKey(int key, char keyChar) {
+        if (overlayUiScreen != null) {
+            overlayUiScreen.onKey(key, keyChar);
+        } else if (!Mouse.isButtonDown(2)) { //If MMB not down
+            if (key == Keyboard.KEY_F1) { //F1 to hide / show the ui
+                mainUI.setVisible(!mainUI.isVisible());
+
+            } else if (key == Keyboard.KEY_ESCAPE) {
+                mode = EnumMode.NONE;
+            } else if (key == Keyboard.KEY_RETURN) {
+                mode = EnumMode.NONE;
+
+            } else if (mode == EnumMode.NONE) {
+                if (key == Keyboard.KEY_G) { //G: Grab
+                    mode = EnumMode.GRAB;
+                } else if (key == Keyboard.KEY_R) { //R: Rotate
+                    mode = EnumMode.ROTATE;
+                } else if (key == Keyboard.KEY_S) { //S: Scale
+                    mode = EnumMode.SCALE;
+                }
+
+            } else if (key == Keyboard.KEY_X) {
+                modeDirection = new PosXYZ(1, 0, 0);
+                modeCursor.setColor(UIColor.matRed());
+            } else if (key == Keyboard.KEY_Y) {
+                modeDirection = new PosXYZ(0, 1, 0);
+                modeCursor.setColor(UIColor.matGreen());
+            } else if (key == Keyboard.KEY_Z) {
+                modeDirection = new PosXYZ(0, 0, 1);
+                modeCursor.setColor(UIColor.matBlue());
+
+            } else {
+                super.onKey(key, keyChar);
+            }
+        }
+    }
+
+    private void notify(String message) {
+        //TODO
+        LogHelper.info(getClass(), message);
+    }
+
+    private void addPlaceable(Placeable placeable) {
+        if (clientLevelData != null) {
+            String name = clientLevelData.getLevelData().addPlaceable(placeable);
+            clientLevelData.clearSelectedPlaceables();
+            clientLevelData.addSelectedPlaceable(name);
+
+            final TextButton placeableButton = new TextButton();
+            placeableButton.setOnInitAction(() -> {
+                placeableButton.setTopLeftPos(0, 0);
+                placeableButton.setBottomRightPos(0, 18);
+                placeableButton.setText(name);
+            });
+            outlinerListBox.addChildComponent(name + "outlinerPlaceable", placeableButton);
+        } else {
+            notify(LangManager.getItem("noLevelLoaded"));
+        }
+    }
+
+    private void newLevelData(FileInputStream fileInputStream) throws IOException {
+        outlinerListBox.childComponents.clear();
+        outlinerListBox.childComponentOrder.clear();
+
+        clientLevelData = new ClientLevelData();
+        clientLevelData.getLevelData().setModel(OBJLoader.loadModel(fileInputStream));
+    }
+
+}

@@ -1,0 +1,3 @@
+[submodule "lib/FluidUI"]
+	path = lib/FluidUI
+	url = https://github.com/CraftedCart/FluidUI.git
