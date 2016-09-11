@@ -298,6 +298,18 @@ public class MainScreen extends FluidUIScreen {
     public void preDraw() {
         super.preDraw();
 
+        if (clientLevelData != null) {
+            for (Map.Entry<String, Component> entry : outlinerListBox.childComponents.entrySet()) {
+                assert entry.getValue() instanceof TextButton;
+                TextButton button = (TextButton) entry.getValue();
+
+                if (clientLevelData.isPlaceableSelected(button.text)) {
+                    button.setBackgroundIdleColor(UIColor.matBlue900());
+                } else {
+                    button.setBackgroundIdleColor(UIColor.matBlue());
+                }
+            }
+        }
 
         if (Mouse.isButtonDown(2)) { //If MMB down
             //<editor-fold desc="Rotate camera on MMB & Move camera with MMB & WASDQE">
@@ -741,6 +753,18 @@ public class MainScreen extends FluidUIScreen {
             placeableButton.setTopLeftPos(0, 0);
             placeableButton.setBottomRightPos(0, 18);
             placeableButton.setText(name);
+        });
+        placeableButton.setOnLMBAction(() -> {
+            assert clientLevelData != null;
+
+            if (Window.isShiftDown()) { //Add to selection on shift
+                if (!clientLevelData.isPlaceableSelected(name)) {
+                    clientLevelData.addSelectedPlaceable(name);
+                }
+            } else {
+                clientLevelData.clearSelectedPlaceables();
+                clientLevelData.addSelectedPlaceable(name);
+            }
         });
         placeableButton.setName(name + "OutlinerPlaceable");
 
