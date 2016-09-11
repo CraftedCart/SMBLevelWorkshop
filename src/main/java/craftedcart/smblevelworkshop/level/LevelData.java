@@ -75,4 +75,8 @@ public class LevelData {
         return placedObjects.get(name);
     }
 
+    public void replacePlaceable(String name, Placeable placeable) {
+        placedObjects.replace(name, placeable);
+    }
+
 }

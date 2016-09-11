@@ -109,4 +109,13 @@ public class Window {
         Window.uiScreen = IUIScreen;
     }
 
+    public static boolean isCtrlOrCmdDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) ||
+                Keyboard.isKeyDown(Keyboard.KEY_LMETA) || Keyboard.isKeyDown(Keyboard.KEY_RMETA);
+    }
+
+    public static boolean isShiftDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+    }
+
 }

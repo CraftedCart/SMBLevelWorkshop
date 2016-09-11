@@ -11,6 +11,7 @@ import io.github.craftedcart.fluidui.util.PosXY;
 import io.github.craftedcart.fluidui.util.UIColor;
 import io.github.craftedcart.fluidui.util.UIUtils;
 import org.apache.logging.log4j.Level;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.UnicodeFont;
@@ -29,6 +30,8 @@ public class CrashedScreen extends FluidUIScreen {
     }
 
     public CrashedScreen(String stackTrace, boolean animateIn) {
+
+        Mouse.setGrabbed(false);
 
         UIColor.matGrey900().bindClearColor();
 

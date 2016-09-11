@@ -3,6 +3,9 @@ package craftedcart.smblevelworkshop.ui;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
+import craftedcart.smblevelworkshop.undo.UndoAddPlaceable;
+import craftedcart.smblevelworkshop.undo.UndoAssetTransform;
+import craftedcart.smblevelworkshop.undo.UndoCommand;
 import craftedcart.smblevelworkshop.util.EnumMode;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.AssetManager;
@@ -34,7 +37,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author CraftedCart
@@ -59,6 +63,10 @@ public class MainScreen extends FluidUIScreen {
     private final Label modeLabel = new Label();
     private final Label modeDirectionLabel = new Label();
     private final ListBox outlinerListBox = new ListBox();
+
+    //Undo
+    @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
+    @NotNull private List<UndoCommand> redoCommandList = new ArrayList<>();
 
 
     public MainScreen() {
@@ -206,6 +214,7 @@ public class MainScreen extends FluidUIScreen {
         });
         leftPanel.addChildComponent("addPlaceableListBox", addPlaceableListBox);
 
+        //<editor-fold desc="Add placeable buttons">
         for (IAsset asset : AssetManager.getAvaliableAssets()) {
             final TextButton placeableButton = new TextButton();
             placeableButton.setOnInitAction(() -> {
@@ -216,6 +225,7 @@ public class MainScreen extends FluidUIScreen {
             placeableButton.setOnLMBAction(() -> addPlaceable(new Placeable(asset)));
             addPlaceableListBox.addChildComponent(asset.getName() + "AddPlaceableButton", placeableButton);
         }
+        //</editor-fold>
 
         final Label outlinerLabel = new Label();
         outlinerLabel.setOnInitAction(() -> {
@@ -295,7 +305,7 @@ public class MainScreen extends FluidUIScreen {
             PosXYZ forwardVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x)), 0, -Math.cos(Math.toRadians(cameraRot.x)));
             PosXYZ rightVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x + 90)), 0, -Math.cos(Math.toRadians(cameraRot.x + 90)));
 
-            double speed = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ? cameraSprintSpeedMultiplier * cameraSpeed : cameraSpeed;
+            double speed = Window.isShiftDown() ? cameraSprintSpeedMultiplier * cameraSpeed : cameraSpeed;
 
             if (Keyboard.isKeyDown(Keyboard.KEY_Q)) { //Q: Go Down
                 cameraPos = cameraPos.add(0, -UIUtils.getDelta() * speed, 0);
@@ -327,7 +337,7 @@ public class MainScreen extends FluidUIScreen {
                 for (String key : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                    if (Window.isShiftDown()) { //Precise movement with shift
                         placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
                         placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
                     } else {
@@ -341,7 +351,7 @@ public class MainScreen extends FluidUIScreen {
                 for (String key : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                    if (Window.isShiftDown()) { //Precise movement with shift
                         placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
                         placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
                     } else {
@@ -355,7 +365,7 @@ public class MainScreen extends FluidUIScreen {
                 for (String key : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                    if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //Precise movement with shift
+                    if (Window.isShiftDown()) { //Precise movement with shift
                         placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
                         placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
                     } else {
@@ -537,8 +547,10 @@ public class MainScreen extends FluidUIScreen {
 
     @Override
     public void onClick(int button, PosXY mousePos) {
-        if (button == 0 && mode != EnumMode.NONE) {
-            mode = EnumMode.NONE;
+        if (button == 0 && mode != EnumMode.NONE) { //LMB: Confirm action
+            confirmModeAction();
+        } else if (button == 1 && mode != EnumMode.NONE) { //RMB: Discard action
+            discardModeAction();
         } else {
             super.onClick(button, mousePos);
         }
@@ -552,37 +564,64 @@ public class MainScreen extends FluidUIScreen {
             if (key == Keyboard.KEY_F1) { //F1 to hide / show the ui
                 mainUI.setVisible(!mainUI.isVisible());
 
-            } else if (key == Keyboard.KEY_ESCAPE) {
-                mode = EnumMode.NONE;
-            } else if (key == Keyboard.KEY_RETURN) {
-                mode = EnumMode.NONE;
+            } else if (clientLevelData != null) {
+                if (key == Keyboard.KEY_ESCAPE) {
+                    discardModeAction();
+                } else if (key == Keyboard.KEY_RETURN) {
+                    confirmModeAction();
 
-            } else if (mode == EnumMode.NONE) {
-                if (key == Keyboard.KEY_G) { //G: Grab
-                    mode = EnumMode.GRAB;
-                } else if (key == Keyboard.KEY_R) { //R: Rotate
-                    mode = EnumMode.ROTATE;
-                } else if (key == Keyboard.KEY_S) { //S: Scale
-                    mode = EnumMode.SCALE;
+                } else if (mode == EnumMode.NONE) {
+                    if (key == Keyboard.KEY_G) { //G: Grab
+                        addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                        mode = EnumMode.GRAB;
+                    } else if (key == Keyboard.KEY_R) { //R: Rotate
+                        addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                        mode = EnumMode.ROTATE;
+                    } else if (key == Keyboard.KEY_S) { //S: Scale
+                        addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                        mode = EnumMode.SCALE;
+
+                    } else if (key == Keyboard.KEY_Z) { //Ctrl / Cmd Z: Undo - Ctrl / Cmd Shift Z: Redo
+                        if (Window.isCtrlOrCmdDown()) {
+                            if (Window.isShiftDown()) {
+                                //Redo
+                                redo();
+                            } else {
+                                //Undo
+                                undo();
+                            }
+                        }
+                    }
+
+                } else if (key == Keyboard.KEY_X) { //X Axis
+                    modeDirection = new PosXYZ(1, 0, 0);
+                    modeCursor.setColor(UIColor.matRed());
+                } else if (key == Keyboard.KEY_Y) { //Y Axis
+                    modeDirection = new PosXYZ(0, 1, 0);
+                    modeCursor.setColor(UIColor.matGreen());
+                } else if (key == Keyboard.KEY_Z) { //Z Axis
+                    modeDirection = new PosXYZ(0, 0, 1);
+                    modeCursor.setColor(UIColor.matBlue());
+                } else if (key == Keyboard.KEY_U) { //XYZ (Uniform)
+                    modeDirection = new PosXYZ(1, 1, 1);
+                    modeCursor.setColor(UIColor.matWhite());
+
+
+                } else {
+                    super.onKey(key, keyChar);
                 }
-
-            } else if (key == Keyboard.KEY_X) { //X Axis
-                modeDirection = new PosXYZ(1, 0, 0);
-                modeCursor.setColor(UIColor.matRed());
-            } else if (key == Keyboard.KEY_Y) { //Y Axis
-                modeDirection = new PosXYZ(0, 1, 0);
-                modeCursor.setColor(UIColor.matGreen());
-            } else if (key == Keyboard.KEY_Z) { //Z Axis
-                modeDirection = new PosXYZ(0, 0, 1);
-                modeCursor.setColor(UIColor.matBlue());
-            } else if (key == Keyboard.KEY_U) { //XYZ (Uniform)
-                modeDirection = new PosXYZ(1, 1, 1);
-                modeCursor.setColor(UIColor.matWhite());
-
-            } else {
-                super.onKey(key, keyChar);
             }
         }
+    }
+
+    private void confirmModeAction() {
+        mode = EnumMode.NONE;
+        assert clientLevelData != null;
+    }
+
+    private void discardModeAction() {
+        mode = EnumMode.NONE;
+        undo();
     }
 
     private void notify(String message) {
@@ -595,6 +634,8 @@ public class MainScreen extends FluidUIScreen {
             String name = clientLevelData.getLevelData().addPlaceable(placeable);
             clientLevelData.clearSelectedPlaceables();
             clientLevelData.addSelectedPlaceable(name);
+
+            addUndoCommand(new UndoAddPlaceable(clientLevelData, name, placeable));
 
             final TextButton placeableButton = new TextButton();
             placeableButton.setOnInitAction(() -> {
@@ -609,11 +650,41 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void newLevelData(FileInputStream fileInputStream) throws IOException {
+        //Clear outliner list box
         outlinerListBox.childComponents.clear();
         outlinerListBox.childComponentOrder.clear();
 
+        //Reset undo history
+        undoCommandList.clear();
+        redoCommandList.clear();
+
         clientLevelData = new ClientLevelData();
         clientLevelData.getLevelData().setModel(OBJLoader.loadModel(fileInputStream));
+    }
+
+    private void addUndoCommand(UndoCommand undoCommand) {
+        undoCommandList.add(undoCommand);
+        redoCommandList.clear();
+    }
+
+    private void undo() {
+        if (undoCommandList.size() > 0) {
+            redoCommandList.add(undoCommandList.get(undoCommandList.size() - 1).getRedoCommand());
+            undoCommandList.get(undoCommandList.size() - 1).undo();
+            notify(undoCommandList.get(undoCommandList.size() - 1).getUndoMessage());
+            undoCommandList.remove(undoCommandList.size() - 1);
+        }
+
+    }
+
+    private void redo() {
+        if (redoCommandList.size() > 0) {
+
+            undoCommandList.add(redoCommandList.get(redoCommandList.size() - 1).getRedoCommand());
+            redoCommandList.get(redoCommandList.size() - 1).undo();
+            notify(redoCommandList.get(redoCommandList.size() - 1).getRedoMessage());
+            redoCommandList.remove(redoCommandList.size() - 1);
+        }
     }
 
 }
