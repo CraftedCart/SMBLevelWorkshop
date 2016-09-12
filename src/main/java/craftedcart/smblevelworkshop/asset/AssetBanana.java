@@ -70,4 +70,14 @@ public class AssetBanana implements IAsset {
         }
     }
 
+    @Override
+    public boolean canRotate() {
+        return false;
+    }
+
+    @Override
+    public boolean canScale() {
+        return false;
+    }
+
 }

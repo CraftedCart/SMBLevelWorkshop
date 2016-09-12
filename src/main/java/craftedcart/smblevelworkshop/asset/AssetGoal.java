@@ -72,4 +72,9 @@ public class AssetGoal implements IAsset {
         }
     }
 
+    @Override
+    public boolean canScale() {
+        return false;
+    }
+
 }

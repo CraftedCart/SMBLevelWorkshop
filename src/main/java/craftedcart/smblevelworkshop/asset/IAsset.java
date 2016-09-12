@@ -37,4 +37,12 @@ public interface IAsset {
         return null;
     }
 
+    default public boolean canRotate() {
+        return true;
+    }
+
+    default public boolean canScale() {
+        return true;
+    }
+
 }

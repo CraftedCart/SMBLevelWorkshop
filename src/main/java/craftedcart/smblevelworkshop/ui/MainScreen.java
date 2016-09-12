@@ -361,12 +361,14 @@ public class MainScreen extends FluidUIScreen {
                 for (String key : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                    if (Window.isShiftDown()) { //Precise movement with shift
-                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
-                    } else {
-                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                        placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    if (placeable.getAsset().canRotate()) { //If can rotate
+                        if (Window.isShiftDown()) { //Precise movement with shift
+                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                        } else {
+                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                        }
                     }
                 }
                 //</editor-fold>
@@ -375,12 +377,14 @@ public class MainScreen extends FluidUIScreen {
                 for (String key : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                    if (Window.isShiftDown()) { //Precise movement with shift
-                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
-                    } else {
-                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                        placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    if (placeable.getAsset().canScale()) { //If can scale
+                        if (Window.isShiftDown()) { //Precise movement with shift
+                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                        } else {
+                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                        }
                     }
                 }
                 //</editor-fold>

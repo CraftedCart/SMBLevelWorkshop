@@ -41,13 +41,17 @@ public class ExportManager {
             appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . y = ").append(placeable.getPosition().y).append("\n");
             appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . z = ").append(placeable.getPosition().z).append("\n");
 
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". rot . x = ").append(placeable.getRotation().x).append("\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". rot . y = ").append(placeable.getRotation().y).append("\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". rot . z = ").append(placeable.getRotation().z).append("\n");
+            if (placeable.getAsset().canRotate()) {
+                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". rot . x = ").append(placeable.getRotation().x).append("\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". rot . y = ").append(placeable.getRotation().y).append("\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". rot . z = ").append(placeable.getRotation().z).append("\n");
+            }
 
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". scl . x = ").append(placeable.getScale().x).append("\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". scl . y = ").append(placeable.getScale().y).append("\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". scl . z = ").append(placeable.getScale().z).append("\n");
+            if (placeable.getAsset().canScale()) {
+                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". scl . x = ").append(placeable.getScale().x).append("\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". scl . y = ").append(placeable.getScale().y).append("\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". scl . z = ").append(placeable.getScale().z).append("\n");
+            }
 
             if (placeable.getAsset().getValidTypes() != null) {
                 appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". type . x = ").append(placeable.getAsset().getGameType()).append("\n");
