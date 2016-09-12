@@ -4,6 +4,7 @@ import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -54,4 +55,19 @@ public class AssetBanana implements IAsset {
     public String[] getValidTypes() {
         return new String[] {"singleBanana", "bunchBanana"};
     }
+
+    @Nullable
+    @Override
+    public String getGameType() {
+        switch (type) {
+            case "singleBanana":
+                return "N";
+            case "bunchBanana":
+                return "B";
+            default:
+                //This shouldn't happen
+                return "N";
+        }
+    }
+
 }

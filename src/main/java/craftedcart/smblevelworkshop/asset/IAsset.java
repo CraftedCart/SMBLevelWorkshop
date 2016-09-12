@@ -27,7 +27,13 @@ public interface IAsset {
         return null;
     }
 
+    @Nullable
     default public String getType() {
+        return null;
+    }
+
+    @Nullable
+    default public String getGameType() {
         return null;
     }
 

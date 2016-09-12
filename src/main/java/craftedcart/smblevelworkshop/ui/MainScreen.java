@@ -15,6 +15,7 @@ import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
+import craftedcart.smblevelworkshop.util.ExportManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.FluidUIScreen;
@@ -36,9 +37,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -117,25 +116,7 @@ public class MainScreen extends FluidUIScreen {
             importObjButton.setTopLeftAnchor(0.5, 0);
             importObjButton.setBottomRightAnchor(0.5, 0);
         });
-        importObjButton.setOnLMBAction(() -> new Thread(() -> {
-                FileDialog fd = new FileDialog((Frame) null);
-                fd.setMode(FileDialog.LOAD);
-                fd.setFile("*.obj");
-                fd.setVisible(true);
-
-                File[] files = fd.getFiles();
-                if (files != null && files.length > 0) {
-                    File file = files[0];
-                    LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
-
-                    try {
-                        newLevelData(new FileInputStream(file));
-                    } catch (IOException e) {
-                        LogHelper.error(getClass(), "Failed to open file");
-                        LogHelper.error(getClass(), e);
-                    }
-                }
-            }, "ObjFileOpenThread").start());
+        importObjButton.setOnLMBAction(() -> importObj());
         mainUI.addChildComponent("importObjButton", importObjButton);
         //</editor-fold>
 
@@ -148,7 +129,7 @@ public class MainScreen extends FluidUIScreen {
             exportButton.setTopLeftAnchor(0.5, 0);
             exportButton.setBottomRightAnchor(0.5, 0);
         });
-        exportButton.setOnLMBAction(() -> LogHelper.info(getClass(), "TODO"));
+        exportButton.setOnLMBAction(() -> export());
         mainUI.addChildComponent("exportButton", exportButton);
         //</editor-fold>
 
@@ -825,6 +806,58 @@ public class MainScreen extends FluidUIScreen {
         placeableButton.setName(name + "OutlinerPlaceable");
 
         return placeableButton;
+    }
+
+    private void importObj() {
+        new Thread(() -> {
+            FileDialog fd = new FileDialog((Frame) null);
+            fd.setMode(FileDialog.LOAD);
+            fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".OBJ"));
+            fd.setVisible(true);
+
+            File[] files = fd.getFiles();
+            if (files != null && files.length > 0) {
+                File file = files[0];
+                LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
+
+                try {
+                    newLevelData(new FileInputStream(file));
+                } catch (IOException e) {
+                    LogHelper.error(getClass(), "Failed to open file");
+                    LogHelper.error(getClass(), e);
+                }
+            }
+        }, "ObjFileOpenThread").start();
+    }
+
+    private void export() {
+        if (clientLevelData != null) {
+            new Thread(() -> {
+                FileDialog fd = new FileDialog((Frame) null);
+                fd.setMode(FileDialog.SAVE);
+                fd.setFile("config.txt");
+                fd.setVisible(true);
+
+                File[] files = fd.getFiles();
+                if (files != null && files.length > 0) {
+                    File file = files[0];
+                    LogHelper.info(getClass(), "Exporting file: " + file.getAbsolutePath());
+
+                    String exportContents = ExportManager.getConfig(clientLevelData.getLevelData());
+
+                    try {
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                        writer.write(exportContents);
+                        writer.close();
+                    } catch (IOException e) {
+                        LogHelper.error(getClass(), "Error while exporting");
+                        LogHelper.error(getClass(), e);
+                    }
+                }
+            }, "ExportThread").start();
+        } else {
+            notify(LangManager.getItem("noLevelLoaded"));
+        }
     }
 
 }
