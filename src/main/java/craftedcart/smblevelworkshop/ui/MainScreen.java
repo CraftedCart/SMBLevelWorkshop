@@ -108,32 +108,6 @@ public class MainScreen extends FluidUIScreen {
         });
         addChildComponent("mainUI", mainUI);
 
-        //<editor-fold desc="ImportObj TextButton">
-        final TextButton importObjButton = new TextButton();
-        importObjButton.setOnInitAction(() -> {
-            importObjButton.setText(LangManager.getItem("importObj"));
-            importObjButton.setTopLeftPos(-132, 4);
-            importObjButton.setBottomRightPos(-4, 28);
-            importObjButton.setTopLeftAnchor(0.5, 0);
-            importObjButton.setBottomRightAnchor(0.5, 0);
-        });
-        importObjButton.setOnLMBAction(() -> importObj());
-        mainUI.addChildComponent("importObjButton", importObjButton);
-        //</editor-fold>
-
-        //<editor-fold desc="Export TextButton">
-        final TextButton exportButton = new TextButton();
-        exportButton.setOnInitAction(() -> {
-            exportButton.setText(LangManager.getItem("export"));
-            exportButton.setTopLeftPos(4, 4);
-            exportButton.setBottomRightPos(132, 28);
-            exportButton.setTopLeftAnchor(0.5, 0);
-            exportButton.setBottomRightAnchor(0.5, 0);
-        });
-        exportButton.setOnLMBAction(() -> export());
-        mainUI.addChildComponent("exportButton", exportButton);
-        //</editor-fold>
-
         //<editor-fold desc="Bottom Panel">
         final Panel bottomPanel = new Panel();
         bottomPanel.setOnInitAction(() -> {
@@ -236,15 +210,44 @@ public class MainScreen extends FluidUIScreen {
         });
         leftPanel.addChildComponent("outlinerListBox", outlinerListBox);
 
-        final Panel rightPanel = new Panel();
-        rightPanel.setOnInitAction(() -> {
-            rightPanel.setBackgroundColor(UIColor.matGrey900(0.75));
-            rightPanel.setTopLeftPos(-256, 0);
-            rightPanel.setBottomRightPos(0, 0);
-            rightPanel.setTopLeftAnchor(1, 0);
-            rightPanel.setBottomRightAnchor(1, 1);
+        final ListBox rightListBox = new ListBox();
+        rightListBox.setOnInitAction(() -> {
+            rightListBox.setBackgroundColor(UIColor.matGrey900(0.75));
+            rightListBox.setTopLeftPos(-256, 0);
+            rightListBox.setBottomRightPos(0, 0);
+            rightListBox.setTopLeftAnchor(1, 0);
+            rightListBox.setBottomRightAnchor(1, 1);
         });
-        mainUI.addChildComponent("rightPanel", rightPanel);
+        mainUI.addChildComponent("rightListBox", rightListBox);
+
+        //<editor-fold desc="ImportObj TextButton">
+        final TextButton importObjButton = new TextButton();
+        importObjButton.setOnInitAction(() -> {
+            importObjButton.setText(LangManager.getItem("importObj"));
+            importObjButton.setTopLeftPos(0, 0);
+            importObjButton.setBottomRightPos(0, 24);
+        });
+        importObjButton.setOnLMBAction(this::importObj);
+        rightListBox.addChildComponent("importObjButton", importObjButton);
+        //</editor-fold>
+
+        //<editor-fold desc="Export TextButton">
+        final TextButton exportButton = new TextButton();
+        exportButton.setOnInitAction(() -> {
+            exportButton.setText(LangManager.getItem("export"));
+            exportButton.setTopLeftPos(0, 0);
+            exportButton.setBottomRightPos(0, 24);
+        });
+        exportButton.setOnLMBAction(this::export);
+        rightListBox.addChildComponent("exportButton", exportButton);
+        //</editor-fold>
+
+        final Panel propertiesLabelPanel = new Panel();
+        propertiesLabelPanel.setOnInitAction(() -> {
+            propertiesLabelPanel.setTopLeftPos(0, 0);
+            propertiesLabelPanel.setBottomRightPos(0, 28);
+        });
+        rightListBox.addChildComponent("propertiesLabelPanel", propertiesLabelPanel);
 
         final Label propertiesLabel = new Label();
         propertiesLabel.setOnInitAction(() -> {
@@ -256,7 +259,7 @@ public class MainScreen extends FluidUIScreen {
             propertiesLabel.setTopLeftAnchor(0, 0);
             propertiesLabel.setBottomRightAnchor(1, 0);
         });
-        rightPanel.addChildComponent("propertiesLabel", propertiesLabel);
+        propertiesLabelPanel.addChildComponent("propertiesLabel", propertiesLabel);
 
         //Defined at class level
         notifPanel.setOnInitAction(() -> {
