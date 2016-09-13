@@ -16,8 +16,6 @@ import java.util.Map;
 public class LevelData {
 
     @Nullable private ResourceModel model;
-    @NotNull private PosXYZ startPos = new PosXYZ(0, 1, 0);
-    @NotNull private PosXYZ startRot = new PosXYZ();
     private float falloutY = -10;
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
 
@@ -28,24 +26,6 @@ public class LevelData {
     @Nullable
     public ResourceModel getModel() {
         return model;
-    }
-
-    public void setStartPos(@NotNull PosXYZ startPos) {
-        this.startPos = startPos;
-    }
-
-    @NotNull
-    public PosXYZ getStartPos() {
-        return startPos;
-    }
-
-    public void setStartRot(@NotNull PosXYZ startRot) {
-        this.startRot = startRot;
-    }
-
-    @NotNull
-    public PosXYZ getStartRot() {
-        return startRot;
     }
 
     public void setFalloutY(float falloutY) {

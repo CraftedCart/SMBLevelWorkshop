@@ -40,8 +40,8 @@
     <entry key="noLevelLoaded" val="No level has been loaded!" />
 
     <!-- Undo / Redo -->
-    <entry key="undoTranslate" val="Undo: Translation" />
-    <entry key="redoTranslate" val="Redo: Translation" />
+    <entry key="undoTransform" val="Undo: Transformation" />
+    <entry key="redoTransform" val="Redo: Transformation" />
     <entry key="undoAddPlaceable" val="Undo: Add placeable" />
     <entry key="redoAddPlaceable" val="Redo: Remove placeable" />
     <entry key="undoRemovePlaceable" val="Undo: Remove placeable" />

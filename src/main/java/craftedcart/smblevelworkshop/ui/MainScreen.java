@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.ui;
 
 import craftedcart.smblevelworkshop.SMBLWSettings;
+import craftedcart.smblevelworkshop.asset.AssetStartPos;
 import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.undo.UndoAddPlaceable;
@@ -764,6 +765,21 @@ public class MainScreen extends FluidUIScreen {
 
         clientLevelData = new ClientLevelData();
         clientLevelData.getLevelData().setModel(OBJLoader.loadModel(fileInputStream));
+
+        Placeable startPosPlaceable = new Placeable(new AssetStartPos());
+        startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
+        String name = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+        clientLevelData.addSelectedPlaceable(name);
+
+        try {
+            Window.drawable.makeCurrent();
+
+            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+
+            Window.drawable.releaseContext();
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addUndoCommand(UndoCommand undoCommand) {

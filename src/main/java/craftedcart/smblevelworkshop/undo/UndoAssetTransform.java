@@ -41,13 +41,13 @@ public class UndoAssetTransform extends UndoCommand {
     @Nullable
     @Override
     public String getUndoMessage() {
-        return LangManager.getItem("undoTranslate");
+        return LangManager.getItem("undoTransform");
     }
 
     @Nullable
     @Override
     public String getRedoMessage() {
-        return LangManager.getItem("redoTranslate");
+        return LangManager.getItem("redoTransform");
     }
 
 }

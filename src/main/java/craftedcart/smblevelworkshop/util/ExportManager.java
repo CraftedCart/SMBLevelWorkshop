@@ -19,13 +19,6 @@ public class ExportManager {
     public static String getConfig(LevelData levelData) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("start [ 0 ] . pos . x = ").append(levelData.getStartPos().x).append("\n");
-        sb.append("start [ 0 ] . pos . y = ").append(levelData.getStartPos().y).append("\n");
-        sb.append("start [ 0 ] . pos . z = ").append(levelData.getStartPos().z).append("\n");
-        sb.append("start [ 0 ] . rot . x = ").append(levelData.getStartRot().x).append("\n");
-        sb.append("start [ 0 ] . rot . y = ").append(levelData.getStartRot().y).append("\n");
-        sb.append("start [ 0 ] . rot . z = ").append(levelData.getStartRot().z).append("\n");
-        sb.append("\n");
         sb.append("fallout [ 0 ] . pos . y = ").append(levelData.getFalloutY()).append("\n");
         sb.append("\n");
 
@@ -84,6 +77,8 @@ public class ExportManager {
                 jamabarCount++;
             }
             sb.append("jamabar [ ").append(jamabarCount).append(" ] ");
+        } else if (asset instanceof AssetStartPos) {
+            sb.append("start [ 0 ] ");
         }
     }
 
