@@ -77,6 +77,10 @@ public class MainScreen extends FluidUIScreen {
     private final TextField rotationYTextField = new TextField();
     private final TextField rotationZTextField = new TextField();
 
+    private final TextField scaleXTextField = new TextField();
+    private final TextField scaleYTextField = new TextField();
+    private final TextField scaleZTextField = new TextField();
+
 
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
@@ -601,6 +605,171 @@ public class MainScreen extends FluidUIScreen {
             rotationZTextField.setValue(String.valueOf(newValue));
         });
         rightListBox.addChildComponent("rotationZTextField", rotationZTextField);
+        //</editor-fold>
+
+        final Label scaleLabel = new Label();
+        scaleLabel.setOnInitAction(() -> {
+            scaleLabel.setText(LangManager.getItem("scale"));
+            scaleLabel.setVerticalAlign(EnumVAlignment.centre);
+            scaleLabel.setTopLeftPos(0, 0);
+            scaleLabel.setBottomRightPos(0, 24);
+        });
+        rightListBox.addChildComponent("scaleLabel", scaleLabel);
+
+        //<editor-fold desc="Scale X Text Field">
+        //Defined at class level
+        scaleXTextField.setOnInitAction(() -> {
+            scaleXTextField.setValue("0.00");
+            scaleXTextField.cursorPos = scaleXTextField.value.length();
+            scaleXTextField.setVerticalAlign(EnumVAlignment.centre);
+            scaleXTextField.setTopLeftPos(0, 0);
+            scaleXTextField.setBottomRightPos(0, 24);
+            scaleXTextField.setBackgroundColor(UIColor.matRed900());
+            scaleXTextField.setInputRegexCheck("[0-9.-]");
+            scaleXTextField.setEnabled(false);
+        });
+        scaleXTextField.setOnSelectedAction(() -> scaleXTextField.cursorPos = scaleXTextField.value.length());
+        scaleXTextField.setOnReturnAction(() -> scaleXTextField.setSelected(false));
+        scaleXTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(scaleXTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(scaleXTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                        Placeable placeable = entry.getValue();
+                        placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
+                    }}
+            }
+            //</editor-fold>
+
+            scaleXTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("scaleXTextField", scaleXTextField);
+        //</editor-fold>
+
+        //<editor-fold desc="Scale Y Text Field">
+        //Defined at class level
+        scaleYTextField.setOnInitAction(() -> {
+            scaleYTextField.setValue("0.00");
+            scaleYTextField.cursorPos = scaleYTextField.value.length();
+            scaleYTextField.setVerticalAlign(EnumVAlignment.centre);
+            scaleYTextField.setTopLeftPos(0, 0);
+            scaleYTextField.setBottomRightPos(0, 24);
+            scaleYTextField.setBackgroundColor(UIColor.matGreen900());
+            scaleYTextField.setInputRegexCheck("[0-9.-]");
+            scaleYTextField.setEnabled(false);
+        });
+        scaleYTextField.setOnSelectedAction(() -> scaleYTextField.cursorPos = scaleYTextField.value.length());
+        scaleYTextField.setOnReturnAction(() -> scaleYTextField.setSelected(false));
+        scaleYTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(scaleYTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    Placeable placeable = entry.getValue();
+                    placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(scaleYTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (String name : clientLevelData.getSelectedPlaceables()) {
+                        Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                        placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
+                    }}
+            }
+            //</editor-fold>
+
+            scaleYTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("scaleYTextField", scaleYTextField);
+        //</editor-fold>
+
+        //<editor-fold desc="Scale Z Text Field">
+        //Defined at class level
+        scaleZTextField.setOnInitAction(() -> {
+            scaleZTextField.setValue("0.00");
+            scaleZTextField.cursorPos = scaleZTextField.value.length();
+            scaleZTextField.setVerticalAlign(EnumVAlignment.centre);
+            scaleZTextField.setTopLeftPos(0, 0);
+            scaleZTextField.setBottomRightPos(0, 24);
+            scaleZTextField.setBackgroundColor(UIColor.matBlue900());
+            scaleZTextField.setInputRegexCheck("[0-9.-]");
+            scaleZTextField.setEnabled(false);
+        });
+        scaleZTextField.setOnSelectedAction(() -> scaleZTextField.cursorPos = scaleZTextField.value.length());
+        scaleZTextField.setOnReturnAction(() -> scaleZTextField.setSelected(false));
+        scaleZTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(scaleZTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    placeable.setScale(new PosXYZ(placeable.getScale().x, placeable.getScale().y, newValue));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(scaleZTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                        Placeable placeable = entry.getValue();
+                        placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
+                    }}
+            }
+            //</editor-fold>
+
+            scaleZTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("scaleZTextField", scaleZTextField);
         //</editor-fold>
 
         //Defined at class level
@@ -1258,6 +1427,11 @@ public class MainScreen extends FluidUIScreen {
         double rotAvgZ = 0;
         boolean canRotate = false;
 
+        double sclAvgX = 0;
+        double sclAvgY = 0;
+        double sclAvgZ = 0;
+        boolean canScale = false;
+
         assert clientLevelData != null;
         for (String name : clientLevelData.getSelectedPlaceables()) {
             Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
@@ -1268,11 +1442,19 @@ public class MainScreen extends FluidUIScreen {
 
             if (placeable.getAsset().canRotate()) {
                 canRotate = true;
+
+                rotAvgX += placeable.getRotation().x;
+                rotAvgY += placeable.getRotation().y;
+                rotAvgZ += placeable.getRotation().z;
             }
 
-            rotAvgX += placeable.getRotation().x;
-            rotAvgY += placeable.getRotation().y;
-            rotAvgZ += placeable.getRotation().z;
+            if (placeable.getAsset().canScale()) {
+                canScale = true;
+
+                sclAvgX += placeable.getScale().x;
+                sclAvgY += placeable.getScale().y;
+                sclAvgZ += placeable.getScale().z;
+            }
         }
 
         int selectedCount = clientLevelData.getSelectedPlaceables().size();
@@ -1319,6 +1501,28 @@ public class MainScreen extends FluidUIScreen {
             rotationXTextField.setValue("0.00");
             rotationYTextField.setValue("0.00");
             rotationZTextField.setValue("0.00");
+        }
+
+        if (selectedCount != 0 && canScale) {
+            sclAvgX = sclAvgX / (double) selectedCount;
+            sclAvgY = sclAvgY / (double) selectedCount;
+            sclAvgZ = sclAvgZ / (double) selectedCount;
+
+            scaleXTextField.setEnabled(true);
+            scaleYTextField.setEnabled(true);
+            scaleZTextField.setEnabled(true);
+
+            scaleXTextField.setValue(df.format(sclAvgX));
+            scaleYTextField.setValue(df.format(sclAvgY));
+            scaleZTextField.setValue(df.format(sclAvgZ));
+        } else {
+            scaleXTextField.setEnabled(false);
+            scaleYTextField.setEnabled(false);
+            scaleZTextField.setEnabled(false);
+
+            scaleXTextField.setValue("1.00");
+            scaleYTextField.setValue("1.00");
+            scaleZTextField.setValue("1.00");
         }
     }
 
