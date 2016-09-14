@@ -299,6 +299,10 @@ public class MainScreen extends FluidUIScreen {
             positionXTextField.setEnabled(false);
         });
         positionXTextField.setOnSelectedAction(() -> positionXTextField.cursorPos = positionXTextField.value.length());
+        positionXTextField.setOnTabAction(() -> {
+            positionXTextField.setSelected(false);
+            positionYTextField.setSelected(true);
+        });
         positionXTextField.setOnReturnAction(() -> positionXTextField.setSelected(false));
         positionXTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -351,6 +355,10 @@ public class MainScreen extends FluidUIScreen {
             positionYTextField.setEnabled(false);
         });
         positionYTextField.setOnSelectedAction(() -> positionYTextField.cursorPos = positionYTextField.value.length());
+        positionYTextField.setOnTabAction(() -> {
+            positionYTextField.setSelected(false);
+            positionZTextField.setSelected(true);
+        });
         positionYTextField.setOnReturnAction(() -> positionYTextField.setSelected(false));
         positionYTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -403,6 +411,10 @@ public class MainScreen extends FluidUIScreen {
             positionZTextField.setEnabled(false);
         });
         positionZTextField.setOnSelectedAction(() -> positionZTextField.cursorPos = positionZTextField.value.length());
+        positionZTextField.setOnTabAction(() -> {
+            positionZTextField.setSelected(false);
+            rotationXTextField.setSelected(true);
+        });
         positionZTextField.setOnReturnAction(() -> positionZTextField.setSelected(false));
         positionZTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -464,6 +476,10 @@ public class MainScreen extends FluidUIScreen {
             rotationXTextField.setEnabled(false);
         });
         rotationXTextField.setOnSelectedAction(() -> rotationXTextField.cursorPos = rotationXTextField.value.length());
+        rotationXTextField.setOnTabAction(() -> {
+            rotationXTextField.setSelected(false);
+            rotationYTextField.setSelected(true);
+        });
         rotationXTextField.setOnReturnAction(() -> rotationXTextField.setSelected(false));
         rotationXTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -516,6 +532,10 @@ public class MainScreen extends FluidUIScreen {
             rotationYTextField.setEnabled(false);
         });
         rotationYTextField.setOnSelectedAction(() -> rotationYTextField.cursorPos = rotationYTextField.value.length());
+        rotationYTextField.setOnTabAction(() -> {
+            rotationYTextField.setSelected(false);
+            rotationZTextField.setSelected(true);
+        });
         rotationYTextField.setOnReturnAction(() -> rotationYTextField.setSelected(false));
         rotationYTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -568,6 +588,10 @@ public class MainScreen extends FluidUIScreen {
             rotationZTextField.setEnabled(false);
         });
         rotationZTextField.setOnSelectedAction(() -> rotationZTextField.cursorPos = rotationZTextField.value.length());
+        rotationZTextField.setOnTabAction(() -> {
+            rotationZTextField.setSelected(false);
+            scaleXTextField.setSelected(true);
+        });
         rotationZTextField.setOnReturnAction(() -> rotationZTextField.setSelected(false));
         rotationZTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -629,6 +653,10 @@ public class MainScreen extends FluidUIScreen {
             scaleXTextField.setEnabled(false);
         });
         scaleXTextField.setOnSelectedAction(() -> scaleXTextField.cursorPos = scaleXTextField.value.length());
+        scaleXTextField.setOnTabAction(() -> {
+            scaleXTextField.setSelected(false);
+            scaleYTextField.setSelected(true);
+        });
         scaleXTextField.setOnReturnAction(() -> scaleXTextField.setSelected(false));
         scaleXTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -681,6 +709,10 @@ public class MainScreen extends FluidUIScreen {
             scaleYTextField.setEnabled(false);
         });
         scaleYTextField.setOnSelectedAction(() -> scaleYTextField.cursorPos = scaleYTextField.value.length());
+        scaleYTextField.setOnTabAction(() -> {
+            scaleYTextField.setSelected(false);
+            scaleZTextField.setSelected(true);
+        });
         scaleYTextField.setOnReturnAction(() -> scaleYTextField.setSelected(false));
         scaleYTextField.setOnValueConfirmedAction(() -> {
             double newValue;
@@ -733,6 +765,7 @@ public class MainScreen extends FluidUIScreen {
             scaleZTextField.setEnabled(false);
         });
         scaleZTextField.setOnSelectedAction(() -> scaleZTextField.cursorPos = scaleZTextField.value.length());
+        scaleZTextField.setOnTabAction(() -> scaleZTextField.setSelected(false));
         scaleZTextField.setOnReturnAction(() -> scaleZTextField.setSelected(false));
         scaleZTextField.setOnValueConfirmedAction(() -> {
             double newValue;
