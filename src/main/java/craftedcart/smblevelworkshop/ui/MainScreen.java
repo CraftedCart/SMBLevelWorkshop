@@ -494,7 +494,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setRotation(normalizeRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z)));
+                    if (placeable.getAsset().canRotate()) {
+                        placeable.setRotation(normalizeRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z)));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -550,7 +552,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z)));
+                    if (placeable.getAsset().canRotate()) {
+                        placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z)));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -606,7 +610,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, placeable.getRotation().y, newValue)));
+                    if (placeable.getAsset().canRotate()) {
+                        placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, placeable.getRotation().y, newValue)));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -671,7 +677,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
+                    if (placeable.getAsset().canScale()) {
+                        placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -727,7 +735,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
+                    if (placeable.getAsset().canScale()) {
+                        placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -780,7 +790,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setScale(new PosXYZ(placeable.getScale().x, placeable.getScale().y, newValue));
+                    if (placeable.getAsset().canScale()) {
+                        placeable.setScale(new PosXYZ(placeable.getScale().x, placeable.getScale().y, newValue));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -1487,6 +1499,10 @@ public class MainScreen extends FluidUIScreen {
                 sclAvgX += placeable.getScale().x;
                 sclAvgY += placeable.getScale().y;
                 sclAvgZ += placeable.getScale().z;
+            } else {
+                sclAvgX += 1;
+                sclAvgY += 1;
+                sclAvgZ += 1;
             }
         }
 
