@@ -1,6 +1,8 @@
 package craftedcart.smblevelworkshop.level;
 
+import io.github.craftedcart.fluidui.uiaction.UIAction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +16,7 @@ public class ClientLevelData {
     @NotNull private LevelData levelData = new LevelData();
 
     private Set<String> selectedPlaceables = new HashSet<>();
+    @Nullable private UIAction onSelectedPlaceablesChanged;
 
     public void setLevelData(LevelData levelData) {
         this.levelData = levelData;
@@ -24,11 +27,21 @@ public class ClientLevelData {
     }
 
     public void addSelectedPlaceable(String name) {
-        selectedPlaceables.add(name);
+        if (!selectedPlaceables.contains(name)) {
+            selectedPlaceables.add(name);
+            if (onSelectedPlaceablesChanged != null) {
+                onSelectedPlaceablesChanged.execute();
+            }
+        }
     }
 
     public void removeSelectedPlaceable(String name) {
-        selectedPlaceables.remove(name);
+        if (selectedPlaceables.contains(name)) {
+            selectedPlaceables.remove(name);
+            if (onSelectedPlaceablesChanged != null) {
+                onSelectedPlaceablesChanged.execute();
+            }
+        }
     }
 
     public boolean isPlaceableSelected(String name) {
@@ -41,13 +54,25 @@ public class ClientLevelData {
         } else {
             addSelectedPlaceable(name);
         }
+        if (onSelectedPlaceablesChanged != null) {
+            onSelectedPlaceablesChanged.execute();
+        }
     }
 
     public void clearSelectedPlaceables() {
-        selectedPlaceables.clear();
+        if (selectedPlaceables.size() != 0) {
+            selectedPlaceables.clear();
+            if (onSelectedPlaceablesChanged != null) {
+                onSelectedPlaceablesChanged.execute();
+            }
+        }
     }
 
     public Set<String> getSelectedPlaceables() {
         return selectedPlaceables;
+    }
+
+    public void setOnSelectedPlaceablesChanged(@Nullable UIAction onSelectedPlaceablesChanged) {
+        this.onSelectedPlaceablesChanged = onSelectedPlaceablesChanged;
     }
 }

@@ -565,6 +565,10 @@ public class MainScreen extends FluidUIScreen {
                 }
                 //</editor-fold>
             }
+
+            if (mode != EnumMode.NONE) {
+                updatePropertiesPanel();
+            }
         }
 
 
@@ -866,6 +870,7 @@ public class MainScreen extends FluidUIScreen {
     private void confirmModeAction() {
         mode = EnumMode.NONE;
         assert clientLevelData != null;
+        updatePropertiesPanel();
     }
 
     private void discardModeAction() {
@@ -942,6 +947,7 @@ public class MainScreen extends FluidUIScreen {
         redoCommandList.clear();
 
         clientLevelData = new ClientLevelData();
+        clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
         clientLevelData.getLevelData().setModel(OBJLoader.loadModel(fileInputStream));
 
         positionXTextField.setEnabled(true);
@@ -975,6 +981,8 @@ public class MainScreen extends FluidUIScreen {
             undoCommandList.get(undoCommandList.size() - 1).undo();
             notify(undoCommandList.get(undoCommandList.size() - 1).getUndoMessage());
             undoCommandList.remove(undoCommandList.size() - 1);
+
+            updatePropertiesPanel();
         }
 
     }
@@ -985,6 +993,8 @@ public class MainScreen extends FluidUIScreen {
             redoCommandList.get(redoCommandList.size() - 1).undo();
             notify(redoCommandList.get(redoCommandList.size() - 1).getRedoMessage());
             redoCommandList.remove(redoCommandList.size() - 1);
+
+            updatePropertiesPanel();
         }
     }
 
@@ -1059,6 +1069,49 @@ public class MainScreen extends FluidUIScreen {
             }, "ExportThread").start();
         } else {
             notify(LangManager.getItem("noLevelLoaded"));
+        }
+    }
+
+    private void onSelectedPlaceablesChanged() {
+        updatePropertiesPanel();
+    }
+
+    private void updatePropertiesPanel() {
+        double posAvgX = 0;
+        double posAvgY = 0;
+        double posAvgZ = 0;
+
+        assert clientLevelData != null;
+        for (String name : clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+
+            posAvgX += placeable.getPosition().x;
+            posAvgY += placeable.getPosition().y;
+            posAvgZ += placeable.getPosition().z;
+        }
+
+        int selectedCount = clientLevelData.getSelectedPlaceables().size();
+
+        if (selectedCount != 0) {
+            posAvgX = posAvgX / (double) selectedCount;
+            posAvgY = posAvgY / (double) selectedCount;
+            posAvgZ = posAvgZ / (double) selectedCount;
+
+            positionXTextField.setEnabled(true);
+            positionYTextField.setEnabled(true);
+            positionZTextField.setEnabled(true);
+
+            positionXTextField.setValue(String.format("%.2f", posAvgX));
+            positionYTextField.setValue(String.format("%.2f", posAvgY));
+            positionZTextField.setValue(String.format("%.2f", posAvgZ));
+        } else {
+            positionXTextField.setEnabled(true);
+            positionYTextField.setEnabled(true);
+            positionZTextField.setEnabled(true);
+
+            positionXTextField.setValue("0.00");
+            positionYTextField.setValue("0.00");
+            positionZTextField.setValue("0.00");
         }
     }
 
