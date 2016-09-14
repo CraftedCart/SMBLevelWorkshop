@@ -363,8 +363,8 @@ public class MainScreen extends FluidUIScreen {
 
                 addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
 
-                for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                    Placeable placeable = entry.getValue();
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
                     placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
                 }
             } catch (NumberFormatException e) {
@@ -528,8 +528,8 @@ public class MainScreen extends FluidUIScreen {
 
                 addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
 
-                for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                    Placeable placeable = entry.getValue();
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
                     placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z)));
                 }
             } catch (NumberFormatException e) {
@@ -693,8 +693,8 @@ public class MainScreen extends FluidUIScreen {
 
                 addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
 
-                for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                    Placeable placeable = entry.getValue();
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
                     placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
                 }
             } catch (NumberFormatException e) {
