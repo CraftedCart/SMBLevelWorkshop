@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.asset;
 
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
+import craftedcart.smblevelworkshop.util.LogHelper;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * @author CraftedCart
  *         Created on 10/09/2016 (DD/MM/YYYY)
  */
-public interface IAsset {
+public interface IAsset extends Cloneable {
 
     @NotNull public String getName();
     @NotNull public ResourceModel getModel();
@@ -44,5 +45,7 @@ public interface IAsset {
     default public boolean canScale() {
         return true;
     }
+
+    public IAsset getCopy();
 
 }

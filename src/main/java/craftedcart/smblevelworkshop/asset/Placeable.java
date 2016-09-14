@@ -58,7 +58,10 @@ public class Placeable implements Cloneable {
 
     public Placeable getCopy() {
         try {
-            return (Placeable) clone();
+            IAsset newAsset = asset.getCopy();
+            Placeable newPlaceable = (Placeable) clone();
+            newPlaceable.setAsset(newAsset);
+            return newPlaceable;
         } catch (CloneNotSupportedException e) {
             LogHelper.error(getClass(), "Failed to clone Placeable");
             LogHelper.error(getClass(), e);
