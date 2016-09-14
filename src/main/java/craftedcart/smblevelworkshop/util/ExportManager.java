@@ -19,8 +19,8 @@ public class ExportManager {
     public static String getConfig(LevelData levelData) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("fallout [ 0 ] . pos . y = ").append(levelData.getFalloutY()).append("\n");
-        sb.append("\n");
+        sb.append("fallout [ 0 ] . pos . y = ").append(levelData.getFalloutY()).append("\r\n");
+        sb.append("\r\n");
 
         bananaCount = -1;
         bumperCount = -1;
@@ -30,27 +30,27 @@ public class ExportManager {
         for (Map.Entry<String, Placeable> entry : levelData.getPlacedObjects().entrySet()) {
             Placeable placeable = entry.getValue();
             
-            appendAssetPrefix(placeable.getAsset(), sb, true ); sb.append(". pos . x = ").append(placeable.getPosition().x).append("\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . y = ").append(placeable.getPosition().y).append("\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . z = ").append(placeable.getPosition().z).append("\n");
+            appendAssetPrefix(placeable.getAsset(), sb, true ); sb.append(". pos . x = ").append(placeable.getPosition().x).append("\r\n");
+            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . y = ").append(placeable.getPosition().y).append("\r\n");
+            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . z = ").append(placeable.getPosition().z).append("\r\n");
 
             if (placeable.getAsset().canRotate()) {
-                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". rot . x = ").append(placeable.getRotation().x).append("\n");
-                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". rot . y = ").append(placeable.getRotation().y).append("\n");
-                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". rot . z = ").append(placeable.getRotation().z).append("\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". rot . x = ").append(placeable.getRotation().x).append("\r\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". rot . y = ").append(placeable.getRotation().y).append("\r\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". rot . z = ").append(placeable.getRotation().z).append("\r\n");
             }
 
             if (placeable.getAsset().canScale()) {
-                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". scl . x = ").append(placeable.getScale().x).append("\n");
-                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". scl . y = ").append(placeable.getScale().y).append("\n");
-                appendAssetPrefix(placeable.getAsset(), sb, false);sb.append(". scl . z = ").append(placeable.getScale().z).append("\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". scl . x = ").append(placeable.getScale().x).append("\r\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". scl . y = ").append(placeable.getScale().y).append("\r\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". scl . z = ").append(placeable.getScale().z).append("\r\n");
             }
 
             if (placeable.getAsset().getValidTypes() != null) {
-                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". type . x = ").append(placeable.getAsset().getGameType()).append("\n");
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". type . x = ").append(placeable.getAsset().getGameType()).append("\r\n");
             }
 
-            sb.append("\n");
+            sb.append("\r\n");
         }
 
         return sb.toString();
