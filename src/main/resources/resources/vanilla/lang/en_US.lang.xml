@@ -44,7 +44,8 @@
 
     <!-- Errors -->
     <entry key="noLevelLoaded" val="No level has been loaded!" />
-    <entry key="invalidNumber" val="Invalid Number!" />
+    <entry key="invalidNumber" val="Invalid number!" />
+    <entry key="nothingSelected" val="Nothing is selected!" />
 
     <!-- Undo / Redo -->
     <entry key="undoTransform" val="Undo: Transformation" />
@@ -53,5 +54,7 @@
     <entry key="redoAddPlaceable" val="Redo: Remove placeable" />
     <entry key="undoRemovePlaceable" val="Undo: Remove placeable" />
     <entry key="redoRemovePlaceable" val="Redo: Add placeable" />
+
+    <entry key="placeablesRemovedFormat" val="Removed %d placeables" />
 
 </langPack>

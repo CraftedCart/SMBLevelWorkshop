@@ -1249,6 +1249,23 @@ public class MainScreen extends FluidUIScreen {
                                 undo();
                             }
                         }
+
+                    } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables
+                        if (clientLevelData.getSelectedPlaceables().size() > 0) {
+                            int deleted = 0;
+                            for (String name : new HashSet<>(clientLevelData.getSelectedPlaceables())) {
+                                if (!(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos)) { //Don't delete the start pos
+                                    removePlaceable(name);
+                                    deleted++;
+                                }
+                            }
+
+                            notify(String.format(LangManager.getItem("placeablesRemovedFormat"), deleted));
+
+                        } else {
+                            notify(LangManager.getItem("nothingSelected"));
+                        }
+
                     } else {
                         super.onKey(key, keyChar);
                     }
