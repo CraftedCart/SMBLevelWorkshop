@@ -20,6 +20,7 @@ import craftedcart.smblevelworkshop.util.ExportManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.FluidUIScreen;
+import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.component.Component;
 import io.github.craftedcart.fluidui.component.Image;
@@ -80,6 +81,9 @@ public class MainScreen extends FluidUIScreen {
     private final TextField scaleXTextField = new TextField();
     private final TextField scaleYTextField = new TextField();
     private final TextField scaleZTextField = new TextField();
+
+    private final TextButton typeButton = new TextButton();
+    @Nullable private List<String> typeList = null;
 
 
     //Undo
@@ -199,7 +203,7 @@ public class MainScreen extends FluidUIScreen {
                 placeableButton.setTopLeftPos(0, 0);
                 placeableButton.setBottomRightPos(0, 18);
             });
-            placeableButton.setOnLMBAction(() -> addPlaceable(new Placeable(asset)));
+            placeableButton.setOnLMBAction(() -> addPlaceable(new Placeable(asset.getCopy())));
             addPlaceableListBox.addChildComponent(asset.getName() + "AddPlaceableButton", placeableButton);
         }
         //</editor-fold>
@@ -816,6 +820,27 @@ public class MainScreen extends FluidUIScreen {
         });
         rightListBox.addChildComponent("scaleZTextField", scaleZTextField);
         //</editor-fold>
+
+        final Label typeLabel = new Label();
+        typeLabel.setOnInitAction(() -> {
+            typeLabel.setText(LangManager.getItem("type"));
+            typeLabel.setVerticalAlign(EnumVAlignment.centre);
+            typeLabel.setTopLeftPos(0, 0);
+            typeLabel.setBottomRightPos(0, 24);
+        });
+        rightListBox.addChildComponent("typeLabel", typeLabel);
+
+        //Defined at class level
+        typeButton.setOnInitAction(() -> {
+            typeButton.setText(LangManager.getItem("noTypes"));
+            typeButton.setEnabled(false);
+            typeButton.setTopLeftPos(0, 0);
+            typeButton.setBottomRightPos(0, 24);
+        });
+        typeButton.setOnLMBAction(() -> {
+            setOverlayUiScreen(getTypeSelectorOverlayScreen(mousePos.y));
+        });
+        rightListBox.addChildComponent("typeButton", typeButton);
 
         //Defined at class level
         notifPanel.setOnInitAction(() -> {
@@ -1478,6 +1503,14 @@ public class MainScreen extends FluidUIScreen {
         boolean canScale = false;
 
         assert clientLevelData != null;
+
+        Class<?> selectedIAsset;
+        if (clientLevelData.getSelectedPlaceables().size() > 0) {
+            selectedIAsset = clientLevelData.getLevelData().getPlaceable(clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getClass();
+        } else {
+            selectedIAsset = null;
+        }
+
         for (String name : clientLevelData.getSelectedPlaceables()) {
             Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
 
@@ -1503,6 +1536,10 @@ public class MainScreen extends FluidUIScreen {
                 sclAvgX += 1;
                 sclAvgY += 1;
                 sclAvgZ += 1;
+            }
+
+            if (selectedIAsset != null && !placeable.getAsset().getClass().isAssignableFrom(selectedIAsset)) {
+                selectedIAsset = null;
             }
         }
 
@@ -1573,6 +1610,25 @@ public class MainScreen extends FluidUIScreen {
             scaleYTextField.setValue("1.00");
             scaleZTextField.setValue("1.00");
         }
+
+        if (selectedIAsset != null) {
+            String[] types = clientLevelData.getLevelData().getPlaceable(clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getValidTypes();
+
+            if (types != null) {
+                typeList = Arrays.asList(types);
+                typeButton.setText(LangManager.getItem(clientLevelData.getLevelData().getPlaceable(clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getType()));
+                typeButton.setEnabled(true);
+            } else {
+                typeList = null;
+                typeButton.setText(LangManager.getItem("noTypes"));
+                typeButton.setEnabled(false);
+            }
+        } else {
+            typeList = null;
+            typeButton.setText(LangManager.getItem("noTypes"));
+            typeButton.setEnabled(false);
+        }
+
     }
 
     private PosXYZ normalizeRotation(PosXYZ rot) {
@@ -1601,6 +1657,22 @@ public class MainScreen extends FluidUIScreen {
         }
 
         return rot;
+    }
+
+    private IUIScreen getTypeSelectorOverlayScreen(double mouseY) {
+        final double mousePercentY = mouseY / Display.getHeight();
+
+        return new TypeSelectorOverlayScreen(mousePercentY, typeList);
+    }
+
+    public void setTypeForSelectedPlaceables(String type) {
+        assert clientLevelData != null;
+        for (String name : clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+            placeable.getAsset().setType(type);
+        }
+
+        updatePropertiesPanel();
     }
 
 }
