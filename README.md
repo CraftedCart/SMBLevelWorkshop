@@ -1,7 +1,7 @@
 # SMBLevelWorkshop
 A Super Monkey Ball Level Editor
 
-![SMB Level Workshop](http://i.imgur.com/GWSLPnv.png)
+![SMB Level Workshop](screenshots/01.png)
 
 ### Building from Source
 First, make sure you have JDK 8 or higher installed, Git, as well as Gradle (Or just use the bundled Gradle by using `./gradlew` on Unix like systems, or `gradlew.bat` on Windows)
