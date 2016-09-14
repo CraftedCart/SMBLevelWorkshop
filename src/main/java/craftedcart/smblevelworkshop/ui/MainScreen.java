@@ -40,6 +40,7 @@ import org.lwjgl.util.glu.GLU;
 
 import java.awt.*;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -68,9 +69,13 @@ public class MainScreen extends FluidUIScreen {
     private final Panel notifPanel = new Panel();
 
     //UI: Properties
-    final TextField positionXTextField = new TextField();
-    final TextField positionYTextField = new TextField();
-    final TextField positionZTextField = new TextField();
+    private final TextField positionXTextField = new TextField();
+    private final TextField positionYTextField = new TextField();
+    private final TextField positionZTextField = new TextField();
+    
+    private final TextField rotationXTextField = new TextField();
+    private final TextField rotationYTextField = new TextField();
+    private final TextField rotationZTextField = new TextField();
 
 
     //Undo
@@ -433,6 +438,171 @@ public class MainScreen extends FluidUIScreen {
         rightListBox.addChildComponent("positionZTextField", positionZTextField);
         //</editor-fold>
 
+        final Label rotationLabel = new Label();
+        rotationLabel.setOnInitAction(() -> {
+            rotationLabel.setText(LangManager.getItem("rotation"));
+            rotationLabel.setVerticalAlign(EnumVAlignment.centre);
+            rotationLabel.setTopLeftPos(0, 0);
+            rotationLabel.setBottomRightPos(0, 24);
+        });
+        rightListBox.addChildComponent("rotationLabel", rotationLabel);
+
+        //<editor-fold desc="Rotation X Text Field">
+        //Defined at class level
+        rotationXTextField.setOnInitAction(() -> {
+            rotationXTextField.setValue("0.00");
+            rotationXTextField.cursorPos = rotationXTextField.value.length();
+            rotationXTextField.setVerticalAlign(EnumVAlignment.centre);
+            rotationXTextField.setTopLeftPos(0, 0);
+            rotationXTextField.setBottomRightPos(0, 24);
+            rotationXTextField.setBackgroundColor(UIColor.matRed900());
+            rotationXTextField.setInputRegexCheck("[0-9.-]");
+            rotationXTextField.setEnabled(false);
+        });
+        rotationXTextField.setOnSelectedAction(() -> rotationXTextField.cursorPos = rotationXTextField.value.length());
+        rotationXTextField.setOnReturnAction(() -> rotationXTextField.setSelected(false));
+        rotationXTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(rotationXTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    placeable.setRotation(normalizeRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z)));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(rotationXTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                        Placeable placeable = entry.getValue();
+                        placeable.setRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z));
+                    }}
+            }
+            //</editor-fold>
+
+            rotationXTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("rotationXTextField", rotationXTextField);
+        //</editor-fold>
+
+        //<editor-fold desc="Rotation Y Text Field">
+        //Defined at class level
+        rotationYTextField.setOnInitAction(() -> {
+            rotationYTextField.setValue("0.00");
+            rotationYTextField.cursorPos = rotationYTextField.value.length();
+            rotationYTextField.setVerticalAlign(EnumVAlignment.centre);
+            rotationYTextField.setTopLeftPos(0, 0);
+            rotationYTextField.setBottomRightPos(0, 24);
+            rotationYTextField.setBackgroundColor(UIColor.matGreen900());
+            rotationYTextField.setInputRegexCheck("[0-9.-]");
+            rotationYTextField.setEnabled(false);
+        });
+        rotationYTextField.setOnSelectedAction(() -> rotationYTextField.cursorPos = rotationYTextField.value.length());
+        rotationYTextField.setOnReturnAction(() -> rotationYTextField.setSelected(false));
+        rotationYTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(rotationYTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    Placeable placeable = entry.getValue();
+                    placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z)));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(rotationYTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (String name : clientLevelData.getSelectedPlaceables()) {
+                        Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                        placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
+                    }}
+            }
+            //</editor-fold>
+
+            rotationYTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("rotationYTextField", rotationYTextField);
+        //</editor-fold>
+
+        //<editor-fold desc="Rotation Z Text Field">
+        //Defined at class level
+        rotationZTextField.setOnInitAction(() -> {
+            rotationZTextField.setValue("0.00");
+            rotationZTextField.cursorPos = rotationZTextField.value.length();
+            rotationZTextField.setVerticalAlign(EnumVAlignment.centre);
+            rotationZTextField.setTopLeftPos(0, 0);
+            rotationZTextField.setBottomRightPos(0, 24);
+            rotationZTextField.setBackgroundColor(UIColor.matBlue900());
+            rotationZTextField.setInputRegexCheck("[0-9.-]");
+            rotationZTextField.setEnabled(false);
+        });
+        rotationZTextField.setOnSelectedAction(() -> rotationZTextField.cursorPos = rotationZTextField.value.length());
+        rotationZTextField.setOnReturnAction(() -> rotationZTextField.setSelected(false));
+        rotationZTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(rotationZTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, placeable.getRotation().y, newValue)));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(rotationZTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                        Placeable placeable = entry.getValue();
+                        placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
+                    }}
+            }
+            //</editor-fold>
+
+            rotationZTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("rotationZTextField", rotationZTextField);
+        //</editor-fold>
+
         //Defined at class level
         notifPanel.setOnInitAction(() -> {
             notifPanel.setTopLeftPos(0, 0);
@@ -539,11 +709,15 @@ public class MainScreen extends FluidUIScreen {
 
                     if (placeable.getAsset().canRotate()) { //If can rotate
                         if (Window.isShiftDown()) { //Precise movement with shift
-                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                                    .add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity))));
+                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                                    .add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity))));
                         } else {
-                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                            placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                                    .add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity))));
+                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                                    .add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity))));
                         }
                     }
                 }
@@ -950,10 +1124,6 @@ public class MainScreen extends FluidUIScreen {
         clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
         clientLevelData.getLevelData().setModel(OBJLoader.loadModel(fileInputStream));
 
-        positionXTextField.setEnabled(true);
-        positionYTextField.setEnabled(true);
-        positionZTextField.setEnabled(true);
-
         Placeable startPosPlaceable = new Placeable(new AssetStartPos());
         startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
         String name = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
@@ -1077,9 +1247,16 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void updatePropertiesPanel() {
+        DecimalFormat df = new DecimalFormat("0.00");
+
         double posAvgX = 0;
         double posAvgY = 0;
         double posAvgZ = 0;
+
+        double rotAvgX = 0;
+        double rotAvgY = 0;
+        double rotAvgZ = 0;
+        boolean canRotate = false;
 
         assert clientLevelData != null;
         for (String name : clientLevelData.getSelectedPlaceables()) {
@@ -1088,6 +1265,14 @@ public class MainScreen extends FluidUIScreen {
             posAvgX += placeable.getPosition().x;
             posAvgY += placeable.getPosition().y;
             posAvgZ += placeable.getPosition().z;
+
+            if (placeable.getAsset().canRotate()) {
+                canRotate = true;
+            }
+
+            rotAvgX += placeable.getRotation().x;
+            rotAvgY += placeable.getRotation().y;
+            rotAvgZ += placeable.getRotation().z;
         }
 
         int selectedCount = clientLevelData.getSelectedPlaceables().size();
@@ -1101,18 +1286,68 @@ public class MainScreen extends FluidUIScreen {
             positionYTextField.setEnabled(true);
             positionZTextField.setEnabled(true);
 
-            positionXTextField.setValue(String.format("%.2f", posAvgX));
-            positionYTextField.setValue(String.format("%.2f", posAvgY));
-            positionZTextField.setValue(String.format("%.2f", posAvgZ));
+            positionXTextField.setValue(df.format(posAvgX));
+            positionYTextField.setValue(df.format(posAvgY));
+            positionZTextField.setValue(df.format(posAvgZ));
         } else {
-            positionXTextField.setEnabled(true);
-            positionYTextField.setEnabled(true);
-            positionZTextField.setEnabled(true);
+            positionXTextField.setEnabled(false);
+            positionYTextField.setEnabled(false);
+            positionZTextField.setEnabled(false);
 
             positionXTextField.setValue("0.00");
             positionYTextField.setValue("0.00");
             positionZTextField.setValue("0.00");
         }
+
+        if (selectedCount != 0 && canRotate) {
+            rotAvgX = rotAvgX / (double) selectedCount;
+            rotAvgY = rotAvgY / (double) selectedCount;
+            rotAvgZ = rotAvgZ / (double) selectedCount;
+
+            rotationXTextField.setEnabled(true);
+            rotationYTextField.setEnabled(true);
+            rotationZTextField.setEnabled(true);
+
+            rotationXTextField.setValue(df.format(rotAvgX));
+            rotationYTextField.setValue(df.format(rotAvgY));
+            rotationZTextField.setValue(df.format(rotAvgZ));
+        } else {
+            rotationXTextField.setEnabled(false);
+            rotationYTextField.setEnabled(false);
+            rotationZTextField.setEnabled(false);
+
+            rotationXTextField.setValue("0.00");
+            rotationYTextField.setValue("0.00");
+            rotationZTextField.setValue("0.00");
+        }
+    }
+
+    private PosXYZ normalizeRotation(PosXYZ rot) {
+        while (rot.x >= 360) {
+            rot.x -= 360;
+        }
+
+        while (rot.y >= 360) {
+            rot.y -= 360;
+        }
+
+        while (rot.z >= 360) {
+            rot.z -= 360;
+        }
+
+        while (rot.x < 0) {
+            rot.x += 360;
+        }
+
+        while (rot.y < 0) {
+            rot.y += 360;
+        }
+
+        while (rot.z < 0) {
+            rot.z += 360;
+        }
+
+        return rot;
     }
 
 }

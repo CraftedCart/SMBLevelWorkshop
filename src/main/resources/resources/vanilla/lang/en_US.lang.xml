@@ -37,6 +37,7 @@
 
     <entry key="properties" val="Properties" />
     <entry key="position" val="Position" />
+    <entry key="rotation" val="Rotation" />
 
     <!-- Errors -->
     <entry key="noLevelLoaded" val="No level has been loaded!" />
