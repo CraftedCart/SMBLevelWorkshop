@@ -25,6 +25,7 @@ import io.github.craftedcart.fluidui.component.Component;
 import io.github.craftedcart.fluidui.component.Image;
 import io.github.craftedcart.fluidui.component.Label;
 import io.github.craftedcart.fluidui.component.Panel;
+import io.github.craftedcart.fluidui.component.TextField;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.util.*;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +66,12 @@ public class MainScreen extends FluidUIScreen {
     private final Label modeDirectionLabel = new Label();
     public final ListBox outlinerListBox = new ListBox();
     private final Panel notifPanel = new Panel();
+
+    //UI: Properties
+    final TextField positionXTextField = new TextField();
+    final TextField positionYTextField = new TextField();
+    final TextField positionZTextField = new TextField();
+
 
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
@@ -260,6 +267,171 @@ public class MainScreen extends FluidUIScreen {
             propertiesLabel.setBottomRightAnchor(1, 0);
         });
         propertiesLabelPanel.addChildComponent("propertiesLabel", propertiesLabel);
+
+        final Label positionLabel = new Label();
+        positionLabel.setOnInitAction(() -> {
+            positionLabel.setText(LangManager.getItem("position"));
+            positionLabel.setVerticalAlign(EnumVAlignment.centre);
+            positionLabel.setTopLeftPos(0, 0);
+            positionLabel.setBottomRightPos(0, 24);
+        });
+        rightListBox.addChildComponent("positionLabel", positionLabel);
+
+        //<editor-fold desc="Position X Text Field">
+        //Defined at class level
+        positionXTextField.setOnInitAction(() -> {
+            positionXTextField.setValue("0.00");
+            positionXTextField.cursorPos = positionXTextField.value.length();
+            positionXTextField.setVerticalAlign(EnumVAlignment.centre);
+            positionXTextField.setTopLeftPos(0, 0);
+            positionXTextField.setBottomRightPos(0, 24);
+            positionXTextField.setBackgroundColor(UIColor.matRed900());
+            positionXTextField.setInputRegexCheck("[0-9.-]");
+            positionXTextField.setEnabled(false);
+        });
+        positionXTextField.setOnSelectedAction(() -> positionXTextField.cursorPos = positionXTextField.value.length());
+        positionXTextField.setOnReturnAction(() -> positionXTextField.setSelected(false));
+        positionXTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(positionXTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(positionXTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                        Placeable placeable = entry.getValue();
+                        placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
+                    }}
+            }
+            //</editor-fold>
+
+            positionXTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("positionXTextField", positionXTextField);
+        //</editor-fold>
+
+        //<editor-fold desc="Position Y Text Field">
+        //Defined at class level
+        positionYTextField.setOnInitAction(() -> {
+            positionYTextField.setValue("0.00");
+            positionYTextField.cursorPos = positionYTextField.value.length();
+            positionYTextField.setVerticalAlign(EnumVAlignment.centre);
+            positionYTextField.setTopLeftPos(0, 0);
+            positionYTextField.setBottomRightPos(0, 24);
+            positionYTextField.setBackgroundColor(UIColor.matGreen900());
+            positionYTextField.setInputRegexCheck("[0-9.-]");
+            positionYTextField.setEnabled(false);
+        });
+        positionYTextField.setOnSelectedAction(() -> positionYTextField.cursorPos = positionYTextField.value.length());
+        positionYTextField.setOnReturnAction(() -> positionYTextField.setSelected(false));
+        positionYTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(positionYTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    Placeable placeable = entry.getValue();
+                    placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(positionYTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (String name : clientLevelData.getSelectedPlaceables()) {
+                        Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
+                    }}
+            }
+            //</editor-fold>
+
+            positionYTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("positionYTextField", positionYTextField);
+        //</editor-fold>
+
+        //<editor-fold desc="Position Z Text Field">
+        //Defined at class level
+        positionZTextField.setOnInitAction(() -> {
+            positionZTextField.setValue("0.00");
+            positionZTextField.cursorPos = positionZTextField.value.length();
+            positionZTextField.setVerticalAlign(EnumVAlignment.centre);
+            positionZTextField.setTopLeftPos(0, 0);
+            positionZTextField.setBottomRightPos(0, 24);
+            positionZTextField.setBackgroundColor(UIColor.matBlue900());
+            positionZTextField.setInputRegexCheck("[0-9.-]");
+            positionZTextField.setEnabled(false);
+        });
+        positionZTextField.setOnSelectedAction(() -> positionZTextField.cursorPos = positionZTextField.value.length());
+        positionZTextField.setOnReturnAction(() -> positionZTextField.setSelected(false));
+        positionZTextField.setOnValueConfirmedAction(() -> {
+            double newValue;
+
+            //<editor-fold desc="Parse the number">
+            try {
+                newValue = Double.parseDouble(positionZTextField.value);
+
+                assert clientLevelData != null;
+
+                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                for (String name : clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    placeable.setPosition(new PosXYZ(placeable.getPosition().x, placeable.getPosition().y, newValue));
+                }
+            } catch (NumberFormatException e) {
+                notify(LangManager.getItem("invalidNumber"));
+                try {
+                    newValue = Double.parseDouble(positionZTextField.prevValue);
+                } catch (NumberFormatException e1) {
+                    LogHelper.error(getClass(), "prevValue was not a number!");
+                    LogHelper.error(getClass(), e1);
+                    newValue = 0;
+
+                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+
+                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                        Placeable placeable = entry.getValue();
+                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
+                    }}
+            }
+            //</editor-fold>
+
+            positionZTextField.setValue(String.valueOf(newValue));
+        });
+        rightListBox.addChildComponent("positionZTextField", positionZTextField);
+        //</editor-fold>
 
         //Defined at class level
         notifPanel.setOnInitAction(() -> {
@@ -639,12 +811,7 @@ public class MainScreen extends FluidUIScreen {
                 mainUI.setVisible(!mainUI.isVisible());
 
             } else if (clientLevelData != null) {
-                if (key == Keyboard.KEY_ESCAPE) {
-                    discardModeAction();
-                } else if (key == Keyboard.KEY_RETURN) {
-                    confirmModeAction();
-
-                } else if (mode == EnumMode.NONE) {
+                if (mode == EnumMode.NONE) {
                     if (key == Keyboard.KEY_G) { //G: Grab
                         addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
                         mode = EnumMode.GRAB;
@@ -665,6 +832,8 @@ public class MainScreen extends FluidUIScreen {
                                 undo();
                             }
                         }
+                    } else {
+                        super.onKey(key, keyChar);
                     }
 
                 } else if (key == Keyboard.KEY_X) { //X Axis
@@ -680,10 +849,16 @@ public class MainScreen extends FluidUIScreen {
                     modeDirection = new PosXYZ(1, 1, 1);
                     modeCursor.setColor(UIColor.matWhite());
 
+                } else if (key == Keyboard.KEY_ESCAPE) {
+                    discardModeAction();
+                } else if (key == Keyboard.KEY_RETURN) {
+                    confirmModeAction();
 
                 } else {
                     super.onKey(key, keyChar);
                 }
+            } else {
+                super.onKey(key, keyChar);
             }
         }
     }
@@ -768,6 +943,10 @@ public class MainScreen extends FluidUIScreen {
 
         clientLevelData = new ClientLevelData();
         clientLevelData.getLevelData().setModel(OBJLoader.loadModel(fileInputStream));
+
+        positionXTextField.setEnabled(true);
+        positionYTextField.setEnabled(true);
+        positionZTextField.setEnabled(true);
 
         Placeable startPosPlaceable = new Placeable(new AssetStartPos());
         startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));

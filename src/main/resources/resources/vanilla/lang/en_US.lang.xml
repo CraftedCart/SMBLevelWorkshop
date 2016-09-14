@@ -35,9 +35,12 @@
     <entry key="addPlaceable" val="Add Placeable" />
     <entry key="outliner" val="Outliner" />
 
-    <entry key="properties" val="Properties (TODO!)" />
+    <entry key="properties" val="Properties" />
+    <entry key="position" val="Position" />
 
+    <!-- Errors -->
     <entry key="noLevelLoaded" val="No level has been loaded!" />
+    <entry key="invalidNumber" val="Invalid Number!" />
 
     <!-- Undo / Redo -->
     <entry key="undoTransform" val="Undo: Transformation" />
