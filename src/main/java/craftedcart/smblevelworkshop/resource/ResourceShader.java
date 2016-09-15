@@ -46,7 +46,7 @@ public class ResourceShader implements IResource {
             LogHelper.error(getClass(), String.format("Failed to compile the shader at \"%s\"", file.getPath()));
 
             IntBuffer logLength = ByteBuffer.allocateDirect(8).asIntBuffer();
-            GL20.glGetShader(shaderID, GL20.GL_INFO_LOG_LENGTH, logLength);
+            GL20.glGetShaderi(shaderID, GL20.GL_INFO_LOG_LENGTH);
 
             throw new GLSLCompileException(GL20.glGetShaderInfoLog(shaderID, logLength.get(0))); //Get the error and throw an exception
         }

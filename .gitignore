@@ -131,3 +131,6 @@ lib/FluidUI/build
 lib/FluidUI/.idea/gradle.xml
 lib/FluidUI/.idea/libraries
 
+#oObjLoader
+src/main/java/com/owens/oobjloader/lwjgl/DisplayTest.java
+

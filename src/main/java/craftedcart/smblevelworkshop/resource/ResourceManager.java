@@ -578,7 +578,7 @@ public class ResourceManager {
     public static void registerObj(@NotNull File resourceFile, @NotNull String resourceID) throws Exception {
         LogHelper.trace(ResourceManager.class, String.format("Loading OBJ model data from \"%s\"", resourceFile.getPath()));
 
-        resources.put(resourceID.substring(0, resourceID.length() - 4), OBJLoader.loadModel(new FileInputStream(resourceFile)));
+        resources.put(resourceID.substring(0, resourceID.length() - 4), OBJLoader.loadModel(resourceFile.getPath()));
 
         LogHelper.trace(ResourceManager.class, String.format("Added OBJ model data \"%s\"", resourceID.substring(0, resourceID.length() - 4)));
     }

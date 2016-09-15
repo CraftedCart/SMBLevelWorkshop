@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop.ui;
 
+import com.owens.oobjloader.lwjgl.VBO;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
@@ -79,10 +80,11 @@ public class MainScreen extends FluidUIScreen {
     private final TextButton typeButton = new TextButton();
     @Nullable private List<String> typeList = null;
 
-
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
     @NotNull private List<UndoCommand> redoCommandList = new ArrayList<>();
+
+    private boolean preventRendering = false; //Used when unloading textures and VBOs
 
     //Notifications
     private int notificationID = 0;
@@ -1053,7 +1055,9 @@ public class MainScreen extends FluidUIScreen {
         }
 
         preDraw();
-        drawViewport();
+        if (!preventRendering) {
+            drawViewport();
+        }
         postDraw();
 
         if (overlayUiScreen != null) {
@@ -1104,12 +1108,12 @@ public class MainScreen extends FluidUIScreen {
 
             GL11.glLineWidth(2);
             GL11.glColor4f(0, 0, 0, 1);
-            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+//            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
 
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             GL11.glColor4f(0, 0, 0, 0.02f);
-            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+//            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
             //</editor-fold>
 
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
@@ -1175,7 +1179,7 @@ public class MainScreen extends FluidUIScreen {
                 } else {
                     UIColor.matOrange().bindColor();
                 }
-                ResourceModel.drawModelWireframe(model);
+//                ResourceModel.drawModelWireframe(model);
                 //</editor-fold>
 
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -1186,7 +1190,7 @@ public class MainScreen extends FluidUIScreen {
                 } else {
                     UIColor.matOrange(0.02).bindColor();
                 }
-                ResourceModel.drawModelWireframe(model);
+//                ResourceModel.drawModelWireframe(model);
                 //</editor-fold>
 
                 GL11.glPopMatrix();
@@ -1362,7 +1366,9 @@ public class MainScreen extends FluidUIScreen {
         }
     }
 
-    private void newLevelData(FileInputStream fileInputStream) throws IOException {
+    private void newLevelData(File file) throws IOException {
+        preventRendering = true;
+
         //Clear outliner list box
         outlinerListBox.clearChildComponents();
 
@@ -1370,9 +1376,25 @@ public class MainScreen extends FluidUIScreen {
         undoCommandList.clear();
         redoCommandList.clear();
 
+        if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+            //Unload textures and VBOs
+
+            try {
+                Window.drawable.makeCurrent();
+
+                for (VBO vbo : clientLevelData.getLevelData().getModel().scene.vboList) {
+                    GL11.glDeleteTextures(vbo.getTextureId());
+                    vbo.destroy();
+                }
+
+            } catch (LWJGLException e) {
+                LogHelper.error(getClass(), e);
+            }
+        }
+
         clientLevelData = new ClientLevelData();
         clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
-        clientLevelData.getLevelData().setModel(OBJLoader.loadModel(fileInputStream));
+        clientLevelData.getLevelData().setModel(OBJLoader.loadModel(file.getPath()));
 
         Placeable startPosPlaceable = new Placeable(new AssetStartPos());
         startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
@@ -1391,8 +1413,10 @@ public class MainScreen extends FluidUIScreen {
 
             Window.drawable.releaseContext();
         } catch (LWJGLException e) {
-            e.printStackTrace();
+            LogHelper.error(getClass(), e);
         }
+
+        preventRendering = false;
     }
 
     private void addUndoCommand(UndoCommand undoCommand) {
@@ -1458,7 +1482,7 @@ public class MainScreen extends FluidUIScreen {
                 LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
 
                 try {
-                    newLevelData(new FileInputStream(file));
+                    newLevelData(file);
                 } catch (IOException e) {
                     LogHelper.error(getClass(), "Failed to open file");
                     LogHelper.error(getClass(), e);
