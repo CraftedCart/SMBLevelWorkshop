@@ -1,14 +1,11 @@
 package craftedcart.smblevelworkshop.ui;
 
 import craftedcart.smblevelworkshop.SMBLWSettings;
-import craftedcart.smblevelworkshop.asset.AssetStartPos;
-import craftedcart.smblevelworkshop.asset.Placeable;
+import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.EnumMode;
 import craftedcart.smblevelworkshop.Window;
-import craftedcart.smblevelworkshop.asset.AssetManager;
-import craftedcart.smblevelworkshop.asset.IAsset;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.LangManager;
@@ -1379,13 +1376,18 @@ public class MainScreen extends FluidUIScreen {
 
         Placeable startPosPlaceable = new Placeable(new AssetStartPos());
         startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-        String name = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
-        clientLevelData.addSelectedPlaceable(name);
+        String startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+        clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+
+//        Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
+//        falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
+//        String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
 
         try {
             Window.drawable.makeCurrent();
 
-            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
+//            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
 
             Window.drawable.releaseContext();
         } catch (LWJGLException e) {
