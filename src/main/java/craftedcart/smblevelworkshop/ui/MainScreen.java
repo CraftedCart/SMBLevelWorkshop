@@ -1108,12 +1108,12 @@ public class MainScreen extends FluidUIScreen {
 
             GL11.glLineWidth(2);
             GL11.glColor4f(0, 0, 0, 1);
-//            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
 
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             GL11.glColor4f(0, 0, 0, 0.02f);
-//            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
             //</editor-fold>
 
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
@@ -1179,7 +1179,7 @@ public class MainScreen extends FluidUIScreen {
                 } else {
                     UIColor.matOrange().bindColor();
                 }
-//                ResourceModel.drawModelWireframe(model);
+                ResourceModel.drawModelWireframe(model);
                 //</editor-fold>
 
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -1190,7 +1190,7 @@ public class MainScreen extends FluidUIScreen {
                 } else {
                     UIColor.matOrange(0.02).bindColor();
                 }
-//                ResourceModel.drawModelWireframe(model);
+                ResourceModel.drawModelWireframe(model);
                 //</editor-fold>
 
                 GL11.glPopMatrix();

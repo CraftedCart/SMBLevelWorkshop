@@ -24,4 +24,10 @@ public class ResourceModel implements IResource {
         m.scene.render();
     }
 
+    public static void drawModelWireframe(ResourceModel m) {
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        m.scene.render();
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+    }
+
 }
