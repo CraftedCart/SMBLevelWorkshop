@@ -54,6 +54,8 @@
     <entry key="redoAddPlaceable" val="Redo: Remove placeable" />
     <entry key="undoRemovePlaceable" val="Undo: Remove placeable" />
     <entry key="redoRemovePlaceable" val="Redo: Add placeable" />
+    <entry key="undoTypeChange" val="Undo: Type change" />
+    <entry key="redoTypeChange" val="Redo: Type change" />
 
     <entry key="placeablesRemovedFormat" val="Removed %d placeables" />
 

@@ -4,10 +4,7 @@ import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.asset.AssetStartPos;
 import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
-import craftedcart.smblevelworkshop.undo.UndoAddPlaceable;
-import craftedcart.smblevelworkshop.undo.UndoAssetTransform;
-import craftedcart.smblevelworkshop.undo.UndoCommand;
-import craftedcart.smblevelworkshop.undo.UndoRemovePlaceable;
+import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.EnumMode;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.AssetManager;
@@ -1683,9 +1680,24 @@ public class MainScreen extends FluidUIScreen {
     }
 
     public void setTypeForSelectedPlaceables(String type) {
+        boolean changed = false;
+
         assert clientLevelData != null;
         for (String name : clientLevelData.getSelectedPlaceables()) {
             Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+
+            if (!Objects.equals(placeable.getAsset().getType(), type)) {
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            addUndoCommand(new UndoAssetTypeChange(clientLevelData, clientLevelData.getSelectedPlaceables()));
+        }
+
+        for (String name : clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+
             placeable.getAsset().setType(type);
         }
 
