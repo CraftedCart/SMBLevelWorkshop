@@ -1,3 +1,4 @@
 [
-  {"name": "tileShaderProgram", "vert": "shader/tileVert", "frag": "shader/tileFrag"}
+  {"name": "texShaderProgram", "vert": "shader/texVert", "frag": "shader/texFrag"},
+  {"name": "colShaderProgram", "vert": "shader/colVert", "frag": "shader/colFrag"}
 ]

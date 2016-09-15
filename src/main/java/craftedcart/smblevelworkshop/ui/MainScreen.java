@@ -1102,7 +1102,7 @@ public class MainScreen extends FluidUIScreen {
 
         if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
             //<editor-fold desc="Draw model with wireframes">
-            GL20.glUseProgram(ResourceManager.getShaderProgram("tileShaderProgram").getProgramID());
+            GL20.glUseProgram(ResourceManager.getShaderProgram("texShaderProgram").getProgramID());
             ResourceModel.drawModel(clientLevelData.getLevelData().getModel());
             GL20.glUseProgram(0);
 
@@ -1133,7 +1133,7 @@ public class MainScreen extends FluidUIScreen {
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
 
                 GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
-                GL20.glUseProgram(ResourceManager.getShaderProgram("tileShaderProgram").getProgramID());
+                GL20.glUseProgram(ResourceManager.getShaderProgram("colShaderProgram").getProgramID());
                 ResourceModel.drawModel(model);
                 GL20.glUseProgram(0);
 

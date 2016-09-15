@@ -10,6 +10,8 @@ package com.owens.oobjloader.lwjgl;
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
 import java.nio.IntBuffer;
+
+import craftedcart.smblevelworkshop.resource.ResourceManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import java.awt.Color;
@@ -17,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.util.*;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL20;
 
 public class VBO {
 
@@ -57,6 +60,7 @@ public class VBO {
     public void render() {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
+        GL20.glUniform1i(GL20.glGetUniformLocation(ResourceManager.getShaderProgram("texShaderProgram").getProgramID(), "tex"), 0);
 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticeAttributesID);
 
