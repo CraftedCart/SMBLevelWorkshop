@@ -1434,8 +1434,8 @@ public class MainScreen extends FluidUIScreen {
         placeableButton.setOnLMBAction(() -> {
             assert clientLevelData != null;
 
-            if (Window.isShiftDown()) { //Add to selection on shift
-                clientLevelData.addSelectedPlaceable(name);
+            if (Window.isShiftDown()) { //Toggle selection on shift
+                clientLevelData.toggleSelectedPlaceable(name);
             } else {
                 clientLevelData.clearSelectedPlaceables();
                 clientLevelData.addSelectedPlaceable(name);
