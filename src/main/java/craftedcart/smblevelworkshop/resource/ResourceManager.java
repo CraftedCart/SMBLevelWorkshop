@@ -158,7 +158,7 @@ public class ResourceManager {
      */
     private static void queueAddResource(@NotNull File resourceFile, @NotNull String resourceID) throws IOException {
 
-        if (resourceID.toUpperCase().endsWith(".PNG")) { //PNG texture
+        if (resourceID.toUpperCase().endsWith(".PNG") && !resourceID.toUpperCase().endsWith("EXCLUDE.PNG")) { //PNG texture (Ignore .exclude.png)
             pngResourcesToLoad.put(resourceID, resourceFile);
         } else if (resourceID.toUpperCase().endsWith(".TTF")) { //TTF Font
             fontResourcesToLoad.put(resourceID, resourceFile);
@@ -178,7 +178,8 @@ public class ResourceManager {
             objResourcesToLoad.put(resourceID, resourceFile);
         } else if (!Objects.equals(resourceID.toUpperCase(), ".DS_STORE") && //Ignore .DS_STORE
                 !Objects.equals(resourceID.toUpperCase(), "THUMBS.DB") && //Ignore THUMBS.DB
-                !resourceID.toUpperCase().endsWith(".MTL")) { //IGNORE .MTL (These are handled by the OBJLoader)
+                !resourceID.toUpperCase().endsWith(".MTL") && //Ignore .MTL (These are handled by the OBJLoader)
+                !resourceID.toUpperCase().endsWith(".EXCLUDE.PNG")) { //Ignore .exclude.png
             addWarnedResource(resourceID, initResources.getString("unrecognisedFileExtension"));
             LogHelper.warn(ResourceManager.class, String.format("Unrecognised resource file extension: \"%s\"", resourceID));
         }
