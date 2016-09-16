@@ -52,6 +52,8 @@ public class ExportManager {
             if (placeable.getAsset().getValidTypes() != null) {
                 appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". type . x = ").append(placeable.getAsset().getGameType()).append("\r\n");
             }
+
+            sb.append("\r\n");
         }
 
         return sb.toString();
