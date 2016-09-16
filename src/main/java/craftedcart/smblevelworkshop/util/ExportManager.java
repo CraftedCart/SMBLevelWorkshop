@@ -19,9 +19,6 @@ public class ExportManager {
     public static String getConfig(LevelData levelData) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("fallout [ 0 ] . pos . y = ").append(levelData.getFalloutY()).append("\r\n");
-        sb.append("\r\n");
-
         bananaCount = -1;
         bumperCount = -1;
         goalCount = -1;
@@ -29,10 +26,16 @@ public class ExportManager {
 
         for (Map.Entry<String, Placeable> entry : levelData.getPlacedObjects().entrySet()) {
             Placeable placeable = entry.getValue();
-            
-            appendAssetPrefix(placeable.getAsset(), sb, true ); sb.append(". pos . x = ").append(placeable.getPosition().x).append("\r\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . y = ").append(placeable.getPosition().y).append("\r\n");
-            appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . z = ").append(placeable.getPosition().z).append("\r\n");
+
+            if (placeable.getAsset().canGrabX()) {
+                appendAssetPrefix(placeable.getAsset(), sb, true); sb.append(". pos . x = ").append(placeable.getPosition().x).append("\r\n");
+            }
+            if (placeable.getAsset().canGrabY()) {
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . y = ").append(placeable.getPosition().y).append("\r\n");
+            }
+            if (placeable.getAsset().canGrabZ()) {
+                appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". pos . z = ").append(placeable.getPosition().z).append("\r\n");
+            }
 
             if (placeable.getAsset().canRotate()) {
                 appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". rot . x = ").append(placeable.getRotation().x).append("\r\n");
@@ -49,8 +52,6 @@ public class ExportManager {
             if (placeable.getAsset().getValidTypes() != null) {
                 appendAssetPrefix(placeable.getAsset(), sb, false); sb.append(". type . x = ").append(placeable.getAsset().getGameType()).append("\r\n");
             }
-
-            sb.append("\r\n");
         }
 
         return sb.toString();
@@ -79,6 +80,8 @@ public class ExportManager {
             sb.append("jamabar [ ").append(jamabarCount).append(" ] ");
         } else if (asset instanceof AssetStartPos) {
             sb.append("start [ 0 ] ");
+        } else if (asset instanceof AssetFalloutY) {
+            sb.append("fallout [ 0 ] ");
         }
     }
 

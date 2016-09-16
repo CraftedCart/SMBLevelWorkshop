@@ -16,7 +16,6 @@ import java.util.Map;
 public class LevelData {
 
     @Nullable private ResourceModel model;
-    private float falloutY = -10;
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
 
     public void setModel(@Nullable ResourceModel model) {
@@ -26,14 +25,6 @@ public class LevelData {
     @Nullable
     public ResourceModel getModel() {
         return model;
-    }
-
-    public void setFalloutY(float falloutY) {
-        this.falloutY = falloutY;
-    }
-
-    public float getFalloutY() {
-        return falloutY;
     }
 
     @NotNull
