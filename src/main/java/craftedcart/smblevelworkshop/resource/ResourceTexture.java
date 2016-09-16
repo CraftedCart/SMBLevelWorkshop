@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.resource;
 
 import craftedcart.smblevelworkshop.Window;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -17,6 +18,7 @@ public class ResourceTexture implements IResource {
 
     public ResourceTexture(String type, File file) throws Exception {
         Window.drawable.makeCurrent();
+        GL11.glFinish();
         FileInputStream fis = new FileInputStream(file);
         try {
             texture = TextureLoader.getTexture(type, fis);
@@ -24,6 +26,7 @@ public class ResourceTexture implements IResource {
             throw new Exception(e);
         }
         fis.close();
+        GL11.glFlush();
         Window.drawable.releaseContext();
     }
 

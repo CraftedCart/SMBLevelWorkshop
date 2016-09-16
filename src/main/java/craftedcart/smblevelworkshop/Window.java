@@ -13,6 +13,7 @@ import org.newdawn.slick.SlickException;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author CraftedCart

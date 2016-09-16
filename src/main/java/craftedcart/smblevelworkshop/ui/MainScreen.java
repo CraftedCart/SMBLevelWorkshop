@@ -29,9 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.*;
 import org.lwjgl.util.glu.GLU;
 
 import java.awt.*;
@@ -1367,49 +1365,47 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void newLevelData(File file) throws IOException {
-        preventRendering = true;
+        try {
+            preventRendering = true;
 
-        //Clear outliner list box
-        outlinerListBox.clearChildComponents();
+            Window.drawable.makeCurrent();
 
-        //Reset undo history
-        undoCommandList.clear();
-        redoCommandList.clear();
+            GL11.glFinish();
 
-        if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
-            //Unload textures and VBOs
+            //Clear outliner list box
+            outlinerListBox.clearChildComponents();
 
-            try {
-                Window.drawable.makeCurrent();
+            //Reset undo history
+            undoCommandList.clear();
+            redoCommandList.clear();
 
+            if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+                //Unload textures and VBOs
                 for (VBO vbo : clientLevelData.getLevelData().getModel().scene.vboList) {
                     GL11.glDeleteTextures(vbo.getTextureId());
                     vbo.destroy();
                 }
-
-            } catch (LWJGLException e) {
-                LogHelper.error(getClass(), e);
             }
-        }
 
-        clientLevelData = new ClientLevelData();
-        clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
-        clientLevelData.getLevelData().setModel(OBJLoader.loadModel(file.getPath()));
+            clientLevelData = new ClientLevelData();
+            clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
+            clientLevelData.getLevelData().setModel(OBJLoader.loadModel(file.getPath()));
 
-        Placeable startPosPlaceable = new Placeable(new AssetStartPos());
-        startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-        String startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
-        clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+            Placeable startPosPlaceable = new Placeable(new AssetStartPos());
+            startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
+            String startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+            clientLevelData.addSelectedPlaceable(startPosPlaceableName);
 
-//        Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
-//        falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-//        String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+//            Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
+//            falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
+//            String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
 
-        try {
             Window.drawable.makeCurrent();
 
             outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
 //            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+
+            GL11.glFlush();
 
             Window.drawable.releaseContext();
         } catch (LWJGLException e) {
