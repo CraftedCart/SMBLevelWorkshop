@@ -14,8 +14,7 @@ void main()
 
     /* Compute the diffuse, ambient and globalAmbient terms */
     diffuse = gl_FrontMaterial.diffuse * gl_Color;
-    ambient = gl_FrontMaterial.ambient * gl_Color;
-    ambient += gl_LightModel.ambient * gl_Color;
+    ambient = vec4(0.3, 0.3, 0.3, 1.0);
     gl_Position = ftransform();
 
     texture_coordinate = vec2(gl_MultiTexCoord0);

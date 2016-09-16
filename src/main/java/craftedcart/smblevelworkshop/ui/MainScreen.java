@@ -1130,7 +1130,7 @@ public class MainScreen extends FluidUIScreen {
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
 
                 GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
-                GL20.glUseProgram(ResourceManager.getShaderProgram("colShaderProgram").getProgramID());
+                GL20.glUseProgram(placeable.getAsset().getShaderProgram().getProgramID());
                 ResourceModel.drawModel(model, placeable.getAsset().getColor());
                 GL20.glUseProgram(0);
 
@@ -1395,14 +1395,14 @@ public class MainScreen extends FluidUIScreen {
             String startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
             clientLevelData.addSelectedPlaceable(startPosPlaceableName);
 
-//            Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
-//            falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-//            String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+            Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
+            falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
+            String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
 
             Window.drawable.makeCurrent();
 
             outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
-//            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
 
             GL11.glFlush();
 

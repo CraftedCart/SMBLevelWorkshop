@@ -1,5 +1,7 @@
 package craftedcart.smblevelworkshop.asset;
 
+import craftedcart.smblevelworkshop.resource.ResourceManager;
+import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import io.github.craftedcart.fluidui.util.UIColor;
@@ -49,5 +51,10 @@ public interface IAsset extends Cloneable {
     }
 
     public IAsset getCopy();
+
+    @NotNull
+    default public ResourceShaderProgram getShaderProgram() {
+        return ResourceManager.getShaderProgram("colShaderProgram");
+    }
 
 }

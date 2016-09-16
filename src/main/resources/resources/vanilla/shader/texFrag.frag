@@ -28,5 +28,5 @@ void main()
                 pow(NdotHV, gl_FrontMaterial.shininess);
     }
 
-    gl_FragColor = color * vec4(0.2, 0.2, 0.2, 1.0) * texture2D(tex, fract(texture_coordinate));
+    gl_FragColor = clamp(color, 0.0, 1.0) * texture2D(tex, fract(texture_coordinate));
 }

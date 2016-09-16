@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.asset;
 
 import craftedcart.smblevelworkshop.resource.ResourceManager;
+import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import io.github.craftedcart.fluidui.util.UIColor;
@@ -31,6 +32,11 @@ public class AssetFalloutY implements IAsset {
     }
 
     @Override
+    public boolean canRotate() {
+        return false;
+    }
+
+    @Override
     public boolean canScale() {
         return false;
     }
@@ -46,4 +52,9 @@ public class AssetFalloutY implements IAsset {
         }
     }
 
+    @NotNull
+    @Override
+    public ResourceShaderProgram getShaderProgram() {
+        return ResourceManager.getShaderProgram("texShaderProgram");
+    }
 }

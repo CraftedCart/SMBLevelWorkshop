@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Window {
 
     public static SharedDrawable drawable;
+    public static ReentrantLock lock = new ReentrantLock();
     public static IUIScreen uiScreen;
 
     public static boolean running = true;
