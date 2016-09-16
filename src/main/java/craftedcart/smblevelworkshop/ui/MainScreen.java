@@ -315,7 +315,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
+                    if (placeable.getAsset().canGrabX()) {
+                        placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -330,7 +332,9 @@ public class MainScreen extends FluidUIScreen {
 
                     for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
-                        placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
+                        if (placeable.getAsset().canGrabX()) {
+                            placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
+                        }
                     }}
             }
             //</editor-fold>
@@ -371,7 +375,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
+                    if (placeable.getAsset().canGrabY()) {
+                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -427,7 +433,9 @@ public class MainScreen extends FluidUIScreen {
 
                 for (String name : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
-                    placeable.setPosition(new PosXYZ(placeable.getPosition().x, placeable.getPosition().y, newValue));
+                    if (placeable.getAsset().canGrabZ()) {
+                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, placeable.getPosition().y, newValue));
+                    }
                 }
             } catch (NumberFormatException e) {
                 notify(LangManager.getItem("invalidNumber"));
@@ -923,15 +931,21 @@ public class MainScreen extends FluidUIScreen {
         } else if (clientLevelData != null) {
             if (mode == EnumMode.GRAB) {
                 //<editor-fold desc="Grab">
+
                 for (String key : clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
-                    if (Window.isShiftDown()) { //Precise movement with shift
-                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
-                    } else {
-                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                        placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                    if ((modeDirection.equals(new PosXYZ(1, 0, 0)) && placeable.getAsset().canGrabX()) ||
+                            (modeDirection.equals(new PosXYZ(0, 1, 0)) && placeable.getAsset().canGrabY()) ||
+                            (modeDirection.equals(new PosXYZ(0, 0, 1)) && placeable.getAsset().canGrabZ()) ||
+                            (placeable.getAsset().canGrabX() && placeable.getAsset().canGrabY()) && placeable.getAsset().canGrabZ()) {
+                        if (Window.isShiftDown()) { //Precise movement with shift
+                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                        } else {
+                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                        }
                     }
                 }
                 //</editor-fold>
@@ -1524,8 +1538,11 @@ public class MainScreen extends FluidUIScreen {
         DecimalFormat df = new DecimalFormat("0.00");
 
         double posAvgX = 0;
+        boolean canGrabX = false;
         double posAvgY = 0;
+        boolean canGrabY = false;
         double posAvgZ = 0;
+        boolean canGrabZ = false;
 
         double rotAvgX = 0;
         double rotAvgY = 0;
@@ -1549,9 +1566,18 @@ public class MainScreen extends FluidUIScreen {
         for (String name : clientLevelData.getSelectedPlaceables()) {
             Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
 
-            posAvgX += placeable.getPosition().x;
-            posAvgY += placeable.getPosition().y;
-            posAvgZ += placeable.getPosition().z;
+            if (placeable.getAsset().canGrabX()) {
+                canGrabX = true;
+                posAvgX += placeable.getPosition().x;
+            }
+            if (placeable.getAsset().canGrabY()) {
+                canGrabY = true;
+                posAvgY += placeable.getPosition().y;
+            }
+            if (placeable.getAsset().canGrabZ()) {
+                canGrabZ = true;
+                posAvgZ += placeable.getPosition().z;
+            }
 
             if (placeable.getAsset().canRotate()) {
                 canRotate = true;
@@ -1585,9 +1611,24 @@ public class MainScreen extends FluidUIScreen {
             posAvgY = posAvgY / (double) selectedCount;
             posAvgZ = posAvgZ / (double) selectedCount;
 
-            positionXTextField.setEnabled(true);
-            positionYTextField.setEnabled(true);
-            positionZTextField.setEnabled(true);
+            if (canGrabX) {
+                positionXTextField.setEnabled(true);
+            } else {
+                positionXTextField.setEnabled(false);
+                positionXTextField.setValue("0.00");
+            }
+            if (canGrabY) {
+                positionYTextField.setEnabled(true);
+            } else {
+                positionYTextField.setEnabled(false);
+                positionYTextField.setValue("0.00");
+            }
+            if (canGrabZ) {
+                positionZTextField.setEnabled(true);
+            } else {
+                positionZTextField.setEnabled(false);
+                positionZTextField.setValue("0.00");
+            }
 
             positionXTextField.setValue(df.format(posAvgX));
             positionYTextField.setValue(df.format(posAvgY));

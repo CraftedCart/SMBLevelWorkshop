@@ -32,6 +32,16 @@ public class AssetFalloutY implements IAsset {
     }
 
     @Override
+    public boolean canGrabX() {
+        return false;
+    }
+
+    @Override
+    public boolean canGrabZ() {
+        return false;
+    }
+
+    @Override
     public boolean canRotate() {
         return false;
     }

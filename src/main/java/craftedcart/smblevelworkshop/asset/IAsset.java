@@ -40,7 +40,19 @@ public interface IAsset extends Cloneable {
         return null;
     }
 
-    default public void setType(String type) {};
+    default public void setType(String type) {}
+
+    default public boolean canGrabX() {
+        return true;
+    }
+
+    default public boolean canGrabY() {
+        return true;
+    }
+
+    default public boolean canGrabZ() {
+        return true;
+    }
 
     default public boolean canRotate() {
         return true;
