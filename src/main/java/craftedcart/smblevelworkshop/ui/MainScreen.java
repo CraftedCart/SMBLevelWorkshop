@@ -339,7 +339,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            positionXTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("positionXTextField", positionXTextField);
         //</editor-fold>
@@ -397,7 +397,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            positionYTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("positionYTextField", positionYTextField);
         //</editor-fold>
@@ -455,7 +455,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            positionZTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("positionZTextField", positionZTextField);
         //</editor-fold>
@@ -522,7 +522,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            rotationXTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("rotationXTextField", rotationXTextField);
         //</editor-fold>
@@ -580,7 +580,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            rotationYTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("rotationYTextField", rotationYTextField);
         //</editor-fold>
@@ -638,7 +638,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            rotationZTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("rotationZTextField", rotationZTextField);
         //</editor-fold>
@@ -705,7 +705,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            scaleXTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("scaleXTextField", scaleXTextField);
         //</editor-fold>
@@ -763,7 +763,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            scaleYTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("scaleYTextField", scaleYTextField);
         //</editor-fold>
@@ -818,7 +818,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            scaleZTextField.setValue(String.valueOf(newValue));
+            updatePropertiesPanel();
         });
         rightListBox.addChildComponent("scaleZTextField", scaleZTextField);
         //</editor-fold>
