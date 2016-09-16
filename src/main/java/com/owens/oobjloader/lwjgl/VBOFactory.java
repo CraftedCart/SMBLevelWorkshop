@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+
+import com.owens.oobjloader.builder.Material;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBVertexBufferObject;
 
@@ -27,7 +29,7 @@ public class VBOFactory {
     private static Logger log = Logger.getLogger(VBOFactory.class.getName());
 
 
-    public static VBO build(int textureID, ArrayList<Face> triangles) {
+    public static VBO build(int textureID, Material material, ArrayList<Face> triangles) {
         //	log.log(INFO, "building a vbo!");
 
         if (triangles.size() <= 0) {
@@ -124,6 +126,6 @@ public class VBOFactory {
         verticeAttributes = null;
         indices = null;
 
-        return new VBO(textureID, verticeAttributesIDBuf.get(0), indicesIDBuf.get(0), indicesCount);
+        return new VBO(textureID, material, verticeAttributesIDBuf.get(0), indicesIDBuf.get(0), indicesCount);
     }
 }

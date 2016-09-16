@@ -1126,13 +1126,12 @@ public class MainScreen extends FluidUIScreen {
                 GL11.glRotated(placeable.getRotation().z, 0, 0, 1);
                 GL11.glRotated(placeable.getRotation().y, 0, 1, 0);
                 GL11.glRotated(placeable.getRotation().x, 1, 0, 0);
-                GL11.glColor4d(placeable.getAsset().getColor().r, placeable.getAsset().getColor().g, placeable.getAsset().getColor().b, placeable.getAsset().getColor().a);
 
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
 
                 GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
                 GL20.glUseProgram(ResourceManager.getShaderProgram("colShaderProgram").getProgramID());
-                ResourceModel.drawModel(model);
+                ResourceModel.drawModel(model, placeable.getAsset().getColor());
                 GL20.glUseProgram(0);
 
                 //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">

@@ -2,6 +2,7 @@ package craftedcart.smblevelworkshop.resource.model;
 
 import com.owens.oobjloader.lwjgl.DisplayModel;
 import craftedcart.smblevelworkshop.resource.IResource;
+import io.github.craftedcart.fluidui.util.UIColor;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -22,6 +23,10 @@ public class ResourceModel implements IResource {
 
     public static void drawModel(ResourceModel m) {
         m.scene.render();
+    }
+
+    public static void drawModel(ResourceModel m, UIColor color) {
+        m.scene.render(color);
     }
 
     public static void drawModelWireframe(ResourceModel m) {

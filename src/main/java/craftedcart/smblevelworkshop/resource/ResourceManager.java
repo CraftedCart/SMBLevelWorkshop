@@ -176,7 +176,9 @@ public class ResourceManager {
 //            musicOggResourcesToLoad.put(resourceID, resourceFile.toURI().toURL());
         } else if (resourceID.toUpperCase().endsWith(".OBJ")) { //Shaders to add to the Shader cache
             objResourcesToLoad.put(resourceID, resourceFile);
-        } else if (!Objects.equals(resourceID.toUpperCase(), ".DS_STORE") || !Objects.equals(resourceID.toUpperCase(), "THUMBS.DB")) { //Ignore OS X .DS_Store or Windows Thumbs.db
+        } else if (!Objects.equals(resourceID.toUpperCase(), ".DS_STORE") && //Ignore .DS_STORE
+                !Objects.equals(resourceID.toUpperCase(), "THUMBS.DB") && //Ignore THUMBS.DB
+                !resourceID.toUpperCase().endsWith(".MTL")) { //IGNORE .MTL (These are handled by the OBJLoader)
             addWarnedResource(resourceID, initResources.getString("unrecognisedFileExtension"));
             LogHelper.warn(ResourceManager.class, String.format("Unrecognised resource file extension: \"%s\"", resourceID));
         }

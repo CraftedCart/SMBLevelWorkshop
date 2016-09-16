@@ -9,9 +9,13 @@ package com.owens.oobjloader.lwjgl;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import com.owens.oobjloader.builder.Material;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
+import io.github.craftedcart.fluidui.util.UIColor;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import java.awt.Color;
@@ -50,17 +54,51 @@ public class VBO {
     private int indicesID = 0;      // indice VBO ID
     private int indicesCount = 0;
 
-    public VBO(int textId, int verticeAttributesID, int indicesID, int indicesCount) {
+    public Material material;
+
+    public VBO(int textId, Material material, int verticeAttributesID, int indicesID, int indicesCount) {
         this.textId = textId;
         this.verticeAttributesID = verticeAttributesID;
         this.indicesID = indicesID;
         this.indicesCount = indicesCount;
+        this.material = material;
     }
 
     public void render() {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
         GL20.glUniform1i(GL20.glGetUniformLocation(ResourceManager.getShaderProgram("texShaderProgram").getProgramID(), "tex"), 0);
+
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticeAttributesID);
+
+        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glVertexPointer(3, GL11.GL_FLOAT, ATTR_V_STRIDE2_BYTES, ATTR_V_OFFSET_BYTES);
+
+        GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+        GL11.glNormalPointer(GL11.GL_FLOAT, ATTR_N_STRIDE2_BYTES, ATTR_N_OFFSET_BYTES);
+
+        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        GL11.glTexCoordPointer(2, GL11.GL_FLOAT, ATTR_T_STRIDE2_BYTES, ATTR_T_OFFSET_BYTES);
+
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesID);
+        GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+
+        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+        GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+    }
+
+    public void render(UIColor color) {
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
+        GL20.glUniform1i(GL20.glGetUniformLocation(ResourceManager.getShaderProgram("texShaderProgram").getProgramID(), "tex"), 0);
+
+        if (material != null) {
+            GL11.glColor4d(color.r, color.g, color.b, material.dFactor);
+        } else {
+            color.bindColor();
+        }
 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticeAttributesID);
 

@@ -9,6 +9,8 @@ package com.owens.oobjloader.lwjgl;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
+import io.github.craftedcart.fluidui.util.UIColor;
+
 import java.util.*;
 
 public class DisplayModel {
@@ -27,4 +29,11 @@ public class DisplayModel {
             vboList.get(loopi).render();
         }
     }
+
+    public void render(UIColor color) {
+        for (int loopi = 0; loopi < vboList.size(); loopi++) {
+            vboList.get(loopi).render(color);
+        }
+    }
+
 }

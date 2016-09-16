@@ -82,7 +82,7 @@ public class OBJLoader {
             }
             LogHelper.info(OBJLoader.class, "Building VBO");
 
-            VBO vbo = VBOFactory.build(currentTextureID, triangleList);
+            VBO vbo = VBOFactory.build(currentTextureID, faceList.get(0).material, triangleList);
 
             LogHelper.info(OBJLoader.class, "Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
             scene.addVBO(vbo);
