@@ -61,7 +61,7 @@ public class ResourceManager {
 
     private static Map<String, String> erroredResources = new HashMap<>();
 
-    private static boolean usingTempFiles = false;
+    @Nullable private static File tempDir;
 
     public static void preInit() throws IOException, FontFormatException {
         initResources = ResourceBundle.getBundle("initResources");
@@ -69,12 +69,17 @@ public class ResourceManager {
 
     public static void queueVanillaResources() {
         try {
+            tempDir = File.createTempFile("SMBLevelWorkshop", null);
+            if (!tempDir.delete()) {
+                throw new IOException("Could not delete temp file: " + tempDir.getAbsolutePath());
+            }
+            if (!tempDir.mkdir()) {
+                throw new IOException("Could not create temp directory: " + tempDir.getAbsolutePath());
+            }
 
             final File jarFile = new File(ResourceManager.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
 
             if (!jarFile.isDirectory()) { //Run from JAR
-
-                usingTempFiles = true;
 
                 final JarFile jar = new JarFile(jarFile);
                 final Enumeration<JarEntry> enumEntries = jar.entries();
@@ -94,10 +99,20 @@ public class ResourceManager {
 //                        musicOggResourcesToLoad.put(file.toString().substring(vanillaResourcePath.length() + 1),
 //                                ResourceManager.class.getResource("/" + file.toString()));
 //                    } else {
-                        File tempFile = File.createTempFile("SMBLevelWorkshop", ".tmp");
-                        Files.copy(ResourceManager.class.getResourceAsStream("/" + file.toString()), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                        queueAddResource(tempFile, file.toString().substring(vanillaResourcePath.length() + 1));
+                    File outFile = new File(tempDir, file.toString());
+                    if (!outFile.getParentFile().exists()) {
+                        if (!outFile.getParentFile().mkdirs()) {
+                            throw new IOException("Error while creating directories for file: " + outFile.getAbsolutePath());
+                        }
+                    }
+                    if (!outFile.createNewFile()) {
+                        throw new IOException("Error while creating new file: " + outFile.getAbsolutePath());
+                    }
+
+                    Files.copy(ResourceManager.class.getResourceAsStream("/" + file.toString()), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                    queueAddResource(new File(tempDir, file.toString()), file.toString().substring(vanillaResourcePath.length() + 1));
 //                    }
 
                 }
@@ -158,7 +173,7 @@ public class ResourceManager {
      */
     private static void queueAddResource(@NotNull File resourceFile, @NotNull String resourceID) throws IOException {
 
-        if (resourceID.toUpperCase().endsWith(".PNG") && !resourceID.toUpperCase().endsWith("EXCLUDE.PNG")) { //PNG texture (Ignore .exclude.png)
+        if (resourceID.toUpperCase().endsWith(".PNG")) { //PNG texture (Ignore .exclude.png)
             pngResourcesToLoad.put(resourceID, resourceFile);
         } else if (resourceID.toUpperCase().endsWith(".TTF")) { //TTF Font
             fontResourcesToLoad.put(resourceID, resourceFile);
@@ -178,8 +193,7 @@ public class ResourceManager {
             objResourcesToLoad.put(resourceID, resourceFile);
         } else if (!Objects.equals(resourceID.toUpperCase(), ".DS_STORE") && //Ignore .DS_STORE
                 !Objects.equals(resourceID.toUpperCase(), "THUMBS.DB") && //Ignore THUMBS.DB
-                !resourceID.toUpperCase().endsWith(".MTL") && //Ignore .MTL (These are handled by the OBJLoader)
-                !resourceID.toUpperCase().endsWith(".EXCLUDE.PNG")) { //Ignore .exclude.png
+                !resourceID.toUpperCase().endsWith(".MTL")) { //Ignore .MTL (These are handled by the OBJLoader))
             addWarnedResource(resourceID, initResources.getString("unrecognisedFileExtension"));
             LogHelper.warn(ResourceManager.class, String.format("Unrecognised resource file extension: \"%s\"", resourceID));
         }
@@ -211,10 +225,6 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerTTF(resource.getValue(), resource.getKey());
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (IOException e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
@@ -227,10 +237,6 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerFontCache(resource.getValue(), resource.getKey());
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (IOException | LWJGLException | SlickException | FontFormatException | ParseException e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
@@ -243,10 +249,6 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerPNG(resource.getValue(), resource.getKey());
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (Exception e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
@@ -259,10 +261,6 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerLangPack(resource.getValue(), resource.getKey());
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (ParserConfigurationException | IOException | SAXException e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, e);
@@ -276,10 +274,6 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerShader(resource.getValue(), resource.getKey(), GL20.GL_VERTEX_SHADER);
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (IOException | LWJGLException | GLSLCompileException e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
@@ -292,10 +286,6 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerShader(resource.getValue(), resource.getKey(), GL20.GL_FRAGMENT_SHADER);
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (IOException | LWJGLException | GLSLCompileException e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
@@ -308,10 +298,6 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerShaderProgram(resource.getValue(), resource.getKey());
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (Exception e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
@@ -336,13 +322,18 @@ public class ResourceManager {
             LoadingScreen.progress = currentResource / (double) totalResources;
             try {
                 registerObj(resource.getValue(), resource.getKey());
-                if (usingTempFiles) {
-                    //noinspection ResultOfMethodCallIgnored
-                    resource.getValue().delete();
-                }
             } catch (Exception e) {
                 addErroredResource(resource.getKey(), e.getMessage());
                 LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
+            }
+        }
+
+        if (tempDir != null) {
+            try {
+                removeRecursive(tempDir.toPath());
+            } catch (IOException e) {
+                LogHelper.error(ResourceManager.class, "Failed to delete temp dir: " + tempDir.getAbsolutePath());
+                LogHelper.error(ResourceManager.class, e);
             }
         }
 
@@ -356,12 +347,16 @@ public class ResourceManager {
      * @throws Exception
      */
     public static void registerPNG(@NotNull File resourceFile, @NotNull String resourceID) throws Exception {
-        LogHelper.trace(ResourceManager.class, String.format("Loading PNG texture from \"%s\"", resourceFile.getPath()));
+        if (!resourceID.toUpperCase().endsWith(".EXCLUDE.PNG")) {
+            LogHelper.trace(ResourceManager.class, String.format("Loading PNG texture from \"%s\"", resourceFile.getPath()));
 
-        ResourceTexture tex = new ResourceTexture("PNG", resourceFile);
-        textureResources.put(resourceID.substring(0, resourceID.length() - 4), tex);
+            ResourceTexture tex = new ResourceTexture("PNG", resourceFile);
+            textureResources.put(resourceID.substring(0, resourceID.length() - 4), tex);
 
-        LogHelper.trace(ResourceManager.class, String.format("Added PNG texture \"%s\"", resourceID.substring(0, resourceID.length() - 4)));
+            LogHelper.trace(ResourceManager.class, String.format("Added PNG texture \"%s\"", resourceID.substring(0, resourceID.length() - 4)));
+        } else {
+            LogHelper.trace(ResourceManager.class, String.format("Ignoring PNG texture \"%s\"", resourceID.substring(0, resourceID.length() - 4)));
+        }
     }
 
     /**
@@ -679,6 +674,45 @@ public class ResourceManager {
         }
         LogHelper.fatal(ResourceManager.class, String.format("Failed to create directories \"%s\"", directory.toString()));
         throw new RuntimeException(String.format("Failed to create directories \"%s\"", directory.toString()));
+    }
+
+    public static void removeRecursive(Path path) throws IOException
+    {
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>()
+        {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                    throws IOException
+            {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException
+            {
+                // try to delete the file anyway, even if its attributes
+                // could not be read, since delete-only access is
+                // theoretically possible
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
+            {
+                if (exc == null)
+                {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+                else
+                {
+                    // directory iteration failed; propagate exception
+                    throw exc;
+                }
+            }
+        });
     }
 
 }
