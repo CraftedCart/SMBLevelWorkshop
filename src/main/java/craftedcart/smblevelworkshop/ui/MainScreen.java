@@ -66,7 +66,7 @@ public class MainScreen extends FluidUIScreen {
     private final TextField positionXTextField = new TextField();
     private final TextField positionYTextField = new TextField();
     private final TextField positionZTextField = new TextField();
-    
+
     private final TextField rotationXTextField = new TextField();
     private final TextField rotationYTextField = new TextField();
     private final TextField rotationZTextField = new TextField();
@@ -1322,6 +1322,10 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void notify(String message) {
+        notify(message, UIColor.matGrey900());
+    }
+
+    private void notify(String message, UIColor color) {
         for (Map.Entry<String, Component> entry : notifPanel.childComponents.entrySet()) {
             assert entry.getValue().plugins.get(1) instanceof NotificationPlugin;
             ((NotificationPlugin) entry.getValue().plugins.get(1)).time = 1.5;
@@ -1333,7 +1337,7 @@ public class MainScreen extends FluidUIScreen {
             panel.setBottomRightPos(-260, -56);
             panel.setTopLeftAnchor(0, 1.2);
             panel.setBottomRightAnchor(1, 1.2);
-            panel.setBackgroundColor(UIColor.matGrey900(0.75));
+            panel.setBackgroundColor(color.alpha(0.75));
         });
         PluginSmoothAnimateAnchor animateAnchor = new PluginSmoothAnimateAnchor();
         panel.addPlugin(animateAnchor);
@@ -1363,7 +1367,7 @@ public class MainScreen extends FluidUIScreen {
 
             outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(name));
         } else {
-            notify(LangManager.getItem("noLevelLoaded"));
+            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
     }
 
@@ -1377,7 +1381,7 @@ public class MainScreen extends FluidUIScreen {
 
             outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
         } else {
-            notify(LangManager.getItem("noLevelLoaded"));
+            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
     }
 
@@ -1523,14 +1527,17 @@ public class MainScreen extends FluidUIScreen {
                         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
                         writer.write(exportContents);
                         writer.close();
+
+                        notify(LangManager.getItem("exportSuccess"));
                     } catch (IOException e) {
                         LogHelper.error(getClass(), "Error while exporting");
                         LogHelper.error(getClass(), e);
+                        notify(LangManager.getItem("exportError"), UIColor.matRed());
                     }
                 }
             }, "ExportThread").start();
         } else {
-            notify(LangManager.getItem("noLevelLoaded"));
+            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
     }
 

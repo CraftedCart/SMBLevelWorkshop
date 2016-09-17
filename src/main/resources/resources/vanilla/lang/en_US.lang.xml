@@ -2,6 +2,8 @@
 <langPack locale="en_US">
     <entry key="importObj" val="Import OBJ" />
     <entry key="export" val="Export" />
+    <entry key="exportSuccess" val="Exported config file successfully!" />
+    <entry key="exportError" val="Error while exporting config file!" />
 
     <!-- Modes -->
     <entry key="modeLabelFormat" val="Mode: %s" />
