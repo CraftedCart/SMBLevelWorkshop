@@ -256,6 +256,17 @@ public class MainScreen extends FluidUIScreen {
         rightListBox.addChildComponent("exportButton", exportButton);
         //</editor-fold>
 
+        //<editor-fold desc="Settings TextButton">
+        final TextButton settingsButton = new TextButton();
+        settingsButton.setOnInitAction(() -> {
+            settingsButton.setText(LangManager.getItem("settings"));
+            settingsButton.setTopLeftPos(0, 0);
+            settingsButton.setBottomRightPos(0, 24);
+        });
+        settingsButton.setOnLMBAction(this::showSettings);
+        rightListBox.addChildComponent("settingsButton", settingsButton);
+        //</editor-fold>
+
         final Panel propertiesLabelPanel = new Panel();
         propertiesLabelPanel.setOnInitAction(() -> {
             propertiesLabelPanel.setTopLeftPos(0, 0);
@@ -1114,7 +1125,11 @@ public class MainScreen extends FluidUIScreen {
 
         if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
             //<editor-fold desc="Draw model with wireframes">
-            GL20.glUseProgram(ResourceManager.getShaderProgram("texShaderProgram").getProgramID());
+            if (SMBLWSettings.showTextures) {
+                GL20.glUseProgram(ResourceManager.getShaderProgram("texShaderProgram").getProgramID());
+            } else {
+                GL20.glUseProgram(ResourceManager.getShaderProgram("colShaderProgram").getProgramID());
+            }
             ResourceModel.drawModel(clientLevelData.getLevelData().getModel());
             GL20.glUseProgram(0);
 
@@ -1775,6 +1790,10 @@ public class MainScreen extends FluidUIScreen {
         }
 
         updatePropertiesPanel();
+    }
+
+    private void showSettings() {
+        setOverlayUiScreen(new SettingsOverlayUIScreen());
     }
 
 }

@@ -25,12 +25,6 @@ public class AssetFalloutY implements IAsset {
         return ResourceManager.getModel("model/falloutPlane");
     }
 
-    @NotNull
-    @Override
-    public UIColor getColor() {
-        return UIColor.matRed();
-    }
-
     @Override
     public boolean canGrabX() {
         return false;

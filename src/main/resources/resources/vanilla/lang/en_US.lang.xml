@@ -4,6 +4,11 @@
     <entry key="export" val="Export" />
     <entry key="exportSuccess" val="Exported config file successfully!" />
     <entry key="exportError" val="Error while exporting config file!" />
+    <entry key="settings" val="Settings" />
+    <entry key="ok" val="OK" />
+
+    <!-- Settings -->
+    <entry key="settingShowTextures" val="Show textures" />
 
     <!-- Modes -->
     <entry key="modeLabelFormat" val="Mode: %s" />

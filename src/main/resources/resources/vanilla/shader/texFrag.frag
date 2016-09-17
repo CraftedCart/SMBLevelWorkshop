@@ -24,7 +24,7 @@ void main()
         halfV = normalize(halfVector);
         NdotHV = max(dot(n,halfV),0.0);
         color += gl_FrontMaterial.specular *
-                gl_LightSource[0].specular *
+                0.3 *
                 pow(NdotHV, gl_FrontMaterial.shininess);
     }
 
