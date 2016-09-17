@@ -50,8 +50,8 @@ public class MainScreen extends FluidUIScreen {
     @NotNull private PosXYZ modeDirection = new PosXYZ(0, 1, 0);
 
     //Camera
-    @NotNull private PosXYZ cameraPos = new PosXYZ();
-    @NotNull private PosXY cameraRot = new PosXY();
+    @NotNull private PosXYZ cameraPos = new PosXYZ(5, 5, 5);
+    @NotNull private PosXY cameraRot = new PosXY(-45, 35);
 
 
     //UI
