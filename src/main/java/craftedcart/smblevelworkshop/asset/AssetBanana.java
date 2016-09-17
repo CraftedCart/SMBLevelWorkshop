@@ -31,9 +31,9 @@ public class AssetBanana implements IAsset {
     public ResourceModel getModel() {
         switch (type) {
             case "singleBanana":
-                return ResourceManager.getModel("model/OBJ_BANANA_01_LOD_150");
+                return ResourceManager.getModel("model/OBJ_BANANA_01_LOD150");
             case "bunchBanana":
-                return ResourceManager.getModel("model/OBJ_BANANA_02_LOD_100");
+                return ResourceManager.getModel("model/OBJ_BANANA_02_LOD100");
             default:
                 //This shouldn't happen
                 return ResourceManager.getModel("model/invalidAsset");
