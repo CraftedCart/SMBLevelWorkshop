@@ -1258,6 +1258,10 @@ public class MainScreen extends FluidUIScreen {
                                 undo();
                             }
                         }
+                    } else if (key == Keyboard.KEY_Y) {
+                        if (Window.isCtrlOrCmdDown()) {
+                            redo();
+                        }
 
                     } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables
                         if (clientLevelData.getSelectedPlaceables().size() > 0) {
