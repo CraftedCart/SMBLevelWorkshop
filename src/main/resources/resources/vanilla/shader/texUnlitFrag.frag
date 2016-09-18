@@ -1,3 +1,5 @@
+#version 120
+
 uniform sampler2D tex;
 varying vec2 texture_coordinate;
 

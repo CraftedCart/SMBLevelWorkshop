@@ -4,7 +4,6 @@ import com.owens.oobjloader.lwjgl.VBO;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
-import craftedcart.smblevelworkshop.resource.ResourceShader;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.EnumMode;
@@ -867,6 +866,8 @@ public class MainScreen extends FluidUIScreen {
         });
         mainUI.addChildComponent("notifPanel", notifPanel);
 
+        Window.logOpenGLError("After MainScreen.init()");
+
         try {
             Window.drawable.releaseContext();
         } catch (LWJGLException e) {
@@ -878,6 +879,8 @@ public class MainScreen extends FluidUIScreen {
     @Override
     public void preDraw() {
         super.preDraw();
+
+        Window.logOpenGLError("After MainScreen.super.preDraw()");
 
         if (clientLevelData != null) {
             //<editor-fold desc="Darken selected placeables in the outliner">
@@ -1064,10 +1067,14 @@ public class MainScreen extends FluidUIScreen {
             }
         }
 
+        Window.logOpenGLError("After MainScreen.preDraw()");
+
     }
 
     @Override
     public void draw() {
+        Window.logOpenGLError("Before MainScreen.draw()");
+
         topLeftPos = new PosXY(0, 0);
         topLeftPx = new PosXY(0, 0);
         bottomRightPos = new PosXY(Display.getWidth(), Display.getHeight());
@@ -1088,9 +1095,13 @@ public class MainScreen extends FluidUIScreen {
         if (overlayUiScreen != null) {
             overlayUiScreen.draw();
         }
+
+        Window.logOpenGLError("After MainScreen.draw()");
     }
 
     private void drawViewport() {
+        Window.logOpenGLError("Before MainScreen.drawViewport()");
+
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
         GL11.glPushMatrix();
@@ -1101,6 +1112,8 @@ public class MainScreen extends FluidUIScreen {
         GL11.glLoadIdentity();
         GLU.gluPerspective(90, Display.getWidth() / (float) Display.getHeight(), 0.01f, 1000f);
         //</editor-fold>
+
+        Window.logOpenGLError("After MainScreen.drawViewport() - Matrix setup");
 
         GL11.glRotated(cameraRot.y, 1, 0, 0);
         GL11.glRotated(cameraRot.x, 0, 1, 0);
@@ -1123,23 +1136,33 @@ public class MainScreen extends FluidUIScreen {
         GL11.glEnd();
         //</editor-fold>
 
+        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing global X & Z lines");
+
         UIColor.pureWhite().bindColor();
 
         if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
             //<editor-fold desc="Draw model with wireframes">
-            GL20.glUseProgram(getCurrentShader().getProgramID());
+            ResourceShaderProgram currentShaderProgram = getCurrentShader();
+            boolean useTextures = isCurrentShaderTextured();
 
-            ResourceModel.drawModel(clientLevelData.getLevelData().getModel());
+            GL20.glUseProgram(currentShaderProgram.getProgramID());
+            ResourceModel.drawModel(clientLevelData.getLevelData().getModel(), currentShaderProgram, useTextures);
             GL20.glUseProgram(0);
+
+            Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
 
             GL11.glLineWidth(2);
             GL11.glColor4f(0, 0, 0, 1);
-            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
+
+            Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
 
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             GL11.glColor4f(0, 0, 0, 0.02f);
-            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel());
+            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
+
+            Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
             //</editor-fold>
 
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
@@ -1159,8 +1182,10 @@ public class MainScreen extends FluidUIScreen {
 
                 GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
                 GL20.glUseProgram(placeable.getAsset().getShaderProgram().getProgramID());
-                ResourceModel.drawModel(model, placeable.getAsset().getColor());
+                ResourceModel.drawModel(model, placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured(), placeable.getAsset().getColor());
                 GL20.glUseProgram(0);
+
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " filled");
 
                 //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
                 if (isSelected) {
@@ -1204,8 +1229,10 @@ public class MainScreen extends FluidUIScreen {
                 } else {
                     UIColor.matOrange().bindColor();
                 }
-                ResourceModel.drawModelWireframe(model);
+                ResourceModel.drawModelWireframe(model, null, false);
                 //</editor-fold>
+
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test on)");
 
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
 
@@ -1215,8 +1242,10 @@ public class MainScreen extends FluidUIScreen {
                 } else {
                     UIColor.matOrange(0.02).bindColor();
                 }
-                ResourceModel.drawModelWireframe(model);
+                ResourceModel.drawModelWireframe(model, null, false);
                 //</editor-fold>
+
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test off)");
 
                 GL11.glPopMatrix();
 
@@ -1229,6 +1258,8 @@ public class MainScreen extends FluidUIScreen {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
         Window.setMatrix();
+
+        Window.logOpenGLError("After MainScreen.drawViewport()");
     }
 
     @Override
@@ -1809,6 +1840,10 @@ public class MainScreen extends FluidUIScreen {
                 return ResourceManager.getShaderProgram("colShaderProgram");
             }
         }
+    }
+
+    private boolean isCurrentShaderTextured() {
+        return SMBLWSettings.showTextures;
     }
 
 }

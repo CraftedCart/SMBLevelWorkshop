@@ -133,4 +133,5 @@ lib/FluidUI/.idea/libraries
 
 #oObjLoader
 src/main/java/com/owens/oobjloader/lwjgl/DisplayTest.java
+src/main/java/com/owens/oobjloader/test/ParseTest.java
 

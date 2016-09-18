@@ -137,7 +137,7 @@ public class OBJLoader {
                 LogHelper.info(OBJLoader.class, "Trying to load  " + mapKdFile.getAbsolutePath());
                 currentTextureID = textureLoader.load(mapKdFile.getAbsolutePath());
             } catch (IOException ex) {
-                Logger.getLogger(DisplayTest.class.getName()).log(Level.SEVERE, null, ex);
+                LogHelper.error(OBJLoader.class, "Failed to get material ID");
                 LogHelper.info(OBJLoader.class, "Got an exception trying to load  texture material = " + material.mapKdFilename + " , ex=" + ex);
                 ex.printStackTrace();
                 LogHelper.info(OBJLoader.class, "Using default texture ID = " + defaultTextureID);

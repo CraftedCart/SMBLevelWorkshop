@@ -69,4 +69,8 @@ public interface IAsset extends Cloneable {
         return ResourceManager.getShaderProgram("colShaderProgram");
     }
 
+    default public boolean isShaderTextured() {
+        return false;
+    }
+
 }

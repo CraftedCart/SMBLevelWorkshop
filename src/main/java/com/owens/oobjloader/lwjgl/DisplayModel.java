@@ -9,6 +9,7 @@ package com.owens.oobjloader.lwjgl;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
+import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import io.github.craftedcart.fluidui.util.UIColor;
 
 import java.util.*;
@@ -24,15 +25,15 @@ public class DisplayModel {
         vboList.add(r);
     }
 
-    public void render() {
+    public void render(ResourceShaderProgram shaderProgram, boolean setTexture) {
         for (int loopi = 0; loopi < vboList.size(); loopi++) {
-            vboList.get(loopi).render();
+            vboList.get(loopi).render(shaderProgram, setTexture);
         }
     }
 
-    public void render(UIColor color) {
+    public void render(ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color) {
         for (int loopi = 0; loopi < vboList.size(); loopi++) {
-            vboList.get(loopi).render(color);
+            vboList.get(loopi).render(shaderProgram, setTexture, color);
         }
     }
 

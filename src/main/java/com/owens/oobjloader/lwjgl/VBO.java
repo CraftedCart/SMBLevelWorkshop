@@ -14,7 +14,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import com.owens.oobjloader.builder.Material;
+import craftedcart.smblevelworkshop.*;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
+import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -64,10 +66,14 @@ public class VBO {
         this.material = material;
     }
 
-    public void render() {
+    public void render(ResourceShaderProgram shaderProgram, boolean setTexture) {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
-        GL20.glUniform1i(GL20.glGetUniformLocation(ResourceManager.getShaderProgram("texShaderProgram").getProgramID(), "tex"), 0);
+        if (setTexture) {
+            GL20.glUniform1i(GL20.glGetUniformLocation(shaderProgram.getProgramID(), "tex"), 0);
+        }
+
+        craftedcart.smblevelworkshop.Window.logOpenGLError("After VBO.render() - Binding texture");
 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticeAttributesID);
 
@@ -89,11 +95,14 @@ public class VBO {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
-    public void render(UIColor color) {
+    public void render(ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color) {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
-        GL20.glUniform1i(GL20.glGetUniformLocation(ResourceManager.getShaderProgram("texShaderProgram").getProgramID(), "tex"), 0);
+        if (setTexture) {
+            GL20.glUniform1i(GL20.glGetUniformLocation(shaderProgram.getProgramID(), "tex"), 0);
+        }
 
+        craftedcart.smblevelworkshop.Window.logOpenGLError("VBO DRAWING");
         if (material != null) {
             GL11.glColor4d(color.r, color.g, color.b, material.dFactor);
         } else {

@@ -2,6 +2,7 @@ package craftedcart.smblevelworkshop;
 
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.util.CrashHandler;
+import craftedcart.smblevelworkshop.util.LogHelper;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.util.PosXY;
 import io.github.craftedcart.fluidui.util.UIUtils;
@@ -9,6 +10,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.*;
+import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.SlickException;
 
 import java.awt.*;
@@ -95,6 +97,8 @@ public class Window {
 
         }
 
+        logOpenGLError("End of rendering");
+
         Display.update();
         Display.sync(60); //Cap to 60 FPS
     }
@@ -118,6 +122,13 @@ public class Window {
 
     public static boolean isShiftDown() {
         return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+    }
+
+    public static void logOpenGLError(String location) {
+        int error = GL11.glGetError();
+        if (error != 0) {
+            LogHelper.error(Window.class, "OpenGL Error #" + String.valueOf(error) + " - " + GLU.gluErrorString(error) + " @ " + location);
+        }
     }
 
 }
