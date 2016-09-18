@@ -5,7 +5,7 @@ varying vec2 texture_coordinate;
 
 uniform sampler2D tex;
 
-uniform vec3 lightPos = vec3(1000, 1000, 1000);
+uniform vec3 lightPos = vec3(10000, 15000, 5000);
 
 uniform vec3 mambient = vec3(0.7, 0.7, 0.7);  //gl_FrontMaterial
 uniform vec3 mdiffuse = vec3(1.3, 1.3, 1.3);
