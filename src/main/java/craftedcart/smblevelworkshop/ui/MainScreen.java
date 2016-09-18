@@ -1104,14 +1104,14 @@ public class MainScreen extends FluidUIScreen {
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        GL11.glPushMatrix();
-
         //<editor-fold desc="Setup the matrix">
         GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GLU.gluPerspective(90, Display.getWidth() / (float) Display.getHeight(), 0.01f, 1000f);
         //</editor-fold>
+
+        GL11.glPushMatrix();
 
         Window.logOpenGLError("After MainScreen.drawViewport() - Matrix setup");
 
