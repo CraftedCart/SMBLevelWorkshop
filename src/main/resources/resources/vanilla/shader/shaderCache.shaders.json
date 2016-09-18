@@ -1,4 +1,6 @@
 [
   {"name": "texShaderProgram", "vert": "shader/texVert", "frag": "shader/texFrag"},
-  {"name": "colShaderProgram", "vert": "shader/colVert", "frag": "shader/colFrag"}
+  {"name": "texUnlitShaderProgram", "vert": "shader/texUnlitVert", "frag": "shader/texUnlitFrag"},
+  {"name": "colShaderProgram", "vert": "shader/colVert", "frag": "shader/colFrag"},
+  {"name": "colUnlitShaderProgram", "vert": "shader/colUnlitVert", "frag": "shader/colUnlitFrag"}
 ]

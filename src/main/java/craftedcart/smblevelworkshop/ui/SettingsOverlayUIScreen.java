@@ -93,6 +93,7 @@ public class SettingsOverlayUIScreen extends FluidUIScreen {
     }
 
     private void populateListBox(ListBox listBox) {
+        //<editor-fold desc="Show textures">
         final Panel showTexturesPanel = new Panel();
         showTexturesPanel.setOnInitAction(() -> {
             showTexturesPanel.setTopLeftPos(0, 0);
@@ -122,6 +123,39 @@ public class SettingsOverlayUIScreen extends FluidUIScreen {
         });
         showTexturesCheckBox.setOnLMBAction(() -> SMBLWSettings.showTextures = showTexturesCheckBox.value);
         showTexturesPanel.addChildComponent("showTexturesCheckBox", showTexturesCheckBox);
+        //</editor-fold>
+
+        //<editor-fold desc="Is unlit">
+        final Panel isUnlitPanel = new Panel();
+        isUnlitPanel.setOnInitAction(() -> {
+            isUnlitPanel.setTopLeftPos(0, 0);
+            isUnlitPanel.setBottomRightPos(0, 24);
+            isUnlitPanel.setBackgroundColor(UIColor.transparent());
+        });
+        listBox.addChildComponent("isUnlitPanel", isUnlitPanel);
+
+        final Label isUnlitLabel = new Label();
+        isUnlitLabel.setOnInitAction(() -> {
+            isUnlitLabel.setTopLeftPos(0, 0);
+            isUnlitLabel.setBottomRightPos(-24, 0);
+            isUnlitLabel.setTopLeftAnchor(0, 0);
+            isUnlitLabel.setBottomRightAnchor(1, 1);
+            isUnlitLabel.setText(LangManager.getItem("settingIsUnlit"));
+        });
+        isUnlitPanel.addChildComponent("isUnlitLabel", isUnlitLabel);
+
+        final CheckBox isUnlitCheckBox = new CheckBox();
+        isUnlitCheckBox.setOnInitAction(() -> {
+            isUnlitCheckBox.setTopLeftPos(-24, 0);
+            isUnlitCheckBox.setBottomRightPos(0, 0);
+            isUnlitCheckBox.setTopLeftAnchor(1, 0);
+            isUnlitCheckBox.setBottomRightAnchor(1, 1);
+            isUnlitCheckBox.setValue(SMBLWSettings.isUnlit);
+            isUnlitCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        });
+        isUnlitCheckBox.setOnLMBAction(() -> SMBLWSettings.isUnlit = isUnlitCheckBox.value);
+        isUnlitPanel.addChildComponent("isUnlitCheckBox", isUnlitCheckBox);
+        //</editor-fold>
     }
 
 }

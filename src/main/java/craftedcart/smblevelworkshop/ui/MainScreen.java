@@ -4,6 +4,8 @@ import com.owens.oobjloader.lwjgl.VBO;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
+import craftedcart.smblevelworkshop.resource.ResourceShader;
+import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.EnumMode;
 import craftedcart.smblevelworkshop.Window;
@@ -1125,11 +1127,8 @@ public class MainScreen extends FluidUIScreen {
 
         if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
             //<editor-fold desc="Draw model with wireframes">
-            if (SMBLWSettings.showTextures) {
-                GL20.glUseProgram(ResourceManager.getShaderProgram("texShaderProgram").getProgramID());
-            } else {
-                GL20.glUseProgram(ResourceManager.getShaderProgram("colShaderProgram").getProgramID());
-            }
+            GL20.glUseProgram(getCurrentShader().getProgramID());
+
             ResourceModel.drawModel(clientLevelData.getLevelData().getModel());
             GL20.glUseProgram(0);
 
@@ -1794,6 +1793,22 @@ public class MainScreen extends FluidUIScreen {
 
     private void showSettings() {
         setOverlayUiScreen(new SettingsOverlayUIScreen());
+    }
+
+    private ResourceShaderProgram getCurrentShader() {
+        if (SMBLWSettings.showTextures) {
+            if (SMBLWSettings.isUnlit) {
+                return ResourceManager.getShaderProgram("texUnlitShaderProgram");
+            } else {
+                return ResourceManager.getShaderProgram("texShaderProgram");
+            }
+        } else {
+            if (SMBLWSettings.isUnlit) {
+                return ResourceManager.getShaderProgram("colUnlitShaderProgram");
+            } else {
+                return ResourceManager.getShaderProgram("colShaderProgram");
+            }
+        }
     }
 
 }

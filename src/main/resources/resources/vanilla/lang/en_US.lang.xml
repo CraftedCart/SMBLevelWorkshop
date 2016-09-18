@@ -9,6 +9,7 @@
 
     <!-- Settings -->
     <entry key="settingShowTextures" val="Show textures" />
+    <entry key="settingIsUnlit" val="Is unlit" />
 
     <!-- Modes -->
     <entry key="modeLabelFormat" val="Mode: %s" />

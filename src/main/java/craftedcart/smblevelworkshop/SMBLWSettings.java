@@ -18,5 +18,6 @@ public class SMBLWSettings {
 
     //Rendering
     public static boolean showTextures = true;
+    public static boolean isUnlit = false;
 
 }
