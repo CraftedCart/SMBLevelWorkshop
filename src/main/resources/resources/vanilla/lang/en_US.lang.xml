@@ -10,6 +10,7 @@
     <!-- Settings -->
     <entry key="settingShowTextures" val="Show textures" />
     <entry key="settingIsUnlit" val="Is unlit" />
+    <entry key="settingShowAllWireframes" val="Show all wireframes" />
 
     <!-- Modes -->
     <entry key="modeLabelFormat" val="Mode: %s" />

@@ -156,6 +156,38 @@ public class SettingsOverlayUIScreen extends FluidUIScreen {
         isUnlitCheckBox.setOnLMBAction(() -> SMBLWSettings.isUnlit = isUnlitCheckBox.value);
         isUnlitPanel.addChildComponent("isUnlitCheckBox", isUnlitCheckBox);
         //</editor-fold>
+
+        //<editor-fold desc="Show all wireframes">
+        final Panel showAllWireframesPanel = new Panel();
+        showAllWireframesPanel.setOnInitAction(() -> {
+            showAllWireframesPanel.setTopLeftPos(0, 0);
+            showAllWireframesPanel.setBottomRightPos(0, 24);
+            showAllWireframesPanel.setBackgroundColor(UIColor.transparent());
+        });
+        listBox.addChildComponent("showAllWireframesPanel", showAllWireframesPanel);
+
+        final Label showAllWireframesLabel = new Label();
+        showAllWireframesLabel.setOnInitAction(() -> {
+            showAllWireframesLabel.setTopLeftPos(0, 0);
+            showAllWireframesLabel.setBottomRightPos(-24, 0);
+            showAllWireframesLabel.setTopLeftAnchor(0, 0);
+            showAllWireframesLabel.setBottomRightAnchor(1, 1);
+            showAllWireframesLabel.setText(LangManager.getItem("settingShowAllWireframes"));
+        });
+        showAllWireframesPanel.addChildComponent("showAllWireframesLabel", showAllWireframesLabel);
+
+        final CheckBox showAllWireframesCheckBox = new CheckBox();
+        showAllWireframesCheckBox.setOnInitAction(() -> {
+            showAllWireframesCheckBox.setTopLeftPos(-24, 0);
+            showAllWireframesCheckBox.setBottomRightPos(0, 0);
+            showAllWireframesCheckBox.setTopLeftAnchor(1, 0);
+            showAllWireframesCheckBox.setBottomRightAnchor(1, 1);
+            showAllWireframesCheckBox.setValue(SMBLWSettings.showAllWireframes);
+            showAllWireframesCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        });
+        showAllWireframesCheckBox.setOnLMBAction(() -> SMBLWSettings.showAllWireframes = showAllWireframesCheckBox.value);
+        showAllWireframesPanel.addChildComponent("showAllWireframesCheckBox", showAllWireframesCheckBox);
+        //</editor-fold>
     }
 
 }

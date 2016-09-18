@@ -1152,17 +1152,19 @@ public class MainScreen extends FluidUIScreen {
             Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
 
             GL11.glLineWidth(2);
-//            GL11.glColor4f(0, 0, 0, 1);
-//            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
-//
-//            Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
-//
-//            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            if (SMBLWSettings.showAllWireframes) {
+                GL11.glColor4f(0, 0, 0, 1);
+                ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
 
-//            GL11.glColor4f(0, 0, 0, 0.02f);
-//            ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
-//
-//            Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
+
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+                GL11.glColor4f(0, 0, 0, 0.01f);
+                ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
+
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
+            }
             //</editor-fold>
 
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
@@ -1226,6 +1228,11 @@ public class MainScreen extends FluidUIScreen {
                     }
 
                     UIColor.matBlue().bindColor();
+                } else {
+                    UIColor.matOrange().bindColor();
+                }
+
+                if (SMBLWSettings.showAllWireframes || isSelected) {
                     ResourceModel.drawModelWireframe(model, null, false);
                 }
                 //</editor-fold>
@@ -1237,6 +1244,11 @@ public class MainScreen extends FluidUIScreen {
                 //<editor-fold desc="Draw blue wireframe if selected, else draw orange wireframe (Ignores depth test - Is semi transparent)">
                 if (isSelected) {
                     UIColor.matBlue(0.05).bindColor();
+                } else {
+                    UIColor.matBlue(0.02).bindColor();
+                }
+
+                if (SMBLWSettings.showAllWireframes || isSelected) {
                     ResourceModel.drawModelWireframe(model, null, false);
                 }
                 //</editor-fold>
