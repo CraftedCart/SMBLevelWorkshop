@@ -529,8 +529,6 @@ public class ResourceManager {
                         String vert = (String) programData.get("vert");
                         String frag = (String) programData.get("frag");
 
-                        LogHelper.fatal(null, name);
-
                         ResourceShaderProgram shaderProgram = new ResourceShaderProgram(getShader(vert), getShader(frag));
                         resources.put(name, shaderProgram);
 

@@ -1,20 +1,13 @@
 #version 120
+varying vec3 position;
+varying vec3 normal;
 
-varying vec4 diffuse,ambient;
-varying vec3 normal,halfVector;
+varying vec4 color;
 
 void main()
 {
-    /* first transform the normal into eye space and
-    normalize the result */
-    normal = normalize(gl_NormalMatrix * gl_Normal);
-
-    /* pass the halfVector to the fragment shader */
-    halfVector = gl_LightSource[0].halfVector.xyz;
-
-    /* Compute the diffuse, ambient and globalAmbient terms */
-    diffuse = gl_FrontMaterial.diffuse * gl_Color;
-    ambient = gl_FrontMaterial.ambient * gl_Color;
-    ambient += gl_LightModel.ambient * gl_Color;
-    gl_Position = ftransform();
+        gl_Position=gl_ModelViewProjectionMatrix*gl_Vertex;     //output position with projection
+        position=vec3(gl_ModelViewMatrix*gl_Vertex);    //get the position of the vertex after translation, rotation, scaling
+        normal=gl_NormalMatrix*gl_Normal;       //get the normal direction, after translation, rotation, scaling
+        color = gl_Color;
 }

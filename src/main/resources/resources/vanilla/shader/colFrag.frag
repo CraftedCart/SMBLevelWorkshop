@@ -1,31 +1,37 @@
 #version 120
+varying vec3 position;
+varying vec3 normal;
 
-varying vec4 diffuse,ambient;
-varying vec3 normal,halfVector;
+varying vec4 color;
+
+uniform vec3 lightPos = vec3(1000, 1000, 1000);
+
+uniform vec3 mambient = vec3(0.7, 0.7, 0.7);  //gl_FrontMaterial
+uniform vec3 mdiffuse = vec3(1.3, 1.3, 1.3);
+uniform vec3 mspecular = vec3(0.2, 0.2, 0.2);
+uniform float shininess = 0.2f;
+
+uniform vec3 lambient = vec3(0.3, 0.3, 0.3);  //gl_LightSource[0]
+uniform vec3 ldiffuse = vec3(0.8, 0.8, 0.8);
+uniform vec3 lspecular = vec3(0.3, 0.3, 0.3);
+
 
 void main()
 {
-    vec3 n,halfV,lightDir;
-    float NdotL,NdotHV;
+        float dist=length(position-lightPos);   //distance from light-source to surface
+//        float att=1.0/(1.0+0.1*dist+0.01*dist*dist);    //attenuation (constant,linear,quadric)
+        vec3 ambient=mambient*lambient; //the ambient light
 
-    lightDir = vec3(5, 5, 5);
+        vec3 surf2light=normalize(lightPos-position);
+        vec3 norm=normalize(normal);
+        float dcont=max(0.0,dot(norm,surf2light));
+        vec3 diffuse=dcont*(mdiffuse*ldiffuse);
 
-    /* The ambient term will always be present */
-    vec4 color = ambient;
-    /* a fragment shader can't write a varying variable, hence we need
-    a new variable to store the normalized interpolated normal */
-    n = normalize(normal);
-    /* compute the dot product between normal and ldir */
+        vec3 surf2view=normalize(-position);
+        vec3 reflection=reflect(-surf2light,norm);
 
-    NdotL = max(dot(n,lightDir),0.0);
-	if (NdotL > 0.0) {
-        color += diffuse * NdotL;
-        halfV = normalize(halfVector);
-        NdotHV = max(dot(n,halfV),0.0);
-        color += gl_FrontMaterial.specular *
-                gl_LightSource[0].specular *
-                pow(NdotHV, gl_FrontMaterial.shininess);
-    }
+        float scont=pow(max(0.0,dot(surf2view,reflection)),shininess);
+        vec3 specular=scont*lspecular*mspecular;
 
-    gl_FragColor = color;
+        gl_FragColor=vec4((ambient+diffuse/*+specular*/)/**att*/,1.0) * color;  //<- don't forget the paranthesis (ambient+diffuse+specular)
 }

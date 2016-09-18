@@ -1,21 +1,13 @@
-varying vec4 diffuse,ambient;
-varying vec3 normal,halfVector;
+#version 120
+varying vec3 position;
+varying vec3 normal;
 
 varying vec2 texture_coordinate;
 
 void main()
 {
-    /* first transform the normal into eye space and
-    normalize the result */
-    normal = normalize(gl_NormalMatrix * gl_Normal);
-
-    /* pass the halfVector to the fragment shader */
-    halfVector = vec3(0.5, -0.5, 0.5);
-
-    /* Compute the diffuse, ambient and globalAmbient terms */
-    diffuse = gl_FrontMaterial.diffuse * gl_Color;
-    ambient = vec4(0.3, 0.3, 0.3, 1.0);
-    gl_Position = ftransform();
-
-    texture_coordinate = vec2(gl_MultiTexCoord0);
+        gl_Position=gl_ModelViewProjectionMatrix*gl_Vertex;     //output position with projection
+        position=vec3(gl_ModelViewMatrix*gl_Vertex);    //get the position of the vertex after translation, rotation, scaling
+        normal=gl_NormalMatrix*gl_Normal;       //get the normal direction, after translation, rotation, scaling
+        texture_coordinate = vec2(gl_MultiTexCoord0);
 }
