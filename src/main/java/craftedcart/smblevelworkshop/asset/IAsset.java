@@ -73,4 +73,8 @@ public interface IAsset extends Cloneable {
         return false;
     }
 
+    default public boolean isOpaque() {
+        return true;
+    }
+
 }

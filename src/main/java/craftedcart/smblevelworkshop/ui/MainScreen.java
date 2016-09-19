@@ -1141,7 +1141,22 @@ public class MainScreen extends FluidUIScreen {
         UIColor.pureWhite().bindColor();
 
         if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+            for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                String name = placeableEntry.getKey();
+                Placeable placeable = placeableEntry.getValue();
+                boolean isSelected = clientLevelData.isPlaceableSelected(name);
+
+                if (!placeable.getAsset().isOpaque()) {
+                    continue;
+                }
+
+                drawPlaceable(placeable, isSelected);
+
+            }
+
             //<editor-fold desc="Draw model with wireframes">
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+
             ResourceShaderProgram currentShaderProgram = getCurrentShader();
             boolean useTextures = isCurrentShaderTextured();
 
@@ -1170,92 +1185,13 @@ public class MainScreen extends FluidUIScreen {
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                 String name = placeableEntry.getKey();
                 Placeable placeable = placeableEntry.getValue();
-                ResourceModel model = placeable.getAsset().getModel();
                 boolean isSelected = clientLevelData.isPlaceableSelected(name);
 
-                GL11.glPushMatrix();
-
-                GL11.glTranslated(placeable.getPosition().x, placeable.getPosition().y, placeable.getPosition().z);
-                GL11.glRotated(placeable.getRotation().z, 0, 0, 1);
-                GL11.glRotated(placeable.getRotation().y, 0, 1, 0);
-                GL11.glRotated(placeable.getRotation().x, 1, 0, 0);
-
-                GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-                GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
-                GL20.glUseProgram(placeable.getAsset().getShaderProgram().getProgramID());
-                ResourceModel.drawModel(model, placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured(), placeable.getAsset().getColor());
-                GL20.glUseProgram(0);
-
-                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " filled");
-
-                //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
-                if (isSelected) {
-                    if (mode != EnumMode.NONE) {
-                        GL11.glPushMatrix();
-
-                        GL11.glRotated(-placeable.getRotation().x, 1, 0, 0);
-                        GL11.glRotated(-placeable.getRotation().y, 0, 1, 0);
-                        GL11.glRotated(-placeable.getRotation().z, 0, 0, 1);
-
-                        if (modeDirection.equals(new PosXYZ(1, 0, 0))) {
-                            //<editor-fold desc="Draw X line">
-                            UIColor.matRed(0.75).bindColor();
-                            GL11.glBegin(GL11.GL_LINES);
-                            GL11.glVertex3d(-10000, 0, 0);
-                            GL11.glVertex3d(10000, 0, 0);
-                            GL11.glEnd();
-                            //</editor-fold>
-                        } else if (modeDirection.equals(new PosXYZ(0, 1, 0))) {
-                            //<editor-fold desc="Draw Y line">
-                            UIColor.matGreen(0.75).bindColor();
-                            GL11.glBegin(GL11.GL_LINES);
-                            GL11.glVertex3d(0, -10000, 0);
-                            GL11.glVertex3d(0, 10000, 0);
-                            GL11.glEnd();
-                            //</editor-fold>
-                        } else if (modeDirection.equals(new PosXYZ(0, 0, 1))) {
-                            //<editor-fold desc="Draw Z line">
-                            UIColor.matBlue(0.75).bindColor();
-                            GL11.glBegin(GL11.GL_LINES);
-                            GL11.glVertex3d(0, 0, -10000);
-                            GL11.glVertex3d(0, 0, 10000);
-                            GL11.glEnd();
-                            //</editor-fold>
-                        }
-
-                        GL11.glPopMatrix();
-                    }
-
-                    UIColor.matBlue().bindColor();
-                } else {
-                    UIColor.matOrange().bindColor();
+                if (placeable.getAsset().isOpaque()) {
+                    continue;
                 }
 
-                if (SMBLWSettings.showAllWireframes || isSelected) {
-                    ResourceModel.drawModelWireframe(model, null, false);
-                }
-                //</editor-fold>
-
-                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test on)");
-
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-                //<editor-fold desc="Draw blue wireframe if selected, else draw orange wireframe (Ignores depth test - Is semi transparent)">
-                if (isSelected) {
-                    UIColor.matBlue(0.05).bindColor();
-                } else {
-                    UIColor.matBlue(0.02).bindColor();
-                }
-
-                if (SMBLWSettings.showAllWireframes || isSelected) {
-                    ResourceModel.drawModelWireframe(model, null, false);
-                }
-                //</editor-fold>
-
-                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test off)");
-
-                GL11.glPopMatrix();
+                drawPlaceable(placeable, isSelected);
 
             }
         }
@@ -1268,6 +1204,94 @@ public class MainScreen extends FluidUIScreen {
         Window.setMatrix();
 
         Window.logOpenGLError("After MainScreen.drawViewport()");
+    }
+
+    private void drawPlaceable(Placeable placeable, boolean isSelected) {
+        ResourceModel model = placeable.getAsset().getModel();
+
+        GL11.glPushMatrix();
+
+        GL11.glTranslated(placeable.getPosition().x, placeable.getPosition().y, placeable.getPosition().z);
+        GL11.glRotated(placeable.getRotation().z, 0, 0, 1);
+        GL11.glRotated(placeable.getRotation().y, 0, 1, 0);
+        GL11.glRotated(placeable.getRotation().x, 1, 0, 0);
+
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+        GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
+        GL20.glUseProgram(placeable.getAsset().getShaderProgram().getProgramID());
+        ResourceModel.drawModel(model, placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured(), placeable.getAsset().getColor());
+        GL20.glUseProgram(0);
+
+        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " filled");
+
+        //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
+        if (isSelected) {
+            if (mode != EnumMode.NONE) {
+                GL11.glPushMatrix();
+
+                GL11.glRotated(-placeable.getRotation().x, 1, 0, 0);
+                GL11.glRotated(-placeable.getRotation().y, 0, 1, 0);
+                GL11.glRotated(-placeable.getRotation().z, 0, 0, 1);
+
+                if (modeDirection.equals(new PosXYZ(1, 0, 0))) {
+                    //<editor-fold desc="Draw X line">
+                    UIColor.matRed(0.75).bindColor();
+                    GL11.glBegin(GL11.GL_LINES);
+                    GL11.glVertex3d(-10000, 0, 0);
+                    GL11.glVertex3d(10000, 0, 0);
+                    GL11.glEnd();
+                    //</editor-fold>
+                } else if (modeDirection.equals(new PosXYZ(0, 1, 0))) {
+                    //<editor-fold desc="Draw Y line">
+                    UIColor.matGreen(0.75).bindColor();
+                    GL11.glBegin(GL11.GL_LINES);
+                    GL11.glVertex3d(0, -10000, 0);
+                    GL11.glVertex3d(0, 10000, 0);
+                    GL11.glEnd();
+                    //</editor-fold>
+                } else if (modeDirection.equals(new PosXYZ(0, 0, 1))) {
+                    //<editor-fold desc="Draw Z line">
+                    UIColor.matBlue(0.75).bindColor();
+                    GL11.glBegin(GL11.GL_LINES);
+                    GL11.glVertex3d(0, 0, -10000);
+                    GL11.glVertex3d(0, 0, 10000);
+                    GL11.glEnd();
+                    //</editor-fold>
+                }
+
+                GL11.glPopMatrix();
+            }
+
+            UIColor.matBlue().bindColor();
+        } else {
+            UIColor.matOrange().bindColor();
+        }
+
+        if (SMBLWSettings.showAllWireframes || isSelected) {
+            ResourceModel.drawModelWireframe(model, null, false);
+        }
+        //</editor-fold>
+
+        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test on)");
+
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        //<editor-fold desc="Draw blue wireframe if selected, else draw orange wireframe (Ignores depth test - Is semi transparent)">
+        if (isSelected) {
+            UIColor.matBlue(0.05).bindColor();
+        } else {
+            UIColor.matBlue(0.02).bindColor();
+        }
+
+        if (SMBLWSettings.showAllWireframes || isSelected) {
+            ResourceModel.drawModelWireframe(model, null, false);
+        }
+        //</editor-fold>
+
+        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test off)");
+
+        GL11.glPopMatrix();
     }
 
     @Override
