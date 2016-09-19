@@ -1392,7 +1392,8 @@ public class MainScreen extends FluidUIScreen {
                         if (clientLevelData.getSelectedPlaceables().size() > 0) {
                             int deleted = 0;
                             for (String name : new HashSet<>(clientLevelData.getSelectedPlaceables())) {
-                                if (!(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos)) { //Don't delete the start pos
+                                if (!(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
+                                        !(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
                                     removePlaceable(name);
                                     deleted++;
                                 }
