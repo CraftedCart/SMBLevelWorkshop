@@ -54,7 +54,6 @@ public class MainScreen extends FluidUIScreen {
     @NotNull private PosXYZ cameraPos = new PosXYZ(5, 5, 5);
     @NotNull private PosXY cameraRot = new PosXY(-45, 35);
 
-
     //UI
     private final Image modeCursor = new Image();
     private final Component mainUI = new Component();
@@ -87,6 +86,9 @@ public class MainScreen extends FluidUIScreen {
 
     //Notifications
     private int notificationID = 0;
+
+    //Mouse & Scroll Wheel Delta (For snapping)
+    private double deltaX = 0;
 
 
     public MainScreen() {
@@ -852,6 +854,7 @@ public class MainScreen extends FluidUIScreen {
             typeButton.setBottomRightPos(0, 24);
         });
         typeButton.setOnLMBAction(() -> {
+            assert mousePos != null;
             setOverlayUiScreen(getTypeSelectorOverlayScreen(mousePos.y));
         });
         rightListBox.addChildComponent("typeButton", typeButton);
@@ -954,8 +957,23 @@ public class MainScreen extends FluidUIScreen {
                     if ((modeDirection.equals(new PosXYZ(1, 0, 0)) && placeable.getAsset().canGrabX()) ||
                             (modeDirection.equals(new PosXYZ(0, 1, 0)) && placeable.getAsset().canGrabY()) ||
                             (modeDirection.equals(new PosXYZ(0, 0, 1)) && placeable.getAsset().canGrabZ()) ||
-                            (placeable.getAsset().canGrabX() && placeable.getAsset().canGrabY()) && placeable.getAsset().canGrabZ()) {
-                        if (Window.isShiftDown()) { //Precise movement with shift
+                            (placeable.getAsset().canGrabX() && placeable.getAsset().canGrabY()) && placeable.getAsset().canGrabZ()) { //If can grab in selected direction
+                        if (Window.isAltDown()) { //Snap with Alt
+                            if (Window.isShiftDown()) {
+                                deltaX += UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity;
+                                deltaX += UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity;
+                            } else {
+                                deltaX += UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity;
+                                deltaX += UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity;
+                            }
+
+                            if (deltaX >= SMBLWSettings.grabSnap || deltaX <= -SMBLWSettings.grabSnap) {
+                                placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(
+                                        SMBLWSettings.grabSnap * Math.round(deltaX / SMBLWSettings.grabSnap))));
+
+                                deltaX = deltaX % SMBLWSettings.grabSnap;
+                            }
+                        } else if (Window.isShiftDown()) { //Precise movement with Shift
                             placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
                             placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
                         } else {
@@ -971,7 +989,22 @@ public class MainScreen extends FluidUIScreen {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
                     if (placeable.getAsset().canRotate()) { //If can rotate
-                        if (Window.isShiftDown()) { //Precise movement with shift
+                        if (Window.isAltDown()) { //Snap with Alt
+                            if (Window.isShiftDown()) {
+                                deltaX += UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity;
+                                deltaX += UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity;
+                            } else {
+                                deltaX += UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity;
+                                deltaX += UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity;
+                            }
+
+                            if (deltaX >= SMBLWSettings.rotationSnap || deltaX <= -SMBLWSettings.rotationSnap) {
+                                placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(
+                                        SMBLWSettings.rotationSnap * Math.round(deltaX / SMBLWSettings.rotationSnap))));
+
+                                deltaX = deltaX % SMBLWSettings.rotationSnap;
+                            }
+                        } else if (Window.isShiftDown()) { //Precise movement with Shift
                             placeable.setRotation(normalizeRotation(placeable.getRotation()
                                     .add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity))));
                             placeable.setRotation(normalizeRotation(placeable.getRotation()
@@ -991,7 +1024,22 @@ public class MainScreen extends FluidUIScreen {
                     Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
 
                     if (placeable.getAsset().canScale()) { //If can scale
-                        if (Window.isShiftDown()) { //Precise movement with shift
+                        if (Window.isAltDown()) { //Snap with Alt
+                            if (Window.isShiftDown()) {
+                                deltaX += UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity;
+                                deltaX += UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity;
+                            } else {
+                                deltaX += UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity;
+                                deltaX += UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity;
+                            }
+
+                            if (deltaX >= SMBLWSettings.scaleSnap || deltaX <= -SMBLWSettings.scaleSnap) {
+                                placeable.setScale(placeable.getScale().add(modeDirection.multiply(
+                                        SMBLWSettings.scaleSnap * Math.round(deltaX / SMBLWSettings.scaleSnap))));
+
+                                deltaX = deltaX % SMBLWSettings.scaleSnap;
+                            }
+                        } else if (Window.isShiftDown()) { //Precise movement with shift
                             placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
                             placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
                         } else {
@@ -1223,7 +1271,7 @@ public class MainScreen extends FluidUIScreen {
         ResourceModel.drawModel(model, placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured(), placeable.getAsset().getColor());
         GL20.glUseProgram(0);
 
-        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " filled");
+        Window.logOpenGLError("After MainScreen.drawPlaceable() - Drawing placeable " + name + " filled");
 
         //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
         if (isSelected) {
@@ -1273,7 +1321,7 @@ public class MainScreen extends FluidUIScreen {
         }
         //</editor-fold>
 
-        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test on)");
+        Window.logOpenGLError("After MainScreen.drawPlaceable() - Drawing placeable " + name + " wireframe (Depth test on)");
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
@@ -1289,7 +1337,7 @@ public class MainScreen extends FluidUIScreen {
         }
         //</editor-fold>
 
-        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing placeable " + name + " wireframe (Depth test off)");
+        Window.logOpenGLError("After MainScreen.drawPlaceable() - Drawing placeable " + name + " wireframe (Depth test off)");
 
         GL11.glPopMatrix();
     }
@@ -1391,11 +1439,13 @@ public class MainScreen extends FluidUIScreen {
         mode = EnumMode.NONE;
         assert clientLevelData != null;
         updatePropertiesPanel();
+        deltaX = 0; //Reset deltaX when no mode is active
     }
 
     private void discardModeAction() {
         mode = EnumMode.NONE;
         undo();
+        deltaX = 0; //Reset deltaX when no mode is active
     }
 
     private void notify(String message) {

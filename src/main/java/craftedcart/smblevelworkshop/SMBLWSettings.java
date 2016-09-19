@@ -21,4 +21,9 @@ public class SMBLWSettings {
     public static boolean isUnlit = false;
     public static boolean showAllWireframes = false;
 
+    //Snapping
+    public static double grabSnap = 0.5;
+    public static double rotationSnap = 5;
+    public static double scaleSnap = 0.5;
+
 }
