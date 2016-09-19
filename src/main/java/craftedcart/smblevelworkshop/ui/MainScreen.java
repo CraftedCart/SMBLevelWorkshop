@@ -1208,6 +1208,10 @@ public class MainScreen extends FluidUIScreen {
             ResourceShaderProgram currentShaderProgram = getCurrentShader();
             boolean useTextures = isCurrentShaderTextured();
 
+            if (!SMBLWSettings.showTextures) {
+                UIColor.pureWhite().bindColor();
+            }
+
             GL20.glUseProgram(currentShaderProgram.getProgramID());
             ResourceModel.drawModel(clientLevelData.getLevelData().getModel(), currentShaderProgram, useTextures);
             GL20.glUseProgram(0);
