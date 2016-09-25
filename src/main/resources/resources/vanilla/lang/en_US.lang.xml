@@ -13,7 +13,7 @@
     <!-- Export -->
     <entry key="export" val="Export" />
     <entry key="exportConfig" val="Export config" />
-    <entry key="exportLzRaw" val="Export raw LZ" />
+    <entry key="exportLzRawSmb1" val="Export raw LZ (SMB 1)" />
     <entry key="exportLzRawDefaultName" val="Output LZ" />
     <entry key="exportErrorPrefix" val="[ ERROR ] " />
     <entry key="exportGenConfig" val="Generating config" />

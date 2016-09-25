@@ -7,7 +7,6 @@ import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smbworkshopexporter.ConfigData;
 import craftedcart.smbworkshopexporter.LZExporter;
 import craftedcart.smbworkshopexporter.ModelData;
-import craftedcart.smbworkshopexporter.SMBWorkshopExporter;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;
@@ -116,14 +115,14 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
         exportConfigButton.setOnLMBAction(this::exportConfig);
         listBox.addChildComponent("exportConfigButton", exportConfigButton);
 
-        final TextButton exportLzRawButton = new TextButton();
-        exportLzRawButton.setOnInitAction(() -> {
-            exportLzRawButton.setTopLeftPos(0, 0);
-            exportLzRawButton.setBottomRightPos(0, 24);
-            exportLzRawButton.setText(LangManager.getItem("exportLzRaw"));
+        final TextButton exportLzRawSmb1Button = new TextButton();
+        exportLzRawSmb1Button.setOnInitAction(() -> {
+            exportLzRawSmb1Button.setTopLeftPos(0, 0);
+            exportLzRawSmb1Button.setBottomRightPos(0, 24);
+            exportLzRawSmb1Button.setText(LangManager.getItem("exportLzRawSmb1"));
         });
-        exportLzRawButton.setOnLMBAction(this::exportLzRaw);
-        listBox.addChildComponent("exportLzRawButton", exportLzRawButton);
+        exportLzRawSmb1Button.setOnLMBAction(this::exportLzRawSmb1);
+        listBox.addChildComponent("exportLzRawSmb1Button", exportLzRawSmb1Button);
     }
 
     private void hideMainPanel() {
@@ -207,7 +206,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
         }, /* onCanceledAction */ this::showMainPanel);
     }
 
-    private void exportLzRaw() {
+    private void exportLzRawSmb1() {
         hideMainPanel();
         askFileLocation(LangManager.getItem("exportLzRawDefaultName"), (file) -> {
             //onSuccessAction
