@@ -23,6 +23,8 @@
       <module name="FluidUI_test" target="1.8" />
       <module name="smblevelworkshop_main" target="1.8" />
       <module name="smblevelworkshop_test" target="1.8" />
+      <module name="SMBWorkshopExporter_main" target="1.8" />
+      <module name="SMBWorkshopExporter_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -20,6 +20,7 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5' //Log4J 2 Core
 
     compile project(':FluidUI')
+    compile project(':SMBWorkshopExporter')
 
     //testCompile group: 'junit', name: 'junit', version: '4.11'
 }

@@ -6,6 +6,7 @@ import craftedcart.smblevelworkshop.util.PosXYZ;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 public class LevelData {
 
     @Nullable private ResourceModel model;
+    @Nullable private File modelObjSource;
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
 
     public void setModel(@Nullable ResourceModel model) {
@@ -25,6 +27,15 @@ public class LevelData {
     @Nullable
     public ResourceModel getModel() {
         return model;
+    }
+
+    public void setModelObjSource(@Nullable File modelObjSource) {
+        this.modelObjSource = modelObjSource;
+    }
+
+    @Nullable
+    public File getModelObjSource() {
+        return modelObjSource;
     }
 
     @NotNull

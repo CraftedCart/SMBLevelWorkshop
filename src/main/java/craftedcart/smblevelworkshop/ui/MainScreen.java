@@ -12,7 +12,6 @@ import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
-import craftedcart.smblevelworkshop.util.ExportManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.FluidUIScreen;
@@ -46,7 +45,7 @@ import java.util.List;
 public class MainScreen extends FluidUIScreen {
 
     //Level
-    @Nullable private ClientLevelData clientLevelData;
+    @Nullable public ClientLevelData clientLevelData;
     @NotNull private EnumMode mode = EnumMode.NONE;
     @NotNull private PosXYZ modeDirection = new PosXYZ(0, 1, 0);
 
@@ -1453,11 +1452,11 @@ public class MainScreen extends FluidUIScreen {
         deltaX = 0; //Reset deltaX when no mode is active
     }
 
-    private void notify(String message) {
+    public void notify(String message) {
         notify(message, UIColor.matGrey900());
     }
 
-    private void notify(String message, UIColor color) {
+    public void notify(String message, UIColor color) {
         for (Map.Entry<String, Component> entry : notifPanel.childComponents.entrySet()) {
             assert entry.getValue().plugins.get(1) instanceof NotificationPlugin;
             ((NotificationPlugin) entry.getValue().plugins.get(1)).time = 1.5;
@@ -1543,6 +1542,7 @@ public class MainScreen extends FluidUIScreen {
             clientLevelData = new ClientLevelData();
             clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
             clientLevelData.getLevelData().setModel(OBJLoader.loadModel(file.getPath()));
+            clientLevelData.getLevelData().setModelObjSource(file);
 
             Placeable startPosPlaceable = new Placeable(new AssetStartPos());
             startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
@@ -1642,32 +1642,7 @@ public class MainScreen extends FluidUIScreen {
 
     private void export() {
         if (clientLevelData != null) {
-            new Thread(() -> {
-                FileDialog fd = new FileDialog((Frame) null);
-                fd.setMode(FileDialog.SAVE);
-                fd.setFile("config.txt");
-                fd.setVisible(true);
-
-                File[] files = fd.getFiles();
-                if (files != null && files.length > 0) {
-                    File file = files[0];
-                    LogHelper.info(getClass(), "Exporting file: " + file.getAbsolutePath());
-
-                    String exportContents = ExportManager.getConfig(clientLevelData.getLevelData());
-
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-                        writer.write(exportContents);
-                        writer.close();
-
-                        notify(LangManager.getItem("exportSuccess"));
-                    } catch (IOException e) {
-                        LogHelper.error(getClass(), "Error while exporting");
-                        LogHelper.error(getClass(), e);
-                        notify(LangManager.getItem("exportError"), UIColor.matRed());
-                    }
-                }
-            }, "ExportThread").start();
+            setOverlayUiScreen(new ExportOverlayUIScreen());
         } else {
             notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }

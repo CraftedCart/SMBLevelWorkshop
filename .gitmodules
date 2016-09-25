@@ -1,3 +1,6 @@
 [submodule "lib/FluidUI"]
 	path = lib/FluidUI
 	url = https://github.com/CraftedCart/FluidUI.git
+[submodule "lib/SMBWorkshopExporter"]
+	path = lib/SMBWorkshopExporter
+	url = https://github.com/CraftedCart/SMBWorkshopExporter/

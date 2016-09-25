@@ -16,13 +16,13 @@ import java.io.IOException;
 
 /**
  * @author CraftedCart
- * Created on 28/03/2016 (DD/MM/YYYY)
+ * Created on 28/08/2016 (DD/MM/YYYY)
  */
 public class SMBLevelWorkshop {
 
     public static void main(String[] args) {
         if (System.getProperty("os.name").toUpperCase().contains("LINUX")) {
-            LogHelper.info(SMBLevelWorkshop.class, "Running on Linux - Calling XInitThreads();");
+            LogHelper.info(SMBLevelWorkshop.class, "Running on Linux - Calling XInitThreads()");
             System.loadLibrary("fixXInitThreads");
         }
 
