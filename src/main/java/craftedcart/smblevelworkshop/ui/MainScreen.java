@@ -1517,6 +1517,8 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void newLevelData(File file) throws IOException {
+        clientLevelData = null;
+
         try {
             preventRendering = true;
 
@@ -1541,7 +1543,8 @@ public class MainScreen extends FluidUIScreen {
 
             clientLevelData = new ClientLevelData();
             clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
-            clientLevelData.getLevelData().setModel(OBJLoader.loadModel(file.getPath()));
+            ResourceModel model = OBJLoader.loadModel(file.getPath());
+            clientLevelData.getLevelData().setModel(model);
             clientLevelData.getLevelData().setModelObjSource(file);
 
             Placeable startPosPlaceable = new Placeable(new AssetStartPos());
@@ -1557,6 +1560,10 @@ public class MainScreen extends FluidUIScreen {
 
             outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
             outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+
+            if (!OBJLoader.isLastObjTriangulated) {
+                setOverlayUiScreen(new DialogOverlayUIScreen(LangManager.getItem("warning"), LangManager.getItem("notTriangulated")));
+            }
 
             GL11.glFlush();
 

@@ -19,6 +19,8 @@ import java.util.logging.Logger;
  */
 public class OBJLoader {
 
+    public static boolean isLastObjTriangulated;
+
     public static ResourceModel loadModel(String filePath) throws IOException {
 
         try {
@@ -200,6 +202,9 @@ public class OBJLoader {
         }
         LogHelper.info(OBJLoader.class, "Building VBO, originally " + faceList.size() + " faces, of which originally " + countTriangles + " triangles, " + countQuads + " quads,  and  " + countNGons + " n-polygons with more than 4 vertices that were dropped.");
         LogHelper.info(OBJLoader.class, "Triangle list has " + triangleList.size() + " rendered triangles of which " + normalCount + " have normals for all vertices and " + texturedCount + " have texture coords for all vertices.");
+
+        isLastObjTriangulated = !(countQuads > 0 || countNGons > 0); //Check if OBJ was triangulated
+
         return triangleList;
     }
 
