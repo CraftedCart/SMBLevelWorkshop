@@ -1188,6 +1188,7 @@ public class MainScreen extends FluidUIScreen {
         UIColor.pureWhite().bindColor();
 
         if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+            //<editor-fold desc="Draw opaque placeables">
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                 String name = placeableEntry.getKey();
                 Placeable placeable = placeableEntry.getValue();
@@ -1200,6 +1201,7 @@ public class MainScreen extends FluidUIScreen {
                 drawPlaceable(placeable, isSelected);
 
             }
+            //</editor-fold>
 
             //<editor-fold desc="Draw model with wireframes">
             GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -1233,9 +1235,26 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
+            //<editor-fold desc="Draw placeables with transparency">
+            SortedMap<Double, Map.Entry<String, Placeable>> depthSortedMap = new TreeMap<>(Collections.reverseOrder());
+
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                String name = placeableEntry.getKey();
                 Placeable placeable = placeableEntry.getValue();
+
+                double distance;
+
+                if (placeable.getAsset() instanceof AssetFalloutY) {
+                    distance = getDistance(cameraPos, new PosXYZ(cameraPos.x, placeable.getPosition().y, cameraPos.z));
+                } else {
+                    distance = getDistance(cameraPos, placeable.getPosition());
+                }
+
+                depthSortedMap.put(distance, placeableEntry);
+            }
+
+            for (Map.Entry<Double, Map.Entry<String, Placeable>> placeableEntry : depthSortedMap.entrySet()) {
+                String name = placeableEntry.getValue().getKey();
+                Placeable placeable = placeableEntry.getValue().getValue();
                 boolean isSelected = clientLevelData.isPlaceableSelected(name);
 
                 if (placeable.getAsset().isOpaque()) {
@@ -1245,6 +1264,7 @@ public class MainScreen extends FluidUIScreen {
                 drawPlaceable(placeable, isSelected);
 
             }
+            //</editor-fold>
         }
 
         GL11.glPopMatrix();
@@ -1944,6 +1964,10 @@ public class MainScreen extends FluidUIScreen {
 
     private boolean isCurrentShaderTextured() {
         return SMBLWSettings.showTextures;
+    }
+
+    private double getDistance(PosXYZ p1, PosXYZ p2) {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2) + Math.pow(p2.z - p1.z, 2));
     }
 
 }
