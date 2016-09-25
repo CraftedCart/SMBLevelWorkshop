@@ -6,14 +6,12 @@ import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.undo.*;
-import craftedcart.smblevelworkshop.util.EnumMode;
+import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
-import craftedcart.smblevelworkshop.util.LogHelper;
-import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.*;
@@ -24,6 +22,8 @@ import io.github.craftedcart.fluidui.component.Panel;
 import io.github.craftedcart.fluidui.component.TextField;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.util.*;
+import org.apache.commons.collections4.OrderedMap;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.LWJGLException;
@@ -1236,7 +1236,7 @@ public class MainScreen extends FluidUIScreen {
             //</editor-fold>
 
             //<editor-fold desc="Draw placeables with transparency">
-            SortedMap<Double, Map.Entry<String, Placeable>> depthSortedMap = new TreeMap<>(Collections.reverseOrder());
+            List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
 
             for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                 Placeable placeable = placeableEntry.getValue();
@@ -1249,12 +1249,14 @@ public class MainScreen extends FluidUIScreen {
                     distance = getDistance(cameraPos, placeable.getPosition());
                 }
 
-                depthSortedMap.put(distance, placeableEntry);
+                depthSortedMap.add(new DepthSortedPlaceable(distance, placeableEntry));
             }
 
-            for (Map.Entry<Double, Map.Entry<String, Placeable>> placeableEntry : depthSortedMap.entrySet()) {
-                String name = placeableEntry.getValue().getKey();
-                Placeable placeable = placeableEntry.getValue().getValue();
+            Collections.sort(depthSortedMap, new DepthComparator());
+
+            for (DepthSortedPlaceable placeableEntry : depthSortedMap) {
+                String name = placeableEntry.entry.getKey();
+                Placeable placeable = placeableEntry.entry.getValue();
                 boolean isSelected = clientLevelData.isPlaceableSelected(name);
 
                 if (placeable.getAsset().isOpaque()) {

@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.level;
 
 import craftedcart.smblevelworkshop.asset.Placeable;
+import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import org.jetbrains.annotations.NotNull;
@@ -58,12 +59,12 @@ public class LevelData {
      * @return The name of the placeable
      */
     public String addPlaceable(Placeable placeable) {
-        String name = placeable.getAsset().getName() + "1";
+        String name = LangManager.getItem(placeable.getAsset().getName()) + " 1";
 
         int i = 1;
         while (placedObjects.containsKey(name)) {
             i++;
-            name = placeable.getAsset().getName() + String.valueOf(i);
+            name = LangManager.getItem(placeable.getAsset().getName()) + " " + String.valueOf(i);
         }
 
         placedObjects.put(name, placeable);

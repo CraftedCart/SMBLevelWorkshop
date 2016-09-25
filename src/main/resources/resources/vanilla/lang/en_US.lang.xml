@@ -43,6 +43,8 @@
     <entry key="assetBumper" val="Bumper" />
     <entry key="assetJamabar" val="Jamabar" />
     <entry key="assetBanana" val="Banana" />
+    <entry key="assetStartPos" val="Start position" />
+    <entry key="assetFalloutY" val="Fallout Y" />
 
     <!-- Types -->
     <entry key="singleBanana" val="Single (x1)" />
