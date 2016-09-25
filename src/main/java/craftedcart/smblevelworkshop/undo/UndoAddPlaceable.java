@@ -7,9 +7,7 @@ import craftedcart.smblevelworkshop.ui.MainScreen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author CraftedCart
@@ -17,28 +15,37 @@ import java.util.Set;
  */
 public class UndoAddPlaceable extends UndoCommand {
 
-    @NotNull private String name;
-    @NotNull private Placeable placeable;
+    @NotNull private List<String> names;
+    @NotNull private List<Placeable> placeables = new ArrayList<>();
     @NotNull private MainScreen mainScreen;
 
-    public UndoAddPlaceable(@NotNull ClientLevelData clientLevelData, MainScreen mainScreen, @NotNull String name, @NotNull Placeable placeable) {
+    public UndoAddPlaceable(@NotNull ClientLevelData clientLevelData, @NotNull MainScreen mainScreen, @NotNull List<String> names, @NotNull List<Placeable> placeables) {
         super(clientLevelData);
 
-        this.name = name;
-        this.placeable = placeable.getCopy();
+        this.names = new ArrayList<>(names);
+        for (Placeable placeable : placeables) {
+            this.placeables.add(placeable.getCopy());
+        }
         this.mainScreen = mainScreen;
     }
 
     @Override
     public void undo() {
-        clientLevelData.getLevelData().removePlaceable(name);
-        clientLevelData.removeSelectedPlaceable(name);
-        mainScreen.outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
+        for (String name : names) {
+            clientLevelData.getLevelData().removePlaceable(name);
+            clientLevelData.removeSelectedPlaceable(name);
+            mainScreen.outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
+        }
     }
 
     @Override
     public UndoCommand getRedoCommand() {
-        return new UndoRemovePlaceable(clientLevelData, mainScreen, name, placeable.getCopy());
+        List<Placeable> newList = new ArrayList<>();
+        for (Placeable placeable : placeables) {
+            newList.add(placeable.getCopy());
+        }
+
+        return new UndoRemovePlaceable(clientLevelData, mainScreen, names, newList);
     }
 
     @Nullable

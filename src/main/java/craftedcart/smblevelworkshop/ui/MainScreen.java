@@ -1408,6 +1408,37 @@ public class MainScreen extends FluidUIScreen {
                             notify(LangManager.getItem("nothingSelected"));
                         }
 
+                    } else if (key == Keyboard.KEY_D && Window.isCtrlOrCmdDown()) { //Ctrl / Cmd D: Duplicate
+                        Set<String> selectedPlaceables = new HashSet<>(clientLevelData.getSelectedPlaceables());
+                        clientLevelData.clearSelectedPlaceables();
+
+                        Map<String, Placeable> newPlaceables = new HashMap<>();
+
+                        int duplicated = 0;
+
+                        for (String name : selectedPlaceables) {
+                            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                            if (!(placeable.getAsset() instanceof AssetStartPos) &&
+                                    !(placeable.getAsset() instanceof AssetFalloutY)) { //If the placeable isn't the start pos or fallout Y
+
+                                duplicated++;
+
+                                Placeable newPlaceable = placeable.getCopy();
+                                String newPlaceableName = clientLevelData.getLevelData().addPlaceable(newPlaceable);
+                                newPlaceables.put(newPlaceableName, newPlaceable);
+                                outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
+
+                                clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
+                            }
+                        }
+
+                        if (duplicated > 0) {
+                            addUndoCommand(new UndoAddPlaceable(clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
+
+                            //Grab after duplicating
+                            addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                            mode = EnumMode.GRAB;
+                        }
                     } else {
                         super.onKey(key, keyChar);
                     }
@@ -1494,7 +1525,7 @@ public class MainScreen extends FluidUIScreen {
             clientLevelData.clearSelectedPlaceables();
             clientLevelData.addSelectedPlaceable(name);
 
-            addUndoCommand(new UndoAddPlaceable(clientLevelData, this, name, placeable));
+            addUndoCommand(new UndoAddPlaceable(clientLevelData, this, Collections.singletonList(name), Collections.singletonList(placeable)));
 
             outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(name));
         } else {
@@ -1505,7 +1536,7 @@ public class MainScreen extends FluidUIScreen {
     private void removePlaceable(String name) {
         if (clientLevelData != null) {
 
-            addUndoCommand(new UndoRemovePlaceable(clientLevelData, this, name, clientLevelData.getLevelData().getPlaceable(name)));
+            addUndoCommand(new UndoRemovePlaceable(clientLevelData, this, Collections.singletonList(name), Collections.singletonList(clientLevelData.getLevelData().getPlaceable(name))));
 
             clientLevelData.removeSelectedPlaceable(name);
             clientLevelData.getLevelData().removePlaceable(name);
