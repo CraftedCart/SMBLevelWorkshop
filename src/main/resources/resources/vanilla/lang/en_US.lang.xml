@@ -19,6 +19,8 @@
     <entry key="exportGenConfig" val="Generating config" />
     <entry key="exportGenObjData" val="Generating model data" />
     <entry key="exportGenConfigData" val="Generating config data" />
+    <entry key="exportGenCfgLzRaw" val="Generating config data for raw LZ" />
+    <entry key="exportGenColLzRaw" val="Generating collision data for raw LZ" />
     <entry key="exportGenLzRaw" val="Generating raw LZ" />
     <entry key="exportSaveConfig" val="Saving config" />
 

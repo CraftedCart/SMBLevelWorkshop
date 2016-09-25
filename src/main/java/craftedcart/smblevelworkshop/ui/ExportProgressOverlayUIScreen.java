@@ -6,7 +6,9 @@ import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimatePanelBackgroundColor;
+import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.util.UIColor;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author CraftedCart
@@ -16,6 +18,8 @@ public class ExportProgressOverlayUIScreen extends FluidUIScreen {
 
     private final ListBox listBox = new ListBox();
     private final TextButton okButton = new TextButton();
+
+    @Nullable private UIAction onPreDrawAction;
 
     public ExportProgressOverlayUIScreen() {
         init();
@@ -37,8 +41,8 @@ public class ExportProgressOverlayUIScreen extends FluidUIScreen {
 
         final Panel mainPanel = new Panel();
         mainPanel.setOnInitAction(() -> {
-            mainPanel.setTopLeftPos(-256, -150);
-            mainPanel.setBottomRightPos(256, 150);
+            mainPanel.setTopLeftPos(-256, -256);
+            mainPanel.setBottomRightPos(256, 256);
             mainPanel.setTopLeftAnchor(0.5, 1.5);
             mainPanel.setBottomRightAnchor(0.5, 1.5);
 
@@ -111,6 +115,42 @@ public class ExportProgressOverlayUIScreen extends FluidUIScreen {
         taskPanel.addChildComponent("label", label);
     }
 
+    public ProgressBar addProgressTask(String taskID, String taskText) {
+        final Panel taskPanel = new Panel();
+        taskPanel.setOnInitAction(() -> {
+            taskPanel.setTopLeftPos(0, 0);
+            taskPanel.setBottomRightPos(0, 30);
+            taskPanel.setBackgroundColor(UIColor.matGrey900());
+        });
+        PluginSmoothAnimatePanelBackgroundColor animBg = new PluginSmoothAnimatePanelBackgroundColor();
+        animBg.setTargetBackgroundColor(UIColor.matGrey900());
+        taskPanel.addPlugin(animBg);
+        listBox.addChildComponent(taskID, taskPanel);
+
+        final Label label = new Label();
+        label.setOnInitAction(() -> {
+            label.setTopLeftPos(4, 0);
+            label.setBottomRightPos(-4, 24);
+            label.setTopLeftAnchor(0, 0);
+            label.setBottomRightAnchor(1, 0);
+            label.setText(taskText);
+            label.setTextColor(UIColor.matWhite());
+        });
+        taskPanel.addChildComponent("label", label);
+
+        final ProgressBar progressBar = new ProgressBar();
+        progressBar.setOnInitAction(() -> {
+            progressBar.setTopLeftPos(4, -4);
+            progressBar.setBottomRightPos(-4, -2);
+            progressBar.setTopLeftAnchor(0, 1);
+            progressBar.setBottomRightAnchor(1, 1);
+            progressBar.setForegroundColor(UIColor.matWhite());
+        });
+        taskPanel.addChildComponent("progressBar", progressBar);
+
+        return progressBar;
+    }
+
     public void activateTask(String taskID) {
         assert childComponents.get(taskID).plugins.get(0) instanceof PluginSmoothAnimatePanelBackgroundColor;
         ((PluginSmoothAnimatePanelBackgroundColor) listBox.childComponents.get(taskID).plugins.get(0)).setTargetBackgroundColor(UIColor.matBlue());
@@ -133,6 +173,19 @@ public class ExportProgressOverlayUIScreen extends FluidUIScreen {
 
     public void finish() {
         okButton.setEnabled(true);
+    }
+
+    @Override
+    public void preDraw() {
+        super.preDraw();
+
+        if (onPreDrawAction != null) {
+            onPreDrawAction.execute();
+        }
+    }
+
+    public void setOnPreDrawAction(@Nullable UIAction onPreDrawAction) {
+        this.onPreDrawAction = onPreDrawAction;
     }
 
 }

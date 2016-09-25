@@ -209,6 +209,8 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
     private void exportLzRawSmb1() {
         hideMainPanel();
         askFileLocation(LangManager.getItem("exportLzRawDefaultName"), (file) -> {
+            LZExporter lzExporter = new LZExporter();
+
             //onSuccessAction
 
             try {
@@ -225,7 +227,9 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             progScreen.addTask("exportSaveConfig", LangManager.getItem("exportSaveConfig"));
             progScreen.addTask("exportGenObjData", LangManager.getItem("exportGenObjData"));
             progScreen.addTask("exportGenConfigData", LangManager.getItem("exportGenConfigData"));
-            progScreen.addTask("exportGenLzRaw", LangManager.getItem("exportGenLzRaw"));
+            ProgressBar exportGenCfgLzRawProg = progScreen.addProgressTask("exportGenCfgLzRaw", LangManager.getItem("exportGenCfgLzRaw"));
+            ProgressBar exportGenColLzRawProg = progScreen.addProgressTask("exportGenColLzRaw", LangManager.getItem("exportGenColLzRaw"));
+            ProgressBar exportGenLzRawProg = progScreen.addProgressTask("exportGenLzRaw", LangManager.getItem("exportGenLzRaw"));
 
             try {
                 Window.drawable.releaseContext();
@@ -322,11 +326,36 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             }
 
             progScreen.completeTask("exportGenConfigData");
-            progScreen.activateTask("exportGenLzRaw");
+            progScreen.activateTask("exportGenCfgLzRaw");
+
+            progScreen.setOnPreDrawAction(() -> {
+                if (lzExporter.cfgBytesToWrite != 0) {
+                    exportGenCfgLzRawProg.setValue((double) lzExporter.cfgBytesWritten / lzExporter.cfgBytesToWrite);
+                }
+                if (lzExporter.colBytesToWrite != 0) {
+                    exportGenColLzRawProg.setValue((double) lzExporter.colBytesWritten / lzExporter.colBytesToWrite);
+                }
+                if (lzExporter.lzBytesToWrite != 0) {
+                    exportGenLzRawProg.setValue((double) lzExporter.lzBytesWritten / lzExporter.lzBytesToWrite);
+                }
+            });
+
+            lzExporter.setTaskDoneAction((enumLZExportTask) -> {
+                switch (enumLZExportTask) {
+                    case EXPORT_CONFIG:
+                        progScreen.completeTask("exportGenCfgLzRaw");
+                        progScreen.activateTask("exportGenColLzRaw");
+                        break;
+                    case EXPORT_COLLISION:
+                        progScreen.completeTask("exportGenColLzRaw");
+                        progScreen.activateTask("exportGenLzRaw");
+                        break;
+                }
+            });
 
             LogHelper.info(getClass(), "Writing LZ file...");
             try {
-                LZExporter.writeLZ(modelData, configData, file);
+                lzExporter.writeLZ(modelData, configData, file);
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.error(getClass(), "LZ file not found!");
@@ -338,6 +367,11 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
                 progScreen.finish();
                 return;
             }
+
+            progScreen.setOnPreDrawAction(null);
+            exportGenCfgLzRawProg.setValue(1);
+            exportGenColLzRawProg.setValue(1);
+            exportGenLzRawProg.setValue(1);
 
             progScreen.completeTask("exportGenLzRaw");
 
