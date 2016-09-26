@@ -9,20 +9,20 @@ package com.owens.oobjloader.lwjgl;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
-import com.owens.oobjloader.builder.FaceVertex;
 import com.owens.oobjloader.builder.Face;
-import java.util.*;
+import com.owens.oobjloader.builder.FaceVertex;
+import com.owens.oobjloader.builder.Material;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ARBVertexBufferObject;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
-import com.owens.oobjloader.builder.Material;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.ARBVertexBufferObject;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
 
 public class VBOFactory {
     

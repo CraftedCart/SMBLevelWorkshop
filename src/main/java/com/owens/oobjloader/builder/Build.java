@@ -8,12 +8,15 @@ package com.owens.oobjloader.builder;
 // license.  (I generally don't care so I'll almost certainly say yes.)
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
+
 import com.owens.oobjloader.parser.BuilderInterface;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Logger;
+
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 
 public class Build implements BuilderInterface {
 

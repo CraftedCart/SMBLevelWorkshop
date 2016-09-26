@@ -2,15 +2,9 @@ package craftedcart.smblevelworkshop.resource.model;
 
 import com.owens.oobjloader.lwjgl.DisplayModel;
 import craftedcart.smblevelworkshop.resource.IResource;
-import craftedcart.smblevelworkshop.resource.ResourceShader;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by CraftedCart on 25/02/2016 (DD/MM/YYYY)

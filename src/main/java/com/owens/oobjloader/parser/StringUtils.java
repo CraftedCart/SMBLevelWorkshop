@@ -9,9 +9,10 @@ package com.owens.oobjloader.parser;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
-import java.util.*;
-import static java.util.logging.Level.SEVERE;
+import java.util.ArrayList;
 import java.util.logging.Logger;
+
+import static java.util.logging.Level.SEVERE;
 
 public class StringUtils {
     private static Logger log = Logger.getLogger(StringUtils.class.getName());

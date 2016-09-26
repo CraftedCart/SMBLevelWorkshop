@@ -12,7 +12,7 @@ package com.owens.oobjloader.lwjgl;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import io.github.craftedcart.fluidui.util.UIColor;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class DisplayModel {
 

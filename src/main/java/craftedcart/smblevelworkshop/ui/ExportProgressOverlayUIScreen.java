@@ -71,6 +71,7 @@ public class ExportProgressOverlayUIScreen extends FluidUIScreen {
             listBox.setBottomRightPos(-24, -72);
             listBox.setTopLeftAnchor(0, 0);
             listBox.setBottomRightAnchor(1, 1);
+            listBox.scrollbarThickness = 0;
         });
         mainPanel.addChildComponent("listBox", listBox);
 
@@ -84,6 +85,7 @@ public class ExportProgressOverlayUIScreen extends FluidUIScreen {
             okButton.setText(LangManager.getItem("ok"));
         });
         okButton.setOnLMBAction(() -> {
+            assert parentComponent != null;
             assert parentComponent.parentComponent instanceof FluidUIScreen;
             ((FluidUIScreen) parentComponent.parentComponent).setOverlayUiScreen(null); //Hide on OK
         });

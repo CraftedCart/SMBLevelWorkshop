@@ -9,23 +9,15 @@ package com.owens.oobjloader.lwjgl;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
 import com.owens.oobjloader.builder.Material;
-import craftedcart.smblevelworkshop.*;
-import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import io.github.craftedcart.fluidui.util.UIColor;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.awt.*;
-import java.util.*;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
+
+import java.nio.IntBuffer;
 
 public class VBO {
 

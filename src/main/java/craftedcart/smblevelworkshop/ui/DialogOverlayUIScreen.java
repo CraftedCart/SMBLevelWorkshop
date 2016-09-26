@@ -10,9 +10,6 @@ import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimatePanelBackgroundColor;
 import io.github.craftedcart.fluidui.util.UIColor;
 
-import java.awt.*;
-import java.io.*;
-
 /**
  * @author CraftedCart
  *         Created on 24/09/2016 (DD/MM/YYYY)

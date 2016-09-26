@@ -10,7 +10,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static craftedcart.smblevelworkshop.Window.*;
+import static craftedcart.smblevelworkshop.Window.drawable;
 
 /**
  * @author CraftedCart

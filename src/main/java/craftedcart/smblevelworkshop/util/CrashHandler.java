@@ -2,7 +2,6 @@ package craftedcart.smblevelworkshop.util;
 
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.ui.CrashedScreen;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 
 import java.io.PrintWriter;

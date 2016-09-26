@@ -1,8 +1,13 @@
 package craftedcart.smblevelworkshop.resource.model;
 
-import com.owens.oobjloader.builder.*;
+import com.owens.oobjloader.builder.Build;
 import com.owens.oobjloader.builder.Face;
-import com.owens.oobjloader.lwjgl.*;
+import com.owens.oobjloader.builder.FaceVertex;
+import com.owens.oobjloader.builder.Material;
+import com.owens.oobjloader.lwjgl.DisplayModel;
+import com.owens.oobjloader.lwjgl.TextureLoader;
+import com.owens.oobjloader.lwjgl.VBO;
+import com.owens.oobjloader.lwjgl.VBOFactory;
 import com.owens.oobjloader.parser.Parse;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -11,8 +16,6 @@ import org.lwjgl.LWJGLException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by CraftedCart on 25/02/2016 (DD/MM/YYYY)

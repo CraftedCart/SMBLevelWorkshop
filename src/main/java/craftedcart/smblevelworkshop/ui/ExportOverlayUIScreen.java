@@ -9,8 +9,8 @@ import craftedcart.smbworkshopexporter.LZExporter;
 import craftedcart.smbworkshopexporter.ModelData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
-import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.component.Label;
+import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.component.Panel;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimatePanelBackgroundColor;
@@ -84,6 +84,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             listBox.setBottomRightPos(-24, -72);
             listBox.setTopLeftAnchor(0, 0);
             listBox.setBottomRightAnchor(1, 1);
+            listBox.scrollbarThickness = 0;
         });
         mainPanel.addChildComponent("listBox", listBox);
 
@@ -331,12 +332,18 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             progScreen.setOnPreDrawAction(() -> {
                 if (lzExporter.cfgBytesToWrite != 0) {
                     exportGenCfgLzRawProg.setValue((double) lzExporter.cfgBytesWritten / lzExporter.cfgBytesToWrite);
+                } else {
+                    exportGenCfgLzRawProg.setValue(1);
                 }
                 if (lzExporter.colBytesToWrite != 0) {
                     exportGenColLzRawProg.setValue((double) lzExporter.colBytesWritten / lzExporter.colBytesToWrite);
+                } else {
+                    exportGenColLzRawProg.setValue(1);
                 }
                 if (lzExporter.lzBytesToWrite != 0) {
                     exportGenLzRawProg.setValue((double) lzExporter.lzBytesWritten / lzExporter.lzBytesToWrite);
+                } else {
+                    exportGenLzRawProg.setValue(1);
                 }
             });
 

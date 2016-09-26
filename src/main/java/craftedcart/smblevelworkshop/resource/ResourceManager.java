@@ -1,8 +1,8 @@
 package craftedcart.smblevelworkshop.resource;
 
 import craftedcart.smblevelworkshop.exception.GLSLCompileException;
-import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
+import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.ui.LoadingScreen;
 import craftedcart.smblevelworkshop.util.CrashHandler;
 import craftedcart.smblevelworkshop.util.LogHelper;

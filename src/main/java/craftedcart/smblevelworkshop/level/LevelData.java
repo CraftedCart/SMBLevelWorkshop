@@ -3,7 +3,6 @@ package craftedcart.smblevelworkshop.level;
 import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
-import craftedcart.smblevelworkshop.util.PosXYZ;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

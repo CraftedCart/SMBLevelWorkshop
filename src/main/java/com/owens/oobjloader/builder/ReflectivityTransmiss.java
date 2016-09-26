@@ -9,11 +9,6 @@ package com.owens.oobjloader.builder;
 // In addition this code may also be used under the "unlicense" described
 // at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
-import java.util.*;
-import java.text.*;
-import java.io.*;
-import java.io.IOException;
-
 public class ReflectivityTransmiss {
 
     public boolean isRGB = false;
