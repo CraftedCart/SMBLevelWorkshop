@@ -10,9 +10,9 @@ public class DepthComparator implements Comparator<DepthSortedPlaceable> {
 
     @Override
     public int compare(DepthSortedPlaceable o1, DepthSortedPlaceable o2) {
-        if (o1.depth > o2.depth) {
+        if (o1.depth < o2.depth) {
             return 1;
-        } else if (o1.depth < o2.depth) {
+        } else if (o1.depth > o2.depth) {
             return -1;
         } else {
             return 0;
