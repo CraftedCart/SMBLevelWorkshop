@@ -574,7 +574,7 @@ public class Parse {
         builder.addLine(values);
     }
 
-    // > mtllib filename1 filename2 . . .
+    // > mtllib filename
     // > 
     // >     Polygonal and free-form geometry statement.
     // > 
@@ -591,17 +591,24 @@ public class Parse {
     // >     filename is the name of the library file that defines the
     // >     materials.  There is no default.
     private void processMaterialLib(String line) throws FileNotFoundException, IOException {
-        String[] matlibnames = StringUtils.parseWhitespaceList(line.substring(OBJ_MTLLIB.length()).trim());
+//        String[] matlibnames = StringUtils.parseWhitespaceList(line.substring(OBJ_MTLLIB.length()).trim());
+        String matlibName = line.substring(OBJ_MTLLIB.length() + 1);
 
-        if (null != matlibnames) {
-            for (int loopi = 0; loopi < matlibnames.length; loopi++) {
-                try {
-                    parseMtlFile(matlibnames[loopi]);
-                } catch (FileNotFoundException e) {
-                    log.log(SEVERE, "Can't find material file name='" + matlibnames[loopi] + "', e=" + e);
-                }
-            }
+        try {
+            parseMtlFile(matlibName);
+        } catch (FileNotFoundException e) {
+            log.log(SEVERE, "Can't find material file name='" + matlibName + "', e=" + e);
         }
+
+//        if (null != mgitatlibnames) {
+//            for (int loopi = 0; loopi < matlibnames.length; loopi++) {
+//                try {
+//                    parseMtlFile(matlibnames[loopi]);
+//                } catch (FileNotFoundException e) {
+//                    log.log(SEVERE, "Can't find material file name='" + matlibnames[loopi] + "', e=" + e);
+//                }
+//            }
+//        }
     }
 
     private void processUseMaterial(String line) {
