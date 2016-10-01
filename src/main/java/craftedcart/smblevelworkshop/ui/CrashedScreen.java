@@ -208,7 +208,7 @@ public class CrashedScreen extends FluidUIScreen {
             return UIColor.matRed(0.2);
         } else if (element.contains("craftedcart.smblevelworkshop")) {
             return UIColor.matBlue(0.2);
-        } else if (element.contains("craftedcart.fluidui")) {
+        } else if (element.contains("craftedcart")) {
             return UIColor.matBlueGrey(0.2);
         } else {
             return UIColor.matGrey300(0.2);

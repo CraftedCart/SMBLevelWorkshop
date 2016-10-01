@@ -14,7 +14,9 @@
     <entry key="export" val="Export" />
     <entry key="exportConfig" val="Export smbcnv config" />
     <entry key="exportLzRawSmb1" val="Export raw LZ (SMB 1)" />
-    <entry key="exportLzRawDefaultName" val="Output LZ" />
+    <entry key="exportLzRawDefaultName" val="output.raw.lz" />
+    <entry key="exportLzCompressedSmb1" val="Export compressed LZ (SMB 1)" />
+    <entry key="exportLzCompressedDefaultName" val="output.lz" />
     <entry key="exportErrorPrefix" val="[ ERROR ] " />
     <entry key="exportGenConfig" val="Generating config" />
     <entry key="exportGenObjData" val="Generating model data" />
@@ -22,6 +24,9 @@
     <entry key="exportGenCfgLzRaw" val="Generating config data for raw LZ" />
     <entry key="exportGenColLzRaw" val="Generating collision data for raw LZ" />
     <entry key="exportGenLzRaw" val="Generating raw LZ" />
+    <entry key="exportReadLzRaw" val="Reading raw LZ" />
+    <entry key="exportCompressLzRaw" val="Compressing raw LZ" />
+    <entry key="exportWriteLz" val="Writing LZ" />
     <entry key="exportSaveConfig" val="Saving config" />
 
     <!-- Modes -->

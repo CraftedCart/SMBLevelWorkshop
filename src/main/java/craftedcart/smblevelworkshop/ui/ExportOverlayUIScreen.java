@@ -5,6 +5,7 @@ import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.util.ExportManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smbworkshopexporter.ConfigData;
+import craftedcart.smbworkshopexporter.LZCompressor;
 import craftedcart.smbworkshopexporter.LZExporter;
 import craftedcart.smbworkshopexporter.ModelData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
@@ -20,6 +21,8 @@ import org.lwjgl.LWJGLException;
 
 import java.awt.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author CraftedCart
@@ -115,6 +118,15 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
         });
         exportConfigButton.setOnLMBAction(this::exportConfig);
         listBox.addChildComponent("exportConfigButton", exportConfigButton);
+
+        final TextButton exportLzCompressedSmb1Button = new TextButton();
+        exportLzCompressedSmb1Button.setOnInitAction(() -> {
+            exportLzCompressedSmb1Button.setTopLeftPos(0, 0);
+            exportLzCompressedSmb1Button.setBottomRightPos(0, 24);
+            exportLzCompressedSmb1Button.setText(LangManager.getItem("exportLzCompressedSmb1"));
+        });
+        exportLzCompressedSmb1Button.setOnLMBAction(this::exportLzCompressedSmb1);
+        listBox.addChildComponent("exportLzCompressedSmb1Button", exportLzCompressedSmb1Button);
 
         final TextButton exportLzRawSmb1Button = new TextButton();
         exportLzRawSmb1Button.setOnInitAction(() -> {
@@ -360,14 +372,14 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
                 }
             });
 
-            LogHelper.info(getClass(), "Writing LZ file...");
+            LogHelper.info(getClass(), "Writing raw LZ file...");
             try {
-                lzExporter.writeLZ(modelData, configData, file);
+                lzExporter.writeRawLZ(modelData, configData, file);
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
-                    LogHelper.error(getClass(), "LZ file not found!");
+                    LogHelper.error(getClass(), "Raw LZ file not found!");
                 } else {
-                    LogHelper.error(getClass(), "LZ file: IOException");
+                    LogHelper.error(getClass(), "Raw LZ file: IOException");
                 }
                 LogHelper.error(getClass(), e);
                 progScreen.errorTask("exportGenLzRaw");
@@ -383,6 +395,244 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             progScreen.completeTask("exportGenLzRaw");
 
             progScreen.finish();
+
+        }, /* onCanceledAction */ this::showMainPanel);
+    }
+
+    private void exportLzCompressedSmb1() {
+        hideMainPanel();
+        askFileLocation(LangManager.getItem("exportLzCompressedDefaultName"), (file) -> {
+            LZExporter lzExporter = new LZExporter();
+
+            //onSuccessAction
+
+            try {
+                craftedcart.smblevelworkshop.Window.drawable.makeCurrent();
+            } catch (LWJGLException e) {
+                e.printStackTrace();
+            }
+
+            ExportProgressOverlayUIScreen progScreen = new ExportProgressOverlayUIScreen();
+            setOverlayUiScreen(progScreen);
+
+            //Add tasks to progScreen
+            progScreen.addTask("exportGenConfig", LangManager.getItem("exportGenConfig"));
+            progScreen.addTask("exportSaveConfig", LangManager.getItem("exportSaveConfig"));
+            progScreen.addTask("exportGenObjData", LangManager.getItem("exportGenObjData"));
+            progScreen.addTask("exportGenConfigData", LangManager.getItem("exportGenConfigData"));
+            ProgressBar exportGenCfgLzRawProg = progScreen.addProgressTask("exportGenCfgLzRaw", LangManager.getItem("exportGenCfgLzRaw"));
+            ProgressBar exportGenColLzRawProg = progScreen.addProgressTask("exportGenColLzRaw", LangManager.getItem("exportGenColLzRaw"));
+            ProgressBar exportGenLzRawProg = progScreen.addProgressTask("exportGenLzRaw", LangManager.getItem("exportGenLzRaw"));
+            ProgressBar exportReadLzRawProg = progScreen.addProgressTask("exportReadLzRaw", LangManager.getItem("exportReadLzRaw"));
+            progScreen.addTask("exportCompressLzRaw", LangManager.getItem("exportCompressLzRaw"));
+            ProgressBar exportWriteLzProg = progScreen.addProgressTask("exportWriteLz", LangManager.getItem("exportWriteLz"));
+
+            try {
+                Window.drawable.releaseContext();
+            } catch (LWJGLException e) {
+                e.printStackTrace();
+            }
+
+            LogHelper.info(getClass(), "Exporting config file: " + file.getAbsolutePath());
+
+            progScreen.activateTask("exportGenConfig");
+
+            assert getMainScreen().clientLevelData != null;
+            String exportContents = ExportManager.getConfig(getMainScreen().clientLevelData.getLevelData());
+
+            progScreen.completeTask("exportGenConfig");
+            progScreen.activateTask("exportSaveConfig");
+
+            File tempConfigFile;
+
+            try {
+                tempConfigFile = File.createTempFile("SMBLevelWorkshopExportConfig", ".txt");
+                BufferedWriter writer = new BufferedWriter(new FileWriter(tempConfigFile));
+                writer.write(exportContents);
+                writer.close();
+                progScreen.completeTask("exportSaveConfig");
+            } catch (IOException e) {
+                LogHelper.error(getClass(), "Error while exporting");
+                LogHelper.error(getClass(), e);
+                progScreen.errorTask("exportSaveConfig");
+                progScreen.finish();
+                return;
+            }
+
+            progScreen.completeTask("exportSaveConfig");
+            progScreen.activateTask("exportGenObjData");
+
+            LogHelper.info(getClass(), "Parsing OBJ File...");
+            ModelData modelData = new ModelData();
+            try {
+                modelData.parseObj(getMainScreen().clientLevelData.getLevelData().getModelObjSource());
+            } catch (IOException e) {
+                if (e instanceof FileNotFoundException) {
+                    LogHelper.error(getClass(), "OBJ file not found!");
+                } else {
+                    LogHelper.error(getClass(), "OBJ file: IOException");
+                }
+                LogHelper.error(getClass(), e);
+
+                progScreen.errorTask("exportGenObjData");
+                progScreen.finish();
+                return;
+            } catch (NumberFormatException e) {
+                LogHelper.error(getClass(), "OBJ file: Invalid number!");
+                LogHelper.error(getClass(), e);
+
+                progScreen.errorTask("exportGenObjData");
+                progScreen.finish();
+                return;
+            }
+
+            progScreen.completeTask("exportGenObjData");
+            progScreen.activateTask("exportGenConfigData");
+
+            LogHelper.info(getClass(), "Parsing Config File...");
+            ConfigData configData = new ConfigData();
+            try {
+                configData.parseConfig(tempConfigFile);
+            } catch (IOException e) {
+                if (e instanceof FileNotFoundException) {
+                    LogHelper.fatal(getClass(), "Config file not found!");
+                } else {
+                    LogHelper.fatal(getClass(), "Config file: IOException");
+                }
+                LogHelper.error(getClass(), e);
+                progScreen.errorTask("exportGenConfigData");
+                progScreen.finish();
+                return;
+            } catch (NumberFormatException e) {
+                LogHelper.error(getClass(), "Config file: Invalid number!");
+                LogHelper.error(getClass(), e);
+                progScreen.errorTask("exportGenConfigData");
+                progScreen.finish();
+                return;
+            } catch (IllegalStateException e) {
+                LogHelper.error(getClass(), "Config file: Invalid pattern!");
+                LogHelper.error(getClass(), e);
+                progScreen.errorTask("exportGenConfigData");
+                progScreen.finish();
+                return;
+            }
+
+            if (!tempConfigFile.delete()) {
+                LogHelper.warn(getClass(), "Failed to delete temporary file: " + tempConfigFile.getAbsolutePath());
+            }
+
+            progScreen.completeTask("exportGenConfigData");
+            progScreen.activateTask("exportGenCfgLzRaw");
+
+            progScreen.setOnPreDrawAction(() -> {
+                if (lzExporter.cfgBytesToWrite != 0) {
+                    exportGenCfgLzRawProg.setValue((double) lzExporter.cfgBytesWritten / lzExporter.cfgBytesToWrite);
+                } else {
+                    exportGenCfgLzRawProg.setValue(1);
+                }
+                if (lzExporter.colBytesToWrite != 0) {
+                    exportGenColLzRawProg.setValue((double) lzExporter.colBytesWritten / lzExporter.colBytesToWrite);
+                } else {
+                    exportGenColLzRawProg.setValue(1);
+                }
+                if (lzExporter.lzBytesToWrite != 0) {
+                    exportGenLzRawProg.setValue((double) lzExporter.lzBytesWritten / lzExporter.lzBytesToWrite);
+                } else {
+                    exportGenLzRawProg.setValue(1);
+                }
+            });
+
+            lzExporter.setTaskDoneAction((enumLZExportTask) -> {
+                switch (enumLZExportTask) {
+                    case EXPORT_CONFIG:
+                        progScreen.completeTask("exportGenCfgLzRaw");
+                        progScreen.activateTask("exportGenColLzRaw");
+                        break;
+                    case EXPORT_COLLISION:
+                        progScreen.completeTask("exportGenColLzRaw");
+                        progScreen.activateTask("exportGenLzRaw");
+                        break;
+                }
+            });
+
+            File tempRawLzFile;
+
+            LogHelper.info(getClass(), "Writing raw LZ file...");
+            try {
+                tempRawLzFile = File.createTempFile("SMBLevelWorkshopExportRawLz", ".lz.raw");
+                lzExporter.writeRawLZ(modelData, configData, tempRawLzFile);
+            } catch (IOException e) {
+                if (e instanceof FileNotFoundException) {
+                    LogHelper.error(getClass(), "Raw LZ file not found!");
+                } else {
+                    LogHelper.error(getClass(), "Raw LZ file: IOException");
+                }
+                LogHelper.error(getClass(), e);
+                progScreen.errorTask("exportGenLzRaw");
+                progScreen.finish();
+                return;
+            }
+
+            progScreen.setOnPreDrawAction(null);
+            exportGenCfgLzRawProg.setValue(1);
+            exportGenColLzRawProg.setValue(1);
+            exportGenLzRawProg.setValue(1);
+
+            progScreen.completeTask("exportGenLzRaw");
+            progScreen.activateTask("exportReadLzRaw");
+
+            LogHelper.info(getClass(), "Reading raw LZ file...");
+            final List<Byte> contents = new ArrayList<>();
+            try {
+                RandomAccessFile raf = new RandomAccessFile(tempRawLzFile, "r");
+                while (raf.getFilePointer() < raf.length()) {
+                    contents.add(raf.readByte());
+                    exportReadLzRawProg.setValue((double) raf.getFilePointer() / raf.length()); //TODO Only call this every frame
+                }
+
+                if (!tempRawLzFile.delete()) {
+                    LogHelper.warn(getClass(), "Failed to delete temporary file: " + tempConfigFile.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                LogHelper.error(getClass(), "Raw LZ file: IOException");
+                LogHelper.error(getClass(), e);
+            }
+
+            exportReadLzRawProg.setValue(1);
+            progScreen.completeTask("exportReadLzRaw");
+            progScreen.activateTask("exportCompressLzRaw");
+
+            LogHelper.info(getClass(), "Compressing raw LZ file...");
+            final Byte[] byteArray = contents.toArray(new Byte[contents.size()]);
+            List<Byte> bl = LZCompressor.compress(byteArray); //Compress the raw lz
+
+            progScreen.completeTask("exportCompressLzRaw");
+            progScreen.activateTask("exportWriteLz");
+
+            try {
+                LogHelper.info(getClass(), "Writing LZ file...");
+                RandomAccessFile raf = new RandomAccessFile(file, "rw");
+                int i = 0;
+                int size = bl.size();
+                for (Byte c : bl) {
+                    raf.write(c);
+                    exportWriteLzProg.setValue((double) i / size); //TODO Only call this every frame
+                    i++;
+                }
+                raf.close();
+            } catch (IOException e) {
+                LogHelper.error(getClass(), "LZ file: IOException");
+                LogHelper.error(getClass(), e);
+
+                progScreen.errorTask("exportWriteLz");
+                progScreen.finish();
+            }
+
+            exportWriteLzProg.setValue(1);
+
+            progScreen.completeTask("exportWriteLz");
+            progScreen.finish();
+
 
         }, /* onCanceledAction */ this::showMainPanel);
     }
