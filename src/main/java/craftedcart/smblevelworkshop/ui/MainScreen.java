@@ -95,6 +95,9 @@ public class MainScreen extends FluidUIScreen {
     //Mouse & Scroll Wheel Delta (For snapping)
     private double deltaX = 0;
 
+    //Locks
+    private final Object renderingLock = new Object();
+
 
     public MainScreen() {
         init();
@@ -1153,136 +1156,138 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void drawViewport() {
-        Window.logOpenGLError("Before MainScreen.drawViewport()");
+        synchronized (renderingLock) {
+            Window.logOpenGLError("Before MainScreen.drawViewport()");
 
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-        //<editor-fold desc="Setup the matrix">
-        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        GLU.gluPerspective(90, Display.getWidth() / (float) Display.getHeight(), 0.01f, 1000f);
-        //</editor-fold>
-
-        GL11.glPushMatrix();
-
-        Window.logOpenGLError("After MainScreen.drawViewport() - Matrix setup");
-
-        GL11.glRotated(cameraRot.y, 1, 0, 0);
-        GL11.glRotated(cameraRot.x, 0, 1, 0);
-
-        GL11.glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-
-        //<editor-fold desc="Draw X line">
-        UIColor.matRed().bindColor();
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex3d(-10000, 0, 0);
-        GL11.glVertex3d(10000, 0, 0);
-        GL11.glEnd();
-        //</editor-fold>
-
-        //<editor-fold desc="Draw Z line">
-        UIColor.matBlue().bindColor();
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex3d(0, 0, -10000);
-        GL11.glVertex3d(0, 0, 10000);
-        GL11.glEnd();
-        //</editor-fold>
-
-        Window.logOpenGLError("After MainScreen.drawViewport() - Drawing global X & Z lines");
-
-        UIColor.pureWhite().bindColor();
-
-        if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
-            //<editor-fold desc="Draw opaque placeables">
-            for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                String name = placeableEntry.getKey();
-                Placeable placeable = placeableEntry.getValue();
-                boolean isSelected = clientLevelData.isPlaceableSelected(name);
-
-                if (!placeable.getAsset().isOpaque()) {
-                    continue;
-                }
-
-                drawPlaceable(placeable, isSelected);
-
-            }
-            //</editor-fold>
-
-            //<editor-fold desc="Draw model with wireframes">
             GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-            ResourceShaderProgram currentShaderProgram = getCurrentShader();
-            boolean useTextures = isCurrentShaderTextured();
-
-            if (!SMBLWSettings.showTextures) {
-                UIColor.pureWhite().bindColor();
-            }
-
-            GL20.glUseProgram(currentShaderProgram.getProgramID());
-            ResourceModel.drawModel(clientLevelData.getLevelData().getModel(), currentShaderProgram, useTextures);
-            GL20.glUseProgram(0);
-
-            Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
-
-            GL11.glLineWidth(2);
-            if (SMBLWSettings.showAllWireframes) {
-                GL11.glColor4f(0, 0, 0, 1);
-                ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
-
-                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
-
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-                GL11.glColor4f(0, 0, 0, 0.01f);
-                ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
-
-                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
-            }
+            //<editor-fold desc="Setup the matrix">
+            GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+            GL11.glMatrixMode(GL11.GL_PROJECTION);
+            GL11.glLoadIdentity();
+            GLU.gluPerspective(90, Display.getWidth() / (float) Display.getHeight(), 0.01f, 1000f);
             //</editor-fold>
 
-            //<editor-fold desc="Draw placeables with transparency">
-            List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
+            GL11.glPushMatrix();
 
-            for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                Placeable placeable = placeableEntry.getValue();
+            Window.logOpenGLError("After MainScreen.drawViewport() - Matrix setup");
 
-                double distance;
+            GL11.glRotated(cameraRot.y, 1, 0, 0);
+            GL11.glRotated(cameraRot.x, 0, 1, 0);
 
-                if (placeable.getAsset() instanceof AssetFalloutY) {
-                    distance = getDistance(cameraPos, new PosXYZ(cameraPos.x, placeable.getPosition().y, cameraPos.z));
-                } else {
-                    distance = getDistance(cameraPos, placeable.getPosition());
-                }
+            GL11.glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
-                depthSortedMap.add(new DepthSortedPlaceable(distance, placeableEntry));
-            }
-
-            Collections.sort(depthSortedMap, new DepthComparator());
-
-            for (DepthSortedPlaceable placeableEntry : depthSortedMap) {
-                String name = placeableEntry.entry.getKey();
-                Placeable placeable = placeableEntry.entry.getValue();
-                boolean isSelected = clientLevelData.isPlaceableSelected(name);
-
-                if (placeable.getAsset().isOpaque()) {
-                    continue;
-                }
-
-                drawPlaceable(placeable, isSelected);
-
-            }
+            //<editor-fold desc="Draw X line">
+            UIColor.matRed().bindColor();
+            GL11.glBegin(GL11.GL_LINES);
+            GL11.glVertex3d(-10000, 0, 0);
+            GL11.glVertex3d(10000, 0, 0);
+            GL11.glEnd();
             //</editor-fold>
+
+            //<editor-fold desc="Draw Z line">
+            UIColor.matBlue().bindColor();
+            GL11.glBegin(GL11.GL_LINES);
+            GL11.glVertex3d(0, 0, -10000);
+            GL11.glVertex3d(0, 0, 10000);
+            GL11.glEnd();
+            //</editor-fold>
+
+            Window.logOpenGLError("After MainScreen.drawViewport() - Drawing global X & Z lines");
+
+            UIColor.pureWhite().bindColor();
+
+            if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+                //<editor-fold desc="Draw opaque placeables">
+                for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    String name = placeableEntry.getKey();
+                    Placeable placeable = placeableEntry.getValue();
+                    boolean isSelected = clientLevelData.isPlaceableSelected(name);
+
+                    if (!placeable.getAsset().isOpaque()) {
+                        continue;
+                    }
+
+                    drawPlaceable(placeable, isSelected);
+
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Draw model with wireframes">
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+                ResourceShaderProgram currentShaderProgram = getCurrentShader();
+                boolean useTextures = isCurrentShaderTextured();
+
+                if (!SMBLWSettings.showTextures) {
+                    UIColor.pureWhite().bindColor();
+                }
+
+                GL20.glUseProgram(currentShaderProgram.getProgramID());
+                ResourceModel.drawModel(clientLevelData.getLevelData().getModel(), currentShaderProgram, useTextures);
+                GL20.glUseProgram(0);
+
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
+
+                GL11.glLineWidth(2);
+                if (SMBLWSettings.showAllWireframes) {
+                    GL11.glColor4f(0, 0, 0, 1);
+                    ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
+
+                    Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
+
+                    GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+                    GL11.glColor4f(0, 0, 0, 0.01f);
+                    ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
+
+                    Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Draw placeables with transparency">
+                List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
+
+                for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    Placeable placeable = placeableEntry.getValue();
+
+                    double distance;
+
+                    if (placeable.getAsset() instanceof AssetFalloutY) {
+                        distance = getDistance(cameraPos, new PosXYZ(cameraPos.x, placeable.getPosition().y, cameraPos.z));
+                    } else {
+                        distance = getDistance(cameraPos, placeable.getPosition());
+                    }
+
+                    depthSortedMap.add(new DepthSortedPlaceable(distance, placeableEntry));
+                }
+
+                Collections.sort(depthSortedMap, new DepthComparator());
+
+                for (DepthSortedPlaceable placeableEntry : depthSortedMap) {
+                    String name = placeableEntry.entry.getKey();
+                    Placeable placeable = placeableEntry.entry.getValue();
+                    boolean isSelected = clientLevelData.isPlaceableSelected(name);
+
+                    if (placeable.getAsset().isOpaque()) {
+                        continue;
+                    }
+
+                    drawPlaceable(placeable, isSelected);
+
+                }
+                //</editor-fold>
+            }
+
+            GL11.glPopMatrix();
+
+            GL11.glColor3f(1, 1, 1);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+            Window.setMatrix();
+
+            Window.logOpenGLError("After MainScreen.drawViewport()");
         }
-
-        GL11.glPopMatrix();
-
-        GL11.glColor3f(1, 1, 1);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-        Window.setMatrix();
-
-        Window.logOpenGLError("After MainScreen.drawViewport()");
     }
 
     private void drawPlaceable(Placeable placeable, boolean isSelected) {
@@ -1576,62 +1581,64 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void newLevelData(File file) throws IOException {
-        clientLevelData = null;
+        synchronized (renderingLock) {
+            clientLevelData = null;
 
-        try {
-            preventRendering = true;
+            try {
+                preventRendering = true;
 
-            Window.drawable.makeCurrent();
+                Window.drawable.makeCurrent();
 
-            GL11.glFinish();
+                GL11.glFinish();
 
-            //Clear outliner list box
-            outlinerListBox.clearChildComponents();
+                //Clear outliner list box
+                outlinerListBox.clearChildComponents();
 
-            //Reset undo history
-            undoCommandList.clear();
-            redoCommandList.clear();
+                //Reset undo history
+                undoCommandList.clear();
+                redoCommandList.clear();
 
-            if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
-                //Unload textures and VBOs
-                for (VBO vbo : clientLevelData.getLevelData().getModel().scene.vboList) {
-                    GL11.glDeleteTextures(vbo.getTextureId());
-                    vbo.destroy();
+                if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+                    //Unload textures and VBOs
+                    for (VBO vbo : clientLevelData.getLevelData().getModel().scene.vboList) {
+                        GL11.glDeleteTextures(vbo.getTextureId());
+                        vbo.destroy();
+                    }
                 }
+
+                clientLevelData = new ClientLevelData();
+                clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
+                ResourceModel model = OBJLoader.loadModel(file.getPath());
+                clientLevelData.getLevelData().setModel(model);
+                clientLevelData.getLevelData().setModelObjSource(file);
+
+                Placeable startPosPlaceable = new Placeable(new AssetStartPos());
+                startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
+                String startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+                clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+
+                Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
+                falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
+                String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+
+                Window.drawable.makeCurrent();
+
+                outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
+                outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+
+                if (!OBJLoader.isLastObjTriangulated) {
+                    setOverlayUiScreen(new DialogOverlayUIScreen(LangManager.getItem("warning"), LangManager.getItem("notTriangulated")));
+                }
+
+                GL11.glFlush();
+
+                Window.drawable.releaseContext();
+            } catch (LWJGLException e) {
+                LogHelper.error(getClass(), e);
             }
 
-            clientLevelData = new ClientLevelData();
-            clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
-            ResourceModel model = OBJLoader.loadModel(file.getPath());
-            clientLevelData.getLevelData().setModel(model);
-            clientLevelData.getLevelData().setModelObjSource(file);
-
-            Placeable startPosPlaceable = new Placeable(new AssetStartPos());
-            startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-            String startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
-            clientLevelData.addSelectedPlaceable(startPosPlaceableName);
-
-            Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
-            falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-            String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
-
-            Window.drawable.makeCurrent();
-
-            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
-            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
-
-            if (!OBJLoader.isLastObjTriangulated) {
-                setOverlayUiScreen(new DialogOverlayUIScreen(LangManager.getItem("warning"), LangManager.getItem("notTriangulated")));
-            }
-
-            GL11.glFlush();
-
-            Window.drawable.releaseContext();
-        } catch (LWJGLException e) {
-            LogHelper.error(getClass(), e);
+            preventRendering = false;
         }
-
-        preventRendering = false;
     }
 
     private void addUndoCommand(UndoCommand undoCommand) {
