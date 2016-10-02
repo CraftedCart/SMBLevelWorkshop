@@ -424,7 +424,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             ProgressBar exportGenColLzRawProg = progScreen.addProgressTask("exportGenColLzRaw", LangManager.getItem("exportGenColLzRaw"));
             ProgressBar exportGenLzRawProg = progScreen.addProgressTask("exportGenLzRaw", LangManager.getItem("exportGenLzRaw"));
             ProgressBar exportReadLzRawProg = progScreen.addProgressTask("exportReadLzRaw", LangManager.getItem("exportReadLzRaw"));
-            progScreen.addTask("exportCompressLzRaw", LangManager.getItem("exportCompressLzRaw"));
+            ProgressBar exportCompressLzRawProg = progScreen.addProgressTask("exportCompressLzRaw", LangManager.getItem("exportCompressLzRaw"));
             ProgressBar exportWriteLzProg = progScreen.addProgressTask("exportWriteLz", LangManager.getItem("exportWriteLz"));
 
             try {
@@ -604,7 +604,18 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             LogHelper.info(getClass(), "Compressing raw LZ file...");
             final Byte[] byteArray = contents.toArray(new Byte[contents.size()]);
-            List<Byte> bl = LZCompressor.compress(byteArray); //Compress the raw lz
+
+            LZCompressor compressor = new LZCompressor();
+
+            progScreen.setOnPreDrawAction(() -> {
+                if (compressor.progressMax != 0) {
+                    exportCompressLzRawProg.setValue((double) compressor.progress / compressor.progressMax);
+                } else {
+                    exportCompressLzRawProg.setValue(1);
+                }
+            });
+
+            List<Byte> bl = compressor.compress(byteArray); //Compress the raw lz
 
             progScreen.completeTask("exportCompressLzRaw");
             progScreen.activateTask("exportWriteLz");

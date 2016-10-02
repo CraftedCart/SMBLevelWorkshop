@@ -50,6 +50,7 @@ public class Window {
                 SMBLevelWorkshop.init();
             } catch (LWJGLException | SlickException | FontFormatException | IOException e) {
                 CrashHandler.handleCrash(Thread.currentThread(), e, false);
+                System.exit(1);
             }
         }, "initThread").start();
 
