@@ -5,6 +5,11 @@
     <entry key="ok" val="OK" />
     <entry key="cancel" val="Cancel" />
 
+    <!-- Ask replace obj dialog -->
+    <entry key="askReplaceCurrentModel" val="Do you want to replace the current model or create a new&#10;project?" />
+    <entry key="replace" val="Replace" />
+    <entry key="newProject" val="New Project" />
+
     <!-- Settings -->
     <entry key="settingShowTextures" val="Show textures" />
     <entry key="settingIsUnlit" val="Is unlit" />

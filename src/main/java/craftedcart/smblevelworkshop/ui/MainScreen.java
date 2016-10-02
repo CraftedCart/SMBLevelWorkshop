@@ -66,6 +66,7 @@ public class MainScreen extends FluidUIScreen {
 
     private final TextButton importObjButton = new TextButton();
     private final TextButton exportButton = new TextButton();
+    private final TextButton settingsButton = new TextButton();
 
     //UI: Properties
     private final TextField positionXTextField = new TextField();
@@ -269,7 +270,7 @@ public class MainScreen extends FluidUIScreen {
         //</editor-fold>
 
         //<editor-fold desc="Settings TextButton">
-        final TextButton settingsButton = new TextButton();
+        //Defined at class level
         settingsButton.setOnInitAction(() -> {
             settingsButton.setText(LangManager.getItem("settings"));
             settingsButton.setTopLeftPos(0, 0);
@@ -1581,10 +1582,8 @@ public class MainScreen extends FluidUIScreen {
         }
     }
 
-    private void newLevelData(File file) throws IOException {
+    private void newLevelData(File file, boolean replace) throws IOException {
         synchronized (renderingLock) {
-            clientLevelData = null;
-
             try {
                 preventRendering = true;
 
@@ -1592,12 +1591,14 @@ public class MainScreen extends FluidUIScreen {
 
                 GL11.glFinish();
 
-                //Clear outliner list box
-                outlinerListBox.clearChildComponents();
+                if (!replace) {
+                    //Clear outliner list box
+                    outlinerListBox.clearChildComponents();
 
-                //Reset undo history
-                undoCommandList.clear();
-                redoCommandList.clear();
+                    //Reset undo history
+                    undoCommandList.clear();
+                    redoCommandList.clear();
+                }
 
                 if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
                     //Unload textures and VBOs
@@ -1607,25 +1608,37 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
 
-                clientLevelData = new ClientLevelData();
-                clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
+                if (!replace) {
+                    clientLevelData = new ClientLevelData();
+                    clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
+                }
+
                 ResourceModel model = OBJLoader.loadModel(file.getPath());
                 clientLevelData.getLevelData().setModel(model);
                 clientLevelData.getLevelData().setModelObjSource(file);
 
-                Placeable startPosPlaceable = new Placeable(new AssetStartPos());
-                startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-                String startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
-                clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+                Placeable startPosPlaceable;
+                String startPosPlaceableName = null;
+                Placeable falloutYPlaceable;
+                String falloutYPlaceableName = null;
+                if (!replace) {
+                    startPosPlaceable = new Placeable(new AssetStartPos());
+                    startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
+                    startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+                    clientLevelData.addSelectedPlaceable(startPosPlaceableName);
 
-                Placeable falloutYPlaceable = new Placeable(new AssetFalloutY());
-                falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-                String falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+                    falloutYPlaceable = new Placeable(new AssetFalloutY());
+                    falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
+                    falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+
+                }
 
                 Window.drawable.makeCurrent();
 
-                outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
-                outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+                if (!replace) {
+                    outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
+                    outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+                }
 
                 if (!OBJLoader.isLastObjTriangulated) {
                     setOverlayUiScreen(new DialogOverlayUIScreen(LangManager.getItem("warning"), LangManager.getItem("notTriangulated")));
@@ -1698,6 +1711,7 @@ public class MainScreen extends FluidUIScreen {
                 isLoadingProject = true;
                 importObjButton.setEnabled(false);
                 exportButton.setEnabled(false);
+                settingsButton.setEnabled(false);
                 FileDialog fd = new FileDialog((Frame) null);
                 fd.setMode(FileDialog.LOAD);
                 fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".OBJ"));
@@ -1709,12 +1723,20 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
 
                     try {
-                        newLevelData(file);
+                        if (clientLevelData != null) {
+                            AskReplaceObjOverlayUIScreen dialog = new AskReplaceObjOverlayUIScreen();
+                            setOverlayUiScreen(dialog);
+                            boolean shouldRepalce = dialog.waitForShouldReplaceResponse();
+                            newLevelData(file, shouldRepalce);
+                        } else {
+                            newLevelData(file, false);
+                        }
                     } catch (IOException e) {
                         LogHelper.error(getClass(), "Failed to open file");
                         LogHelper.error(getClass(), e);
                     }
                 }
+                settingsButton.setEnabled(true);
                 exportButton.setEnabled(true);
                 importObjButton.setEnabled(true);
                 isLoadingProject = false;
