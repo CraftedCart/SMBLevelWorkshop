@@ -12,6 +12,8 @@ import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
+import craftedcart.smblevelworkshop.util.LogHelper;
+import craftedcart.smbworkshopexporter.util.*;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Component;
@@ -62,6 +64,8 @@ public class MainScreen extends FluidUIScreen {
     public final ListBox outlinerListBox = new ListBox();
     private final Panel notifPanel = new Panel();
 
+    final TextButton importObjButton = new TextButton();
+
     //UI: Properties
     private final TextField positionXTextField = new TextField();
     private final TextField positionYTextField = new TextField();
@@ -83,6 +87,7 @@ public class MainScreen extends FluidUIScreen {
     @NotNull private List<UndoCommand> redoCommandList = new ArrayList<>();
 
     private boolean preventRendering = false; //Used when unloading textures and VBOs
+    private boolean isLoadingProject = false; //Just in case disabling the button is too slow
 
     //Notifications
     private int notificationID = 0;
@@ -238,7 +243,7 @@ public class MainScreen extends FluidUIScreen {
         mainUI.addChildComponent("rightListBox", rightListBox);
 
         //<editor-fold desc="ImportObj TextButton">
-        final TextButton importObjButton = new TextButton();
+        //Defined at class level
         importObjButton.setOnInitAction(() -> {
             importObjButton.setText(LangManager.getItem("importObj"));
             importObjButton.setTopLeftPos(0, 0);
@@ -1680,25 +1685,33 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void importObj() {
-        new Thread(() -> {
-            FileDialog fd = new FileDialog((Frame) null);
-            fd.setMode(FileDialog.LOAD);
-            fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".OBJ"));
-            fd.setVisible(true);
+        if (!isLoadingProject) {
+            new Thread(() -> {
+                isLoadingProject = true;
+                importObjButton.setEnabled(false);
+                FileDialog fd = new FileDialog((Frame) null);
+                fd.setMode(FileDialog.LOAD);
+                fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".OBJ"));
+                fd.setVisible(true);
 
-            File[] files = fd.getFiles();
-            if (files != null && files.length > 0) {
-                File file = files[0];
-                LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
+                File[] files = fd.getFiles();
+                if (files != null && files.length > 0) {
+                    File file = files[0];
+                    LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
 
-                try {
-                    newLevelData(file);
-                } catch (IOException e) {
-                    LogHelper.error(getClass(), "Failed to open file");
-                    LogHelper.error(getClass(), e);
+                    try {
+                        newLevelData(file);
+                    } catch (IOException e) {
+                        LogHelper.error(getClass(), "Failed to open file");
+                        LogHelper.error(getClass(), e);
+                    }
                 }
-            }
-        }, "ObjFileOpenThread").start();
+                importObjButton.setEnabled(true);
+                isLoadingProject = false;
+            }, "ObjFileOpenThread").start();
+        } else {
+            LogHelper.warn(getClass(), "Tried importing OBJ when already importing OBJ");
+        }
     }
 
     private void export() {
