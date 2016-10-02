@@ -49,7 +49,7 @@ public class Window {
             try {
                 SMBLevelWorkshop.init();
             } catch (LWJGLException | SlickException | FontFormatException | IOException e) {
-                e.printStackTrace();
+                CrashHandler.handleCrash(Thread.currentThread(), e, false);
             }
         }, "initThread").start();
 
