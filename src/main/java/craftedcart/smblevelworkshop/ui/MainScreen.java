@@ -13,7 +13,6 @@ import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
-import craftedcart.smbworkshopexporter.util.*;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Component;
@@ -1428,16 +1427,23 @@ public class MainScreen extends FluidUIScreen {
 
                     } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables
                         if (clientLevelData.getSelectedPlaceables().size() > 0) {
-                            int deleted = 0;
+
+                            List<String> toDelete = new ArrayList<>();
+
                             for (String name : new HashSet<>(clientLevelData.getSelectedPlaceables())) {
                                 if (!(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
                                         !(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
-                                    removePlaceable(name);
-                                    deleted++;
+                                    toDelete.add(name);
                                 }
                             }
 
-                            notify(String.format(LangManager.getItem("placeablesRemovedFormat"), deleted));
+                            removePlaceables(toDelete);
+
+                            if (toDelete.size() > 1) {
+                                notify(String.format(LangManager.getItem("placeableRemovedPlural"), toDelete.size()));
+                            } else {
+                                notify(LangManager.getItem("placeableRemoved"));
+                            }
 
                         } else {
                             notify(LangManager.getItem("nothingSelected"));
@@ -1577,6 +1583,27 @@ public class MainScreen extends FluidUIScreen {
             clientLevelData.getLevelData().removePlaceable(name);
 
             outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
+        } else {
+            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+        }
+    }
+
+    private void removePlaceables(List<String> names) {
+        if (clientLevelData != null) {
+
+            List<Placeable> placeables = new ArrayList<>();
+            for (String name : names) {
+                placeables.add(clientLevelData.getLevelData().getPlaceable(name));
+            }
+
+            addUndoCommand(new UndoRemovePlaceable(clientLevelData, this, names, placeables));
+
+            for (String name : names) {
+                clientLevelData.removeSelectedPlaceable(name);
+                clientLevelData.getLevelData().removePlaceable(name);
+
+                outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
+            }
         } else {
             notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }

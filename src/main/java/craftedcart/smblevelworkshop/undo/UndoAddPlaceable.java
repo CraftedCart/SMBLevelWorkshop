@@ -58,7 +58,11 @@ public class UndoAddPlaceable extends UndoCommand {
     @Nullable
     @Override
     public String getRedoMessage() {
-        return LangManager.getItem("redoAddPlaceable");
+        if (names.size() > 1) {
+            return String.format(LangManager.getItem("redoAddPlaceablePlural"), names.size());
+        } else {
+            return LangManager.getItem("redoAddPlaceable");
+        }
     }
 
 }

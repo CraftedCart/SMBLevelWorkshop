@@ -53,7 +53,11 @@ public class UndoRemovePlaceable extends UndoCommand {
     @Nullable
     @Override
     public String getUndoMessage() {
-        return LangManager.getItem("undoRemovePlaceable");
+        if (names.size() > 1) {
+            return String.format(LangManager.getItem("undoRemovePlaceablePlural"), names.size());
+        } else {
+            return LangManager.getItem("undoRemovePlaceable");
+        }
     }
 
     @Nullable
