@@ -64,7 +64,8 @@ public class MainScreen extends FluidUIScreen {
     public final ListBox outlinerListBox = new ListBox();
     private final Panel notifPanel = new Panel();
 
-    final TextButton importObjButton = new TextButton();
+    private final TextButton importObjButton = new TextButton();
+    private final TextButton exportButton = new TextButton();
 
     //UI: Properties
     private final TextField positionXTextField = new TextField();
@@ -257,7 +258,7 @@ public class MainScreen extends FluidUIScreen {
         //</editor-fold>
 
         //<editor-fold desc="Export TextButton">
-        final TextButton exportButton = new TextButton();
+        //Defined at class level
         exportButton.setOnInitAction(() -> {
             exportButton.setText(LangManager.getItem("export"));
             exportButton.setTopLeftPos(0, 0);
@@ -1696,6 +1697,7 @@ public class MainScreen extends FluidUIScreen {
             new Thread(() -> {
                 isLoadingProject = true;
                 importObjButton.setEnabled(false);
+                exportButton.setEnabled(false);
                 FileDialog fd = new FileDialog((Frame) null);
                 fd.setMode(FileDialog.LOAD);
                 fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".OBJ"));
@@ -1713,6 +1715,7 @@ public class MainScreen extends FluidUIScreen {
                         LogHelper.error(getClass(), e);
                     }
                 }
+                exportButton.setEnabled(true);
                 importObjButton.setEnabled(true);
                 isLoadingProject = false;
             }, "ObjFileOpenThread").start();
@@ -1722,10 +1725,12 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void export() {
-        if (clientLevelData != null) {
-            setOverlayUiScreen(new ExportOverlayUIScreen());
-        } else {
-            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+        if (!isLoadingProject) {
+            if (clientLevelData != null) {
+                setOverlayUiScreen(new ExportOverlayUIScreen());
+            } else {
+                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            }
         }
     }
 
