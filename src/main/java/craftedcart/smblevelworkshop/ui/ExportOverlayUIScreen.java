@@ -185,7 +185,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             //Add tasks to progScreen
             progScreen.addTask("exportGenConfig", LangManager.getItem("exportGenConfig"));
-            progScreen.addTask("exportSaveConfig", LangManager.getItem("exportSaveConfig"));
+            progScreen.addTask("exportWriteConfig", LangManager.getItem("exportWriteConfig"));
 
             try {
                 Window.drawable.releaseContext();
@@ -201,17 +201,17 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             String exportContents = ExportManager.getConfig(getMainScreen().clientLevelData.getLevelData());
 
             progScreen.completeTask("exportGenConfig");
-            progScreen.activateTask("exportSaveConfig");
+            progScreen.activateTask("exportWriteConfig");
 
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
                 writer.write(exportContents);
                 writer.close();
-                progScreen.completeTask("exportSaveConfig");
+                progScreen.completeTask("exportWriteConfig");
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
                 LogHelper.error(getClass(), e);
-                progScreen.errorTask("exportSaveConfig");
+                progScreen.errorTask("exportWriteConfig");
             }
 
             progScreen.finish();
@@ -237,7 +237,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             //Add tasks to progScreen
             progScreen.addTask("exportGenConfig", LangManager.getItem("exportGenConfig"));
-            progScreen.addTask("exportSaveConfig", LangManager.getItem("exportSaveConfig"));
+            progScreen.addTask("exportWriteConfig", LangManager.getItem("exportWriteConfig"));
             progScreen.addTask("exportGenObjData", LangManager.getItem("exportGenObjData"));
             progScreen.addTask("exportGenConfigData", LangManager.getItem("exportGenConfigData"));
             ProgressBar exportGenCfgLzRawProg = progScreen.addProgressTask("exportGenCfgLzRaw", LangManager.getItem("exportGenCfgLzRaw"));
@@ -258,7 +258,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             String exportContents = ExportManager.getConfig(getMainScreen().clientLevelData.getLevelData());
 
             progScreen.completeTask("exportGenConfig");
-            progScreen.activateTask("exportSaveConfig");
+            progScreen.activateTask("exportWriteConfig");
 
             File tempConfigFile;
 
@@ -267,16 +267,16 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(tempConfigFile));
                 writer.write(exportContents);
                 writer.close();
-                progScreen.completeTask("exportSaveConfig");
+                progScreen.completeTask("exportWriteConfig");
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
                 LogHelper.error(getClass(), e);
-                progScreen.errorTask("exportSaveConfig");
+                progScreen.errorTask("exportWriteConfig");
                 progScreen.finish();
                 return;
             }
 
-            progScreen.completeTask("exportSaveConfig");
+            progScreen.completeTask("exportWriteConfig");
             progScreen.activateTask("exportGenObjData");
 
             LogHelper.info(getClass(), "Parsing OBJ File...");
@@ -417,7 +417,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             //Add tasks to progScreen
             progScreen.addTask("exportGenConfig", LangManager.getItem("exportGenConfig"));
-            progScreen.addTask("exportSaveConfig", LangManager.getItem("exportSaveConfig"));
+            progScreen.addTask("exportWriteConfig", LangManager.getItem("exportWriteConfig"));
             progScreen.addTask("exportGenObjData", LangManager.getItem("exportGenObjData"));
             progScreen.addTask("exportGenConfigData", LangManager.getItem("exportGenConfigData"));
             ProgressBar exportGenCfgLzRawProg = progScreen.addProgressTask("exportGenCfgLzRaw", LangManager.getItem("exportGenCfgLzRaw"));
@@ -441,7 +441,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             String exportContents = ExportManager.getConfig(getMainScreen().clientLevelData.getLevelData());
 
             progScreen.completeTask("exportGenConfig");
-            progScreen.activateTask("exportSaveConfig");
+            progScreen.activateTask("exportWriteConfig");
 
             File tempConfigFile;
 
@@ -450,16 +450,16 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(tempConfigFile));
                 writer.write(exportContents);
                 writer.close();
-                progScreen.completeTask("exportSaveConfig");
+                progScreen.completeTask("exportWriteConfig");
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
                 LogHelper.error(getClass(), e);
-                progScreen.errorTask("exportSaveConfig");
+                progScreen.errorTask("exportWriteConfig");
                 progScreen.finish();
                 return;
             }
 
-            progScreen.completeTask("exportSaveConfig");
+            progScreen.completeTask("exportWriteConfig");
             progScreen.activateTask("exportGenObjData");
 
             LogHelper.info(getClass(), "Parsing OBJ File...");

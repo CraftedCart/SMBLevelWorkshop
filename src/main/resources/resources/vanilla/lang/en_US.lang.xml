@@ -27,7 +27,7 @@
     <entry key="exportReadLzRaw" val="Reading raw LZ" />
     <entry key="exportCompressLzRaw" val="Compressing raw LZ" />
     <entry key="exportWriteLz" val="Writing LZ" />
-    <entry key="exportSaveConfig" val="Saving config" />
+    <entry key="exportWriteConfig" val="Writing config" />
 
     <!-- Modes -->
     <entry key="modeLabelFormat" val="Mode: %s" />
