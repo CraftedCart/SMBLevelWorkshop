@@ -4,10 +4,7 @@ import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.util.ExportManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
-import craftedcart.smbworkshopexporter.ConfigData;
-import craftedcart.smbworkshopexporter.LZCompressor;
-import craftedcart.smbworkshopexporter.LZExporter;
-import craftedcart.smbworkshopexporter.ModelData;
+import craftedcart.smbworkshopexporter.*;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.Label;
@@ -224,7 +221,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
     private void exportLzRawSmb1() {
         hideMainPanel();
         askFileLocation(LangManager.getItem("exportLzRawDefaultName"), (file) -> {
-            LZExporter lzExporter = new LZExporter();
+            SMB2LZExporter lzExporter = new SMB2LZExporter();
 
             //onSuccessAction
 
@@ -404,7 +401,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
     private void exportLzCompressedSmb1() {
         hideMainPanel();
         askFileLocation(LangManager.getItem("exportLzCompressedDefaultName"), (file) -> {
-            LZExporter lzExporter = new LZExporter();
+            SMB2LZExporter lzExporter = new SMB2LZExporter();
 
             //onSuccessAction
 
