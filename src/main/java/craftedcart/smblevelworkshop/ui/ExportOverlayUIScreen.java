@@ -139,11 +139,13 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
     }
 
     private void hideMainPanel() {
+        enableClicking = false;
         mainPanelAnimAnchor.setTargetTopLeftAnchor(0.5, -0.5);
         mainPanelAnimAnchor.setTargetBottomRightAnchor(0.5, -0.5);
     }
 
     private void showMainPanel() {
+        enableClicking = true;
         mainPanelAnimAnchor.setTargetTopLeftAnchor(0.5, 0.5);
         mainPanelAnimAnchor.setTargetBottomRightAnchor(0.5, 0.5);
     }
