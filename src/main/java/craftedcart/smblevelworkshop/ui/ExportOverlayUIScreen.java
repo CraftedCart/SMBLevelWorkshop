@@ -54,8 +54,8 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
         final Panel mainPanel = new Panel();
         mainPanel.setOnInitAction(() -> {
-            mainPanel.setTopLeftPos(-256, -128);
-            mainPanel.setBottomRightPos(256, 128);
+            mainPanel.setTopLeftPos(-256, -150);
+            mainPanel.setBottomRightPos(256, 150);
             mainPanel.setTopLeftAnchor(0.5, 1.5);
             mainPanel.setBottomRightAnchor(0.5, 1.5);
 
@@ -122,7 +122,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             exportLzCompressedSmb1Button.setBottomRightPos(0, 24);
             exportLzCompressedSmb1Button.setText(LangManager.getItem("exportLzCompressedSmb1"));
         });
-        exportLzCompressedSmb1Button.setOnLMBAction(this::exportLzCompressedSmb1);
+        exportLzCompressedSmb1Button.setOnLMBAction(() -> exportLzCompressed(new SMB1LZExporter()));
         listBox.addChildComponent("exportLzCompressedSmb1Button", exportLzCompressedSmb1Button);
 
         final TextButton exportLzRawSmb1Button = new TextButton();
@@ -131,8 +131,26 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             exportLzRawSmb1Button.setBottomRightPos(0, 24);
             exportLzRawSmb1Button.setText(LangManager.getItem("exportLzRawSmb1"));
         });
-        exportLzRawSmb1Button.setOnLMBAction(this::exportLzRawSmb1);
+        exportLzRawSmb1Button.setOnLMBAction(() -> exportLzRaw(new SMB1LZExporter()));
         listBox.addChildComponent("exportLzRawSmb1Button", exportLzRawSmb1Button);
+
+        final TextButton exportLzCompressedSmb2Button = new TextButton();
+        exportLzCompressedSmb2Button.setOnInitAction(() -> {
+            exportLzCompressedSmb2Button.setTopLeftPos(0, 0);
+            exportLzCompressedSmb2Button.setBottomRightPos(0, 24);
+            exportLzCompressedSmb2Button.setText(LangManager.getItem("exportLzCompressedSmb2"));
+        });
+        exportLzCompressedSmb2Button.setOnLMBAction(() -> exportLzCompressed(new SMB2LZExporter()));
+        listBox.addChildComponent("exportLzCompressedSmb2Button", exportLzCompressedSmb2Button);
+
+        final TextButton exportLzRawSmb2Button = new TextButton();
+        exportLzRawSmb2Button.setOnInitAction(() -> {
+            exportLzRawSmb2Button.setTopLeftPos(0, 0);
+            exportLzRawSmb2Button.setBottomRightPos(0, 24);
+            exportLzRawSmb2Button.setText(LangManager.getItem("exportLzRawSmb2"));
+        });
+        exportLzRawSmb2Button.setOnLMBAction(() -> exportLzRaw(new SMB2LZExporter()));
+        listBox.addChildComponent("exportLzRawSmb2Button", exportLzRawSmb2Button);
     }
 
     private void hideMainPanel() {
@@ -218,11 +236,9 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
         }, /* onCanceledAction */ this::showMainPanel);
     }
 
-    private void exportLzRawSmb1() {
+    private void exportLzRaw(AbstractLzExporter lzExporter) {
         hideMainPanel();
         askFileLocation(LangManager.getItem("exportLzRawDefaultName"), (file) -> {
-            SMB2LZExporter lzExporter = new SMB2LZExporter();
-
             //onSuccessAction
 
             try {
@@ -398,11 +414,9 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
         }, /* onCanceledAction */ this::showMainPanel);
     }
 
-    private void exportLzCompressedSmb1() {
+    private void exportLzCompressed(AbstractLzExporter lzExporter) {
         hideMainPanel();
         askFileLocation(LangManager.getItem("exportLzCompressedDefaultName"), (file) -> {
-            SMB2LZExporter lzExporter = new SMB2LZExporter();
-
             //onSuccessAction
 
             try {
