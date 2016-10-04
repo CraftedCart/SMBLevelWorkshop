@@ -645,37 +645,6 @@ public class ResourceManager {
         return (ResourceModel) getResource(resourceID);
     }
 
-    private static File getAppSupportDirectory() {
-
-        String workingDirectory;
-        String os = (System.getProperty("os.name")).toUpperCase();
-
-        if (os.contains("WIN")) {
-            //If on Windows, get the Application Data folder
-            workingDirectory = System.getenv("AppData") + "\\SMBLevelWorkshop";
-        } else if (os.contains("MAC OS X")) {
-            //If we are on a Mac, goto the "Application Support" directory
-            workingDirectory = System.getProperty("user.home") + "/Library/Application Support/SMBLevelWorkshop";
-        } else {
-            //Assume Linux or some other distro. Use the User's home folder
-            workingDirectory = System.getProperty("user.home") + "/.config/SMBLevelWorkshop";
-        }
-
-        File fileAppSupportDirectory = new File(workingDirectory);
-
-        tryCreateDirectory(fileAppSupportDirectory);
-        return fileAppSupportDirectory;
-
-    }
-
-    private static void tryCreateDirectory(File directory) {
-        if ((!directory.isDirectory() && directory.mkdirs()) || directory.isDirectory()) {
-            return;
-        }
-        LogHelper.fatal(ResourceManager.class, String.format("Failed to create directories \"%s\"", directory.toString()));
-        throw new RuntimeException(String.format("Failed to create directories \"%s\"", directory.toString()));
-    }
-
     public static void removeRecursive(Path path) throws IOException
     {
         Files.walkFileTree(path, new SimpleFileVisitor<Path>()

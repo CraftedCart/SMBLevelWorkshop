@@ -2,7 +2,6 @@ package craftedcart.smblevelworkshop.ui;
 
 import com.owens.oobjloader.lwjgl.VBO;
 import craftedcart.smblevelworkshop.SMBLWSettings;
-import craftedcart.smblevelworkshop.SMBLevelWorkshop;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
@@ -63,6 +62,7 @@ public class MainScreen extends FluidUIScreen {
     private final TextButton importObjButton = new TextButton();
     private final TextButton exportButton = new TextButton();
     private final TextButton settingsButton = new TextButton();
+    private final TextButton communityButton = new TextButton();
 
     //UI: Properties
     private final TextField positionXTextField = new TextField();
@@ -263,6 +263,17 @@ public class MainScreen extends FluidUIScreen {
         });
         exportButton.setOnLMBAction(this::export);
         rightListBox.addChildComponent("exportButton", exportButton);
+        //</editor-fold>
+
+        //<editor-fold desc="Community TextButton">
+        //Defined at class level
+        communityButton.setOnInitAction(() -> {
+            communityButton.setText(LangManager.getItem("community"));
+            communityButton.setTopLeftPos(0, 0);
+            communityButton.setBottomRightPos(0, 24);
+        });
+        communityButton.setOnLMBAction(this::showCommunity);
+        rightListBox.addChildComponent("communityButton", communityButton);
         //</editor-fold>
 
         //<editor-fold desc="Settings TextButton">
@@ -1737,6 +1748,7 @@ public class MainScreen extends FluidUIScreen {
                 importObjButton.setEnabled(false);
                 exportButton.setEnabled(false);
                 settingsButton.setEnabled(false);
+                communityButton.setEnabled(false);
                 FileDialog fd = new FileDialog((Frame) null);
                 fd.setMode(FileDialog.LOAD);
                 fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".OBJ"));
@@ -1761,6 +1773,7 @@ public class MainScreen extends FluidUIScreen {
                         LogHelper.error(getClass(), e);
                     }
                 }
+                communityButton.setEnabled(true);
                 settingsButton.setEnabled(true);
                 exportButton.setEnabled(true);
                 importObjButton.setEnabled(true);
@@ -2019,6 +2032,11 @@ public class MainScreen extends FluidUIScreen {
 
     private void showSettings() {
         setOverlayUiScreen(new SettingsOverlayUIScreen());
+    }
+
+    private void showCommunity() {
+        ProjectManager.getCurrentProject().mainScreen = this; //TODO: Eh, this is a quick and dirty way to take care of restoring data
+        Window.setUIScreen(new CommunityScreen());
     }
 
     private ResourceShaderProgram getCurrentShader() {

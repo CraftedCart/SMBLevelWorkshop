@@ -13,6 +13,7 @@ public class DialogUITheme extends UITheme {
     public DialogUITheme() {
         panelBackgroundColor = UIColor.matWhite();
         labelFont = FontCache.getUnicodeFont("Roboto-Regular", 16);
+        tooltipFont = FontCache.getUnicodeFont("Roboto-Regular", 16);
         labelTextColor = UIColor.matGrey900();
         scrollbarThickness = 2;
     }
