@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop;
 
+import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.ui.DefaultUITheme;
 import craftedcart.smblevelworkshop.ui.LoadingScreen;
@@ -62,6 +63,8 @@ public class SMBLevelWorkshop {
 //        } catch (SoundSystemException e) {
 //            LogHelper.error(SMBLevelWorkshop.class, "Error while initializing AudioUtils\n" + CrashHandler.getStackTraceString(e));
 //        }
+
+        ProjectManager.setCurrentProject(new Project());
 
         MainScreen mainScreen = new MainScreen();
         mainScreen.setTheme(new DefaultUITheme());

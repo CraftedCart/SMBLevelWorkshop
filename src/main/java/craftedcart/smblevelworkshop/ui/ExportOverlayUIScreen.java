@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.ui;
 
 import craftedcart.smblevelworkshop.Window;
+import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.util.ExportManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -181,11 +182,6 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
     }
 
-    private MainScreen getMainScreen() {
-        assert parentComponent instanceof MainScreen;
-        return (MainScreen) parentComponent;
-    }
-
     private void exportConfig() {
         hideMainPanel();
         askFileLocation("config.txt", (file) -> {
@@ -214,8 +210,8 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             progScreen.activateTask("exportGenConfig");
 
-            assert getMainScreen().clientLevelData != null;
-            String exportContents = ExportManager.getConfig(getMainScreen().clientLevelData.getLevelData());
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            String exportContents = ExportManager.getConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData());
 
             progScreen.completeTask("exportGenConfig");
             progScreen.activateTask("exportWriteConfig");
@@ -269,8 +265,8 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             progScreen.activateTask("exportGenConfig");
 
-            assert getMainScreen().clientLevelData != null;
-            String exportContents = ExportManager.getConfig(getMainScreen().clientLevelData.getLevelData());
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            String exportContents = ExportManager.getConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData());
 
             progScreen.completeTask("exportGenConfig");
             progScreen.activateTask("exportWriteConfig");
@@ -297,7 +293,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing OBJ File...");
             ModelData modelData = new ModelData();
             try {
-                modelData.parseObj(getMainScreen().clientLevelData.getLevelData().getModelObjSource());
+                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSource());
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.error(getClass(), "OBJ file not found!");
@@ -450,8 +446,8 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             progScreen.activateTask("exportGenConfig");
 
-            assert getMainScreen().clientLevelData != null;
-            String exportContents = ExportManager.getConfig(getMainScreen().clientLevelData.getLevelData());
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            String exportContents = ExportManager.getConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData());
 
             progScreen.completeTask("exportGenConfig");
             progScreen.activateTask("exportWriteConfig");
@@ -478,7 +474,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing OBJ File...");
             ModelData modelData = new ModelData();
             try {
-                modelData.parseObj(getMainScreen().clientLevelData.getLevelData().getModelObjSource());
+                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSource());
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.error(getClass(), "OBJ file not found!");

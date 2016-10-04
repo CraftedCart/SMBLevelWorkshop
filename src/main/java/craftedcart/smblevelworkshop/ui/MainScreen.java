@@ -2,9 +2,11 @@ package craftedcart.smblevelworkshop.ui;
 
 import com.owens.oobjloader.lwjgl.VBO;
 import craftedcart.smblevelworkshop.SMBLWSettings;
+import craftedcart.smblevelworkshop.SMBLevelWorkshop;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
+import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
@@ -45,11 +47,6 @@ import java.util.List;
  * Created on 02/04/2016 (DD/MM/YYYY)
  */
 public class MainScreen extends FluidUIScreen {
-
-    //Level
-    @Nullable public ClientLevelData clientLevelData;
-    @NotNull private EnumMode mode = EnumMode.NONE;
-    @NotNull private PosXYZ modeDirection = new PosXYZ(0, 1, 0);
 
     //Camera
     @NotNull private PosXYZ cameraPos = new PosXYZ(5, 5, 5);
@@ -146,7 +143,7 @@ public class MainScreen extends FluidUIScreen {
         mainUI.addChildComponent("bottomPanel", bottomPanel);
         //</editor-fold>
 
-        //<editor-fold desc="Mode Label">
+        //<editor-fold desc="ProjectManager.getCurrentProject().mode Label">
         //Defined at class level
         modeLabel.setOnInitAction(() -> {
             modeLabel.setTopLeftPos(4, 0);
@@ -158,7 +155,7 @@ public class MainScreen extends FluidUIScreen {
         bottomPanel.addChildComponent("modeLabel", modeLabel);
         //</editor-fold>
 
-        //<editor-fold desc="Mode Direction Label">
+        //<editor-fold desc="ProjectManager.getCurrentProject().mode Direction Label">
         //Defined at class level
         modeDirectionLabel.setOnInitAction(() -> {
             modeDirectionLabel.setTopLeftPos(4, 24);
@@ -332,12 +329,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(positionXTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canGrabX()) {
                         placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
                     }
@@ -351,9 +348,9 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         if (placeable.getAsset().canGrabX()) {
                             placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
@@ -392,12 +389,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(positionYTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canGrabY()) {
                         placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
                     }
@@ -411,10 +408,10 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (String name : clientLevelData.getSelectedPlaceables()) {
-                        Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                         placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
                     }}
             }
@@ -450,12 +447,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(positionZTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canGrabZ()) {
                         placeable.setPosition(new PosXYZ(placeable.getPosition().x, placeable.getPosition().y, newValue));
                     }
@@ -469,9 +466,9 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
                     }}
@@ -517,12 +514,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(rotationXTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canRotate()) {
                         placeable.setRotation(normalizeRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z)));
                     }
@@ -536,9 +533,9 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z));
                     }}
@@ -575,12 +572,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(rotationYTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canRotate()) {
                         placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z)));
                     }
@@ -594,10 +591,10 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (String name : clientLevelData.getSelectedPlaceables()) {
-                        Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                         placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
                     }}
             }
@@ -633,12 +630,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(rotationZTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canRotate()) {
                         placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, placeable.getRotation().y, newValue)));
                     }
@@ -652,9 +649,9 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
                     }}
@@ -700,12 +697,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(scaleXTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canScale()) {
                         placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
                     }
@@ -719,9 +716,9 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
                     }}
@@ -758,12 +755,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(scaleYTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canScale()) {
                         placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
                     }
@@ -777,10 +774,10 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (String name : clientLevelData.getSelectedPlaceables()) {
-                        Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                         placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
                     }}
             }
@@ -813,12 +810,12 @@ public class MainScreen extends FluidUIScreen {
             try {
                 newValue = Double.parseDouble(scaleZTextField.value);
 
-                assert clientLevelData != null;
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-                addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                for (String name : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                     if (placeable.getAsset().canScale()) {
                         placeable.setScale(new PosXYZ(placeable.getScale().x, placeable.getScale().y, newValue));
                     }
@@ -832,9 +829,9 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.error(getClass(), e1);
                     newValue = 0;
 
-                    addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
+                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
 
-                    for (Map.Entry<String, Placeable> entry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
                     }}
@@ -894,13 +891,13 @@ public class MainScreen extends FluidUIScreen {
 
         Window.logOpenGLError("After MainScreen.super.preDraw()");
 
-        if (clientLevelData != null) {
+        if (ProjectManager.getCurrentProject().clientLevelData != null) {
             //<editor-fold desc="Darken selected placeables in the outliner">
             for (Map.Entry<String, Component> entry : outlinerListBox.childComponents.entrySet()) {
                 assert entry.getValue() instanceof TextButton;
                 TextButton button = (TextButton) entry.getValue();
 
-                if (clientLevelData.isPlaceableSelected(button.text)) {
+                if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) {
                     button.setBackgroundIdleColor(UIColor.matBlue900());
                 } else {
                     button.setBackgroundIdleColor(UIColor.matBlue());
@@ -956,16 +953,16 @@ public class MainScreen extends FluidUIScreen {
                 cameraPos = cameraPos.subtract(rightVector.multiply(UIUtils.getDelta()).multiply(speed));
             }
             //</editor-fold>
-        } else if (clientLevelData != null) {
-            if (mode == EnumMode.GRAB) {
+        } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
+            if (ProjectManager.getCurrentProject().mode == EnumMode.GRAB) {
                 //<editor-fold desc="Grab">
 
-                for (String key : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+                for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
 
-                    if ((modeDirection.equals(new PosXYZ(1, 0, 0)) && placeable.getAsset().canGrabX()) ||
-                            (modeDirection.equals(new PosXYZ(0, 1, 0)) && placeable.getAsset().canGrabY()) ||
-                            (modeDirection.equals(new PosXYZ(0, 0, 1)) && placeable.getAsset().canGrabZ()) ||
+                    if ((ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(1, 0, 0)) && placeable.getAsset().canGrabX()) ||
+                            (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(0, 1, 0)) && placeable.getAsset().canGrabY()) ||
+                            (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(0, 0, 1)) && placeable.getAsset().canGrabZ()) ||
                             (placeable.getAsset().canGrabX() && placeable.getAsset().canGrabY()) && placeable.getAsset().canGrabZ()) { //If can grab in selected direction
                         if (Window.isAltDown()) { //Snap with Alt
                             if (Window.isShiftDown()) {
@@ -977,25 +974,25 @@ public class MainScreen extends FluidUIScreen {
                             }
 
                             if (deltaX >= SMBLWSettings.grabSnap || deltaX <= -SMBLWSettings.grabSnap) {
-                                placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(
+                                placeable.setPosition(placeable.getPosition().add(ProjectManager.getCurrentProject().modeDirection.multiply(
                                         SMBLWSettings.grabSnap * Math.round(deltaX / SMBLWSettings.grabSnap))));
 
                                 deltaX = deltaX % SMBLWSettings.grabSnap;
                             }
                         } else if (Window.isShiftDown()) { //Precise movement with Shift
-                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                            placeable.setPosition(placeable.getPosition().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                            placeable.setPosition(placeable.getPosition().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
                         } else {
-                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                            placeable.setPosition(placeable.getPosition().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                            placeable.setPosition(placeable.getPosition().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                            placeable.setPosition(placeable.getPosition().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
                         }
                     }
                 }
                 //</editor-fold>
-            } else if (mode == EnumMode.ROTATE) {
+            } else if (ProjectManager.getCurrentProject().mode == EnumMode.ROTATE) {
                 //<editor-fold desc="Rotate">
-                for (String key : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+                for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
 
                     if (placeable.getAsset().canRotate()) { //If can rotate
                         if (Window.isAltDown()) { //Snap with Alt
@@ -1008,29 +1005,29 @@ public class MainScreen extends FluidUIScreen {
                             }
 
                             if (deltaX >= SMBLWSettings.rotationSnap || deltaX <= -SMBLWSettings.rotationSnap) {
-                                placeable.setRotation(placeable.getRotation().add(modeDirection.multiply(
+                                placeable.setRotation(placeable.getRotation().add(ProjectManager.getCurrentProject().modeDirection.multiply(
                                         SMBLWSettings.rotationSnap * Math.round(deltaX / SMBLWSettings.rotationSnap))));
 
                                 deltaX = deltaX % SMBLWSettings.rotationSnap;
                             }
                         } else if (Window.isShiftDown()) { //Precise movement with Shift
                             placeable.setRotation(normalizeRotation(placeable.getRotation()
-                                    .add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity))));
+                                    .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity))));
                             placeable.setRotation(normalizeRotation(placeable.getRotation()
-                                    .add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity))));
+                                    .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity))));
                         } else {
                             placeable.setRotation(normalizeRotation(placeable.getRotation()
-                                    .add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity))));
+                                    .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity))));
                             placeable.setRotation(normalizeRotation(placeable.getRotation()
-                                    .add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity))));
+                                    .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity))));
                         }
                     }
                 }
                 //</editor-fold>
-            } else if (mode == EnumMode.SCALE) {
+            } else if (ProjectManager.getCurrentProject().mode == EnumMode.SCALE) {
                 //<editor-fold desc="Scale">
-                for (String key : clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = clientLevelData.getLevelData().getPlaceable(key);
+                for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
 
                     if (placeable.getAsset().canScale()) { //If can scale
                         if (Window.isAltDown()) { //Snap with Alt
@@ -1043,32 +1040,32 @@ public class MainScreen extends FluidUIScreen {
                             }
 
                             if (deltaX >= SMBLWSettings.scaleSnap || deltaX <= -SMBLWSettings.scaleSnap) {
-                                placeable.setScale(placeable.getScale().add(modeDirection.multiply(
+                                placeable.setScale(placeable.getScale().add(ProjectManager.getCurrentProject().modeDirection.multiply(
                                         SMBLWSettings.scaleSnap * Math.round(deltaX / SMBLWSettings.scaleSnap))));
 
                                 deltaX = deltaX % SMBLWSettings.scaleSnap;
                             }
                         } else if (Window.isShiftDown()) { //Precise movement with shift
-                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
-                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
+                            placeable.setScale(placeable.getScale().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity)));
+                            placeable.setScale(placeable.getScale().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity)));
                         } else {
-                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
-                            placeable.setScale(placeable.getScale().add(modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
+                            placeable.setScale(placeable.getScale().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity)));
+                            placeable.setScale(placeable.getScale().add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity)));
                         }
                     }
                 }
                 //</editor-fold>
             }
 
-            if (mode != EnumMode.NONE) {
+            if (ProjectManager.getCurrentProject().mode != EnumMode.NONE) {
                 updatePropertiesPanel();
             }
         }
 
 
-        //<editor-fold desc="Set Mode Label">
+        //<editor-fold desc="Set ProjectManager.getCurrentProject().mode Label">
         String modeStringKey;
-        switch (mode) {
+        switch (ProjectManager.getCurrentProject().mode) {
             case NONE:
                 modeStringKey = "none";
                 break;
@@ -1090,31 +1087,31 @@ public class MainScreen extends FluidUIScreen {
         modeLabel.setText(String.format(LangManager.getItem("modeLabelFormat"), LangManager.getItem(modeStringKey)));
         //</editor-fold>
 
-        //<editor-fold desc="Mode Direction Label">
+        //<editor-fold desc="ProjectManager.getCurrentProject().mode Direction Label">
         String modeDirectionString;
-        if (modeDirection.equals(new PosXYZ(1, 0, 0))) {
+        if (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(1, 0, 0))) {
             modeDirectionString = LangManager.getItem("axisX");
-        } else if (modeDirection.equals(new PosXYZ(0, 1, 0))) {
+        } else if (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(0, 1, 0))) {
             modeDirectionString = LangManager.getItem("axisY");
-        } else if (modeDirection.equals(new PosXYZ(0, 0, 1))) {
+        } else if (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(0, 0, 1))) {
             modeDirectionString = LangManager.getItem("axisZ");
-        } else if (modeDirection.equals(new PosXYZ(1, 1, 1))) {
+        } else if (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(1, 1, 1))) {
             modeDirectionString = LangManager.getItem("axisUniform");
         } else {
-            modeDirectionString = String.format("%.2f, %.2f, %.2f", modeDirection.x, modeDirection.y, modeDirection.z);
+            modeDirectionString = String.format("%.2f, %.2f, %.2f", ProjectManager.getCurrentProject().modeDirection.x, ProjectManager.getCurrentProject().modeDirection.y, ProjectManager.getCurrentProject().modeDirection.z);
         }
 
         modeDirectionLabel.setText(String.format(LangManager.getItem("modeDirectionLabelFormat"), modeDirectionString));
         //</editor-fold>
 
-        if (mode == EnumMode.NONE) {
+        if (ProjectManager.getCurrentProject().mode == EnumMode.NONE) {
             modeCursor.setVisible(false);
         } else {
             modeCursor.setVisible(true);
         }
 
         if (Mouse.isButtonDown(2) ||
-                mode != EnumMode.NONE) {
+                ProjectManager.getCurrentProject().mode != EnumMode.NONE) {
             if (!Mouse.isGrabbed()) {
                 Mouse.setGrabbed(true);
             }
@@ -1198,12 +1195,12 @@ public class MainScreen extends FluidUIScreen {
 
             UIColor.pureWhite().bindColor();
 
-            if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+            if (ProjectManager.getCurrentProject().clientLevelData != null && ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel() != null) {
                 //<editor-fold desc="Draw opaque placeables">
-                for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                     String name = placeableEntry.getKey();
                     Placeable placeable = placeableEntry.getValue();
-                    boolean isSelected = clientLevelData.isPlaceableSelected(name);
+                    boolean isSelected = ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(name);
 
                     if (!placeable.getAsset().isOpaque()) {
                         continue;
@@ -1225,7 +1222,7 @@ public class MainScreen extends FluidUIScreen {
                 }
 
                 GL20.glUseProgram(currentShaderProgram.getProgramID());
-                ResourceModel.drawModel(clientLevelData.getLevelData().getModel(), currentShaderProgram, useTextures);
+                ResourceModel.drawModel(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel(), currentShaderProgram, useTextures);
                 GL20.glUseProgram(0);
 
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
@@ -1233,14 +1230,14 @@ public class MainScreen extends FluidUIScreen {
                 GL11.glLineWidth(2);
                 if (SMBLWSettings.showAllWireframes) {
                     GL11.glColor4f(0, 0, 0, 1);
-                    ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
+                    ResourceModel.drawModelWireframe(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel(), null, false);
 
                     Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
 
                     GL11.glDisable(GL11.GL_DEPTH_TEST);
 
                     GL11.glColor4f(0, 0, 0, 0.01f);
-                    ResourceModel.drawModelWireframe(clientLevelData.getLevelData().getModel(), null, false);
+                    ResourceModel.drawModelWireframe(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel(), null, false);
 
                     Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
                 }
@@ -1249,7 +1246,7 @@ public class MainScreen extends FluidUIScreen {
                 //<editor-fold desc="Draw placeables with transparency">
                 List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
 
-                for (Map.Entry<String, Placeable> placeableEntry : clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                     Placeable placeable = placeableEntry.getValue();
 
                     double distance;
@@ -1268,7 +1265,7 @@ public class MainScreen extends FluidUIScreen {
                 for (DepthSortedPlaceable placeableEntry : depthSortedMap) {
                     String name = placeableEntry.entry.getKey();
                     Placeable placeable = placeableEntry.entry.getValue();
-                    boolean isSelected = clientLevelData.isPlaceableSelected(name);
+                    boolean isSelected = ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(name);
 
                     if (placeable.getAsset().isOpaque()) {
                         continue;
@@ -1312,14 +1309,14 @@ public class MainScreen extends FluidUIScreen {
 
         //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
         if (isSelected) {
-            if (mode != EnumMode.NONE) {
+            if (ProjectManager.getCurrentProject().mode != EnumMode.NONE) {
                 GL11.glPushMatrix();
 
                 GL11.glRotated(-placeable.getRotation().x, 1, 0, 0);
                 GL11.glRotated(-placeable.getRotation().y, 0, 1, 0);
                 GL11.glRotated(-placeable.getRotation().z, 0, 0, 1);
 
-                if (modeDirection.equals(new PosXYZ(1, 0, 0))) {
+                if (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(1, 0, 0))) {
                     //<editor-fold desc="Draw X line">
                     UIColor.matRed(0.75).bindColor();
                     GL11.glBegin(GL11.GL_LINES);
@@ -1327,7 +1324,7 @@ public class MainScreen extends FluidUIScreen {
                     GL11.glVertex3d(10000, 0, 0);
                     GL11.glEnd();
                     //</editor-fold>
-                } else if (modeDirection.equals(new PosXYZ(0, 1, 0))) {
+                } else if (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(0, 1, 0))) {
                     //<editor-fold desc="Draw Y line">
                     UIColor.matGreen(0.75).bindColor();
                     GL11.glBegin(GL11.GL_LINES);
@@ -1335,7 +1332,7 @@ public class MainScreen extends FluidUIScreen {
                     GL11.glVertex3d(0, 10000, 0);
                     GL11.glEnd();
                     //</editor-fold>
-                } else if (modeDirection.equals(new PosXYZ(0, 0, 1))) {
+                } else if (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(0, 0, 1))) {
                     //<editor-fold desc="Draw Z line">
                     UIColor.matBlue(0.75).bindColor();
                     GL11.glBegin(GL11.GL_LINES);
@@ -1381,9 +1378,9 @@ public class MainScreen extends FluidUIScreen {
 
     @Override
     public void onClick(int button, PosXY mousePos) {
-        if (button == 0 && mode != EnumMode.NONE) { //LMB: Confirm action
+        if (button == 0 && ProjectManager.getCurrentProject().mode != EnumMode.NONE) { //LMB: Confirm action
             confirmModeAction();
-        } else if (button == 1 && mode != EnumMode.NONE) { //RMB: Discard action
+        } else if (button == 1 && ProjectManager.getCurrentProject().mode != EnumMode.NONE) { //RMB: Discard action
             discardModeAction();
         } else {
             super.onClick(button, mousePos);
@@ -1398,17 +1395,17 @@ public class MainScreen extends FluidUIScreen {
             if (key == Keyboard.KEY_F1) { //F1 to hide / show the ui
                 mainUI.setVisible(!mainUI.isVisible());
 
-            } else if (clientLevelData != null) {
-                if (mode == EnumMode.NONE) {
+            } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                if (ProjectManager.getCurrentProject().mode == EnumMode.NONE) {
                     if (key == Keyboard.KEY_G) { //G: Grab
-                        addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
-                        mode = EnumMode.GRAB;
+                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                        ProjectManager.getCurrentProject().mode = EnumMode.GRAB;
                     } else if (key == Keyboard.KEY_R) { //R: Rotate
-                        addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
-                        mode = EnumMode.ROTATE;
+                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                        ProjectManager.getCurrentProject().mode = EnumMode.ROTATE;
                     } else if (key == Keyboard.KEY_S) { //S: Scale
-                        addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
-                        mode = EnumMode.SCALE;
+                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                        ProjectManager.getCurrentProject().mode = EnumMode.SCALE;
 
                     } else if (key == Keyboard.KEY_Z) { //Ctrl / Cmd Z: Undo - Ctrl / Cmd Shift Z: Redo
                         if (Window.isCtrlOrCmdDown()) {
@@ -1426,13 +1423,13 @@ public class MainScreen extends FluidUIScreen {
                         }
 
                     } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables
-                        if (clientLevelData.getSelectedPlaceables().size() > 0) {
+                        if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
 
                             List<String> toDelete = new ArrayList<>();
 
-                            for (String name : new HashSet<>(clientLevelData.getSelectedPlaceables())) {
-                                if (!(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
-                                        !(clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
+                            for (String name : new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables())) {
+                                if (!(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
+                                        !(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
                                     toDelete.add(name);
                                 }
                             }
@@ -1450,51 +1447,51 @@ public class MainScreen extends FluidUIScreen {
                         }
 
                     } else if (key == Keyboard.KEY_D && Window.isCtrlOrCmdDown()) { //Ctrl / Cmd D: Duplicate
-                        Set<String> selectedPlaceables = new HashSet<>(clientLevelData.getSelectedPlaceables());
-                        clientLevelData.clearSelectedPlaceables();
+                        Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables());
+                        ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
 
                         Map<String, Placeable> newPlaceables = new HashMap<>();
 
                         int duplicated = 0;
 
                         for (String name : selectedPlaceables) {
-                            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+                            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                             if (!(placeable.getAsset() instanceof AssetStartPos) &&
                                     !(placeable.getAsset() instanceof AssetFalloutY)) { //If the placeable isn't the start pos or fallout Y
 
                                 duplicated++;
 
                                 Placeable newPlaceable = placeable.getCopy();
-                                String newPlaceableName = clientLevelData.getLevelData().addPlaceable(newPlaceable);
+                                String newPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(newPlaceable);
                                 newPlaceables.put(newPlaceableName, newPlaceable);
                                 outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
 
-                                clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
+                                ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
                             }
                         }
 
                         if (duplicated > 0) {
-                            addUndoCommand(new UndoAddPlaceable(clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
+                            addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
 
                             //Grab after duplicating
-                            addUndoCommand(new UndoAssetTransform(clientLevelData, clientLevelData.getSelectedPlaceables()));
-                            mode = EnumMode.GRAB;
+                            addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                            ProjectManager.getCurrentProject().mode = EnumMode.GRAB;
                         }
                     } else {
                         super.onKey(key, keyChar);
                     }
 
                 } else if (key == Keyboard.KEY_X) { //X Axis
-                    modeDirection = new PosXYZ(1, 0, 0);
+                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(1, 0, 0);
                     modeCursor.setColor(UIColor.matRed());
                 } else if (key == Keyboard.KEY_Y) { //Y Axis
-                    modeDirection = new PosXYZ(0, 1, 0);
+                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(0, 1, 0);
                     modeCursor.setColor(UIColor.matGreen());
                 } else if (key == Keyboard.KEY_Z) { //Z Axis
-                    modeDirection = new PosXYZ(0, 0, 1);
+                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(0, 0, 1);
                     modeCursor.setColor(UIColor.matBlue());
                 } else if (key == Keyboard.KEY_U) { //XYZ (Uniform)
-                    modeDirection = new PosXYZ(1, 1, 1);
+                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(1, 1, 1);
                     modeCursor.setColor(UIColor.matWhite());
 
                 } else if (key == Keyboard.KEY_ESCAPE) {
@@ -1512,16 +1509,16 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void confirmModeAction() {
-        mode = EnumMode.NONE;
-        assert clientLevelData != null;
+        ProjectManager.getCurrentProject().mode = EnumMode.NONE;
+        assert ProjectManager.getCurrentProject().clientLevelData != null;
         updatePropertiesPanel();
-        deltaX = 0; //Reset deltaX when no mode is active
+        deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
     }
 
     private void discardModeAction() {
-        mode = EnumMode.NONE;
+        ProjectManager.getCurrentProject().mode = EnumMode.NONE;
         undo();
-        deltaX = 0; //Reset deltaX when no mode is active
+        deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
     }
 
     public void notify(String message) {
@@ -1561,12 +1558,12 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void addPlaceable(Placeable placeable) {
-        if (clientLevelData != null) {
-            String name = clientLevelData.getLevelData().addPlaceable(placeable);
-            clientLevelData.clearSelectedPlaceables();
-            clientLevelData.addSelectedPlaceable(name);
+        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+            String name = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(placeable);
+            ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
+            ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(name);
 
-            addUndoCommand(new UndoAddPlaceable(clientLevelData, this, Collections.singletonList(name), Collections.singletonList(placeable)));
+            addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, Collections.singletonList(name), Collections.singletonList(placeable)));
 
             outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(name));
         } else {
@@ -1575,12 +1572,12 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void removePlaceable(String name) {
-        if (clientLevelData != null) {
+        if (ProjectManager.getCurrentProject().clientLevelData != null) {
 
-            addUndoCommand(new UndoRemovePlaceable(clientLevelData, this, Collections.singletonList(name), Collections.singletonList(clientLevelData.getLevelData().getPlaceable(name))));
+            addUndoCommand(new UndoRemovePlaceable(ProjectManager.getCurrentProject().clientLevelData, this, Collections.singletonList(name), Collections.singletonList(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name))));
 
-            clientLevelData.removeSelectedPlaceable(name);
-            clientLevelData.getLevelData().removePlaceable(name);
+            ProjectManager.getCurrentProject().clientLevelData.removeSelectedPlaceable(name);
+            ProjectManager.getCurrentProject().clientLevelData.getLevelData().removePlaceable(name);
 
             outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
         } else {
@@ -1589,18 +1586,19 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void removePlaceables(List<String> names) {
-        if (clientLevelData != null) {
+        if (ProjectManager.getCurrentProject().clientLevelData != null) {
 
             List<Placeable> placeables = new ArrayList<>();
             for (String name : names) {
-                placeables.add(clientLevelData.getLevelData().getPlaceable(name));
+                placeables.add(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name));
             }
 
-            addUndoCommand(new UndoRemovePlaceable(clientLevelData, this, names, placeables));
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            addUndoCommand(new UndoRemovePlaceable(ProjectManager.getCurrentProject().clientLevelData, this, names, placeables));
 
             for (String name : names) {
-                clientLevelData.removeSelectedPlaceable(name);
-                clientLevelData.getLevelData().removePlaceable(name);
+                ProjectManager.getCurrentProject().clientLevelData.removeSelectedPlaceable(name);
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removePlaceable(name);
 
                 outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
             }
@@ -1627,22 +1625,22 @@ public class MainScreen extends FluidUIScreen {
                     redoCommandList.clear();
                 }
 
-                if (clientLevelData != null && clientLevelData.getLevelData().getModel() != null) {
+                if (ProjectManager.getCurrentProject().clientLevelData != null && ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel() != null) {
                     //Unload textures and VBOs
-                    for (VBO vbo : clientLevelData.getLevelData().getModel().scene.vboList) {
+                    for (VBO vbo : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.vboList) {
                         GL11.glDeleteTextures(vbo.getTextureId());
                         vbo.destroy();
                     }
                 }
 
                 if (!replace) {
-                    clientLevelData = new ClientLevelData();
-                    clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
+                    ProjectManager.getCurrentProject().clientLevelData = new ClientLevelData();
+                    ProjectManager.getCurrentProject().clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
                 }
 
                 ResourceModel model = OBJLoader.loadModel(file.getPath());
-                clientLevelData.getLevelData().setModel(model);
-                clientLevelData.getLevelData().setModelObjSource(file);
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().setModel(model);
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().setModelObjSource(file);
 
                 Placeable startPosPlaceable;
                 String startPosPlaceableName = null;
@@ -1651,12 +1649,12 @@ public class MainScreen extends FluidUIScreen {
                 if (!replace) {
                     startPosPlaceable = new Placeable(new AssetStartPos());
                     startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-                    startPosPlaceableName = clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
-                    clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+                    startPosPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+                    ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(startPosPlaceableName);
 
                     falloutYPlaceable = new Placeable(new AssetFalloutY());
                     falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-                    falloutYPlaceableName = clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+                    falloutYPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
 
                 }
 
@@ -1718,13 +1716,13 @@ public class MainScreen extends FluidUIScreen {
             placeableButton.setText(name);
         });
         placeableButton.setOnLMBAction(() -> {
-            assert clientLevelData != null;
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
 
             if (Window.isShiftDown()) { //Toggle selection on shift
-                clientLevelData.toggleSelectedPlaceable(name);
+                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedPlaceable(name);
             } else {
-                clientLevelData.clearSelectedPlaceables();
-                clientLevelData.addSelectedPlaceable(name);
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
+                ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(name);
             }
         });
         placeableButton.setName(name + "OutlinerPlaceable");
@@ -1750,7 +1748,7 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
 
                     try {
-                        if (clientLevelData != null) {
+                        if (ProjectManager.getCurrentProject().clientLevelData != null) {
                             AskReplaceObjOverlayUIScreen dialog = new AskReplaceObjOverlayUIScreen();
                             setOverlayUiScreen(dialog);
                             boolean shouldRepalce = dialog.waitForShouldReplaceResponse();
@@ -1775,7 +1773,7 @@ public class MainScreen extends FluidUIScreen {
 
     private void export() {
         if (!isLoadingProject) {
-            if (clientLevelData != null) {
+            if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 setOverlayUiScreen(new ExportOverlayUIScreen());
             } else {
                 notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
@@ -1807,17 +1805,17 @@ public class MainScreen extends FluidUIScreen {
         double sclAvgZ = 0;
         boolean canScale = false;
 
-        assert clientLevelData != null;
+        assert ProjectManager.getCurrentProject().clientLevelData != null;
 
         Class<?> selectedIAsset;
-        if (clientLevelData.getSelectedPlaceables().size() > 0) {
-            selectedIAsset = clientLevelData.getLevelData().getPlaceable(clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getClass();
+        if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
+            selectedIAsset = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getClass();
         } else {
             selectedIAsset = null;
         }
 
-        for (String name : clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
 
             if (placeable.getAsset().canGrabX()) {
                 canGrabX = true;
@@ -1857,7 +1855,7 @@ public class MainScreen extends FluidUIScreen {
             }
         }
 
-        int selectedCount = clientLevelData.getSelectedPlaceables().size();
+        int selectedCount = ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size();
 
         if (selectedCount != 0) {
             posAvgX = posAvgX / (double) selectedCount;
@@ -1941,11 +1939,11 @@ public class MainScreen extends FluidUIScreen {
         }
 
         if (selectedIAsset != null) {
-            String[] types = clientLevelData.getLevelData().getPlaceable(clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getValidTypes();
+            String[] types = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getValidTypes();
 
             if (types != null) {
                 typeList = Arrays.asList(types);
-                typeButton.setText(LangManager.getItem(clientLevelData.getLevelData().getPlaceable(clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getType()));
+                typeButton.setText(LangManager.getItem(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getType()));
                 typeButton.setEnabled(true);
             } else {
                 typeList = null;
@@ -1997,9 +1995,9 @@ public class MainScreen extends FluidUIScreen {
     public void setTypeForSelectedPlaceables(String type) {
         boolean changed = false;
 
-        assert clientLevelData != null;
-        for (String name : clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+        assert ProjectManager.getCurrentProject().clientLevelData != null;
+        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
 
             if (!Objects.equals(placeable.getAsset().getType(), type)) {
                 changed = true;
@@ -2007,11 +2005,11 @@ public class MainScreen extends FluidUIScreen {
         }
 
         if (changed) {
-            addUndoCommand(new UndoAssetTypeChange(clientLevelData, clientLevelData.getSelectedPlaceables()));
+            addUndoCommand(new UndoAssetTypeChange(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
         }
 
-        for (String name : clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = clientLevelData.getLevelData().getPlaceable(name);
+        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
 
             placeable.getAsset().setType(type);
         }
