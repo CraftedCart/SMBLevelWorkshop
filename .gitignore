@@ -135,3 +135,5 @@ lib/FluidUI/.idea/libraries
 src/main/java/com/owens/oobjloader/lwjgl/DisplayTest.java
 src/main/java/com/owens/oobjloader/test/ParseTest.java
 
+#Mac
+.DS_Store
