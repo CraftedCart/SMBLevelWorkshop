@@ -7,9 +7,9 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://repo.jenkins-ci.org/releases/" //Required for GitHub API
-    }
+//    maven {
+//        url "http://repo.jenkins-ci.org/releases/" //Required for GitHub API
+//    }
 }
 
 dependencies {
@@ -22,7 +22,11 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5' //Log4J 2 API
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5' //Log4J 2 Core
 
-    compile group: 'org.kohsuke', name: 'github-api', version: '1.77' //GitHub API
+    compile group: 'commons-io', name: 'commons-io', version: '2.5' //Apache Commons-IO
+
+//    compile group: 'org.kohsuke', name: 'github-api', version: '1.77' //GitHub API
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.5.0.201609210915-r' //JGit
+
 
     compile project(':FluidUI')
     compile project(':SMBWorkshopExporter')
