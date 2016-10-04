@@ -16,4 +16,6 @@ public class Project {
     @NotNull public EnumActionMode mode = EnumActionMode.NONE;
     @NotNull public PosXYZ modeDirection = new PosXYZ(0, 1, 0);
 
+    @Nullable public MainScreen mainScreen;
+
 }
