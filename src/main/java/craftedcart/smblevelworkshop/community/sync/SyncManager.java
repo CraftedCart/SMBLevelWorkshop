@@ -22,6 +22,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author CraftedCart
@@ -30,6 +32,8 @@ import java.io.IOException;
 public class SyncManager {
 
     public static final String COMMUNITY_ROOT_URI = "https://github.com/CraftedCart/SMBLevelWorkshopCommunity.git";
+
+    private static final ExecutorService cloneThreadPool = Executors.newFixedThreadPool(4);
 
     public static void syncDatabases() throws IOException, SyncDatabasesException, SAXException {
         File communityDir = AppDataManager.getAppSupportDirectory();
@@ -62,7 +66,7 @@ public class SyncManager {
         //TODO Parse Featured.xml
 
         //Clone root repos for each user
-        LogHelper.info(SyncManager.class, "Resetting and cloning / pulling all user root repos");
+        LogHelper.info(SyncManager.class, "Resetting and cloning / pulling all user root repos"); //TODO update this string when single repos are supported
         for (ICommunityCreator creator : CommunityRootData.getCreatorList()) {
             if (creator instanceof CommunityUser) {
                 //It's an entire user
@@ -71,16 +75,7 @@ public class SyncManager {
                 File destDir = new File(usersDir, user.getUsername());
                 AppDataManager.tryCreateDirectory(destDir);
 
-                try {
-                    cloneOrPullRepo(destDir, getGitURL(user.getUsername(), "root"));
-
-                } catch (SyncDatabasesException | IOException e) {
-                    LogHelper.error(SyncManager.class, "Error while cloning " + user.getUsername() + "/root");
-                    LogHelper.error(SyncManager.class, "Ignoring user");
-                    LogHelper.error(SyncManager.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
-
-                    //TODO: Remove user from local CreatorList.xml and CommunityRootData
-                }
+                getGitURL(user.getUsername(), "root");//TODO
 
                 LogHelper.info(SyncManager.class, "Done cloning / pulling all user repos!");
 
@@ -88,6 +83,7 @@ public class SyncManager {
                 //It's a single repo
                 CommunityRepo repo = (CommunityRepo) creator;
 
+                //TODO clone single repos on root branch
             }
         }
 
