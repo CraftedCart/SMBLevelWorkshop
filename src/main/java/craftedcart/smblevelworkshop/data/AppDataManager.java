@@ -26,7 +26,7 @@ public class AppDataManager {
         tryCreateDirectory(communityUsersDir);
     }
 
-    private static File getAppSupportDirectory() {
+    public static File getAppSupportDirectory() {
         String workingDirectory;
         String os = (System.getProperty("os.name")).toUpperCase();
 
@@ -44,7 +44,7 @@ public class AppDataManager {
         return new File(workingDirectory);
     }
 
-    private static void tryCreateDirectory(File directory) {
+    public static void tryCreateDirectory(File directory) {
         if ((!directory.isDirectory() && directory.mkdirs()) || directory.isDirectory()) {
             return;
         }

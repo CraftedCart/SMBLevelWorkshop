@@ -455,7 +455,7 @@ public class MainScreen extends FluidUIScreen {
             communityButton.setBottomRightPos(0, 24);
         });
         communityButton.setOnLMBAction(this::showCommunity);
-        rightListBox.addChildComponent("communityButton", communityButton);
+        actionsListBox.addChildComponent("communityButton", communityButton);
         //</editor-fold>
 
         //<editor-fold desc="Settings TextButton">
@@ -2552,7 +2552,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void showCommunity() {
-        ProjectManager.getCurrentProject().mainScreen = this; //TODO: Eh, this is a quick and dirty way to take care of restoring data
+        ProjectManager.getCurrentProject().mainScreen = this;
         Window.setUIScreen(new CommunityScreen());
     }
 

@@ -111,7 +111,8 @@
     <!-- Community -->
     <entry key="community" val="Community" />
     <entry key="userProfile" val="User profile" />
-    <entry key="syncDatabases" val="Synchronise databases" />
+    <entry key="syncDatabases" val="Synchronize databases" />
+    <entry key="syncingDatabases" val="Synchronizing databases" />
 
 
 </langPack>
