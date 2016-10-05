@@ -1,20 +1,25 @@
-package craftedcart.smblevelworkshop.ui;
+package craftedcart.smblevelworkshop.ui.community;
 
 import craftedcart.smblevelworkshop.Window;
+import craftedcart.smblevelworkshop.community.SyncManager;
+import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
+import craftedcart.smblevelworkshop.ui.DialogUITheme;
+import craftedcart.smblevelworkshop.ui.MainScreen;
+import craftedcart.smbworkshopexporter.util.LogHelper;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Button;
 import io.github.craftedcart.fluidui.component.Label;
 import io.github.craftedcart.fluidui.component.Panel;
-import io.github.craftedcart.fluidui.component.TextButton;
-import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
-import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimatePanelBackgroundColor;
 import io.github.craftedcart.fluidui.util.EnumVAlignment;
 import io.github.craftedcart.fluidui.util.UIColor;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 
 /**
  * @author CraftedCart
@@ -113,9 +118,26 @@ public class CommunityScreen extends FluidUIScreen {
             syncButton.setBackgroundActiveColor(UIColor.matGrey());
             syncButton.setBackgroundHitColor(UIColor.matGrey900());
         });
-        syncButton.setOnLMBAction(() -> {
-            //TODO
-        });
+        syncButton.setOnLMBAction(() -> new Thread(() -> {
+            try {
+                SyncManager.syncDatabases();
+            } catch (IOException e) {
+                LogHelper.error(getClass(), "IOException: Failed to sync databases");
+                LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+
+                //TODO: Display an error screen
+            } catch (SyncDatabasesException e) {
+                LogHelper.error(getClass(), "SyncDatabasesException: Failed to sync databases");
+                LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+
+                //TODO: Display an error screen
+            } catch (SAXException e) {
+                LogHelper.error(getClass(), "SAXException: Failed to sync databases");
+                LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+
+                //TODO: Display an error screen
+            }
+        }, "SyncThread").start());
         topBarPanel.addChildComponent("syncButton", syncButton);
 
     }

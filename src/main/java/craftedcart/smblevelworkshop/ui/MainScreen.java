@@ -11,6 +11,7 @@ import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
+import craftedcart.smblevelworkshop.ui.community.CommunityScreen;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -2035,7 +2036,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void showCommunity() {
-        ProjectManager.getCurrentProject().mainScreen = this; //TODO: Eh, this is a quick and dirty way to take care of restoring data
+        ProjectManager.getCurrentProject().mainScreen = this;
         Window.setUIScreen(new CommunityScreen());
     }
 
