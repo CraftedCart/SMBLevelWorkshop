@@ -1,39 +1,50 @@
-package craftedcart.smblevelworkshop.community;
+package craftedcart.smblevelworkshop.community.sync;
 
+import craftedcart.smblevelworkshop.community.CommunityRootData;
+import craftedcart.smblevelworkshop.community.creator.CommunityUser;
+import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smbworkshopexporter.util.LogHelper;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 /**
  * @author CraftedCart
  *         Created on 05/10/2016 (DD/MM/YYYY)
  */
-public class CloneRootRepoThread<Void> implements Callable {
+public class CloneSyncRootRepoThread implements Runnable {
 
-    private String destDir;
-    private Stromg
+    private File destDir;
+    private String username;
 
-    public CloneRootRepoThread(String destDir, String gitURI) {
-
+    public CloneSyncRootRepoThread(File destDir, String username) {
+        this.destDir = destDir;
+        this.username = username;
     }
 
     @Override
-    public Void call() throws Exception {
-
+    public void run() {
         try {
-            cloneOrPullRepo(destDir, gitURI);
+            SyncManager.cloneOrPullRepo(destDir, SyncManager.getGitURL(username, "root"));
 
         } catch (SyncDatabasesException | IOException e) {
-            LogHelper.error(SyncManager.class, "Error while cloning " + user.getUsername() + "/root");
             LogHelper.error(SyncManager.class, "Ignoring user");
             LogHelper.error(SyncManager.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
 
-            //TODO: Remove user from local CreatorList.xml and CommunityRootData
-        }
+            File communityDir = AppDataManager.getAppSupportDirectory();
+            File creatorXMLFile = new File(communityDir, "community/root/CreatorList.xml");
 
-        return null;
+            try {
+                CommunityRootData.removeCreator(creatorXMLFile, new CommunityUser(username));
+            } catch (ParserConfigurationException | IOException | SAXException | TransformerException e1) {
+                LogHelper.error(SyncManager.class, "Error while removing user " + username);
+                LogHelper.error(SyncManager.class, "\n" + e1 + "\n" + LogHelper.stackTraceToString(e1));
+            }
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 package craftedcart.smblevelworkshop.ui.community;
 
 import craftedcart.smblevelworkshop.Window;
-import craftedcart.smblevelworkshop.community.SyncManager;
+import craftedcart.smblevelworkshop.community.sync.SyncManager;
 import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
