@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop;
 
+import craftedcart.smblevelworkshop.community.CommunityRootData;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
@@ -41,6 +42,9 @@ public class SMBLevelWorkshop {
     }
 
     public static void init() throws LWJGLException, IOException, FontFormatException, SlickException {
+        //Load in community data in a new thread
+        new Thread(CommunityRootData::loadFromFiles, "LoadCommunityThread").start();
+
         Window.drawable.makeCurrent();
 
         FontCache.registerAWTFont("Roboto-Regular", SMBLevelWorkshop.class.getResourceAsStream("/Roboto-Regular.ttf"));
