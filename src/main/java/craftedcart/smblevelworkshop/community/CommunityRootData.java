@@ -3,7 +3,6 @@ package craftedcart.smblevelworkshop.community;
 import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
 import craftedcart.smblevelworkshop.community.creator.CommunityUser;
 import craftedcart.smblevelworkshop.community.creator.ICommunityCreator;
-import craftedcart.smblevelworkshop.community.sync.SyncManager;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smbworkshopexporter.util.LogHelper;
 import org.apache.commons.io.FileUtils;

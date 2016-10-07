@@ -105,6 +105,8 @@
     <entry key="syncDatabases" val="Synchronize databases" />
     <entry key="syncingDatabases" val="Synchronizing databases" />
     <entry key="announcements" val="Announcements" />
+    <entry key="syncRootTask" val="Synchronizing root repository" />
+    <entry key="syncUserTask" val="Synchronizing %s's root repository" />
 
 
 </langPack>

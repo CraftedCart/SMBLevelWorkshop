@@ -5,6 +5,7 @@ import craftedcart.smblevelworkshop.community.creator.CommunityUser;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smbworkshopexporter.util.LogHelper;
+import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,10 +21,12 @@ public class CloneSyncRootRepoThread implements Runnable {
 
     private File destDir;
     private String username;
+    private UIAction1<Boolean> onFinishAction;
 
-    public CloneSyncRootRepoThread(File destDir, String username) {
+    public CloneSyncRootRepoThread(File destDir, String username, UIAction1<Boolean> onFinishAction) {
         this.destDir = destDir;
         this.username = username;
+        this.onFinishAction = onFinishAction;
     }
 
     @Override
@@ -31,6 +34,9 @@ public class CloneSyncRootRepoThread implements Runnable {
         try {
             SyncManager.cloneOrPullRepo(destDir, SyncManager.getGitURL(username, "root"));
 
+            if (onFinishAction != null) {
+                onFinishAction.execute(true);
+            }
         } catch (SyncDatabasesException | IOException e) {
             LogHelper.error(SyncManager.class, "Ignoring user");
             LogHelper.error(SyncManager.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
@@ -43,6 +49,10 @@ public class CloneSyncRootRepoThread implements Runnable {
             } catch (ParserConfigurationException | IOException | SAXException | TransformerException e1) {
                 LogHelper.error(SyncManager.class, "Error while removing user " + username);
                 LogHelper.error(SyncManager.class, "\n" + e1 + "\n" + LogHelper.stackTraceToString(e1));
+            }
+
+            if (onFinishAction != null) {
+                onFinishAction.execute(false);
             }
         }
     }

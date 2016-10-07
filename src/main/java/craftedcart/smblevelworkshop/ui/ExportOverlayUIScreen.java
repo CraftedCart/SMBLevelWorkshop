@@ -46,7 +46,6 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             backgroundPanel.setBottomRightAnchor(1, 1);
             backgroundPanel.setBackgroundColor(UIColor.pureBlack(0));
 
-
             PluginSmoothAnimatePanelBackgroundColor backgroundPanelAnimColor = new PluginSmoothAnimatePanelBackgroundColor();
             backgroundPanelAnimColor.setTargetBackgroundColor(UIColor.pureBlack(0.75));
             backgroundPanel.addPlugin(backgroundPanelAnimColor);
