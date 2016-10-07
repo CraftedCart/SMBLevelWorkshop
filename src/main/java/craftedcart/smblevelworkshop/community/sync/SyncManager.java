@@ -7,6 +7,8 @@ import craftedcart.smblevelworkshop.community.creator.ICommunityCreator;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smbworkshopexporter.util.LogHelper;
+import io.github.craftedcart.fluidui.uiaction.UIAction;
+import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
@@ -37,7 +39,11 @@ public class SyncManager {
 
     public static final String COMMUNITY_ROOT_URI = "https://github.com/CraftedCart/SMBLevelWorkshopCommunity.git";
 
-    public static void syncDatabases() throws IOException, SyncDatabasesException, SAXException {
+    public UIAction onRootSyncFinishAction;
+    public UIAction1<String> onUserSyncBeginAction;
+    public UIAction1<String> onUserSyncFinishAction;
+
+    public void syncDatabases() throws IOException, SyncDatabasesException, SAXException {
         ExecutorService cloneThreadPool = Executors.newFixedThreadPool(4);
 
         File supportDir = AppDataManager.getAppSupportDirectory();
@@ -66,6 +72,10 @@ public class SyncManager {
 
         //TODO Parse Featured.xml
 
+        if (onRootSyncFinishAction != null) {
+            onRootSyncFinishAction.execute();
+        }
+
         //Clone root repos for each user
         LogHelper.info(SyncManager.class, "Cloning / resetting and pulling all user root repos"); //TODO update this string when single repos are supported
 
@@ -76,10 +86,18 @@ public class SyncManager {
                 //It's an entire user
                 CommunityUser user = (CommunityUser) creator;
 
+                if (onUserSyncBeginAction != null) {
+                    onUserSyncBeginAction.execute(user.getUsername());
+                }
+
                 File destDir = new File(usersDir, user.getUsername());
                 AppDataManager.tryCreateDirectory(destDir);
 
-                Callable thread = Executors.callable(new CloneSyncRootRepoThread(destDir, user.getUsername()));
+                Callable<Object> thread = Executors.callable(new CloneSyncRootRepoThread(destDir, user.getUsername(), (success) -> { //TODO Success boolean is ignored
+                    if (onUserSyncFinishAction != null) {
+                        onUserSyncFinishAction.execute(user.getUsername());
+                    }
+                }));
                 toExecute.add(thread);
 
             } else if (creator instanceof CommunityRepo) {
@@ -102,6 +120,18 @@ public class SyncManager {
         }
 
         cloneThreadPool.shutdown();
+    }
+
+    public void setOnRootSyncFinishAction(UIAction onRootSyncFinishAction) {
+        this.onRootSyncFinishAction = onRootSyncFinishAction;
+    }
+
+    public void setOnUserSyncBeginAction(UIAction1<String> onUserSyncBeginAction) {
+        this.onUserSyncBeginAction = onUserSyncBeginAction;
+    }
+
+    public void setOnUserSyncFinishAction(UIAction1<String> onUserSyncFinishAction) {
+        this.onUserSyncFinishAction = onUserSyncFinishAction;
     }
 
     private static void cloneRepo(File destDir, String uri) throws GitAPIException {

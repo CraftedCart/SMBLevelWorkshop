@@ -1,6 +1,10 @@
 package craftedcart.smblevelworkshop.ui.community;
 
 import craftedcart.smblevelworkshop.Window;
+import craftedcart.smblevelworkshop.community.CommunityRootData;
+import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
+import craftedcart.smblevelworkshop.community.creator.CommunityUser;
+import craftedcart.smblevelworkshop.community.creator.ICommunityCreator;
 import craftedcart.smblevelworkshop.community.sync.SyncManager;
 import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smblevelworkshop.project.ProjectManager;
@@ -120,9 +124,51 @@ public class CommunityScreen extends FluidUIScreen {
             syncButton.setBackgroundActiveColor(UIColor.matGrey());
             syncButton.setBackgroundHitColor(UIColor.matGrey900());
         });
-        syncButton.setOnLMBAction(() -> new Thread(() -> {
+        syncButton.setOnLMBAction(this::syncDatabases);
+        topBarPanel.addChildComponent("syncButton", syncButton);
+        //</editor-fold>
+
+        final CommunityHomeScreen homeScreen = new CommunityHomeScreen();
+        homeScreen.setOnInitAction(() -> {
+            homeScreen.setTopLeftPos(24, 48);
+            homeScreen.setBottomRightPos(-24, 0);
+            homeScreen.setTopLeftAnchor(0, 0);
+            homeScreen.setBottomRightAnchor(1, 1);
+        });
+        mainPanel.addChildComponent("homeScreen", homeScreen);
+
+    }
+
+    private void syncDatabases() {
+        SyncProgressOverlayUIScreen syncOverlay = new SyncProgressOverlayUIScreen();
+
+        syncOverlay.addTask("syncRoot", LangManager.getItem("syncRootTask"));
+
+        setOverlayUiScreen(syncOverlay);
+
+        new Thread(() -> {
             try {
-                SyncManager.syncDatabases();
+                SyncManager sm = new SyncManager();
+
+                sm.setOnRootSyncFinishAction(() -> {
+                    syncOverlay.completeTask("syncRoot");
+
+                    for (ICommunityCreator creator : CommunityRootData.getCreatorList()) { //Add all creators to the overlay
+                        if (creator instanceof CommunityUser) {
+                            CommunityUser user = (CommunityUser) creator;
+                            syncOverlay.addTask("syncUser" + user.getUsername(), String.format(LangManager.getItem("syncUserTask"), user.getUsername()));
+
+                        } else if (creator instanceof CommunityRepo) {
+                            //TODO: Add repo to overlay
+                        }
+                    }
+                });
+
+                sm.setOnUserSyncBeginAction((username) -> syncOverlay.activateTask("syncUser" + username));
+                sm.setOnUserSyncFinishAction((username) -> syncOverlay.completeTask("syncUser" + username));
+
+                sm.syncDatabases();
+
             } catch (IOException e) {
                 LogHelper.error(getClass(), "IOException: Failed to sync databases");
                 LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
@@ -139,18 +185,9 @@ public class CommunityScreen extends FluidUIScreen {
 
                 //TODO: Display an error screen
             }
-        }, "SyncThread").start());
-        topBarPanel.addChildComponent("syncButton", syncButton);
-        //</editor-fold>
 
-        final CommunityHomeScreen homeScreen = new CommunityHomeScreen();
-        homeScreen.setOnInitAction(() -> {
-            homeScreen.setTopLeftPos(24, 48);
-            homeScreen.setBottomRightPos(-24, 0);
-            homeScreen.setTopLeftAnchor(0, 0);
-            homeScreen.setBottomRightAnchor(1, 1);
-        });
-        mainPanel.addChildComponent("homeScreen", homeScreen);
+            setOverlayUiScreen(null);
+        }, "SyncThread").start();
 
     }
 
