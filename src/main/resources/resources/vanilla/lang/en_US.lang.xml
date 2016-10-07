@@ -113,6 +113,7 @@
     <entry key="userProfile" val="User profile" />
     <entry key="syncDatabases" val="Synchronize databases" />
     <entry key="syncingDatabases" val="Synchronizing databases" />
+    <entry key="announcements" val="Announcements" />
 
 
 </langPack>

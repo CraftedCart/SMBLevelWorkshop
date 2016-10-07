@@ -18,9 +18,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -93,7 +91,7 @@ public class CommunityRootData {
                     if (Objects.equals(userElement.getAttribute("username"), username)) {
                         userElement.removeChild(userNode);
 
-                        getXMLString(doc);
+                        writeFile(xmlFile, getXMLString(doc));
                         break;
                     }
                 }
@@ -150,6 +148,32 @@ public class CommunityRootData {
 
     public static List<CommunityAnnouncement> getAnnouncementList() {
         return announcementList;
+    }
+
+    /**
+     * @param file The file to write to / overwrite
+     * @param string The string to write
+     * @throws IOException Thrown if deleting the existing file fails, if the existing file is a directory, or if it fails writing.
+     */
+    private static void writeFile(File file, String string) throws IOException {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                //The file shouldn't exist as a directory
+                throw new IOException("File is a directory");
+            }
+
+            if (!file.delete()) {
+                throw new IOException("Failed to delete existing file");
+            }
+        }
+
+        FileWriter fw = new FileWriter(file);
+        BufferedWriter out = new BufferedWriter(fw);
+
+        out.write(string);
+
+        out.close();
+        fw.close();
     }
 
 }
