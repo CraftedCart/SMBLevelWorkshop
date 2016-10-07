@@ -3,6 +3,10 @@ package craftedcart.smblevelworkshop.community;
 import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
 import craftedcart.smblevelworkshop.community.creator.CommunityUser;
 import craftedcart.smblevelworkshop.community.creator.ICommunityCreator;
+import craftedcart.smblevelworkshop.community.sync.SyncManager;
+import craftedcart.smblevelworkshop.data.AppDataManager;
+import craftedcart.smbworkshopexporter.util.LogHelper;
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -174,6 +178,56 @@ public class CommunityRootData {
 
         out.close();
         fw.close();
+    }
+
+    public static void loadFromFiles() {
+        LogHelper.info(CommunityRootData.class, "Loading community data from local files");
+
+        File supportDir = AppDataManager.getAppSupportDirectory();
+        File announcementsXML = new File(supportDir, "community/root/Announcements.xml");
+        File creatorListXML = new File(supportDir, "community/root/CreatorList.xml");
+
+        //<editor-fold desc="Load Announcements.xml">
+        if (announcementsXML.exists()) {
+            if (!announcementsXML.isDirectory()) {
+                try {
+                    parseAnnouncementsListXML(announcementsXML);
+                } catch (ParserConfigurationException | IOException | SAXException e) {
+                    LogHelper.error(CommunityRootData.class, "Error while parsing community/root/Announcements.xml");
+                    LogHelper.error(CommunityRootData.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+                }
+            } else {
+                //Announcements is a directory - It shouldn't be! - delete the directory
+                try {
+                    FileUtils.deleteDirectory(announcementsXML);
+                } catch (IOException e) {
+                    LogHelper.error(CommunityRootData.class, "Failed to delete directory community/root/Announcements.xml - This shouldn't be a directory!");
+                    LogHelper.error(CommunityRootData.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+                }
+            }
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Load CreatorList.xml">
+        if (creatorListXML.exists()) {
+            if (!creatorListXML.isDirectory()) {
+                try {
+                    parseCreatorListXML(creatorListXML);
+                } catch (ParserConfigurationException | IOException | SAXException e) {
+                    LogHelper.error(CommunityRootData.class, "Error while parsing community/root/CreatorList.xml");
+                    LogHelper.error(CommunityRootData.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+                }
+            } else {
+                //Announcements is a directory - It shouldn't be! - delete the directory
+                try {
+                    FileUtils.deleteDirectory(creatorListXML);
+                } catch (IOException e) {
+                    LogHelper.error(CommunityRootData.class, "Failed to delete directory community/root/CreatorList.xml - This shouldn't be a directory!");
+                    LogHelper.error(CommunityRootData.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+                }
+            }
+        }
+        //</editor-fold>
     }
 
 }

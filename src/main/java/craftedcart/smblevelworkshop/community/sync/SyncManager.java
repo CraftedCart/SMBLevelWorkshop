@@ -40,9 +40,9 @@ public class SyncManager {
     public static void syncDatabases() throws IOException, SyncDatabasesException, SAXException {
         ExecutorService cloneThreadPool = Executors.newFixedThreadPool(4);
 
-        File communityDir = AppDataManager.getAppSupportDirectory();
-        File rootDir = new File(communityDir, "community/root");
-        File usersDir = new File(communityDir, "community/users");
+        File supportDir = AppDataManager.getAppSupportDirectory();
+        File rootDir = new File(supportDir, "community/root");
+        File usersDir = new File(supportDir, "community/users");
 
         cloneOrPullRepo(rootDir, COMMUNITY_ROOT_URI);
 
