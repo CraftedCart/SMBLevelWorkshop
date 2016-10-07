@@ -60,7 +60,7 @@ public class CrashedScreen extends FluidUIScreen {
             crashedLabel.setBottomRightPos(-24, 88);
             crashedLabel.setTopLeftAnchor(animateIn ? 1 : 0, 0);
             crashedLabel.setBottomRightAnchor(animateIn ? 2 : 1, 0);
-            crashedLabel.setFont(FontCache.getUnicodeFont("Roboto-Regular", 48));
+            crashedLabel.setFont(FontCache.getUnicodeFont("Roboto-Regular", 24));
             crashedLabel.setText(ResourceManager.initResources.getString("crashed"));
             crashedLabel.setTextColor(UIColor.matWhite());
 
