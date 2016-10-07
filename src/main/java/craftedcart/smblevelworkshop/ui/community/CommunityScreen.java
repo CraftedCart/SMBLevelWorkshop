@@ -15,6 +15,7 @@ import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Button;
 import io.github.craftedcart.fluidui.component.Label;
 import io.github.craftedcart.fluidui.component.Panel;
+import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.util.EnumVAlignment;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.xml.sax.SAXException;
@@ -44,6 +45,7 @@ public class CommunityScreen extends FluidUIScreen {
         });
         addChildComponent("mainPanel", mainPanel);
 
+        //<editor-fold desc="topBarPanel">
         final Panel topBarPanel = new Panel();
         topBarPanel.setOnInitAction(() -> {
             topBarPanel.setTopLeftPos(0, 0);
@@ -139,6 +141,16 @@ public class CommunityScreen extends FluidUIScreen {
             }
         }, "SyncThread").start());
         topBarPanel.addChildComponent("syncButton", syncButton);
+        //</editor-fold>
+
+        final CommunityHomeScreen homeScreen = new CommunityHomeScreen();
+        homeScreen.setOnInitAction(() -> {
+            homeScreen.setTopLeftPos(24, 48);
+            homeScreen.setBottomRightPos(-24, 0);
+            homeScreen.setTopLeftAnchor(0, 0);
+            homeScreen.setBottomRightAnchor(1, 1);
+        });
+        mainPanel.addChildComponent("homeScreen", homeScreen);
 
     }
 
