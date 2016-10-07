@@ -32,6 +32,8 @@ import java.io.IOException;
  */
 public class CommunityScreen extends FluidUIScreen {
 
+    private final CommunityHomeScreen homeScreen = new CommunityHomeScreen();
+
     public CommunityScreen() {
         init();
     }
@@ -128,7 +130,7 @@ public class CommunityScreen extends FluidUIScreen {
         topBarPanel.addChildComponent("syncButton", syncButton);
         //</editor-fold>
 
-        final CommunityHomeScreen homeScreen = new CommunityHomeScreen();
+        //Defined at class level
         homeScreen.setOnInitAction(() -> {
             homeScreen.setTopLeftPos(24, 48);
             homeScreen.setBottomRightPos(-24, 0);
@@ -187,6 +189,7 @@ public class CommunityScreen extends FluidUIScreen {
             }
 
             setOverlayUiScreen(null);
+            homeScreen.reload();
         }, "SyncThread").start();
 
     }

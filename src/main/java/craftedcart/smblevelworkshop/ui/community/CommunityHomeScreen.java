@@ -5,10 +5,16 @@ import craftedcart.smblevelworkshop.community.CommunityRootData;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.ui.DialogUITheme;
 import io.github.craftedcart.fluidui.FontCache;
+import io.github.craftedcart.fluidui.component.Component;
 import io.github.craftedcart.fluidui.component.Label;
 import io.github.craftedcart.fluidui.component.ListBox;
 import io.github.craftedcart.fluidui.component.Panel;
+import org.apache.commons.collections4.map.ListOrderedMap;
+import org.apache.commons.collections4.set.ListOrderedSet;
 import org.newdawn.slick.UnicodeFont;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author CraftedCart
@@ -27,6 +33,17 @@ public class CommunityHomeScreen extends ListBox {
         subHeadingFont = FontCache.getUnicodeFont("Roboto-Regular", 20);
 
         setTheme(new DialogUITheme());
+        initComponents();
+    }
+
+    public void reload() {
+        ListOrderedMap<String, Component> cloneMap = new ListOrderedMap<>();
+        cloneMap.putAll(childComponents);
+
+        for (Map.Entry<String, Component> entry : cloneMap.entrySet()) {
+            removeChildComponent(entry.getKey());
+        }
+
         initComponents();
     }
 
@@ -79,4 +96,5 @@ public class CommunityHomeScreen extends ListBox {
             i++;
         }
     }
+
 }
