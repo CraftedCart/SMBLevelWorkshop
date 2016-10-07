@@ -1,5 +1,8 @@
 package craftedcart.smblevelworkshop.community.creator;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -8,14 +11,25 @@ import java.util.Objects;
  */
 public class CommunityUser implements ICommunityCreator {
 
-    private String username;
+    @NotNull private String username;
+    @Nullable private String displayName;
 
-    public CommunityUser(String username) {
+    public CommunityUser(@NotNull String username) {
         this.username = username;
     }
 
+    @NotNull
     public String getUsername() {
         return username;
+    }
+
+    public void setDisplayName(@Nullable String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Nullable
+    public String getDisplayName() {
+        return displayName;
     }
 
     @Override
