@@ -168,8 +168,11 @@ public class CommunityScreen extends FluidUIScreen {
 
                 sm.setOnUserSyncBeginAction((username) -> syncOverlay.activateTask("syncUser" + username));
                 sm.setOnUserSyncFinishAction((username) -> syncOverlay.completeTask("syncUser" + username));
+                sm.setOnBuildDatabaseBeginAction(() -> syncOverlay.addTask("syncBuildDatabase", LangManager.getItem("syncBuildDatabase")));
 
                 sm.syncDatabases();
+
+                syncOverlay.completeTask("syncBuildDatabase");
 
             } catch (IOException e) {
                 LogHelper.error(getClass(), "IOException: Failed to sync databases");

@@ -35,6 +35,12 @@ public class CommunityRootData {
     private static List<ICommunityCreator> creatorList = new ArrayList<>();
     private static List<CommunityAnnouncement> announcementList = new ArrayList<>();
 
+    private static DatabaseManager dbManager;
+
+    public static void init() {
+        dbManager = new DatabaseManager();
+    }
+
     public static void parseCreatorListXML(File xmlFile) throws ParserConfigurationException, IOException, SAXException {
         creatorList.clear();
 
@@ -151,6 +157,10 @@ public class CommunityRootData {
 
     public static List<CommunityAnnouncement> getAnnouncementList() {
         return announcementList;
+    }
+
+    public static DatabaseManager getDbManager() {
+        return dbManager;
     }
 
     /**

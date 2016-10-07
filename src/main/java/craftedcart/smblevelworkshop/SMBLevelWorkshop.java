@@ -43,7 +43,10 @@ public class SMBLevelWorkshop {
 
     public static void init() throws LWJGLException, IOException, FontFormatException, SlickException {
         //Load in community data in a new thread
-        new Thread(CommunityRootData::loadFromFiles, "LoadCommunityThread").start();
+        new Thread(() -> {
+            CommunityRootData.init();
+            CommunityRootData.loadFromFiles();
+        }, "LoadCommunityThread").start();
 
         Window.drawable.makeCurrent();
 

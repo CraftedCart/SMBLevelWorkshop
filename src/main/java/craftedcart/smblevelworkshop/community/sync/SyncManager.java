@@ -20,11 +20,13 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryCache;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.util.FS;
+import org.jetbrains.annotations.Nullable;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -39,9 +41,10 @@ public class SyncManager {
 
     public static final String COMMUNITY_ROOT_URI = "https://github.com/CraftedCart/SMBLevelWorkshopCommunity.git";
 
-    public UIAction onRootSyncFinishAction;
-    public UIAction1<String> onUserSyncBeginAction;
-    public UIAction1<String> onUserSyncFinishAction;
+    @Nullable public UIAction onRootSyncFinishAction;
+    @Nullable public UIAction1<String> onUserSyncBeginAction;
+    @Nullable public UIAction1<String> onUserSyncFinishAction;
+    @Nullable public UIAction onBuildDatabaseBeginAction;
 
     public void syncDatabases() throws IOException, SyncDatabasesException, SAXException {
         ExecutorService cloneThreadPool = Executors.newFixedThreadPool(4);
@@ -76,7 +79,7 @@ public class SyncManager {
             onRootSyncFinishAction.execute();
         }
 
-        //Clone root repos for each user
+        //Clone / pull root repos for each user
         LogHelper.info(SyncManager.class, "Cloning / resetting and pulling all user root repos"); //TODO update this string when single repos are supported
 
         List<Callable<Object>> toExecute = new ArrayList<>();
@@ -90,7 +93,7 @@ public class SyncManager {
                     onUserSyncBeginAction.execute(user.getUsername());
                 }
 
-                File destDir = new File(usersDir, user.getUsername());
+                File destDir = new File(usersDir, user.getUsername() + "/root");
                 AppDataManager.tryCreateDirectory(destDir);
 
                 Callable<Object> thread = Executors.callable(new CloneSyncRootRepoThread(destDir, user.getUsername(), (success) -> { //TODO Success boolean is ignored
@@ -120,18 +123,37 @@ public class SyncManager {
         }
 
         cloneThreadPool.shutdown();
+
+        LogHelper.info(SyncManager.class, "Building main database");
+
+        if (onBuildDatabaseBeginAction != null) {
+            onBuildDatabaseBeginAction.execute();
+        }
+
+        try {
+            buildMainDatabase();
+            //TODO callback
+        } catch (SQLException e) {
+            LogHelper.error(SyncManager.class, "Error while building database");
+
+            throw new SyncDatabasesException("Error while building main database", e);
+        }
     }
 
-    public void setOnRootSyncFinishAction(UIAction onRootSyncFinishAction) {
+    public void setOnRootSyncFinishAction(@Nullable UIAction onRootSyncFinishAction) {
         this.onRootSyncFinishAction = onRootSyncFinishAction;
     }
 
-    public void setOnUserSyncBeginAction(UIAction1<String> onUserSyncBeginAction) {
+    public void setOnUserSyncBeginAction(@Nullable UIAction1<String> onUserSyncBeginAction) {
         this.onUserSyncBeginAction = onUserSyncBeginAction;
     }
 
-    public void setOnUserSyncFinishAction(UIAction1<String> onUserSyncFinishAction) {
+    public void setOnUserSyncFinishAction(@Nullable UIAction1<String> onUserSyncFinishAction) {
         this.onUserSyncFinishAction = onUserSyncFinishAction;
+    }
+
+    public void setOnBuildDatabaseBeginAction(@Nullable UIAction onBuildDatabaseBeginAction) {
+        this.onBuildDatabaseBeginAction = onBuildDatabaseBeginAction;
     }
 
     private static void cloneRepo(File destDir, String uri) throws GitAPIException {
@@ -225,6 +247,10 @@ public class SyncManager {
         }
 
         return false;
+    }
+
+    private static void buildMainDatabase() throws SQLException {
+        CommunityRootData.getDbManager().buildCommunityDatabase(CommunityRootData.getCreatorList());
     }
 
     public static String getGitURL(String username, String repoName) {
