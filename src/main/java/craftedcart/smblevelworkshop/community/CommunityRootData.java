@@ -2,7 +2,7 @@ package craftedcart.smblevelworkshop.community;
 
 import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
 import craftedcart.smblevelworkshop.community.creator.CommunityUser;
-import craftedcart.smblevelworkshop.community.creator.ICommunityCreator;
+import craftedcart.smblevelworkshop.community.creator.AbstractCommunityCreator;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smbworkshopexporter.util.LogHelper;
 import org.apache.commons.io.FileUtils;
@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 public class CommunityRootData {
 
-    private static List<ICommunityCreator> creatorList = new ArrayList<>();
+    private static List<AbstractCommunityCreator> creatorList = new ArrayList<>();
     private static List<CommunityAnnouncement> announcementList = new ArrayList<>();
 
     private static DatabaseManager dbManager;
@@ -75,7 +75,7 @@ public class CommunityRootData {
 
     }
 
-    public static void removeCreator(File xmlFile, ICommunityCreator creator) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+    public static void removeCreator(File xmlFile, AbstractCommunityCreator creator) throws ParserConfigurationException, IOException, SAXException, TransformerException {
         creatorList.remove(creator);
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -89,28 +89,24 @@ public class CommunityRootData {
             Node node = nodeList.item(i);
             Element element = (Element) node;
 
-            if (creator instanceof CommunityUser) {
-                NodeList userList = element.getElementsByTagName("user");
-                String username = ((CommunityUser) creator).getUsername();
+            NodeList userList = element.getElementsByTagName("user");
+            String username = creator.getUsername();
 
-                for (int j = 0; j < userList.getLength(); j++) {
-                    Node userNode = userList.item(i);
-                    Element userElement = (Element) userNode;
+            for (int j = 0; j < userList.getLength(); j++) {
+                Node userNode = userList.item(i);
+                Element userElement = (Element) userNode;
 
-                    if (Objects.equals(userElement.getAttribute("username"), username)) {
+                if (Objects.equals(userElement.getAttribute("username"), username)) {
+                    if (creator instanceof CommunityRepo && Objects.equals(userElement.getAttribute("repoName"), ((CommunityRepo) creator).getRepoName())) {
                         userElement.removeChild(userNode);
 
                         writeFile(xmlFile, getXMLString(doc));
                         break;
                     }
                 }
-
-                throw new NullPointerException("CommunityUser not found in XML file"); //We iterated through the whole XML without finding the user
-
-            } else if (creator instanceof CommunityRepo) {
-                NodeList repoList = element.getElementsByTagName("repo");
-                //TODO Single repos
             }
+
+            throw new NullPointerException("CommunityUser not found in XML file"); //We iterated through the whole XML without finding the user
 
         }
     }
@@ -151,7 +147,7 @@ public class CommunityRootData {
         return result.getWriter().toString();
     }
 
-    public static List<ICommunityCreator> getCreatorList() {
+    public static List<AbstractCommunityCreator> getCreatorList() {
         return creatorList;
     }
 

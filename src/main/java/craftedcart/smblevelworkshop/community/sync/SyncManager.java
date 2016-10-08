@@ -3,7 +3,7 @@ package craftedcart.smblevelworkshop.community.sync;
 import craftedcart.smblevelworkshop.community.CommunityRootData;
 import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
 import craftedcart.smblevelworkshop.community.creator.CommunityUser;
-import craftedcart.smblevelworkshop.community.creator.ICommunityCreator;
+import craftedcart.smblevelworkshop.community.creator.AbstractCommunityCreator;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smbworkshopexporter.util.LogHelper;
@@ -11,7 +11,6 @@ import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -28,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -44,7 +44,8 @@ public class SyncManager {
     @Nullable public UIAction onRootSyncFinishAction;
     @Nullable public UIAction1<String> onUserSyncBeginAction;
     @Nullable public UIAction1<String> onUserSyncFinishAction;
-    @Nullable public UIAction onBuildDatabaseBeginAction;
+    @Nullable public UIAction onBuildCommunityDatabaseBeginAction;
+    @Nullable public UIAction onBuildCommunityDatabaseFinishAction;
 
     public void syncDatabases() throws IOException, SyncDatabasesException, SAXException {
         ExecutorService cloneThreadPool = Executors.newFixedThreadPool(4);
@@ -80,11 +81,11 @@ public class SyncManager {
         }
 
         //Clone / pull root repos for each user
-        LogHelper.info(SyncManager.class, "Cloning / resetting and pulling all user root repos"); //TODO update this string when single repos are supported
+        LogHelper.info(SyncManager.class, "Cloning / resetting and pulling all user root repos / branches");
 
         List<Callable<Object>> toExecute = new ArrayList<>();
 
-        for (ICommunityCreator creator : CommunityRootData.getCreatorList()) { //Loop through all creators
+        for (AbstractCommunityCreator creator : CommunityRootData.getCreatorList()) { //Loop through all creators
             if (creator instanceof CommunityUser) {
                 //It's an entire user
                 CommunityUser user = (CommunityUser) creator;
@@ -96,7 +97,7 @@ public class SyncManager {
                 File destDir = new File(usersDir, user.getUsername() + "/root");
                 AppDataManager.tryCreateDirectory(destDir);
 
-                Callable<Object> thread = Executors.callable(new CloneSyncRootRepoThread(destDir, user.getUsername(), (success) -> { //TODO Success boolean is ignored
+                Callable<Object> thread = Executors.callable(new CloneSyncRootThread(destDir, user, (success) -> { //TODO Success boolean is ignored
                     if (onUserSyncFinishAction != null) {
                         onUserSyncFinishAction.execute(user.getUsername());
                     }
@@ -107,37 +108,53 @@ public class SyncManager {
                 //It's a single repo
                 CommunityRepo repo = (CommunityRepo) creator;
 
-                //TODO clone single repos on root branch
+                if (onUserSyncBeginAction != null) {
+                    onUserSyncBeginAction.execute(repo.getUsername());
+                }
+
+                File destDir = new File(usersDir, repo.getUsername() + "/root");
+                AppDataManager.tryCreateDirectory(destDir);
+
+                Callable<Object> thread = Executors.callable(new CloneSyncRootThread(destDir, repo, (success) -> { //TODO Success boolean is ignored
+                    if (onUserSyncFinishAction != null) {
+                        onUserSyncFinishAction.execute(repo.getUsername());
+                    }
+                }));
+                toExecute.add(thread);
             }
         }
 
         //Invoke all clone threads
         try {
             cloneThreadPool.invokeAll(toExecute);
-            LogHelper.info(SyncManager.class, "Done cloning / pulling all user repos!"); //TODO update this string when single repos are supported
+            LogHelper.info(SyncManager.class, "Done cloning / pulling all repos!");
         } catch (InterruptedException e) {
-            LogHelper.error(SyncManager.class, "Error while cloning / pulling all user repos");
+            LogHelper.error(SyncManager.class, "Error while cloning / pulling all repos");
             LogHelper.error(SyncManager.class, "Aborting database sync");
 
-            throw new SyncDatabasesException("Error while cloning / pulling all user repos", e);
+            throw new SyncDatabasesException("Error while cloning / pulling all repos", e);
         }
 
         cloneThreadPool.shutdown();
 
-        LogHelper.info(SyncManager.class, "Building main database");
+        LogHelper.info(SyncManager.class, "Building community database");
 
-        if (onBuildDatabaseBeginAction != null) {
-            onBuildDatabaseBeginAction.execute();
+        if (onBuildCommunityDatabaseBeginAction != null) {
+            onBuildCommunityDatabaseBeginAction.execute();
         }
 
         try {
-            buildMainDatabase();
-            //TODO callback
-        } catch (SQLException e) {
-            LogHelper.error(SyncManager.class, "Error while building database");
+            buildCommunityDatabase();
 
-            throw new SyncDatabasesException("Error while building main database", e);
+            if (onBuildCommunityDatabaseFinishAction != null) {
+                onBuildCommunityDatabaseFinishAction.execute();
+            }
+        } catch (SQLException e) {
+            LogHelper.error(SyncManager.class, "Error while building community database");
+
+            throw new SyncDatabasesException("Error while building community database", e);
         }
+
     }
 
     public void setOnRootSyncFinishAction(@Nullable UIAction onRootSyncFinishAction) {
@@ -152,28 +169,38 @@ public class SyncManager {
         this.onUserSyncFinishAction = onUserSyncFinishAction;
     }
 
-    public void setOnBuildDatabaseBeginAction(@Nullable UIAction onBuildDatabaseBeginAction) {
-        this.onBuildDatabaseBeginAction = onBuildDatabaseBeginAction;
+    public void setOnBuildCommunityDatabaseBeginAction(@Nullable UIAction onBuildLevelsDatabaseBeginAction) {
+        this.onBuildCommunityDatabaseBeginAction = onBuildLevelsDatabaseBeginAction;
     }
 
-    private static void cloneRepo(File destDir, String uri) throws GitAPIException {
+    public void setOnBuildCommunityDatabaseFinishAction(@Nullable UIAction onBuildCommunityDatabaseFinishAction) {
+        this.onBuildCommunityDatabaseFinishAction = onBuildCommunityDatabaseFinishAction;
+    }
+
+    private static void cloneRepo(File destDir, String uri, String branch) throws GitAPIException {
         LogHelper.info(SyncManager.class, "Cloning " + uri + " into " + destDir.getAbsolutePath());
 
         Git git = Git.cloneRepository()
                 .setURI(uri)
                 .setDirectory(destDir)
+                .setBranchesToClone(Collections.singletonList("refs/heads/" + branch))
                 .call();
 
         LogHelper.info(SyncManager.class, "Done cloning!");
     }
 
-    /**
-     * @param destDir Where to clone the repo / where the repo to pull is from
-     * @param uri The remote URI of the repo
-     * @throws SyncDatabasesException Thrown when a Git command fail
-     * @throws IOException Thrown when cleaning a directory fails
-     */
-    public static void cloneOrPullRepo(File destDir, String uri) throws SyncDatabasesException, IOException {
+    private static void cloneRepo(File destDir, String uri) throws GitAPIException {
+        cloneRepo(destDir, uri, "master");
+    }
+
+        /**
+         * @param destDir Where to clone the repo / where the repo to pull is from
+         * @param uri The remote URI of the repo
+         * @param branch The name of the branch to clone / pull
+         * @throws SyncDatabasesException Thrown when a Git command fail
+         * @throws IOException Thrown when cleaning a directory fails
+         */
+    public static void cloneOrPullRepo(File destDir, String uri, String branch) throws SyncDatabasesException, IOException {
         if (isGitRepo(destDir)) { //Check if the Git repo already exists
             try {
                 FileRepositoryBuilder repoBuilder = new FileRepositoryBuilder();
@@ -189,8 +216,7 @@ public class SyncManager {
                     try {
                         git.reset().setMode(ResetCommand.ResetType.HARD).call();
 
-                        PullCommand pull = git.pull();
-                        PullResult result = pull.call();
+                        PullResult result = git.pull().call();
 
                         LogHelper.info(SyncManager.class, "Done pulling - Result: " + result.toString());
                     } catch (GitAPIException e) {
@@ -202,7 +228,7 @@ public class SyncManager {
                     FileUtils.cleanDirectory(destDir);
 
                     try {
-                        cloneRepo(destDir, uri);
+                        cloneRepo(destDir, uri, branch);
                     } catch (GitAPIException e) {
                         throw new SyncDatabasesException("Error while cloning from the Git repo at " + destDir.getAbsolutePath(), e);
                     }
@@ -216,7 +242,7 @@ public class SyncManager {
                 FileUtils.cleanDirectory(destDir);
 
                 try {
-                    cloneRepo(destDir, uri);
+                    cloneRepo(destDir, uri, branch);
                 } catch (GitAPIException e1) {
                     throw new SyncDatabasesException("Error while cloning from the Git repo at " + destDir.getAbsolutePath(), e1);
                 }
@@ -224,11 +250,15 @@ public class SyncManager {
         } else {
 
             try {
-                cloneRepo(destDir, uri);
+                cloneRepo(destDir, uri, branch);
             } catch (GitAPIException e) {
                 throw new SyncDatabasesException("Error while cloning from the Git repo at " + destDir.getAbsolutePath(), e);
             }
         }
+    }
+
+    public static void cloneOrPullRepo(File destDir, String uri) throws SyncDatabasesException, IOException {
+        cloneOrPullRepo(destDir, uri, "master");
     }
 
     private static boolean isGitRepo(File dir) {
@@ -249,7 +279,7 @@ public class SyncManager {
         return false;
     }
 
-    private static void buildMainDatabase() throws SQLException {
+    private static void buildCommunityDatabase() throws SQLException {
         CommunityRootData.getDbManager().buildCommunityDatabase(CommunityRootData.getCreatorList());
     }
 

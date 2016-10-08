@@ -2,7 +2,7 @@ package craftedcart.smblevelworkshop.community;
 
 import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
 import craftedcart.smblevelworkshop.community.creator.CommunityUser;
-import craftedcart.smblevelworkshop.community.creator.ICommunityCreator;
+import craftedcart.smblevelworkshop.community.creator.AbstractCommunityCreator;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smbworkshopexporter.util.LogHelper;
 import org.xml.sax.SAXException;
@@ -33,16 +33,44 @@ public class DatabaseManager {
         Runtime.getRuntime().addShutdownHook(new Thread(this::closeDatabaseConnection));
     }
 
-    public void buildCommunityDatabase(List<ICommunityCreator> creatorList) throws SQLException {
-        replaceLevelsTable(creatorList);
-    }
-
-    private void replaceLevelsTable(List<ICommunityCreator> creatorList) throws SQLException {
-        File supportDir = AppDataManager.getAppSupportDirectory();
-
+    public void buildCommunityDatabase(List<AbstractCommunityCreator> creatorList) throws SQLException {
         //In case files were deleted
         closeDatabaseConnection();
         connectToDatabase();
+
+        buildUsersTable(creatorList);
+        buildLevelsTable(creatorList);
+    }
+
+    private void buildUsersTable(List<AbstractCommunityCreator> creatorList) throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30); //Set timeout to 30 sec
+
+        //(Re)create the users table
+        statement.executeUpdate("drop table if exists users");
+        statement.executeUpdate("create table users (" +
+                "username string," +
+                "displayName string," +
+                "isSingleRepo boolean," +
+                "repo string," + //Repo will only be used if the user is using a single repo instead of a full account
+                "bioPath string" +
+                ")");
+
+        PreparedStatement addUserStatement = connection.prepareStatement("insert into users values (?, ?, ?, ?, ?)");
+
+        for (AbstractCommunityCreator creator : creatorList) {
+            addUserStatement.setString(1, creator.getUsername()); //Username
+            addUserStatement.setString(2, creator.getDisplayName()); //User Display Name
+            addUserStatement.setBoolean(3, creator instanceof CommunityRepo); //Is Single Repo?
+            addUserStatement.setString(4, creator instanceof CommunityRepo ? ((CommunityRepo) creator).getRepoName() : null); //Repo (Not single repo, so null)
+            addUserStatement.setString(5, creator.getBioPath()); //Bio Path
+
+            addUserStatement.execute();
+        }
+    }
+
+    private void buildLevelsTable(List<AbstractCommunityCreator> creatorList) throws SQLException {
+        File supportDir = AppDataManager.getAppSupportDirectory();
 
         Statement statement = connection.createStatement();
         statement.setQueryTimeout(30); //Set timeout to 30 sec
@@ -60,39 +88,30 @@ public class DatabaseManager {
 
         PreparedStatement addLevelStatement = connection.prepareStatement("insert into levels values (?, ?, ?, ?, ?, ?)");
 
-        for (ICommunityCreator creator : creatorList) {
-            if (creator instanceof CommunityUser) {
-                CommunityUser user = (CommunityUser) creator;
+        for (AbstractCommunityCreator creator : creatorList) {
+            addLevelStatement.setString(1, creator.getUsername()); //Username
 
-                addLevelStatement.setString(1, user.getUsername());
+            File levelsXML = new File(supportDir, "community/users/" + creator.getUsername() + "/root/levels/LevelList.xml");
 
-                File levelsXML = new File(supportDir, "community/users/" + user.getUsername() + "/root/levels/LevelList.xml");
+            if (levelsXML.exists() && !levelsXML.isDirectory()) {
+                try {
+                    List<CommunityLevel> levelList = CommunityLevel.getCommunityLevelsFromXML(levelsXML, creator.getUsername(), creator.getDisplayName());
 
-                if (levelsXML.exists() && !levelsXML.isDirectory()) {
-                    try {
-                        List<CommunityLevel> levelList = CommunityLevel.getCommunityLevelsFromXML(levelsXML, user.getUsername(), user.getDisplayName());
-
-                        for (CommunityLevel level : levelList) {
-                            addLevelStatement.setString(2, level.getUserDisplayName()); //User Display Name
-                            addLevelStatement.setString(3, level.getId()); //ID
-                            addLevelStatement.setString(4, level.getName()); //Name
-                            addLevelStatement.setString(5, level.getShortDescription()); //Short Description
-                            addLevelStatement.setLong(6, level.getTime()); //Creation Time
-                        }
-
-                        addLevelStatement.execute();
-
-                    } catch (ParserConfigurationException | IOException | SAXException e) {
-                        LogHelper.error(getClass(), "Failed to parse LevelList.xml for " + user.getUsername());
-                        LogHelper.error(getClass(), "Skipping user");
-                        LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+                    for (CommunityLevel level : levelList) {
+                        addLevelStatement.setString(2, level.getUserDisplayName()); //User Display Name
+                        addLevelStatement.setString(3, level.getId()); //ID
+                        addLevelStatement.setString(4, level.getName()); //Name
+                        addLevelStatement.setString(5, level.getShortDescription()); //Short Description
+                        addLevelStatement.setLong(6, level.getTime()); //Creation Time
                     }
+
+                    addLevelStatement.execute();
+
+                } catch (ParserConfigurationException | IOException | SAXException e) {
+                    LogHelper.error(getClass(), "Failed to parse LevelList.xml for " + creator.getUsername());
+                    LogHelper.error(getClass(), "Skipping user");
+                    LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
                 }
-
-            } else if (creator instanceof CommunityRepo) {
-                CommunityRepo repo = (CommunityRepo) creator;
-                //TODO Handle root branch for single repo
-
             }
         }
     }
