@@ -4,7 +4,7 @@ import craftedcart.smblevelworkshop.community.CommunityRootData;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
-import craftedcart.smblevelworkshop.ui.DefaultUITheme;
+import craftedcart.smblevelworkshop.ui.theme.DefaultUITheme;
 import craftedcart.smblevelworkshop.ui.LoadingScreen;
 import craftedcart.smblevelworkshop.ui.MainScreen;
 import craftedcart.smblevelworkshop.util.CrashHandler;

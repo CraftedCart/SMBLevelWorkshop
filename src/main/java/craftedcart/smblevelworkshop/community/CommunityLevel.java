@@ -27,7 +27,7 @@ public class CommunityLevel {
     private String id;
     private String name;
     private String shortDescription;
-    private long time;
+    private long creationTime;
 
     public void setUsername(String username) {
         this.username = username;
@@ -69,12 +69,12 @@ public class CommunityLevel {
         return shortDescription;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
 
-    public long getTime() {
-        return time;
+    public long getCreationTime() {
+        return creationTime;
     }
 
     public static List<CommunityLevel> getCommunityLevelsFromXML(File xmlFile, String username, String userDisplayName)
@@ -118,7 +118,7 @@ public class CommunityLevel {
             level.setName(levelRepoElement.getAttribute("name"));
             level.setShortDescription(levelRepoElement.getAttribute("shortDescription"));
             try {
-                level.setTime(Long.valueOf(levelRepoElement.getAttribute("creationTime")));
+                level.setCreationTime(Long.valueOf(levelRepoElement.getAttribute("creationTime")));
             } catch (NumberFormatException e) {
                 //Invalid time - Skip this level
                 LogHelper.warn(CommunityLevel.class,String.format("Invalid time for level %s by %s - Skipping level",

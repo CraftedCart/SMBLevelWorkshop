@@ -1,4 +1,4 @@
-package craftedcart.smblevelworkshop.ui;
+package craftedcart.smblevelworkshop.ui.theme;
 
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.theme.UITheme;
