@@ -1,7 +1,6 @@
 package craftedcart.smblevelworkshop.community;
 
 import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
-import craftedcart.smblevelworkshop.community.creator.CommunityUser;
 import craftedcart.smblevelworkshop.community.creator.AbstractCommunityCreator;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smbworkshopexporter.util.LogHelper;
@@ -11,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,7 +102,7 @@ public class DatabaseManager {
                         addLevelStatement.setString(3, level.getId()); //ID
                         addLevelStatement.setString(4, level.getName()); //Name
                         addLevelStatement.setString(5, level.getShortDescription()); //Short Description
-                        addLevelStatement.setLong(6, level.getTime()); //Creation Time
+                        addLevelStatement.setLong(6, level.getCreationTime()); //Creation Time
                     }
 
                     addLevelStatement.execute();
@@ -114,6 +114,46 @@ public class DatabaseManager {
                 }
             }
         }
+    }
+
+    public boolean isDatabaseOk() throws SQLException {
+        if (connection != null) {
+            DatabaseMetaData meta = connection.getMetaData();
+
+            ResultSet usersTables = meta.getTables(null, null, "users", null);
+            if (usersTables.next()) { //If "users" table exists
+                ResultSet levelsTables = meta.getTables(null, null, "levels", null); //If "levels" table exists
+                if (levelsTables.next()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public List<CommunityLevel> getNewestLevels(int startIndex, int endIndex) throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30); //Set timeout to 30 sec
+
+        ResultSet results = statement.executeQuery(String.format("select * from levels order by creationTime desc limit %d,%d", startIndex, endIndex));
+
+        List<CommunityLevel> levelList = new ArrayList<>();
+
+        while (results.next()) {
+            CommunityLevel level = new CommunityLevel();
+
+            level.setUsername(results.getString("username"));
+            level.setUserDisplayName(results.getString("userDisplayName"));
+            level.setId(results.getString("id"));
+            level.setName(results.getString("levelName"));
+            level.setShortDescription(results.getString("shortDescription"));
+            level.setCreationTime(results.getLong("creationTime"));
+
+            levelList.add(level);
+        }
+
+        return levelList;
     }
 
     private void connectToDatabase() {

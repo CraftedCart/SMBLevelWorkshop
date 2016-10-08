@@ -3,6 +3,7 @@ package craftedcart.smblevelworkshop.ui;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
+import craftedcart.smblevelworkshop.ui.theme.DialogUITheme;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;

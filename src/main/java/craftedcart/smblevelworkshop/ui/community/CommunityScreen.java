@@ -2,15 +2,13 @@ package craftedcart.smblevelworkshop.ui.community;
 
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.community.CommunityRootData;
-import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
-import craftedcart.smblevelworkshop.community.creator.CommunityUser;
 import craftedcart.smblevelworkshop.community.creator.AbstractCommunityCreator;
 import craftedcart.smblevelworkshop.community.sync.SyncManager;
 import craftedcart.smblevelworkshop.exception.SyncDatabasesException;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
-import craftedcart.smblevelworkshop.ui.DialogUITheme;
+import craftedcart.smblevelworkshop.ui.theme.DialogUITheme;
 import craftedcart.smblevelworkshop.ui.MainScreen;
 import craftedcart.smbworkshopexporter.util.LogHelper;
 import io.github.craftedcart.fluidui.FluidUIScreen;
@@ -131,8 +129,8 @@ public class CommunityScreen extends FluidUIScreen {
 
         //Defined at class level
         homeScreen.setOnInitAction(() -> {
-            homeScreen.setTopLeftPos(24, 48);
-            homeScreen.setBottomRightPos(-24, 0);
+            homeScreen.setTopLeftPos(0, 48);
+            homeScreen.setBottomRightPos(0, 0);
             homeScreen.setTopLeftAnchor(0, 0);
             homeScreen.setBottomRightAnchor(1, 1);
         });

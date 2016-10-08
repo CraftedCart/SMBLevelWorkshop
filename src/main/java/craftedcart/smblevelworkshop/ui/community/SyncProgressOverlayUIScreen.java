@@ -1,7 +1,7 @@
 package craftedcart.smblevelworkshop.ui.community;
 
 import craftedcart.smblevelworkshop.resource.LangManager;
-import craftedcart.smblevelworkshop.ui.DialogUITheme;
+import craftedcart.smblevelworkshop.ui.theme.DialogUITheme;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;
