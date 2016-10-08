@@ -6,18 +6,13 @@ import java.util.Objects;
  * @author CraftedCart
  *         Created on 04/10/2016 (DD/MM/YYYY)
  */
-public class CommunityRepo implements ICommunityCreator {
+public class CommunityRepo extends AbstractCommunityCreator {
 
-    private String username;
     private String repoName;
 
     public CommunityRepo(String username, String repoName) {
         this.username = username;
         this.repoName = repoName;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public String getRepoName() {

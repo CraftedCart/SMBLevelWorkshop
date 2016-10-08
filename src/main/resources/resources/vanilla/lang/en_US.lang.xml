@@ -116,7 +116,7 @@
     <entry key="announcements" val="Announcements" />
     <entry key="syncRootTask" val="Synchronizing root repository" />
     <entry key="syncUserTask" val="Synchronizing %s's root repository" />
-    <entry key="syncBuildDatabase" val="Building database" />
+    <entry key="syncBuildCommunityDatabase" val="Building community database" />
 
 
 </langPack>
