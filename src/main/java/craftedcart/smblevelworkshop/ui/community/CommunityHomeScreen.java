@@ -6,11 +6,13 @@ import craftedcart.smblevelworkshop.community.sync.SyncManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.ui.theme.DialogUITheme;
 import craftedcart.smbworkshopexporter.util.LogHelper;
+import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.util.EnumVAlignment;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.apache.commons.collections4.map.ListOrderedMap;
+import org.jetbrains.annotations.NotNull;
 import org.newdawn.slick.UnicodeFont;
 
 import java.sql.SQLException;
@@ -22,12 +24,16 @@ import java.util.Map;
  */
 public class CommunityHomeScreen extends ListBox {
 
+    @NotNull private FluidUIScreen uiScreen;
+
     private final UnicodeFont HEADING_FONT;
     private final UnicodeFont SUBHEADING_FONT;
 
-    public CommunityHomeScreen() {
+    public CommunityHomeScreen(@NotNull FluidUIScreen uiScreen) {
         init();
         postInit();
+
+        this.uiScreen = uiScreen;
 
         HEADING_FONT = FontCache.getUnicodeFont("Roboto-Regular", 24);
         SUBHEADING_FONT = FontCache.getUnicodeFont("Roboto-Regular", 20);
@@ -54,7 +60,7 @@ public class CommunityHomeScreen extends ListBox {
             LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
         }
 
-        //The method didn't return, so an error occured
+        //The method didn't return, so an error occurred
         //TODO: Show error screen
     }
 
@@ -144,20 +150,21 @@ public class CommunityHomeScreen extends ListBox {
     }
 
     private void addNewestLevels(ListBox parent) {
-        try {
-            CommunityLevelList newestLevelsList = new CommunityLevelList(LangManager.getItem("newestLevels"), CommunityRootData.getDbManager().getNewestLevels(0, 50));
-            newestLevelsList.setOnInitAction(() -> {
-                newestLevelsList.setTopLeftPos(0, 0);
-            });
-            newestLevelsList.setOnSizeChangedAction(parent::reorganizeChildComponents);
-            parent.addChildComponent("newestLevelsList", newestLevelsList);
+        //Do this in a new thread to not block the main thread when doing the SQL query
+        new Thread(() -> {
+            try {
+                CommunityLevelList newestLevelsList = new CommunityLevelList(LangManager.getItem("newestLevels"), CommunityRootData.getDbManager().getNewestLevels(0, 50), uiScreen);
+                newestLevelsList.setOnInitAction(() -> newestLevelsList.setTopLeftPos(0, 0));
+                newestLevelsList.setOnSizeChangedAction(parent::reorganizeChildComponents);
+                parent.addChildComponent("newestLevelsList", newestLevelsList);
 
-        } catch (SQLException e) {
-            LogHelper.error(SyncManager.class, "Error while getting newest levels");
-            LogHelper.error(SyncManager.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+            } catch (SQLException e) {
+                LogHelper.error(SyncManager.class, "Error while getting newest levels");
+                LogHelper.error(SyncManager.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
 
-            //TODO: Display error message
-        }
+                //TODO: Display error message
+            }
+        }, "AddNewestLevelsThread").start();
     }
 
 }

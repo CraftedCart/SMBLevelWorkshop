@@ -1,9 +1,9 @@
 package craftedcart.smblevelworkshop.data;
 
-import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author CraftedCart
@@ -11,12 +11,12 @@ import java.io.File;
  */
 public class AppDataManager {
 
-    public static void createAppSupportDirectories() {
+    public static void createAppSupportDirectories() throws IOException {
         tryCreateDirectory(getAppSupportDirectory());
         createAppSupportSubdirectoies();
     }
 
-    public static void createAppSupportSubdirectoies() {
+    public static void createAppSupportSubdirectoies() throws IOException {
         File communityDir = new File(getAppSupportDirectory(), "community");
         File communityRootDir = new File(communityDir, "root");
         File communityUsersDir = new File(communityDir, "users");
@@ -44,12 +44,12 @@ public class AppDataManager {
         return new File(workingDirectory);
     }
 
-    public static void tryCreateDirectory(File directory) {
+    public static void tryCreateDirectory(File directory) throws IOException {
         if ((!directory.isDirectory() && directory.mkdirs()) || directory.isDirectory()) {
             return;
         }
-        LogHelper.fatal(ResourceManager.class, String.format("Failed to create directories \"%s\"", directory.toString()));
-        throw new RuntimeException(String.format("Failed to create directories \"%s\"", directory.toString()));
+        LogHelper.error(AppDataManager.class, String.format("Failed to create directories \"%s\"", directory.toString()));
+        throw new IOException(String.format("Failed to create directories \"%s\"", directory.toString()));
     }
 
 }

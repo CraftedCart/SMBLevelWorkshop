@@ -2,6 +2,7 @@ package craftedcart.smblevelworkshop.ui.community;
 
 import craftedcart.smblevelworkshop.community.CommunityLevel;
 import craftedcart.smblevelworkshop.ui.theme.DialogUITheme;
+import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.uiaction.UIAction;
@@ -9,6 +10,7 @@ import io.github.craftedcart.fluidui.util.EnumVAlignment;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.eclipse.jgit.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.newdawn.slick.UnicodeFont;
 
 import java.util.List;
@@ -25,18 +27,20 @@ public class CommunityLevelList extends ListBox {
     public String heading;
     public List<CommunityLevel> levelList;
     @Nullable public UIAction onSizeChangedAction;
+    @NotNull FluidUIScreen uiScreen;
 
     private final UnicodeFont HEADING_FONT;
     private final UnicodeFont SUBHEADING_FONT;
 
     public static final double LEVEL_ENTRY_HEIGHT = 72;
 
-    public CommunityLevelList(String heading, List<CommunityLevel> levelList) {
+    public CommunityLevelList(String heading, List<CommunityLevel> levelList, @NotNull FluidUIScreen uiScreen) {
         init();
         postInit();
 
         this.heading = heading;
         this.levelList = levelList;
+        this.uiScreen = uiScreen;
 
         HEADING_FONT = FontCache.getUnicodeFont("Roboto-Regular", 24);
         SUBHEADING_FONT = FontCache.getUnicodeFont("Roboto-Regular", 20);
@@ -52,24 +56,21 @@ public class CommunityLevelList extends ListBox {
     }
 
     private void initComponents() {
-        //Do this in another thread to not block the main one when executing the SQL query
-        new Thread(() -> {
-            setCanScroll(false);
+        setCanScroll(false);
 
-            addLevels(this);
+        addLevels(this);
 
-            if (bottomRightPos != null) {
-                setBottomRightPos(bottomRightPos.x, bottomRightPos.y + 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
-            } else {
-                setBottomRightPos(0, 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
-            }
+        if (bottomRightPos != null) {
+            setBottomRightPos(bottomRightPos.x, bottomRightPos.y + 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
+        } else {
+            setBottomRightPos(0, 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
+        }
 
-            preDraw(); //Recalculate height
+        preDraw(); //Recalculate height
 
-            if (onSizeChangedAction != null) {
-                onSizeChangedAction.execute();
-            }
-        }, "InitComponentsLevelListThread").start();
+        if (onSizeChangedAction != null) {
+            onSizeChangedAction.execute();
+        }
     }
 
     private void addLevels(ListBox parent) {
@@ -108,9 +109,7 @@ public class CommunityLevelList extends ListBox {
                 levelButton.setBackgroundActiveColor(UIColor.matGrey(0.3));
                 levelButton.setBackgroundHitColor(UIColor.matGrey(0.5));
             });
-            levelButton.setOnLMBAction(() -> {
-                //TODO
-            });
+            levelButton.setOnLMBAction(() -> uiScreen.setOverlayUiScreen(new CommunityOverlayLevelScreen(level)));
             parent.addChildComponent("levelButton" + String.valueOf(i), levelButton);
 
             final Label levelTitleLabel = new Label();

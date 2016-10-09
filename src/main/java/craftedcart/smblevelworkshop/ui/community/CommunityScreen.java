@@ -22,6 +22,7 @@ import io.github.craftedcart.fluidui.util.UIColor;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * @author CraftedCart
@@ -29,7 +30,7 @@ import java.io.IOException;
  */
 public class CommunityScreen extends FluidUIScreen {
 
-    private final CommunityHomeScreen homeScreen = new CommunityHomeScreen();
+    private final CommunityHomeScreen homeScreen = new CommunityHomeScreen(this);
 
     public CommunityScreen() {
         init();

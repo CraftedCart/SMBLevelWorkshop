@@ -4,6 +4,7 @@ import craftedcart.smblevelworkshop.community.creator.CommunityRepo;
 import craftedcart.smblevelworkshop.community.creator.AbstractCommunityCreator;
 import craftedcart.smblevelworkshop.data.AppDataManager;
 import craftedcart.smbworkshopexporter.util.LogHelper;
+import org.jetbrains.annotations.Nullable;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -136,7 +137,7 @@ public class DatabaseManager {
         Statement statement = connection.createStatement();
         statement.setQueryTimeout(30); //Set timeout to 30 sec
 
-        ResultSet results = statement.executeQuery(String.format("select * from levels order by creationTime desc limit %d,%d", startIndex, endIndex));
+        ResultSet results = statement.executeQuery(String.format("select * from levels order by creationTime desc limit %d, %d", startIndex, endIndex));
 
         List<CommunityLevel> levelList = new ArrayList<>();
 
@@ -154,6 +155,44 @@ public class DatabaseManager {
         }
 
         return levelList;
+    }
+
+    public CommunityLevel getLevelByUsernameAndID(String username, String ID) throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30); //Set timeout to 30 sec
+
+        PreparedStatement addLevelStatement = connection.prepareStatement("select * from levels where username = ? and id = ?");
+        addLevelStatement.setString(1, username);
+        addLevelStatement.setString(2, ID);
+        ResultSet results = addLevelStatement.executeQuery();
+
+        CommunityLevel level = new CommunityLevel();
+
+        level.setUsername(results.getString("username"));
+        level.setUserDisplayName(results.getString("userDisplayName"));
+        level.setId(results.getString("id"));
+        level.setName(results.getString("levelName"));
+        level.setShortDescription(results.getString("shortDescription"));
+        level.setCreationTime(results.getLong("creationTime"));
+
+        return level;
+    }
+
+    @Nullable
+    public String getUserSingleRepo(String username) throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30); //Set timeout to 30 sec
+
+        PreparedStatement addLevelStatement = connection.prepareStatement("select * from users where username = ?");
+        addLevelStatement.setString(1, username);
+        ResultSet results = addLevelStatement.executeQuery();
+
+        if (results.getBoolean("isSingleRepo")) {
+            //It's a single repo
+            return results.getString("repo");
+        } else {
+            return null;
+        }
     }
 
     private void connectToDatabase() {

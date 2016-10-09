@@ -54,13 +54,35 @@ public class SyncManager {
         File rootDir = new File(supportDir, "community/root");
         File usersDir = new File(supportDir, "community/users");
 
+        LogHelper.info(getClass(), "Cleaning up folders that aren't Git repos");
+
+        if (usersDir.exists() && usersDir.isDirectory()) {
+            for (File file : usersDir.listFiles()) {
+                //Loop through users dir
+                if (file.isDirectory()) {
+                    for (File repo : file.listFiles()) {
+                        //Loop through user repos / branches
+                        if (repo.isDirectory()) {
+                            if (!isGitRepo(repo)) {
+                                //It's not a Git repo - Delete it
+                                LogHelper.info(getClass(), "Directory is not a Git repo - Deleting directory " + repo.getAbsolutePath());
+                                FileUtils.deleteDirectory(repo);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //TODO: Reset and pull levels that are Git repos
+
         cloneOrPullRepo(rootDir, COMMUNITY_ROOT_URI);
 
         try {
             CommunityRootData.parseCreatorListXML(new File(rootDir, "CreatorList.xml"));
         } catch (ParserConfigurationException e) {
-            LogHelper.error(SyncManager.class, "Error while parsing root/CreatorList.xml");
-            LogHelper.error(SyncManager.class, "Aborting database sync");
+            LogHelper.error(getClass(), "Error while parsing root/CreatorList.xml");
+            LogHelper.error(getClass(), "Aborting database sync");
 
             throw new SyncDatabasesException("Error while parsing root/CreatorList.xml", e);
         }
@@ -68,8 +90,8 @@ public class SyncManager {
         try {
             CommunityRootData.parseAnnouncementsListXML(new File(rootDir, "Announcements.xml"));
         } catch (ParserConfigurationException e) {
-            LogHelper.error(SyncManager.class, "Error while parsing root/Announcements.xml");
-            LogHelper.error(SyncManager.class, "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+            LogHelper.error(getClass(), "Error while parsing root/Announcements.xml");
+            LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
 
             //Failing to parse Announcements.xml should not stop syncing - so SyncDatabasesException is not thrown here
         }
@@ -127,17 +149,17 @@ public class SyncManager {
         //Invoke all clone threads
         try {
             cloneThreadPool.invokeAll(toExecute);
-            LogHelper.info(SyncManager.class, "Done cloning / pulling all repos!");
+            LogHelper.info(getClass(), "Done cloning / pulling all repos!");
         } catch (InterruptedException e) {
-            LogHelper.error(SyncManager.class, "Error while cloning / pulling all repos");
-            LogHelper.error(SyncManager.class, "Aborting database sync");
+            LogHelper.error(getClass(), "Error while cloning / pulling all repos");
+            LogHelper.error(getClass(), "Aborting database sync");
 
             throw new SyncDatabasesException("Error while cloning / pulling all repos", e);
         }
 
         cloneThreadPool.shutdown();
 
-        LogHelper.info(SyncManager.class, "Building community database");
+        LogHelper.info(getClass(), "Building community database");
 
         if (onBuildCommunityDatabaseBeginAction != null) {
             onBuildCommunityDatabaseBeginAction.execute();
@@ -150,7 +172,7 @@ public class SyncManager {
                 onBuildCommunityDatabaseFinishAction.execute();
             }
         } catch (SQLException e) {
-            LogHelper.error(SyncManager.class, "Error while building community database");
+            LogHelper.error(getClass(), "Error while building community database");
 
             throw new SyncDatabasesException("Error while building community database", e);
         }

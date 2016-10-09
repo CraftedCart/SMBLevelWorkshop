@@ -92,7 +92,7 @@ public class CommunityLevel {
         Element element = (Element) node;
 
         NodeList levelRepoList = element.getElementsByTagName("levelRepo");
-        //TODO Check branches for single repos
+
 
         //Add repos to creatorList
         for (int i = 0; i < levelRepoList.getLength(); i++) {
