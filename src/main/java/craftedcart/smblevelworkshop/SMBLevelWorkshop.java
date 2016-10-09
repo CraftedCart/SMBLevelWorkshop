@@ -42,12 +42,6 @@ public class SMBLevelWorkshop {
     }
 
     public static void init() throws LWJGLException, IOException, FontFormatException, SlickException {
-        //Load in community data in a new thread
-        new Thread(() -> {
-            CommunityRootData.init();
-            CommunityRootData.loadFromFiles();
-        }, "LoadCommunityThread").start();
-
         Window.drawable.makeCurrent();
 
         FontCache.registerAWTFont("Roboto-Regular", SMBLevelWorkshop.class.getResourceAsStream("/Roboto-Regular.ttf"));
@@ -72,8 +66,17 @@ public class SMBLevelWorkshop {
 //            LogHelper.error(SMBLevelWorkshop.class, "Error while initializing AudioUtils\n" + CrashHandler.getStackTraceString(e));
 //        }
 
+        LoadingScreen.headerMessage = ResourceManager.initResources.getString("creatingSupportDirs"); //Set the loading screen's header message
+        LoadingScreen.infoMessage = "";
+        LoadingScreen.progress = -1;
         AppDataManager.createAppSupportDirectories();
 
+        LogHelper.info(SMBLevelWorkshop.class, "Loading community data");
+        LoadingScreen.headerMessage = ResourceManager.initResources.getString("loadingCommunityData"); //Set the loading screen's header message
+        CommunityRootData.init();
+        CommunityRootData.loadFromFiles();
+
+        LoadingScreen.headerMessage = ResourceManager.initResources.getString("finishingUp"); //Set the loading screen's header message
         ProjectManager.setCurrentProject(new Project());
 
         MainScreen mainScreen = new MainScreen();

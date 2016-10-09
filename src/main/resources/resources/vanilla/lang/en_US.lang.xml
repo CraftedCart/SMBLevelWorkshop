@@ -110,6 +110,11 @@
 
     <entry key="announcements" val="Announcements" />
     <entry key="newestLevels" val="Newest Levels" />
+    <entry key="creator" val="Creator" />
+    <entry key="levelId" val="Level ID" />
+    <entry key="createdAt" val="Created at" />
+    <entry key="suggestedReplacement" val="Suggested stage replacement" />
+    <entry key="licence" val="Licence" />
 
 
 </langPack>
