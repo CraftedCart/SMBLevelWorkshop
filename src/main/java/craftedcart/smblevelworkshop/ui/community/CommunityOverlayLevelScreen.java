@@ -1,6 +1,5 @@
 package craftedcart.smblevelworkshop.ui.community;
 
-import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.community.CommunityLevel;
 import craftedcart.smblevelworkshop.community.CommunityLevelFull;
 import craftedcart.smblevelworkshop.community.CommunityRootData;
@@ -44,6 +43,7 @@ import java.util.List;
 public class CommunityOverlayLevelScreen extends FluidUIScreen {
 
     @NotNull private CommunityLevel level;
+    private CommunityLevelFull levelFull;
     @Nullable private String singleRepoName; //Null if the user is using an account instead of a single repo
     @NotNull private List<ResourceTexture> screenshots = new ArrayList<>();
 
@@ -53,10 +53,11 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
     private final UnicodeFont SUBHEADING_FONT;
 
     public CommunityOverlayLevelScreen(@NotNull CommunityLevel level) {
-        this.level = level;
 
         HEADING_FONT = FontCache.getUnicodeFont("Roboto-Regular", 24);
         SUBHEADING_FONT = FontCache.getUnicodeFont("Roboto-Regular", 20);
+
+        this.level = level;
 
         setTheme(new DialogUITheme());
         initComponents();
@@ -154,8 +155,17 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
         });
         mainPanel.addChildComponent("screenshotListBox", screenshotListBox);
 
-        addLevel(infoListBox);
-        addScreenshots(screenshotListBox);
+        try {
+            levelFull = getLevelFull();
+            addLevel(infoListBox);
+            addScreenshots(screenshotListBox);
+        } catch (SQLException | IOException | SAXException | ParserConfigurationException e) {
+            LogHelper.error(getClass(), "Error while getting level full");
+            LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
+
+            //TODO Display error screen
+        }
+
     }
 
     private void addLevel(ListBox parent) {
@@ -203,27 +213,20 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
 
         //Get level and fill in blanks in another thread, so that the main thread isn't blocked
         new Thread(() -> {
-            try {
-                CommunityLevelFull levelFull = getLevelFull();
+            //Convert Unix seconds to human readable time
+            long unixSeconds = levelFull.getCreationTime();
+            Date date = new Date(unixSeconds * 1000L); //Convert seconds to milliseconds
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); //The format of the date
+            String formattedDate = sdf.format(date);
 
-                //Convert Unix seconds to human readable time
-                long unixSeconds = levelFull.getCreationTime();
-                Date date = new Date(unixSeconds * 1000L); //Convert seconds to milliseconds
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); //The format of the date
-                String formattedDate = sdf.format(date);
+            descriptionLabel.setText(levelFull.getDescription());
+            infoLabel.setText(String.format("%s: %s (%s)\n%s: %s\n%s: %s\n%s: %s\n%s: %d",
+                    LangManager.getItem("creator"), levelFull.getUserDisplayName(), levelFull.getUsername(), //Created by
+                    LangManager.getItem("levelId"), levelFull.getId(), //Level ID
+                    LangManager.getItem("createdAt"), formattedDate, //Created at
+                    LangManager.getItem("licence"), levelFull.getLicence(), //Licence
+                    LangManager.getItem("suggestedReplacement"), levelFull.getSuggestedReplacement())); //Suggested stage replacement
 
-                descriptionLabel.setText(levelFull.getDescription());
-                infoLabel.setText(String.format("%s: %s (%s)\n%s: %s\n%s: %s\n%s: %s\n%s: %d",
-                        LangManager.getItem("creator"), levelFull.getUserDisplayName(), levelFull.getUsername(), //Created by
-                        LangManager.getItem("levelId"), levelFull.getId(), //Level ID
-                        LangManager.getItem("createdAt"), formattedDate, //Created at
-                        LangManager.getItem("licence"), levelFull.getLicence(), //Licence
-                        LangManager.getItem("suggestedReplacement"), levelFull.getSuggestedReplacement())); //Suggested stage replacement
-
-            } catch (SQLException | IOException | SAXException | ParserConfigurationException e) {
-                LogHelper.error(getClass(), "Error while getting level full");
-                LogHelper.error(getClass(), "\n" + e + "\n" + LogHelper.stackTraceToString(e));
-            }
         }, "GetLevelDataFull").start();
 
     }
