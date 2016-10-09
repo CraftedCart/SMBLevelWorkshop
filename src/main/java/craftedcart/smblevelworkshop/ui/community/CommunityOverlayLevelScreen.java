@@ -290,8 +290,8 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
                 }
 
                 for (File file : screenshotDir.listFiles()) {
-                    if (file.getName().toUpperCase().endsWith(".PNG") && !file.isDirectory()) { //If it's a PNG image
-                        ResourceTexture tex = new ResourceTexture("PNG", file);
+                    if (file.getName().toUpperCase().endsWith(".JPG") && !file.isDirectory()) { //If it's a PNG image
+                        ResourceTexture tex = new ResourceTexture("JPG", file);
                         screenshots.add(tex);
 
                         Image image = new Image();
@@ -328,8 +328,8 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
         }
 
         for (GHContent screenshot : screenshots) {
-            if (!screenshot.getName().toUpperCase().endsWith(".PNG")) {
-                LogHelper.warn(getClass(), String.format("Screenshot for %s - %s is not a PNG", level.getUsername(), level.getId()));
+            if (!screenshot.getName().toUpperCase().endsWith(".JPG")) {
+                LogHelper.warn(getClass(), String.format("Screenshot for %s - %s is not a JPG", level.getUsername(), level.getId()));
                 continue;
             }
 
