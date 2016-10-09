@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GitHub;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.UnicodeFont;
 import org.xml.sax.SAXException;
@@ -47,6 +46,8 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
     @NotNull private CommunityLevel level;
     @Nullable private String singleRepoName; //Null if the user is using an account instead of a single repo
     @NotNull private List<ResourceTexture> screenshots = new ArrayList<>();
+
+    private boolean shouldLoadTextures = true;
 
     private final UnicodeFont HEADING_FONT;
     private final UnicodeFont SUBHEADING_FONT;
@@ -291,6 +292,10 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
 
                 for (File file : screenshotDir.listFiles()) {
                     if (file.getName().toUpperCase().endsWith(".JPG") && !file.isDirectory()) { //If it's a PNG image
+                        if (!shouldLoadTextures) {
+                            //Stop loading textures!
+                            break;
+                        }
                         ResourceTexture tex = new ResourceTexture("JPG", file);
                         screenshots.add(tex);
 
@@ -343,11 +348,32 @@ public class CommunityOverlayLevelScreen extends FluidUIScreen {
     }
 
     private void unloadOGLTextures() {
+        shouldLoadTextures = false;
+
         GL11.glFinish();
         for (ResourceTexture tex : screenshots) {
             tex.getTexture().release();
         }
         GL11.glFlush();
+
+        screenshots.clear();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+
+        if (screenshots.size() > 0) {
+            LogHelper.warn(getClass(), String.valueOf(screenshots.size()) +
+                    " textures still left to unload right before being garbage collected! This shouldn't happen! - Unloading textures");
+
+            GL11.glFinish();
+            for (ResourceTexture tex : screenshots) {
+                tex.getTexture().release();
+            }
+            GL11.glFlush();
+
+            screenshots.clear();
+        }
+    }
 }
