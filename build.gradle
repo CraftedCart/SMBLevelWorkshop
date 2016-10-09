@@ -7,9 +7,9 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-//    maven {
-//        url "http://repo.jenkins-ci.org/releases/" //Required for GitHub API
-//    }
+    maven {
+        url "http://repo.jenkins-ci.org/releases/" //Required for GitHub API
+    }
 }
 
 dependencies {
@@ -24,7 +24,7 @@ dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: '2.5' //Apache Commons-IO
 
-//    compile group: 'org.kohsuke', name: 'github-api', version: '1.77' //GitHub API
+    compile group: 'org.kohsuke', name: 'github-api', version: '1.77' //GitHub API
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.5.0.201609210915-r' //JGit
 
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.14.2.1' //SQLite-JDBC for databases
