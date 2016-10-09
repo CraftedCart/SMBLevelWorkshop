@@ -1,15 +1,14 @@
 package craftedcart.smblevelworkshop.ui.community;
 
-import craftedcart.smblevelworkshop.community.CommunityAnnouncement;
 import craftedcart.smblevelworkshop.community.CommunityLevel;
-import craftedcart.smblevelworkshop.community.CommunityRootData;
-import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.ui.theme.DialogUITheme;
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;
+import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.util.EnumVAlignment;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.apache.commons.collections4.map.ListOrderedMap;
+import org.eclipse.jgit.annotations.Nullable;
 import org.newdawn.slick.UnicodeFont;
 
 import java.util.List;
@@ -19,12 +18,13 @@ import java.util.Map;
  * @author CraftedCart
  *         Created on 08/10/2016 (DD/MM/YYYY)
  *
- *         Don't set the bottom right pos for this! It does it itself (Unless if you want to set the X)
+ *         This will set its own bottom right pos!
  */
 public class CommunityLevelList extends ListBox {
 
     public String heading;
     public List<CommunityLevel> levelList;
+    @Nullable public UIAction onSizeChangedAction;
 
     private final UnicodeFont HEADING_FONT;
     private final UnicodeFont SUBHEADING_FONT;
@@ -42,7 +42,7 @@ public class CommunityLevelList extends ListBox {
         SUBHEADING_FONT = FontCache.getUnicodeFont("Roboto-Regular", 20);
 
         setTheme(new DialogUITheme());
-        setCanScroll(false);
+//        setCanScroll(false);
         initComponents();
     }
 
@@ -58,13 +58,24 @@ public class CommunityLevelList extends ListBox {
     }
 
     private void initComponents() {
-        addLevels(this);
+        //Do this in another thread to not block the main one when executing the SQL query
+        new Thread(() -> {
+            setCanScroll(false);
 
-        if (bottomRightPos != null) {
-            setBottomRightPos(bottomRightPos.x, 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
-        } else {
-            setBottomRightPos(0, 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
-        }
+            addLevels(this);
+
+            if (bottomRightPos != null) {
+                setBottomRightPos(bottomRightPos.x, bottomRightPos.y + 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
+            } else {
+                setBottomRightPos(0, 36 + LEVEL_ENTRY_HEIGHT * levelList.size());
+            }
+
+            preDraw(); //Recalculate height
+
+            if (onSizeChangedAction != null) {
+                onSizeChangedAction.execute();
+            }
+        }, "InitComponentsLevelListThread").start();
     }
 
     private void addLevels(ListBox parent) {
@@ -142,6 +153,10 @@ public class CommunityLevelList extends ListBox {
 
             i++;
         }
+    }
+
+    public void setOnSizeChangedAction(UIAction onSizeChangedAction) {
+        this.onSizeChangedAction = onSizeChangedAction;
     }
 
 }

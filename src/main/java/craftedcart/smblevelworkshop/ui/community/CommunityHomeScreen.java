@@ -139,6 +139,7 @@ public class CommunityHomeScreen extends ListBox {
             newestLevelsList.setOnInitAction(() -> {
                 newestLevelsList.setTopLeftPos(0, 0);
             });
+            newestLevelsList.setOnSizeChangedAction(parent::reorganizeChildComponents);
             parent.addChildComponent("newestLevelsList", newestLevelsList);
 
         } catch (SQLException e) {
