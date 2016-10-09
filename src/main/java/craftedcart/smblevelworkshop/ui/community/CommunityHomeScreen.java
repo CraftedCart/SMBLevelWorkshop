@@ -37,13 +37,7 @@ public class CommunityHomeScreen extends ListBox {
     }
 
     public void reload() {
-        ListOrderedMap<String, Component> cloneMap = new ListOrderedMap<>();
-        cloneMap.putAll(childComponents);
-
-        for (Map.Entry<String, Component> entry : cloneMap.entrySet()) {
-            removeChildComponent(entry.getKey());
-        }
-
+        clearChildComponents();
         initComponents();
     }
 
@@ -121,6 +115,22 @@ public class CommunityHomeScreen extends ListBox {
                 announcementBodyLabel.setSoftWrap(true);
             });
             announcementPanel.addChildComponent("announcementBodyLabel", announcementBodyLabel);
+
+            //Wrapping changed actions
+            announcementTitleLabel.setOnWrappingChangedAction(() -> {
+                announcementTitleLabel.height = 24 + (SUBHEADING_FONT.getLineHeight() * (announcementTitleLabel.wrapLines - 1));
+                announcementBodyLabel.setTopLeftPos(24, 24 + (SUBHEADING_FONT.getLineHeight() * (announcementTitleLabel.wrapLines - 1)));
+                announcementPanel.height = 24 + (SUBHEADING_FONT.getLineHeight() * (announcementTitleLabel.wrapLines - 1)) +
+                        24 + (new DialogUITheme().labelFont).getLineHeight() * (announcementBodyLabel.wrapLines - 1);
+                parent.reorganizeChildComponents();
+            });
+
+            announcementBodyLabel.setOnWrappingChangedAction(() -> {
+                announcementBodyLabel.height = 24 + (new DialogUITheme().labelFont).getLineHeight() * (announcementBodyLabel.wrapLines - 1);
+                announcementPanel.height = 24 + (SUBHEADING_FONT.getLineHeight() * (announcementTitleLabel.wrapLines - 1)) +
+                        24 + (new DialogUITheme().labelFont).getLineHeight() * (announcementBodyLabel.wrapLines - 1);
+                parent.reorganizeChildComponents();
+            });
 
             i++;
         }

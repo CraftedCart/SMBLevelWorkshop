@@ -47,13 +47,7 @@ public class CommunityLevelList extends ListBox {
     }
 
     public void reload() {
-        ListOrderedMap<String, Component> cloneMap = new ListOrderedMap<>();
-        cloneMap.putAll(childComponents);
-
-        for (Map.Entry<String, Component> entry : cloneMap.entrySet()) {
-            removeChildComponent(entry.getKey());
-        }
-
+        clearChildComponents();
         initComponents();
     }
 
