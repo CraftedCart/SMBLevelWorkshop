@@ -1,8 +1,6 @@
 package craftedcart.smblevelworkshop.ui;
 
-import com.owens.oobjloader.lwjgl.VBO;
 import craftedcart.smblevelworkshop.SMBLWSettings;
-import craftedcart.smblevelworkshop.SMBLevelWorkshop;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
@@ -11,7 +9,6 @@ import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
-import craftedcart.smblevelworkshop.resource.model.OBJScene;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
@@ -58,8 +55,14 @@ public class MainScreen extends FluidUIScreen {
     private final Component mainUI = new Component();
     private final Label modeLabel = new Label();
     private final Label modeDirectionLabel = new Label();
-    public final ListBox outlinerListBox = new ListBox();
     private final Panel notifPanel = new Panel();
+
+    //UI: Left Panel
+    public final Panel addPlaceablePanel = new Panel();
+    public final Panel outlinerPlaceablesPanel = new Panel();
+    public final ListBox outlinerPlaceablesListBox = new ListBox();
+    public final Panel outlinerObjectsPanel = new Panel();
+    public final ListBox outlinerObjectsListBox = new ListBox();
 
     private final TextButton importObjButton = new TextButton();
     private final TextButton exportButton = new TextButton();
@@ -95,6 +98,7 @@ public class MainScreen extends FluidUIScreen {
     private double deltaX = 0;
 
     //Locks
+    private final Object outlinerPlaceablesListBoxLock = new Object();
     private final Object renderingLock = new Object();
 
 
@@ -177,27 +181,80 @@ public class MainScreen extends FluidUIScreen {
         });
         mainUI.addChildComponent("leftPanel", leftPanel);
 
+        //<editor-fold desc="Placeables / Objects mode buttons">
+        final TextButton outlinerPlaceablesTabButton = new TextButton();
+        final TextButton outlinerObjectsTabButton = new TextButton();
+
+        //Defined above
+        outlinerPlaceablesTabButton.setOnInitAction(() -> {
+            outlinerPlaceablesTabButton.setTopLeftPos(0, 0);
+            outlinerPlaceablesTabButton.setBottomRightPos(-1, 24);
+            outlinerPlaceablesTabButton.setTopLeftAnchor(0, 0);
+            outlinerPlaceablesTabButton.setBottomRightAnchor(0.5, 0);
+            outlinerPlaceablesTabButton.setText(LangManager.getItem("placeables"));
+            outlinerPlaceablesTabButton.setBackgroundIdleColor(UIColor.matBlue900());
+        });
+        outlinerPlaceablesTabButton.setOnLMBAction(() -> {
+            outlinerPlaceablesTabButton.setBackgroundIdleColor(UIColor.matBlue900());
+            outlinerObjectsTabButton.setBackgroundIdleColor(UIColor.matBlue());
+
+            addPlaceablePanel.setVisible(true);
+            outlinerPlaceablesPanel.setVisible(true);
+            outlinerObjectsPanel.setVisible(false);
+        });
+        leftPanel.addChildComponent("outlinerPlaceablesTabButton", outlinerPlaceablesTabButton);
+
+        //Defined above
+        outlinerObjectsTabButton.setOnInitAction(() -> {
+            outlinerObjectsTabButton.setTopLeftPos(1, 0);
+            outlinerObjectsTabButton.setBottomRightPos(0, 24);
+            outlinerObjectsTabButton.setTopLeftAnchor(0.5, 0);
+            outlinerObjectsTabButton.setBottomRightAnchor(1, 0);
+            outlinerObjectsTabButton.setText(LangManager.getItem("objects"));
+            outlinerObjectsTabButton.setBackgroundIdleColor(UIColor.matBlue());
+        });
+        outlinerObjectsTabButton.setOnLMBAction(() -> {
+            outlinerPlaceablesTabButton.setBackgroundIdleColor(UIColor.matBlue());
+            outlinerObjectsTabButton.setBackgroundIdleColor(UIColor.matBlue900());
+
+            addPlaceablePanel.setVisible(false);
+            outlinerPlaceablesPanel.setVisible(false);
+            outlinerObjectsPanel.setVisible(true);
+        });
+        leftPanel.addChildComponent("outlinerObjectsTabButton", outlinerObjectsTabButton);
+        //</editor-fold>
+
+        //Defined at class level
+        addPlaceablePanel.setOnInitAction(() -> {
+            addPlaceablePanel.setTopLeftPos(0, 24);
+            addPlaceablePanel.setBottomRightPos(0, 0);
+            addPlaceablePanel.setTopLeftAnchor(0, 0);
+            addPlaceablePanel.setBottomRightAnchor(1, 0.25);
+            addPlaceablePanel.setBackgroundColor(UIColor.transparent());
+        });
+        leftPanel.addChildComponent("addPlaceablePanel", addPlaceablePanel);
+
         final Label addPlaceableLabel = new Label();
         addPlaceableLabel.setOnInitAction(() -> {
             addPlaceableLabel.setText(LangManager.getItem("addPlaceable"));
             addPlaceableLabel.setHorizontalAlign(EnumHAlignment.centre);
             addPlaceableLabel.setVerticalAlign(EnumVAlignment.centre);
-            addPlaceableLabel.setTopLeftPos(4, 4);
-            addPlaceableLabel.setBottomRightPos(-4, 28);
+            addPlaceableLabel.setTopLeftPos(4, 0);
+            addPlaceableLabel.setBottomRightPos(-4, 24);
             addPlaceableLabel.setTopLeftAnchor(0, 0);
             addPlaceableLabel.setBottomRightAnchor(1, 0);
         });
-        leftPanel.addChildComponent("addPlaceableLabel", addPlaceableLabel);
+        addPlaceablePanel.addChildComponent("addPlaceableLabel", addPlaceableLabel);
 
         final ListBox addPlaceableListBox = new ListBox();
         addPlaceableListBox.setOnInitAction(() -> {
             addPlaceableListBox.setBackgroundColor(UIColor.transparent());
-            addPlaceableListBox.setTopLeftPos(0, 28);
+            addPlaceableListBox.setTopLeftPos(0, 24);
             addPlaceableListBox.setBottomRightPos(0, 0);
             addPlaceableListBox.setTopLeftAnchor(0, 0);
-            addPlaceableListBox.setBottomRightAnchor(1, 0.25);
+            addPlaceableListBox.setBottomRightAnchor(1, 1);
         });
-        leftPanel.addChildComponent("addPlaceableListBox", addPlaceableListBox);
+        addPlaceablePanel.addChildComponent("addPlaceableListBox", addPlaceableListBox);
 
         //<editor-fold desc="Add placeable buttons">
         for (IAsset asset : AssetManager.getAvaliableAssets()) {
@@ -212,27 +269,74 @@ public class MainScreen extends FluidUIScreen {
         }
         //</editor-fold>
 
-        final Label outlinerLabel = new Label();
-        outlinerLabel.setOnInitAction(() -> {
-            outlinerLabel.setText(LangManager.getItem("outliner"));
-            outlinerLabel.setHorizontalAlign(EnumHAlignment.centre);
-            outlinerLabel.setVerticalAlign(EnumVAlignment.centre);
-            outlinerLabel.setTopLeftPos(4, 4);
-            outlinerLabel.setBottomRightPos(-4, 28);
-            outlinerLabel.setTopLeftAnchor(0, 0.25);
-            outlinerLabel.setBottomRightAnchor(1, 0.25);
+        //<editor-fold desc="Outliner placeables panel">
+        //Defined at class level
+        outlinerPlaceablesPanel.setOnInitAction(() -> {
+            outlinerPlaceablesPanel.setTopLeftPos(0, 0);
+            outlinerPlaceablesPanel.setBottomRightPos(0, 0);
+            outlinerPlaceablesPanel.setTopLeftAnchor(0, 0.25);
+            outlinerPlaceablesPanel.setBottomRightAnchor(1, 1);
+            outlinerPlaceablesPanel.setBackgroundColor(UIColor.transparent());
         });
-        leftPanel.addChildComponent("outlinerLabel", outlinerLabel);
+        leftPanel.addChildComponent("outlinerPlaceablesPanel", outlinerPlaceablesPanel);
+
+        final Label outlinerPlaceablesLabel = new Label();
+        outlinerPlaceablesLabel.setOnInitAction(() -> {
+            outlinerPlaceablesLabel.setText(LangManager.getItem("outliner"));
+            outlinerPlaceablesLabel.setHorizontalAlign(EnumHAlignment.centre);
+            outlinerPlaceablesLabel.setVerticalAlign(EnumVAlignment.centre);
+            outlinerPlaceablesLabel.setTopLeftPos(4, 0);
+            outlinerPlaceablesLabel.setBottomRightPos(-4, 24);
+            outlinerPlaceablesLabel.setTopLeftAnchor(0, 0);
+            outlinerPlaceablesLabel.setBottomRightAnchor(1, 0);
+        });
+        outlinerPlaceablesPanel.addChildComponent("outlinerPlaceablesLabel", outlinerPlaceablesLabel);
 
         //Defined at class level
-        outlinerListBox.setOnInitAction(() -> {
-            outlinerListBox.setBackgroundColor(UIColor.transparent());
-            outlinerListBox.setTopLeftPos(0, 28);
-            outlinerListBox.setBottomRightPos(0, 0);
-            outlinerListBox.setTopLeftAnchor(0, 0.25);
-            outlinerListBox.setBottomRightAnchor(1, 1);
+        outlinerPlaceablesListBox.setOnInitAction(() -> {
+            outlinerPlaceablesListBox.setBackgroundColor(UIColor.transparent());
+            outlinerPlaceablesListBox.setTopLeftPos(0, 24);
+            outlinerPlaceablesListBox.setBottomRightPos(0, 0);
+            outlinerPlaceablesListBox.setTopLeftAnchor(0, 0);
+            outlinerPlaceablesListBox.setBottomRightAnchor(1, 1);
         });
-        leftPanel.addChildComponent("outlinerListBox", outlinerListBox);
+        outlinerPlaceablesPanel.addChildComponent("outlinerPlaceablesListBox", outlinerPlaceablesListBox);
+        //</editor-fold>
+
+        //<editor-fold desc="Outliner objects panel">
+        //Defined at class level
+        outlinerObjectsPanel.setOnInitAction(() -> {
+            outlinerObjectsPanel.setTopLeftPos(0, 24);
+            outlinerObjectsPanel.setBottomRightPos(0, 0);
+            outlinerObjectsPanel.setTopLeftAnchor(0, 0);
+            outlinerObjectsPanel.setBottomRightAnchor(1, 1);
+            outlinerObjectsPanel.setBackgroundColor(UIColor.transparent());
+            outlinerObjectsPanel.setVisible(false); //Hidden by default
+        });
+        leftPanel.addChildComponent("outlinerObjectsPanel", outlinerObjectsPanel);
+
+        final Label outlinerObjectsLabel = new Label();
+        outlinerObjectsLabel.setOnInitAction(() -> {
+            outlinerObjectsLabel.setText(LangManager.getItem("outliner"));
+            outlinerObjectsLabel.setHorizontalAlign(EnumHAlignment.centre);
+            outlinerObjectsLabel.setVerticalAlign(EnumVAlignment.centre);
+            outlinerObjectsLabel.setTopLeftPos(4, 0);
+            outlinerObjectsLabel.setBottomRightPos(-4, 24);
+            outlinerObjectsLabel.setTopLeftAnchor(0, 0);
+            outlinerObjectsLabel.setBottomRightAnchor(1, 0);
+        });
+        outlinerObjectsPanel.addChildComponent("outlinerObjectsLabel", outlinerObjectsLabel);
+
+        //Defined at class level
+        outlinerObjectsListBox.setOnInitAction(() -> {
+            outlinerObjectsListBox.setBackgroundColor(UIColor.transparent());
+            outlinerObjectsListBox.setTopLeftPos(0, 24);
+            outlinerObjectsListBox.setBottomRightPos(0, 0);
+            outlinerObjectsListBox.setTopLeftAnchor(0, 0);
+            outlinerObjectsListBox.setBottomRightAnchor(1, 1);
+        });
+        outlinerObjectsPanel.addChildComponent("outlinerObjectsListBox", outlinerObjectsListBox);
+        //</editor-fold>
 
         final ListBox rightListBox = new ListBox();
         rightListBox.setOnInitAction(() -> {
@@ -887,14 +991,16 @@ public class MainScreen extends FluidUIScreen {
 
         if (ProjectManager.getCurrentProject().clientLevelData != null) {
             //<editor-fold desc="Darken selected placeables in the outliner">
-            for (Map.Entry<String, Component> entry : outlinerListBox.childComponents.entrySet()) {
-                assert entry.getValue() instanceof TextButton;
-                TextButton button = (TextButton) entry.getValue();
+            synchronized (outlinerPlaceablesListBoxLock) {
+                for (Map.Entry<String, Component> entry : outlinerPlaceablesListBox.childComponents.entrySet()) {
+                    assert entry.getValue() instanceof TextButton;
+                    TextButton button = (TextButton) entry.getValue();
 
-                if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) {
-                    button.setBackgroundIdleColor(UIColor.matBlue900());
-                } else {
-                    button.setBackgroundIdleColor(UIColor.matBlue());
+                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) {
+                        button.setBackgroundIdleColor(UIColor.matBlue900());
+                    } else {
+                        button.setBackgroundIdleColor(UIColor.matBlue());
+                    }
                 }
             }
             //</editor-fold>
@@ -1458,7 +1564,10 @@ public class MainScreen extends FluidUIScreen {
                                 Placeable newPlaceable = placeable.getCopy();
                                 String newPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(newPlaceable);
                                 newPlaceables.put(newPlaceableName, newPlaceable);
-                                outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
+
+                                synchronized (outlinerPlaceablesListBoxLock) {
+                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
+                                }
 
                                 ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
                             }
@@ -1559,7 +1668,9 @@ public class MainScreen extends FluidUIScreen {
 
             addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, Collections.singletonList(name), Collections.singletonList(placeable)));
 
-            outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+            synchronized (outlinerPlaceablesListBoxLock) {
+                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+            }
         } else {
             notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
@@ -1573,7 +1684,9 @@ public class MainScreen extends FluidUIScreen {
             ProjectManager.getCurrentProject().clientLevelData.removeSelectedPlaceable(name);
             ProjectManager.getCurrentProject().clientLevelData.getLevelData().removePlaceable(name);
 
-            outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
+            synchronized (outlinerPlaceablesListBoxLock) {
+                outlinerPlaceablesListBox.removeChildComponent(name + "OutlinerPlaceable");
+            }
         } else {
             notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
@@ -1594,7 +1707,9 @@ public class MainScreen extends FluidUIScreen {
                 ProjectManager.getCurrentProject().clientLevelData.removeSelectedPlaceable(name);
                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().removePlaceable(name);
 
-                outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
+                synchronized (outlinerPlaceablesListBoxLock) {
+                    outlinerPlaceablesListBox.removeChildComponent(name + "OutlinerPlaceable");
+                }
             }
         } else {
             notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
@@ -1612,7 +1727,9 @@ public class MainScreen extends FluidUIScreen {
 
                 if (!replace) {
                     //Clear outliner list box
-                    outlinerListBox.clearChildComponents();
+                    synchronized (outlinerPlaceablesListBoxLock) {
+                        outlinerPlaceablesListBox.clearChildComponents();
+                    }
 
                     //Reset undo history
                     undoCommandList.clear();
@@ -1652,8 +1769,10 @@ public class MainScreen extends FluidUIScreen {
                 Window.drawable.makeCurrent();
 
                 if (!replace) {
-                    outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
-                    outlinerListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+                    synchronized (outlinerPlaceablesListBoxLock) {
+                        outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
+                        outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+                    }
                 }
 
                 if (!OBJLoader.isLastObjTriangulated) {

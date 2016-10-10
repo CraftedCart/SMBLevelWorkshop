@@ -35,7 +35,7 @@ public class UndoAddPlaceable extends UndoCommand {
         for (String name : names) {
             clientLevelData.getLevelData().removePlaceable(name);
             clientLevelData.removeSelectedPlaceable(name);
-            mainScreen.outlinerListBox.removeChildComponent(name + "OutlinerPlaceable");
+            mainScreen.outlinerPlaceablesListBox.removeChildComponent(name + "OutlinerPlaceable");
         }
     }
 

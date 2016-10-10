@@ -36,7 +36,7 @@ public class UndoRemovePlaceable extends UndoCommand {
             String name = names.get(i);
             Placeable placeable = placeables.get(i);
             clientLevelData.getLevelData().addPlaceable(name, placeable.getCopy());
-            mainScreen.outlinerListBox.addChildComponent(mainScreen.getOutlinerPlaceableComponent(name));
+            mainScreen.outlinerPlaceablesListBox.addChildComponent(mainScreen.getOutlinerPlaceableComponent(name));
         }
     }
 

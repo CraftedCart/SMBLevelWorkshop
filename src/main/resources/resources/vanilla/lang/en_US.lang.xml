@@ -69,6 +69,8 @@
 
     <entry key="addPlaceable" val="Add Placeable" />
     <entry key="outliner" val="Outliner" />
+    <entry key="placeables" val="Placeables" />
+    <entry key="objects" val="Objects" />
 
     <entry key="properties" val="Properties" />
     <entry key="position" val="Position" />
