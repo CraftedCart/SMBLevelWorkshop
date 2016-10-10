@@ -1,6 +1,5 @@
 package craftedcart.smblevelworkshop.resource.model;
 
-import com.owens.oobjloader.lwjgl.DisplayModel;
 import craftedcart.smblevelworkshop.resource.IResource;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import io.github.craftedcart.fluidui.util.UIColor;
@@ -11,24 +10,37 @@ import org.lwjgl.opengl.GL11;
  */
 public class ResourceModel implements IResource {
 
-    public DisplayModel scene;
+    public OBJScene scene;
 
-    public ResourceModel(DisplayModel scene) {
+    public ResourceModel(OBJScene scene) {
         this.scene = scene;
     }
 
-    public static void drawModel(ResourceModel m, ResourceShaderProgram shaderProgram, boolean setTexture) {
-        m.scene.render(shaderProgram, setTexture);
+    public void drawModel(ResourceShaderProgram shaderProgram, boolean setTexture) {
+        scene.renderAll(shaderProgram, setTexture);
+    }
+    public void drawModel(ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color) {
+        scene.renderAll(shaderProgram, setTexture, color);
     }
 
-    public static void drawModel(ResourceModel m, ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color) {
-        m.scene.render(shaderProgram, setTexture, color);
-    }
-
-    public static void drawModelWireframe(ResourceModel m, ResourceShaderProgram shaderProgram, boolean setTexture) {
+    public void drawModelWireframe(ResourceShaderProgram shaderProgram, boolean setTexture) {
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-        m.scene.render(shaderProgram, setTexture);
+        scene.renderAll(shaderProgram, setTexture);
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
     }
+
+//    public static void drawModel(ResourceModel m, ResourceShaderProgram shaderProgram, boolean setTexture) {
+//        m.scene.render(shaderProgram, setTexture);
+//    }
+//
+//    public static void drawModel(ResourceModel m, ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color) {
+//        m.scene.render(shaderProgram, setTexture, color);
+//    }
+//
+//    public static void drawModelWireframe(ResourceModel m, ResourceShaderProgram shaderProgram, boolean setTexture) {
+//        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+//        m.scene.render(shaderProgram, setTexture);
+//        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+//    }
 
 }

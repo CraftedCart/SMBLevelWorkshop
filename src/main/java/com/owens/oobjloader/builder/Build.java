@@ -87,6 +87,7 @@ public class Build implements BuilderInterface {
 
         face.material = currentMaterial;
         face.map = currentMap;
+        face.objectName = objectName;
 
         int loopi = 0;
         // @TODO: add better error checking - make sure values is not empty and that it is a multiple of 3

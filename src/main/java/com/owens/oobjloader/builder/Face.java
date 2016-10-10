@@ -16,6 +16,8 @@ public class Face {
     public ArrayList<FaceVertex> vertices = new ArrayList<FaceVertex>();
     public Material material = null;
     public Material map = null;
+    public VertexNormal faceNormal = new VertexNormal(0, 0, 0);
+    public String objectName;
 
     public Face() {
     }
@@ -23,7 +25,6 @@ public class Face {
     public void add(FaceVertex vertex) {
         vertices.add(vertex);
     }
-    public VertexNormal faceNormal = new VertexNormal(0, 0, 0);
 
     // @TODO: This code assumes the face is a triangle.  
     public void calculateTriangleNormal() {
@@ -61,4 +62,5 @@ public class Face {
         }
         return result;
     }
+
 }   

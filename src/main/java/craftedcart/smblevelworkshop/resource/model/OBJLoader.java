@@ -16,6 +16,8 @@ import org.lwjgl.LWJGLException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by CraftedCart on 25/02/2016 (DD/MM/YYYY)
@@ -32,22 +34,38 @@ public class OBJLoader {
             LogHelper.error(OBJLoader.class, e);
         }
 
-        DisplayModel scene = new DisplayModel();
-
         LogHelper.info(OBJLoader.class, "Parsing OBJ file");
 
         Build builder = new Build();
-        Parse obj = null;
 
         try {
-            Parse parse = new Parse(builder, filePath);
+            new Parse(builder, filePath); //Constructor does work
         } catch (IOException e) {
             LogHelper.error(OBJLoader.class, "Error while loading OBJ");
             LogHelper.error(OBJLoader.class, e);
         }
 
-        LogHelper.info(OBJLoader.class, "Splitting OBJ file faces into list of faces per material");
-        ArrayList<ArrayList<Face>> facesByTextureList = createFaceListsByMaterial(builder);
+//        LogHelper.info(OBJLoader.class, "Splitting OBJ file faces into list of faces per material");
+//        ArrayList<ArrayList<Face>> facesByTextureList = createFaceListsByMaterial(builder);
+
+        LogHelper.info(OBJLoader.class, "Splitting OBJ file faces into list of faces per object");
+        ArrayList<ArrayList<Face>> facesByObjectList = createFaceListsByObject(builder);
+
+        List<OBJObject> objectList = new ArrayList<>();
+
+        for (ArrayList<Face> faceList : facesByObjectList) { //Split objects by material
+            ArrayList<ArrayList<Face>> facesByMaterialList = createFaceListsByMaterial(faceList);
+
+            OBJObject object = new OBJObject();
+
+            for (ArrayList<Face> faceMatList : facesByMaterialList) {
+                OBJFacesByMaterial facesByMaterial = new OBJFacesByMaterial();
+                facesByMaterial.setFaceList(faceMatList);
+                object.addFacesByMaterial(facesByMaterial);
+            }
+
+            objectList.add(object);
+        }
 
         TextureLoader textureLoader = new TextureLoader();
         int defaultTextureID = 0;
@@ -68,30 +86,40 @@ public class OBJLoader {
 //            }
 //            defaultTextureID = textureLoader.convertToTexture(img);
 //        }
-        int currentTextureID = -1;
-        for (ArrayList<Face> faceList : facesByTextureList) {
-            if (faceList.isEmpty()) {
-                LogHelper.info(OBJLoader.class, "ERROR: got an empty face list.  That shouldn't be possible.");
-                continue;
+        int currentTextureID;
+
+        OBJScene scene = new OBJScene();
+
+        scene.setObjectList(objectList);
+
+        for (OBJObject object : objectList) {
+            for (OBJFacesByMaterial facesByMaterial : object.facesByMaterialList) {
+                List<Face> faceList = facesByMaterial.faceList;
+
+                if (faceList.isEmpty()) {
+                    LogHelper.error(OBJLoader.class, "Got an empty face list. That shouldn't be possible.");
+                    continue;
+                }
+                LogHelper.info(OBJLoader.class, "Getting material " + faceList.get(0).material);
+                currentTextureID = getMaterialID(faceList.get(0).material, defaultTextureID, builder, textureLoader);
+                LogHelper.info(OBJLoader.class, "Splitting any quads and throwing any faces with > 4 vertices.");
+                ArrayList<Face> triangleList = splitQuads(faceList);
+                LogHelper.info(OBJLoader.class, "Calculating any missing vertex normals.");
+                calcMissingVertexNormals(triangleList);
+                LogHelper.info(OBJLoader.class, "Ready to build VBO of " + triangleList.size() + " triangles");
+
+                if (triangleList.size() <= 0) {
+                    continue;
+                }
+                LogHelper.info(OBJLoader.class, "Building VBO");
+
+                VBO vbo = VBOFactory.build(currentTextureID, faceList.get(0).material, triangleList);
+
+                LogHelper.info(OBJLoader.class, "Adding VBO with texture id " + currentTextureID + ", with " + triangleList.size() + " triangles to OBJFacesByMaterial");
+                facesByMaterial.setVbo(vbo);
             }
-            LogHelper.info(OBJLoader.class, "Getting material " + faceList.get(0).material);
-            currentTextureID = getMaterialID(faceList.get(0).material, defaultTextureID, builder, textureLoader);
-            LogHelper.info(OBJLoader.class, "Splitting any quads and throwing any faces with > 4 vertices.");
-            ArrayList<Face> triangleList = splitQuads(faceList);
-            LogHelper.info(OBJLoader.class, "Calculating any missing vertex normals.");
-            calcMissingVertexNormals(triangleList);
-            LogHelper.info(OBJLoader.class, "Ready to build VBO of " + triangleList.size() + " triangles");
-
-            if (triangleList.size() <= 0) {
-                continue;
-            }
-            LogHelper.info(OBJLoader.class, "Building VBO");
-
-            VBO vbo = VBOFactory.build(currentTextureID, faceList.get(0).material, triangleList);
-
-            LogHelper.info(OBJLoader.class, "Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
-            scene.addVBO(vbo);
         }
+
         LogHelper.info(OBJLoader.class, "Done loading OBJ");
 
         try {
@@ -104,28 +132,75 @@ public class OBJLoader {
     }
 
     //Iterate over face list from builder, and break it up into a set of face lists by material, i.e. each for each face list, all faces in that specific list use the same material
-    private static ArrayList<ArrayList<Face>> createFaceListsByMaterial(Build builder) {
-        ArrayList<ArrayList<Face>> facesByTextureList = new ArrayList<ArrayList<Face>>();
+    private static ArrayList<ArrayList<Face>> createFaceListsByMaterial(ArrayList<Face> faceList) {
+        ArrayList<ArrayList<Face>> facesByTextureList;
+        facesByTextureList = new ArrayList<>();
         Material currentMaterial = null;
-        ArrayList<Face> currentFaceList = new ArrayList<Face>();
-        for (Face face : builder.faces) {
+        ArrayList<Face> currentFaceList;
+        currentFaceList = new ArrayList<>();
+        for (Face face : faceList) {
             if (face.material != currentMaterial) {
                 if (!currentFaceList.isEmpty()) {
-                    LogHelper.info(OBJLoader.class, "Adding list of " + currentFaceList.size() + " triangle faces with material " + currentMaterial + "  to our list of lists of faces.");
+                    String matName = null;
+                    if (currentMaterial != null) {
+                        matName = currentMaterial.name;
+                    }
+
+                    LogHelper.trace(OBJLoader.class, "Adding list of " + currentFaceList.size() + " triangle faces with material " + matName + " to our list of lists of faces.");
                     facesByTextureList.add(currentFaceList);
                 }
-                LogHelper.info(OBJLoader.class, "Creating new list of faces for material " + face.material);
+
+                String faceMatName = null;
+                if (face.material != null) {
+                    faceMatName = face.material.name;
+                }
+
+                LogHelper.trace(OBJLoader.class, "Creating new list of faces for material " + faceMatName);
                 currentMaterial = face.material;
-                currentFaceList = new ArrayList<Face>();
+                currentFaceList = new ArrayList<>();
             }
             currentFaceList.add(face);
         }
         if (!currentFaceList.isEmpty()) {
-            LogHelper.info(OBJLoader.class, "Adding list of " + currentFaceList.size() + " triangle faces with material " + currentMaterial + "  to our list of lists of faces.");
+            String matName = null;
+            if (currentMaterial != null) {
+                matName = currentMaterial.name;
+            }
+
+            LogHelper.trace(OBJLoader.class, "Adding list of " + currentFaceList.size() + " triangle faces with material " + matName + " to our list of lists of faces.");
             facesByTextureList.add(currentFaceList);
         }
         return facesByTextureList;
     }
+
+    private static ArrayList<ArrayList<Face>> createFaceListsByObject(Build builder) {
+        ArrayList<ArrayList<Face>> facesByObjectList = new ArrayList<>();
+        String currentObjectName = null;
+        ArrayList<Face> currentFaceList = new ArrayList<>();
+
+        for (Face face : builder.faces) {
+            if (!Objects.equals(face.objectName, currentObjectName)) {
+                if (!currentFaceList.isEmpty()) {
+                    LogHelper.trace(OBJLoader.class, "Adding list of " + currentFaceList.size() + " triangle faces of object " + currentObjectName + " to our list of lists of faces.");
+                    facesByObjectList.add(currentFaceList);
+                }
+
+                LogHelper.trace(OBJLoader.class, "Creating new list of faces for object " + face.objectName);
+                currentObjectName = face.objectName;
+                currentFaceList = new ArrayList<>();
+            }
+
+            currentFaceList.add(face);
+        }
+
+        if (!currentFaceList.isEmpty()) {
+            LogHelper.trace(OBJLoader.class, "Adding list of " + currentFaceList.size() + " triangle faces of object " + currentObjectName + " to our list of lists of faces.");
+            facesByObjectList.add(currentFaceList);
+        }
+
+        return facesByObjectList;
+    }
+
 
     // Get the specified Material, bind it as a texture, and return the OpenGL ID.  Returns the default texture ID if we can't
     // load the new texture, or if the material is a non texture and hence we ignore it.
@@ -156,8 +231,8 @@ public class OBJLoader {
     // can be used on polygons with more than 4 sides, but for this simple test code justsplit quads into two triangles
     // and drop all polygons with more than 4 vertices.  (I was originally just dropping quads as well but then I kept ending up with nothing
     // left to display. :-)  Or at least, not much. )
-    private static ArrayList<Face> splitQuads(ArrayList<Face> faceList) {
-        ArrayList<Face> triangleList = new ArrayList<Face>();
+    private static ArrayList<Face> splitQuads(List<Face> faceList) {
+        ArrayList<Face> triangleList = new ArrayList<>();
         int countTriangles = 0;
         int countQuads = 0;
         int countNGons = 0;

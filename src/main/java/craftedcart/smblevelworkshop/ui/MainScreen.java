@@ -11,6 +11,7 @@ import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
+import craftedcart.smblevelworkshop.resource.model.OBJScene;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
@@ -1215,7 +1216,7 @@ public class MainScreen extends FluidUIScreen {
                 }
 
                 GL20.glUseProgram(currentShaderProgram.getProgramID());
-                ResourceModel.drawModel(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel(), currentShaderProgram, useTextures);
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModel(currentShaderProgram, useTextures);
                 GL20.glUseProgram(0);
 
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
@@ -1223,14 +1224,14 @@ public class MainScreen extends FluidUIScreen {
                 GL11.glLineWidth(2);
                 if (SMBLWSettings.showAllWireframes) {
                     GL11.glColor4f(0, 0, 0, 1);
-                    ResourceModel.drawModelWireframe(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel(), null, false);
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelWireframe(null, false);
 
                     Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
 
                     GL11.glDisable(GL11.GL_DEPTH_TEST);
 
                     GL11.glColor4f(0, 0, 0, 0.01f);
-                    ResourceModel.drawModelWireframe(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel(), null, false);
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelWireframe(null, false);
 
                     Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
                 }
@@ -1295,7 +1296,7 @@ public class MainScreen extends FluidUIScreen {
 
         GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
         GL20.glUseProgram(placeable.getAsset().getShaderProgram().getProgramID());
-        ResourceModel.drawModel(model, placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured(), placeable.getAsset().getColor());
+        model.drawModel(placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured(), placeable.getAsset().getColor());
         GL20.glUseProgram(0);
 
         Window.logOpenGLError("After MainScreen.drawPlaceable() - Drawing placeable " + name + " filled");
@@ -1344,7 +1345,7 @@ public class MainScreen extends FluidUIScreen {
         }
 
         if (SMBLWSettings.showAllWireframes || isSelected) {
-            ResourceModel.drawModelWireframe(model, null, false);
+            model.drawModelWireframe(null, false);
         }
         //</editor-fold>
 
@@ -1360,7 +1361,7 @@ public class MainScreen extends FluidUIScreen {
         }
 
         if (SMBLWSettings.showAllWireframes || isSelected) {
-            ResourceModel.drawModelWireframe(model, null, false);
+            model.drawModelWireframe(null, false);
         }
         //</editor-fold>
 
@@ -1620,10 +1621,7 @@ public class MainScreen extends FluidUIScreen {
 
                 if (ProjectManager.getCurrentProject().clientLevelData != null && ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel() != null) {
                     //Unload textures and VBOs
-                    for (VBO vbo : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.vboList) {
-                        GL11.glDeleteTextures(vbo.getTextureId());
-                        vbo.destroy();
-                    }
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.unloadAll();
                 }
 
                 if (!replace) {
