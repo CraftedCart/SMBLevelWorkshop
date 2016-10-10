@@ -276,24 +276,17 @@ public class MainScreen extends FluidUIScreen {
         rightListBox.addChildComponent("settingsButton", settingsButton);
         //</editor-fold>
 
-        final Panel propertiesLabelPanel = new Panel();
-        propertiesLabelPanel.setOnInitAction(() -> {
-            propertiesLabelPanel.setTopLeftPos(0, 0);
-            propertiesLabelPanel.setBottomRightPos(0, 28);
-        });
-        rightListBox.addChildComponent("propertiesLabelPanel", propertiesLabelPanel);
-
         final Label propertiesLabel = new Label();
         propertiesLabel.setOnInitAction(() -> {
             propertiesLabel.setText(LangManager.getItem("properties"));
             propertiesLabel.setHorizontalAlign(EnumHAlignment.centre);
             propertiesLabel.setVerticalAlign(EnumVAlignment.centre);
-            propertiesLabel.setTopLeftPos(4, 4);
-            propertiesLabel.setBottomRightPos(-4, 28);
+            propertiesLabel.setTopLeftPos(0, 0);
+            propertiesLabel.setBottomRightPos(0, 28);
             propertiesLabel.setTopLeftAnchor(0, 0);
             propertiesLabel.setBottomRightAnchor(1, 0);
         });
-        propertiesLabelPanel.addChildComponent("propertiesLabel", propertiesLabel);
+        rightListBox.addChildComponent("propertiesLabel", propertiesLabel);
 
         final Label positionLabel = new Label();
         positionLabel.setOnInitAction(() -> {
