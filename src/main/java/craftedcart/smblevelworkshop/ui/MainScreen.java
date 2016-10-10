@@ -340,7 +340,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                
                 try {
                     newValue = Double.parseDouble(positionXTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -400,7 +400,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(positionYTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -458,7 +458,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(positionZTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -525,7 +525,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(rotationXTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -583,7 +583,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(rotationYTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -641,7 +641,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(rotationZTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -708,7 +708,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(scaleXTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -766,7 +766,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(scaleYTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -821,7 +821,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"));
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(scaleZTextField.prevValue);
                 } catch (NumberFormatException e1) {
