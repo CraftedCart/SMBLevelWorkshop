@@ -14,6 +14,7 @@ public class DefaultUITheme extends UITheme {
         labelFont = FontCache.getUnicodeFont("Roboto-Regular", 16);
         labelTextColor = UIColor.matWhite();
         scrollbarThickness = 2;
+        checkBoxUncheckedColor = UIColor.matWhite();
     }
 
 }

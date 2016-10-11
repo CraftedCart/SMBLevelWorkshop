@@ -29,6 +29,16 @@ public class ResourceModel implements IResource {
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
     }
 
+    public void drawModelObjectWireframe(ResourceShaderProgram shaderProgram, boolean setTexture, String name) {
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        scene.renderObjectByName(shaderProgram, setTexture, name);
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+    }
+
+    public boolean hasObject(String name) {
+        return scene.hasObject(name);
+    }
+
 //    public static void drawModel(ResourceModel m, ResourceShaderProgram shaderProgram, boolean setTexture) {
 //        m.scene.render(shaderProgram, setTexture);
 //    }

@@ -5,6 +5,7 @@ import io.github.craftedcart.fluidui.util.UIColor;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author CraftedCart
@@ -34,6 +35,30 @@ public class OBJScene {
         }
     }
 
+    public void renderObjectByName(ResourceShaderProgram shaderProgram, boolean setTexture, String name) {
+        for (OBJObject object : objectList) {
+            if (Objects.equals(object.name, name)) {
+                for (OBJFacesByMaterial facesByMaterial : object.facesByMaterialList) {
+                    facesByMaterial.vbo.render(shaderProgram, setTexture);
+                }
+
+                break;
+            }
+        }
+    }
+
+    public void renderObjectByName(ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color, String name) {
+        for (OBJObject object : objectList) {
+            if (Objects.equals(object.name, name)) {
+                for (OBJFacesByMaterial facesByMaterial : object.facesByMaterialList) {
+                    facesByMaterial.vbo.render(shaderProgram, setTexture, color);
+                }
+
+                break;
+            }
+        }
+    }
+
     public void unloadAll() {
         for (OBJObject object : objectList) {
             for (OBJFacesByMaterial facesByMaterial : object.facesByMaterialList) {
@@ -45,6 +70,17 @@ public class OBJScene {
 
     public List<OBJObject> getObjectList() {
         return objectList;
+    }
+
+    public boolean hasObject(String name) {
+        for (OBJObject object : objectList) {
+            if (Objects.equals(object.name, name)) {
+                return true;
+            }
+        }
+
+        //No object with a matching name was found
+        return false;
     }
 
 }

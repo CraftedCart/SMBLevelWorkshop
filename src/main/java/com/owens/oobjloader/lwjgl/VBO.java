@@ -59,9 +59,9 @@ public class VBO {
     }
 
     public void render(ResourceShaderProgram shaderProgram, boolean setTexture) {
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
         if (setTexture) {
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
             GL20.glUniform1i(GL20.glGetUniformLocation(shaderProgram.getProgramID(), "tex"), 0);
         }
 
@@ -84,7 +84,10 @@ public class VBO {
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
         GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+        if (setTexture) {
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+        }
     }
 
     public void render(ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color) {

@@ -58,6 +58,8 @@ public class MainScreen extends FluidUIScreen {
     private final Label modeDirectionLabel = new Label();
     private final Panel notifPanel = new Panel();
 
+    private EnumObjectMode objectMode = EnumObjectMode.PLACEABLE_EDIT;
+
     //UI: Left Panel
     public final Panel addPlaceablePanel = new Panel();
     public final Panel outlinerPlaceablesPanel = new Panel();
@@ -69,7 +71,7 @@ public class MainScreen extends FluidUIScreen {
     private final TextButton exportButton = new TextButton();
     private final TextButton settingsButton = new TextButton();
 
-    //UI: Properties
+    //UI: Placeable Properties
     private final ListBox propertiesPlaceablesListBox = new ListBox();
     private final ListBox propertiesObjectsListBox = new ListBox();
 
@@ -87,6 +89,9 @@ public class MainScreen extends FluidUIScreen {
 
     private final TextButton typeButton = new TextButton();
     @Nullable private List<String> typeList = null;
+
+    //UI: Object Properties
+    private final CheckBox backgroundObjectCheckBox = new CheckBox();
 
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
@@ -206,6 +211,15 @@ public class MainScreen extends FluidUIScreen {
             addPlaceablePanel.setVisible(true);
             outlinerPlaceablesPanel.setVisible(true);
             outlinerObjectsPanel.setVisible(false);
+
+            propertiesPlaceablesListBox.setVisible(true);
+            propertiesObjectsListBox.setVisible(false);
+
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
+            }
+
+            objectMode = EnumObjectMode.PLACEABLE_EDIT;
         });
         leftPanel.addChildComponent("outlinerPlaceablesTabButton", outlinerPlaceablesTabButton);
 
@@ -225,6 +239,15 @@ public class MainScreen extends FluidUIScreen {
             addPlaceablePanel.setVisible(false);
             outlinerPlaceablesPanel.setVisible(false);
             outlinerObjectsPanel.setVisible(true);
+
+            propertiesPlaceablesListBox.setVisible(false);
+            propertiesObjectsListBox.setVisible(true);
+
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
+            }
+
+            objectMode = EnumObjectMode.OBJECT_EDIT;
         });
         leftPanel.addChildComponent("outlinerObjectsTabButton", outlinerObjectsTabButton);
         //</editor-fold>
@@ -396,6 +419,7 @@ public class MainScreen extends FluidUIScreen {
         actionsListBox.addChildComponent("settingsButton", settingsButton);
         //</editor-fold>
 
+        //<editor-fold desc="Placeable Properties">
         //Defined at class level
         propertiesPlaceablesListBox.setOnInitAction(() -> {
             propertiesPlaceablesListBox.setTopLeftPos(0, 78);
@@ -406,17 +430,17 @@ public class MainScreen extends FluidUIScreen {
         });
         rightPanel.addChildComponent("propertiesPlaceablesListBox", propertiesPlaceablesListBox);
 
-        final Label propertiesLabel = new Label();
-        propertiesLabel.setOnInitAction(() -> {
-            propertiesLabel.setText(LangManager.getItem("properties"));
-            propertiesLabel.setHorizontalAlign(EnumHAlignment.centre);
-            propertiesLabel.setVerticalAlign(EnumVAlignment.centre);
-            propertiesLabel.setTopLeftPos(0, 0);
-            propertiesLabel.setBottomRightPos(0, 28);
-            propertiesLabel.setTopLeftAnchor(0, 0);
-            propertiesLabel.setBottomRightAnchor(1, 0);
+        final Label placeablesPropertiesLabel = new Label();
+        placeablesPropertiesLabel.setOnInitAction(() -> {
+            placeablesPropertiesLabel.setText(LangManager.getItem("properties"));
+            placeablesPropertiesLabel.setHorizontalAlign(EnumHAlignment.centre);
+            placeablesPropertiesLabel.setVerticalAlign(EnumVAlignment.centre);
+            placeablesPropertiesLabel.setTopLeftPos(0, 0);
+            placeablesPropertiesLabel.setBottomRightPos(0, 28);
+            placeablesPropertiesLabel.setTopLeftAnchor(0, 0);
+            placeablesPropertiesLabel.setBottomRightAnchor(1, 0);
         });
-        propertiesPlaceablesListBox.addChildComponent("propertiesLabel", propertiesLabel);
+        propertiesPlaceablesListBox.addChildComponent("placeablesPropertiesLabel", placeablesPropertiesLabel);
 
         final Label positionLabel = new Label();
         positionLabel.setOnInitAction(() -> {
@@ -482,7 +506,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("positionXTextField", positionXTextField);
         //</editor-fold>
@@ -540,7 +564,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("positionYTextField", positionYTextField);
         //</editor-fold>
@@ -598,7 +622,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("positionZTextField", positionZTextField);
         //</editor-fold>
@@ -665,7 +689,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("rotationXTextField", rotationXTextField);
         //</editor-fold>
@@ -723,7 +747,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("rotationYTextField", rotationYTextField);
         //</editor-fold>
@@ -781,7 +805,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("rotationZTextField", rotationZTextField);
         //</editor-fold>
@@ -848,7 +872,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("scaleXTextField", scaleXTextField);
         //</editor-fold>
@@ -906,7 +930,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("scaleYTextField", scaleYTextField);
         //</editor-fold>
@@ -961,7 +985,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("scaleZTextField", scaleZTextField);
         //</editor-fold>
@@ -987,6 +1011,74 @@ public class MainScreen extends FluidUIScreen {
             setOverlayUiScreen(getTypeSelectorOverlayScreen(mousePos.y));
         });
         propertiesPlaceablesListBox.addChildComponent("typeButton", typeButton);
+        //</editor-fold>
+
+        //<editor-fold desc="Object Properties">
+        //Defined at class level
+        propertiesObjectsListBox.setOnInitAction(() -> {
+            propertiesObjectsListBox.setTopLeftPos(0, 78);
+            propertiesObjectsListBox.setBottomRightPos(0, 0);
+            propertiesObjectsListBox.setTopLeftAnchor(0, 0);
+            propertiesObjectsListBox.setBottomRightAnchor(1, 1);
+            propertiesObjectsListBox.setBackgroundColor(UIColor.transparent());
+            propertiesObjectsListBox.setVisible(false);
+        });
+        rightPanel.addChildComponent("propertiesObjectsListBox", propertiesObjectsListBox);
+
+        final Label objectsPropertiesLabel = new Label();
+        objectsPropertiesLabel.setOnInitAction(() -> {
+            objectsPropertiesLabel.setText(LangManager.getItem("properties"));
+            objectsPropertiesLabel.setHorizontalAlign(EnumHAlignment.centre);
+            objectsPropertiesLabel.setVerticalAlign(EnumVAlignment.centre);
+            objectsPropertiesLabel.setTopLeftPos(0, 0);
+            objectsPropertiesLabel.setBottomRightPos(0, 28);
+            objectsPropertiesLabel.setTopLeftAnchor(0, 0);
+            objectsPropertiesLabel.setBottomRightAnchor(1, 0);
+        });
+        propertiesObjectsListBox.addChildComponent("objectsPropertiesLabel", objectsPropertiesLabel);
+
+        final Panel backgroundObjectPanel = new Panel();
+        backgroundObjectPanel.setOnInitAction(() -> {
+            backgroundObjectPanel.setTopLeftPos(0, 0);
+            backgroundObjectPanel.setBottomRightPos(0, 24);
+            backgroundObjectPanel.setBackgroundColor(UIColor.transparent());
+        });
+        propertiesObjectsListBox.addChildComponent("backgroundObjectPanel", backgroundObjectPanel);
+
+        final Label backgroundObjectLabel = new Label();
+        backgroundObjectLabel.setOnInitAction(() -> {
+            backgroundObjectLabel.setTopLeftPos(4, 0);
+            backgroundObjectLabel.setBottomRightPos(-24, 0);
+            backgroundObjectLabel.setTopLeftAnchor(0, 0);
+            backgroundObjectLabel.setBottomRightAnchor(1, 1);
+            backgroundObjectLabel.setText(LangManager.getItem("backgroundObject"));
+        });
+        backgroundObjectPanel.addChildComponent("backgroundObjectLabel", backgroundObjectLabel);
+
+        //Defined at class level
+        backgroundObjectCheckBox.setOnInitAction(() -> {
+            backgroundObjectCheckBox.setTopLeftPos(-24, 0);
+            backgroundObjectCheckBox.setBottomRightPos(0, 0);
+            backgroundObjectCheckBox.setTopLeftAnchor(1, 0);
+            backgroundObjectCheckBox.setBottomRightAnchor(1, 1);
+            backgroundObjectCheckBox.setEnabled(false);
+            backgroundObjectCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        });
+        backgroundObjectCheckBox.setOnLMBAction(() -> {
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                    if (backgroundObjectCheckBox.getValue()) {
+                        ProjectManager.getCurrentProject().clientLevelData.addBackgroundObject(name);
+                    } else {
+                        ProjectManager.getCurrentProject().clientLevelData.removeBackgroundObject(name);
+                    }
+                }
+            } else {
+                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed()); //You really shouldn't be able to toggle the checkbox when no level is loaded, but just in case
+            }
+        });
+        backgroundObjectPanel.addChildComponent("backgroundObjectCheckBox", backgroundObjectCheckBox);
+        //</editor-fold>
 
         //Defined at class level
         notifPanel.setOnInitAction(() -> {
@@ -1021,7 +1113,22 @@ public class MainScreen extends FluidUIScreen {
                     assert entry.getValue() instanceof TextButton;
                     TextButton button = (TextButton) entry.getValue();
 
-                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) {
+                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
+                        button.setBackgroundIdleColor(UIColor.matBlue900());
+                    } else {
+                        button.setBackgroundIdleColor(UIColor.matBlue());
+                    }
+                }
+            }
+            //</editor-fold>
+
+            //<editor-fold desc="Darken selected object in the outliner">
+            synchronized (outlinerObjectsListBoxLock) {
+                for (Map.Entry<String, Component> entry : outlinerObjectsListBox.childComponents.entrySet()) {
+                    assert entry.getValue() instanceof TextButton;
+                    TextButton button = (TextButton) entry.getValue();
+
+                    if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
                         button.setBackgroundIdleColor(UIColor.matBlue900());
                     } else {
                         button.setBackgroundIdleColor(UIColor.matBlue());
@@ -1079,7 +1186,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
         } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
-            if (ProjectManager.getCurrentProject().mode == EnumMode.GRAB) {
+            if (ProjectManager.getCurrentProject().mode == EnumActionMode.GRAB) {
                 //<editor-fold desc="Grab">
 
                 for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
@@ -1114,7 +1221,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
                 //</editor-fold>
-            } else if (ProjectManager.getCurrentProject().mode == EnumMode.ROTATE) {
+            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.ROTATE) {
                 //<editor-fold desc="Rotate">
                 for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
@@ -1149,7 +1256,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
                 //</editor-fold>
-            } else if (ProjectManager.getCurrentProject().mode == EnumMode.SCALE) {
+            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.SCALE) {
                 //<editor-fold desc="Scale">
                 for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
@@ -1182,8 +1289,8 @@ public class MainScreen extends FluidUIScreen {
                 //</editor-fold>
             }
 
-            if (ProjectManager.getCurrentProject().mode != EnumMode.NONE) {
-                updatePropertiesPanel();
+            if (ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) {
+                updatePropertiesPlaceablesPanel();
             }
         }
 
@@ -1229,14 +1336,14 @@ public class MainScreen extends FluidUIScreen {
         modeDirectionLabel.setText(String.format(LangManager.getItem("modeDirectionLabelFormat"), modeDirectionString));
         //</editor-fold>
 
-        if (ProjectManager.getCurrentProject().mode == EnumMode.NONE) {
+        if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
             modeCursor.setVisible(false);
         } else {
             modeCursor.setVisible(true);
         }
 
         if (Mouse.isButtonDown(2) ||
-                ProjectManager.getCurrentProject().mode != EnumMode.NONE) {
+                ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) {
             if (!Mouse.isGrabbed()) {
                 Mouse.setGrabbed(true);
             }
@@ -1364,11 +1471,31 @@ public class MainScreen extends FluidUIScreen {
                     GL11.glColor4f(0, 0, 0, 0.01f);
                     ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelWireframe(null, false);
 
+                    GL11.glEnable(GL11.GL_DEPTH_TEST);
+
                     Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="Draw placeables with transparency">
+                //<editor-fold desc="Draw selected objects">
+                UIColor.matBlue().bindColor();
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+                }
+
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframe (Depth test on)");
+
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+                UIColor.matBlue(0.05).bindColor();
+                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+                }
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframe (Depth test off)");
+                //</editor-fold>
+
+                //<editor-fold desc="draw placeables with transparency">
                 List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
 
                 for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
@@ -1434,7 +1561,7 @@ public class MainScreen extends FluidUIScreen {
 
         //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
         if (isSelected) {
-            if (ProjectManager.getCurrentProject().mode != EnumMode.NONE) {
+            if (ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) {
                 GL11.glPushMatrix();
 
                 GL11.glRotated(-placeable.getRotation().x, 1, 0, 0);
@@ -1503,9 +1630,9 @@ public class MainScreen extends FluidUIScreen {
 
     @Override
     public void onClick(int button, PosXY mousePos) {
-        if (button == 0 && ProjectManager.getCurrentProject().mode != EnumMode.NONE) { //LMB: Confirm action
+        if (button == 0 && ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) { //LMB: Confirm action
             confirmModeAction();
-        } else if (button == 1 && ProjectManager.getCurrentProject().mode != EnumMode.NONE) { //RMB: Discard action
+        } else if (button == 1 && ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) { //RMB: Discard action
             discardModeAction();
         } else {
             super.onClick(button, mousePos);
@@ -1521,16 +1648,16 @@ public class MainScreen extends FluidUIScreen {
                 mainUI.setVisible(!mainUI.isVisible());
 
             } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                if (ProjectManager.getCurrentProject().mode == EnumMode.NONE) {
+                if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
                     if (key == Keyboard.KEY_G) { //G: Grab
                         addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                        ProjectManager.getCurrentProject().mode = EnumMode.GRAB;
+                        ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
                     } else if (key == Keyboard.KEY_R) { //R: Rotate
                         addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                        ProjectManager.getCurrentProject().mode = EnumMode.ROTATE;
+                        ProjectManager.getCurrentProject().mode = EnumActionMode.ROTATE;
                     } else if (key == Keyboard.KEY_S) { //S: Scale
                         addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                        ProjectManager.getCurrentProject().mode = EnumMode.SCALE;
+                        ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE;
 
                     } else if (key == Keyboard.KEY_Z) { //Ctrl / Cmd Z: Undo - Ctrl / Cmd Shift Z: Redo
                         if (Window.isCtrlOrCmdDown()) {
@@ -1603,7 +1730,7 @@ public class MainScreen extends FluidUIScreen {
 
                             //Grab after duplicating
                             addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                            ProjectManager.getCurrentProject().mode = EnumMode.GRAB;
+                            ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
                         }
                     } else {
                         super.onKey(key, keyChar);
@@ -1637,14 +1764,14 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void confirmModeAction() {
-        ProjectManager.getCurrentProject().mode = EnumMode.NONE;
+        ProjectManager.getCurrentProject().mode = EnumActionMode.NONE;
         assert ProjectManager.getCurrentProject().clientLevelData != null;
-        updatePropertiesPanel();
+        updatePropertiesPlaceablesPanel();
         deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
     }
 
     private void discardModeAction() {
-        ProjectManager.getCurrentProject().mode = EnumMode.NONE;
+        ProjectManager.getCurrentProject().mode = EnumActionMode.NONE;
         undo();
         deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
     }
@@ -1769,6 +1896,7 @@ public class MainScreen extends FluidUIScreen {
                 if (!replace) {
                     ProjectManager.getCurrentProject().clientLevelData = new ClientLevelData();
                     ProjectManager.getCurrentProject().clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
+                    ProjectManager.getCurrentProject().clientLevelData.setOnSelectedObjectsChanged(this::onSelectedObjectsChanged);
                 }
 
                 ResourceModel model = OBJLoader.loadModel(file.getPath());
@@ -1783,7 +1911,10 @@ public class MainScreen extends FluidUIScreen {
                     startPosPlaceable = new Placeable(new AssetStartPos());
                     startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
                     startPosPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
-                    ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+
+                    if (objectMode == EnumObjectMode.PLACEABLE_EDIT) {
+                        ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+                    }
 
                     falloutYPlaceable = new Placeable(new AssetFalloutY());
                     falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
@@ -1798,6 +1929,24 @@ public class MainScreen extends FluidUIScreen {
                         outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
                         outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
                     }
+                }
+
+                if (replace) {
+                    //Remove selected objects if they no longer exist in the new OBJ
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                        if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(name)) {
+                            ProjectManager.getCurrentProject().clientLevelData.removeSelectedObject(name);
+                        }
+                    }
+
+                    //Remove background objects if they no longer exist in the new OBJ
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getBackgroundObjects()) {
+                        if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(name)) {
+                            ProjectManager.getCurrentProject().clientLevelData.removeBackgroundObject(name);
+                        }
+                    }
+                } else {
+                    ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
                 }
 
                 if (!OBJLoader.isLastObjTriangulated) {
@@ -1827,7 +1976,7 @@ public class MainScreen extends FluidUIScreen {
             notify(undoCommandList.get(undoCommandList.size() - 1).getUndoMessage());
             undoCommandList.remove(undoCommandList.size() - 1);
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         }
 
     }
@@ -1839,7 +1988,7 @@ public class MainScreen extends FluidUIScreen {
             notify(redoCommandList.get(redoCommandList.size() - 1).getRedoMessage());
             redoCommandList.remove(redoCommandList.size() - 1);
 
-            updatePropertiesPanel();
+            updatePropertiesPlaceablesPanel();
         }
     }
 
@@ -1851,7 +2000,14 @@ public class MainScreen extends FluidUIScreen {
             placeableButton.setText(name);
         });
         placeableButton.setOnLMBAction(() -> {
-            //TODO
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+
+            if (Window.isShiftDown()) { //Toggle selection on shift
+                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedPlaceable(name);
+            } else {
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
+                ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(name);
+            }
         });
         placeableButton.setName(name + "OutlinerPlaceable");
 
@@ -1866,7 +2022,14 @@ public class MainScreen extends FluidUIScreen {
             objectButton.setText(name);
         });
         objectButton.setOnLMBAction(() -> {
-            //TODO
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+
+            if (Window.isShiftDown()) { //Toggle selection on shift
+                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedObject(name);
+            } else {
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
+                ProjectManager.getCurrentProject().clientLevelData.addSelectedObject(name);
+            }
         });
         objectButton.setName(name + "OutlinerObject");
 
@@ -1903,7 +2066,7 @@ public class MainScreen extends FluidUIScreen {
                         synchronized (outlinerObjectsListBoxLock) {
                             outlinerObjectsListBox.clearChildComponents();
                             for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
-                                outlinerObjectsListBox.addChildComponent(getOutlinerPlaceableComponent(object.name));
+                                outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
                             }
                         }
                     } catch (IOException e) {
@@ -1932,10 +2095,10 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void onSelectedPlaceablesChanged() {
-        updatePropertiesPanel();
+        updatePropertiesPlaceablesPanel();
     }
 
-    private void updatePropertiesPanel() {
+    private void updatePropertiesPlaceablesPanel() {
         DecimalFormat df = new DecimalFormat("0.00");
 
         double posAvgX = 0;
@@ -2108,6 +2271,34 @@ public class MainScreen extends FluidUIScreen {
 
     }
 
+    private void onSelectedObjectsChanged() {
+        updatePropertiesObjectsPanel();
+    }
+
+    private void updatePropertiesObjectsPanel() {
+        if (ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size() > 0) {
+
+            //Enable UI components
+            backgroundObjectCheckBox.setEnabled(true);
+
+            boolean areBackgroundObjects = true;
+
+            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                if (!ProjectManager.getCurrentProject().clientLevelData.isObjectBackground(name)) {
+                    //At least one selected object isn't marked as in the background
+                    areBackgroundObjects = false;
+
+                    break;
+                }
+            }
+
+            backgroundObjectCheckBox.setValue(areBackgroundObjects);
+
+        } else {
+            backgroundObjectCheckBox.setEnabled(false);
+        }
+    }
+
     private PosXYZ normalizeRotation(PosXYZ rot) {
         while (rot.x >= 360) {
             rot.x -= 360;
@@ -2164,7 +2355,7 @@ public class MainScreen extends FluidUIScreen {
             placeable.getAsset().setType(type);
         }
 
-        updatePropertiesPanel();
+        updatePropertiesPlaceablesPanel();
     }
 
     private void showSettings() {

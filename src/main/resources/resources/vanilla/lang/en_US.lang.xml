@@ -79,6 +79,9 @@
     <entry key="type" val="Type" />
     <entry key="noTypes" val="No Types" />
 
+    <!-- Object properties -->
+    <entry key="backgroundObject" val="Background Object" />
+
     <!-- Errors -->
     <entry key="warning" val="Warning" />
     <entry key="notTriangulated" val="Mesh is not triangulated&#10;Expect broken mesh and collision when importing into SMB" />
