@@ -9,7 +9,12 @@ import java.util.List;
  */
 public class OBJObject {
 
+    public String name;
     public List<OBJFacesByMaterial> facesByMaterialList = new ArrayList<>();
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public void addFacesByMaterial(OBJFacesByMaterial mat) {
         facesByMaterialList.add(mat);

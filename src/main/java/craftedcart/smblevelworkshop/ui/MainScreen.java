@@ -9,6 +9,7 @@ import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
+import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
@@ -69,6 +70,9 @@ public class MainScreen extends FluidUIScreen {
     private final TextButton settingsButton = new TextButton();
 
     //UI: Properties
+    private final ListBox propertiesPlaceablesListBox = new ListBox();
+    private final ListBox propertiesObjectsListBox = new ListBox();
+
     private final TextField positionXTextField = new TextField();
     private final TextField positionYTextField = new TextField();
     private final TextField positionZTextField = new TextField();
@@ -99,6 +103,7 @@ public class MainScreen extends FluidUIScreen {
 
     //Locks
     private final Object outlinerPlaceablesListBoxLock = new Object();
+    private final Object outlinerObjectsListBoxLock = new Object();
     private final Object renderingLock = new Object();
 
 
@@ -338,15 +343,25 @@ public class MainScreen extends FluidUIScreen {
         outlinerObjectsPanel.addChildComponent("outlinerObjectsListBox", outlinerObjectsListBox);
         //</editor-fold>
 
-        final ListBox rightListBox = new ListBox();
-        rightListBox.setOnInitAction(() -> {
-            rightListBox.setBackgroundColor(UIColor.matGrey900(0.75));
-            rightListBox.setTopLeftPos(-256, 0);
-            rightListBox.setBottomRightPos(0, 0);
-            rightListBox.setTopLeftAnchor(1, 0);
-            rightListBox.setBottomRightAnchor(1, 1);
+        final Panel rightPanel = new Panel();
+        rightPanel.setOnInitAction(() -> {
+            rightPanel.setBackgroundColor(UIColor.matGrey900(0.75));
+            rightPanel.setTopLeftPos(-256, 0);
+            rightPanel.setBottomRightPos(0, 0);
+            rightPanel.setTopLeftAnchor(1, 0);
+            rightPanel.setBottomRightAnchor(1, 1);
         });
-        mainUI.addChildComponent("rightListBox", rightListBox);
+        mainUI.addChildComponent("rightPanel", rightPanel);
+
+        final ListBox actionsListBox = new ListBox();
+        actionsListBox.setOnInitAction(() -> {
+            actionsListBox.setTopLeftPos(0, 0);
+            actionsListBox.setBottomRightPos(0, 78);
+            actionsListBox.setTopLeftAnchor(0, 0);
+            actionsListBox.setBottomRightAnchor(1, 0);
+            actionsListBox.setBackgroundColor(UIColor.transparent());
+        });
+        rightPanel.addChildComponent("actionsListBox", actionsListBox);
 
         //<editor-fold desc="ImportObj TextButton">
         //Defined at class level
@@ -356,7 +371,7 @@ public class MainScreen extends FluidUIScreen {
             importObjButton.setBottomRightPos(0, 24);
         });
         importObjButton.setOnLMBAction(this::importObj);
-        rightListBox.addChildComponent("importObjButton", importObjButton);
+        actionsListBox.addChildComponent("importObjButton", importObjButton);
         //</editor-fold>
 
         //<editor-fold desc="Export TextButton">
@@ -367,7 +382,7 @@ public class MainScreen extends FluidUIScreen {
             exportButton.setBottomRightPos(0, 24);
         });
         exportButton.setOnLMBAction(this::export);
-        rightListBox.addChildComponent("exportButton", exportButton);
+        actionsListBox.addChildComponent("exportButton", exportButton);
         //</editor-fold>
 
         //<editor-fold desc="Settings TextButton">
@@ -378,8 +393,18 @@ public class MainScreen extends FluidUIScreen {
             settingsButton.setBottomRightPos(0, 24);
         });
         settingsButton.setOnLMBAction(this::showSettings);
-        rightListBox.addChildComponent("settingsButton", settingsButton);
+        actionsListBox.addChildComponent("settingsButton", settingsButton);
         //</editor-fold>
+
+        //Defined at class level
+        propertiesPlaceablesListBox.setOnInitAction(() -> {
+            propertiesPlaceablesListBox.setTopLeftPos(0, 78);
+            propertiesPlaceablesListBox.setBottomRightPos(0, 0);
+            propertiesPlaceablesListBox.setTopLeftAnchor(0, 0);
+            propertiesPlaceablesListBox.setBottomRightAnchor(1, 1);
+            propertiesPlaceablesListBox.setBackgroundColor(UIColor.transparent());
+        });
+        rightPanel.addChildComponent("propertiesPlaceablesListBox", propertiesPlaceablesListBox);
 
         final Label propertiesLabel = new Label();
         propertiesLabel.setOnInitAction(() -> {
@@ -391,7 +416,7 @@ public class MainScreen extends FluidUIScreen {
             propertiesLabel.setTopLeftAnchor(0, 0);
             propertiesLabel.setBottomRightAnchor(1, 0);
         });
-        rightListBox.addChildComponent("propertiesLabel", propertiesLabel);
+        propertiesPlaceablesListBox.addChildComponent("propertiesLabel", propertiesLabel);
 
         final Label positionLabel = new Label();
         positionLabel.setOnInitAction(() -> {
@@ -400,7 +425,7 @@ public class MainScreen extends FluidUIScreen {
             positionLabel.setTopLeftPos(0, 0);
             positionLabel.setBottomRightPos(0, 24);
         });
-        rightListBox.addChildComponent("positionLabel", positionLabel);
+        propertiesPlaceablesListBox.addChildComponent("positionLabel", positionLabel);
 
         //<editor-fold desc="Position X Text Field">
         //Defined at class level
@@ -459,7 +484,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("positionXTextField", positionXTextField);
+        propertiesPlaceablesListBox.addChildComponent("positionXTextField", positionXTextField);
         //</editor-fold>
 
         //<editor-fold desc="Position Y Text Field">
@@ -517,7 +542,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("positionYTextField", positionYTextField);
+        propertiesPlaceablesListBox.addChildComponent("positionYTextField", positionYTextField);
         //</editor-fold>
 
         //<editor-fold desc="Position Z Text Field">
@@ -575,7 +600,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("positionZTextField", positionZTextField);
+        propertiesPlaceablesListBox.addChildComponent("positionZTextField", positionZTextField);
         //</editor-fold>
 
         final Label rotationLabel = new Label();
@@ -585,7 +610,7 @@ public class MainScreen extends FluidUIScreen {
             rotationLabel.setTopLeftPos(0, 0);
             rotationLabel.setBottomRightPos(0, 24);
         });
-        rightListBox.addChildComponent("rotationLabel", rotationLabel);
+        propertiesPlaceablesListBox.addChildComponent("rotationLabel", rotationLabel);
 
         //<editor-fold desc="Rotation X Text Field">
         //Defined at class level
@@ -642,7 +667,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("rotationXTextField", rotationXTextField);
+        propertiesPlaceablesListBox.addChildComponent("rotationXTextField", rotationXTextField);
         //</editor-fold>
 
         //<editor-fold desc="Rotation Y Text Field">
@@ -700,7 +725,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("rotationYTextField", rotationYTextField);
+        propertiesPlaceablesListBox.addChildComponent("rotationYTextField", rotationYTextField);
         //</editor-fold>
 
         //<editor-fold desc="Rotation Z Text Field">
@@ -758,7 +783,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("rotationZTextField", rotationZTextField);
+        propertiesPlaceablesListBox.addChildComponent("rotationZTextField", rotationZTextField);
         //</editor-fold>
 
         final Label scaleLabel = new Label();
@@ -768,7 +793,7 @@ public class MainScreen extends FluidUIScreen {
             scaleLabel.setTopLeftPos(0, 0);
             scaleLabel.setBottomRightPos(0, 24);
         });
-        rightListBox.addChildComponent("scaleLabel", scaleLabel);
+        propertiesPlaceablesListBox.addChildComponent("scaleLabel", scaleLabel);
 
         //<editor-fold desc="Scale X Text Field">
         //Defined at class level
@@ -825,7 +850,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("scaleXTextField", scaleXTextField);
+        propertiesPlaceablesListBox.addChildComponent("scaleXTextField", scaleXTextField);
         //</editor-fold>
 
         //<editor-fold desc="Scale Y Text Field">
@@ -883,7 +908,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("scaleYTextField", scaleYTextField);
+        propertiesPlaceablesListBox.addChildComponent("scaleYTextField", scaleYTextField);
         //</editor-fold>
 
         //<editor-fold desc="Scale Z Text Field">
@@ -938,7 +963,7 @@ public class MainScreen extends FluidUIScreen {
 
             updatePropertiesPanel();
         });
-        rightListBox.addChildComponent("scaleZTextField", scaleZTextField);
+        propertiesPlaceablesListBox.addChildComponent("scaleZTextField", scaleZTextField);
         //</editor-fold>
 
         final Label typeLabel = new Label();
@@ -948,7 +973,7 @@ public class MainScreen extends FluidUIScreen {
             typeLabel.setTopLeftPos(0, 0);
             typeLabel.setBottomRightPos(0, 24);
         });
-        rightListBox.addChildComponent("typeLabel", typeLabel);
+        propertiesPlaceablesListBox.addChildComponent("typeLabel", typeLabel);
 
         //Defined at class level
         typeButton.setOnInitAction(() -> {
@@ -961,7 +986,7 @@ public class MainScreen extends FluidUIScreen {
             assert mousePos != null;
             setOverlayUiScreen(getTypeSelectorOverlayScreen(mousePos.y));
         });
-        rightListBox.addChildComponent("typeButton", typeButton);
+        propertiesPlaceablesListBox.addChildComponent("typeButton", typeButton);
 
         //Defined at class level
         notifPanel.setOnInitAction(() -> {
@@ -1826,18 +1851,26 @@ public class MainScreen extends FluidUIScreen {
             placeableButton.setText(name);
         });
         placeableButton.setOnLMBAction(() -> {
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-            if (Window.isShiftDown()) { //Toggle selection on shift
-                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedPlaceable(name);
-            } else {
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
-                ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(name);
-            }
+            //TODO
         });
         placeableButton.setName(name + "OutlinerPlaceable");
 
         return placeableButton;
+    }
+
+    public Component getOutlinerObjectComponent(String name) {
+        final TextButton objectButton = new TextButton();
+        objectButton.setOnInitAction(() -> {
+            objectButton.setTopLeftPos(0, 0);
+            objectButton.setBottomRightPos(0, 18);
+            objectButton.setText(name);
+        });
+        objectButton.setOnLMBAction(() -> {
+            //TODO
+        });
+        objectButton.setName(name + "OutlinerObject");
+
+        return objectButton;
     }
 
     private void importObj() {
@@ -1865,6 +1898,13 @@ public class MainScreen extends FluidUIScreen {
                             newLevelData(file, shouldRepalce);
                         } else {
                             newLevelData(file, false);
+                        }
+
+                        synchronized (outlinerObjectsListBoxLock) {
+                            outlinerObjectsListBox.clearChildComponents();
+                            for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
+                                outlinerObjectsListBox.addChildComponent(getOutlinerPlaceableComponent(object.name));
+                            }
                         }
                     } catch (IOException e) {
                         LogHelper.error(getClass(), "Failed to open file");

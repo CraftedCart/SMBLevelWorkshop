@@ -43,4 +43,8 @@ public class OBJScene {
         }
     }
 
+    public List<OBJObject> getObjectList() {
+        return objectList;
+    }
+
 }

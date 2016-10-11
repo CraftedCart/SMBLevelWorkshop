@@ -57,6 +57,9 @@ public class OBJLoader {
             ArrayList<ArrayList<Face>> facesByMaterialList = createFaceListsByMaterial(faceList);
 
             OBJObject object = new OBJObject();
+            if (facesByMaterialList.size() > 0 && facesByMaterialList.get(0).size() > 0) {
+                object.setName(facesByMaterialList.get(0).get(0).objectName);
+            }
 
             for (ArrayList<Face> faceMatList : facesByMaterialList) {
                 OBJFacesByMaterial facesByMaterial = new OBJFacesByMaterial();
