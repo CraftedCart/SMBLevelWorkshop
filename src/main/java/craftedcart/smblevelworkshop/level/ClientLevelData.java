@@ -21,8 +21,6 @@ public class ClientLevelData {
     private Set<String> selectedObjects = new HashSet<>();
     @Nullable private UIAction onSelectedObjectsChanged;
 
-    private Set<String> backgroundObjects = new HashSet<>();
-
     public void setLevelData(@NotNull LevelData levelData) {
         this.levelData = levelData;
     }
@@ -130,36 +128,6 @@ public class ClientLevelData {
 
     public void setOnSelectedObjectsChanged(@Nullable UIAction onSelectedObjectsChanged) {
         this.onSelectedObjectsChanged = onSelectedObjectsChanged;
-    }
-
-    public void addBackgroundObject(String name) {
-        backgroundObjects.add(name);
-    }
-
-    public void removeBackgroundObject(String name) {
-        if (backgroundObjects.contains(name)) {
-            backgroundObjects.remove(name);
-        }
-    }
-
-    public boolean isObjectBackground(String name) {
-        return backgroundObjects.contains(name);
-    }
-
-    public void toggleBackgroundObject(String name) {
-        if (isObjectBackground(name)) {
-            removeBackgroundObject(name);
-        } else {
-            addBackgroundObject(name);
-        }
-    }
-
-    public void clearBackgroundObjects() {
-        backgroundObjects.clear();
-    }
-
-    public Set<String> getBackgroundObjects() {
-        return backgroundObjects;
     }
     
 }

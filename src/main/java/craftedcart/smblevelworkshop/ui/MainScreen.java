@@ -1068,9 +1068,9 @@ public class MainScreen extends FluidUIScreen {
             if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
                 for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
                     if (backgroundObjectCheckBox.getValue()) {
-                        ProjectManager.getCurrentProject().clientLevelData.addBackgroundObject(name);
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().addBackgroundObject(name);
                     } else {
-                        ProjectManager.getCurrentProject().clientLevelData.removeBackgroundObject(name);
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
                     }
                 }
             } else {
@@ -1940,9 +1940,9 @@ public class MainScreen extends FluidUIScreen {
                     }
 
                     //Remove background objects if they no longer exist in the new OBJ
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getBackgroundObjects()) {
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
                         if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(name)) {
-                            ProjectManager.getCurrentProject().clientLevelData.removeBackgroundObject(name);
+                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
                         }
                     }
                 } else {
@@ -2284,7 +2284,7 @@ public class MainScreen extends FluidUIScreen {
             boolean areBackgroundObjects = true;
 
             for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                if (!ProjectManager.getCurrentProject().clientLevelData.isObjectBackground(name)) {
+                if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackground(name)) {
                     //At least one selected object isn't marked as in the background
                     areBackgroundObjects = false;
 

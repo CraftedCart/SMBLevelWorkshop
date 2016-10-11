@@ -122,6 +122,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             exportLzCompressedSmb1Button.setTopLeftPos(0, 0);
             exportLzCompressedSmb1Button.setBottomRightPos(0, 24);
             exportLzCompressedSmb1Button.setText(LangManager.getItem("exportLzCompressedSmb1"));
+            exportLzCompressedSmb1Button.setTooltip(LangManager.getItem("backgroundNotYetSupported"));
         });
         exportLzCompressedSmb1Button.setOnLMBAction(() -> exportLzCompressed(new SMB1LZExporter()));
         listBox.addChildComponent("exportLzCompressedSmb1Button", exportLzCompressedSmb1Button);
@@ -131,6 +132,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             exportLzRawSmb1Button.setTopLeftPos(0, 0);
             exportLzRawSmb1Button.setBottomRightPos(0, 24);
             exportLzRawSmb1Button.setText(LangManager.getItem("exportLzRawSmb1"));
+            exportLzRawSmb1Button.setTooltip(LangManager.getItem("backgroundNotYetSupported"));
         });
         exportLzRawSmb1Button.setOnLMBAction(() -> exportLzRaw(new SMB1LZExporter()));
         listBox.addChildComponent("exportLzRawSmb1Button", exportLzRawSmb1Button);
@@ -140,6 +142,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             exportLzCompressedSmb2Button.setTopLeftPos(0, 0);
             exportLzCompressedSmb2Button.setBottomRightPos(0, 24);
             exportLzCompressedSmb2Button.setText(LangManager.getItem("exportLzCompressedSmb2"));
+            exportLzCompressedSmb2Button.setTooltip(LangManager.getItem("backgroundNotYetSupported"));
         });
         exportLzCompressedSmb2Button.setOnLMBAction(() -> exportLzCompressed(new SMB2LZExporter()));
         listBox.addChildComponent("exportLzCompressedSmb2Button", exportLzCompressedSmb2Button);
@@ -149,6 +152,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             exportLzRawSmb2Button.setTopLeftPos(0, 0);
             exportLzRawSmb2Button.setBottomRightPos(0, 24);
             exportLzRawSmb2Button.setText(LangManager.getItem("exportLzRawSmb2"));
+            exportLzRawSmb2Button.setTooltip(LangManager.getItem("backgroundNotYetSupported"));
         });
         exportLzRawSmb2Button.setOnLMBAction(() -> exportLzRaw(new SMB2LZExporter()));
         listBox.addChildComponent("exportLzRawSmb2Button", exportLzRawSmb2Button);

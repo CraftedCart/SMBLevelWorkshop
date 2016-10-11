@@ -11,10 +11,11 @@ import java.util.Map;
  */
 public class ExportManager {
 
-    private static int bananaCount = 0;
-    private static int bumperCount = 0;
-    private static int goalCount = 0;
-    private static int jamabarCount = 0;
+    private static int bananaCount;
+    private static int bumperCount;
+    private static int goalCount;
+    private static int jamabarCount;
+    private static int backgroundCount;
 
     public static String getConfig(LevelData levelData) {
         StringBuilder sb = new StringBuilder();
@@ -23,6 +24,7 @@ public class ExportManager {
         bumperCount = -1;
         goalCount = -1;
         jamabarCount = -1;
+        backgroundCount = -1;
 
         for (Map.Entry<String, Placeable> entry : levelData.getPlacedObjects().entrySet()) {
             Placeable placeable = entry.getValue();
@@ -56,9 +58,15 @@ public class ExportManager {
             sb.append("\r\n");
         }
 
+        for (String name : levelData.getBackgroundObjects()) {
+            appendBackgroundPrefix(sb, true); sb.append(". x . x = ").append(name).append("\r\n");
+
+            sb.append("\r\n");
+        }
+
         return sb.toString();
     }
-    
+
     private static void appendAssetPrefix(IAsset asset, StringBuilder sb, boolean incrementCounter) {
         if (asset instanceof AssetBanana) {
             if (incrementCounter) {
@@ -85,6 +93,13 @@ public class ExportManager {
         } else if (asset instanceof AssetFalloutY) {
             sb.append("fallout [ 0 ] ");
         }
+    }
+
+    private static void appendBackgroundPrefix(StringBuilder sb, boolean incrementCounter) {
+        if (incrementCounter) {
+            backgroundCount++;
+        }
+        sb.append("background [ ").append(backgroundCount).append(" ] ");
     }
 
 }

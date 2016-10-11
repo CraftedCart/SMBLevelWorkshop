@@ -8,7 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author CraftedCart
@@ -19,6 +21,7 @@ public class LevelData {
     @Nullable private ResourceModel model;
     @Nullable private File modelObjSource;
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
+    @NotNull private Set<String> backgroundObjects = new HashSet<>();
 
     public void setModel(@Nullable ResourceModel model) {
         this.model = model;
@@ -80,6 +83,37 @@ public class LevelData {
 
     public void replacePlaceable(String name, Placeable placeable) {
         placedObjects.replace(name, placeable);
+    }
+
+    public void addBackgroundObject(String name) {
+        backgroundObjects.add(name);
+    }
+
+    public void removeBackgroundObject(String name) {
+        if (backgroundObjects.contains(name)) {
+            backgroundObjects.remove(name);
+        }
+    }
+
+    public boolean isObjectBackground(String name) {
+        return backgroundObjects.contains(name);
+    }
+
+    public void toggleBackgroundObject(String name) {
+        if (isObjectBackground(name)) {
+            removeBackgroundObject(name);
+        } else {
+            addBackgroundObject(name);
+        }
+    }
+
+    public void clearBackgroundObjects() {
+        backgroundObjects.clear();
+    }
+
+    @NotNull
+    public Set<String> getBackgroundObjects() {
+        return backgroundObjects;
     }
 
 }
