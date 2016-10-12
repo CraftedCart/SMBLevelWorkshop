@@ -1072,6 +1072,8 @@ public class MainScreen extends FluidUIScreen {
                     } else {
                         ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
                     }
+
+                    updateOutlinerObjectsPanel();
                 }
             } else {
                 notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed()); //You really shouldn't be able to toggle the checkbox when no level is loaded, but just in case
@@ -2289,7 +2291,8 @@ public class MainScreen extends FluidUIScreen {
                     assert entry.getValue() instanceof TextButton;
                     TextButton button = (TextButton) entry.getValue();
 
-                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
+                    //TODO: Using button.text feels hacky - Extend TextButton and add id field
+                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) {
                         button.setBackgroundIdleColor(UIColor.matBlue900());
                     } else {
                         button.setBackgroundIdleColor(UIColor.matBlue());
@@ -2307,14 +2310,27 @@ public class MainScreen extends FluidUIScreen {
                 assert entry.getValue() instanceof TextButton;
                 TextButton button = (TextButton) entry.getValue();
 
-                if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
-                    button.setBackgroundIdleColor(UIColor.matBlue900());
-                } else {
-                    button.setBackgroundIdleColor(UIColor.matBlue());
-                }
+                //TODO: Using button.text feels hacky - Extend TextButton and add id field
+                button.setBackgroundIdleColor(getOutlinerObjectColor(button.text));
             }
         }
         //</editor-fold>
+    }
+
+    private UIColor getOutlinerObjectColor(String name) {
+        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackground(name)) {
+            if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
+                return UIColor.matPurple900();
+            } else {
+                return UIColor.matPurple();
+            }
+        } else {
+            if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
+                return UIColor.matBlue900();
+            } else {
+                return UIColor.matBlue();
+            }
+        }
     }
 
     private PosXYZ normalizeRotation(PosXYZ rot) {
