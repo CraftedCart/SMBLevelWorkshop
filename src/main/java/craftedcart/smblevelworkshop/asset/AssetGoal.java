@@ -89,8 +89,4 @@ public class AssetGoal implements IAsset {
         }
     }
 
-    @Override
-    public boolean isOpaque() {
-        return false;
-    }
 }

@@ -61,9 +61,4 @@ public class AssetFalloutY implements IAsset {
         return ResourceManager.getShaderProgram("texShaderProgram");
     }
 
-    @Override
-    public boolean isOpaque() {
-        return false;
-    }
-
 }

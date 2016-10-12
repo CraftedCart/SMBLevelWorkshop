@@ -487,7 +487,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-                
+
                 try {
                     newValue = Double.parseDouble(positionXTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -1407,6 +1407,8 @@ public class MainScreen extends FluidUIScreen {
 
             GL11.glTranslated(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
+            GL11.glLineWidth(2);
+
             //<editor-fold desc="Draw X line">
             UIColor.matRed().bindColor();
             GL11.glBegin(GL11.GL_LINES);
@@ -1425,24 +1427,11 @@ public class MainScreen extends FluidUIScreen {
 
             Window.logOpenGLError("After MainScreen.drawViewport() - Drawing global X & Z lines");
 
+            GL11.glLineWidth(4);
+
             UIColor.pureWhite().bindColor();
 
             if (ProjectManager.getCurrentProject().clientLevelData != null && ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel() != null) {
-                //<editor-fold desc="Draw opaque placeables">
-                for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                    String name = placeableEntry.getKey();
-                    Placeable placeable = placeableEntry.getValue();
-                    boolean isSelected = ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(name);
-
-                    if (!placeable.getAsset().isOpaque()) {
-                        continue;
-                    }
-
-                    drawPlaceable(placeable, isSelected);
-
-                }
-                //</editor-fold>
-
                 //<editor-fold desc="Draw model with wireframes">
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
 
@@ -1459,7 +1448,6 @@ public class MainScreen extends FluidUIScreen {
 
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
 
-                GL11.glLineWidth(2);
                 if (SMBLWSettings.showAllWireframes) {
                     GL11.glColor4f(0, 0, 0, 1);
                     ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelWireframe(null, false);
@@ -1480,22 +1468,28 @@ public class MainScreen extends FluidUIScreen {
                 //<editor-fold desc="Draw selected objects">
                 UIColor.matBlue().bindColor();
                 for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+                    UIUtils.drawWithStencilOutside(
+                            () -> ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(null, false, name),
+                            () -> {
+                                GL11.glDisable(GL11.GL_DEPTH_TEST);
+                                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+                                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                            });
                 }
 
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframe (Depth test on)");
 
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                UIColor.matBlue(0.05).bindColor();
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
-                }
-                GL11.glEnable(GL11.GL_DEPTH_TEST);
+//                GL11.glDisable(GL11.GL_DEPTH_TEST);
+//                UIColor.matBlue(0.05).bindColor();
+//                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+//                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+//                }
+//                GL11.glEnable(GL11.GL_DEPTH_TEST);
 
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframe (Depth test off)");
                 //</editor-fold>
 
-                //<editor-fold desc="draw placeables with transparency">
+                //<editor-fold desc="draw placeables">
                 List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
 
                 for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
@@ -1518,10 +1512,6 @@ public class MainScreen extends FluidUIScreen {
                     String name = placeableEntry.entry.getKey();
                     Placeable placeable = placeableEntry.entry.getValue();
                     boolean isSelected = ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(name);
-
-                    if (placeable.getAsset().isOpaque()) {
-                        continue;
-                    }
 
                     drawPlaceable(placeable, isSelected);
 
@@ -1560,6 +1550,8 @@ public class MainScreen extends FluidUIScreen {
         Window.logOpenGLError("After MainScreen.drawPlaceable() - Drawing placeable " + name + " filled");
 
         //<editor-fold desc="Draw blue wireframe and direction line if selected, else draw orange wireframe">
+        GL11.glLineWidth(2);
+
         if (isSelected) {
             if (ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) {
                 GL11.glPushMatrix();
@@ -1602,8 +1594,20 @@ public class MainScreen extends FluidUIScreen {
             UIColor.matOrange().bindColor();
         }
 
-        if (SMBLWSettings.showAllWireframes || isSelected) {
+        if (SMBLWSettings.showAllWireframes) {
             model.drawModelWireframe(null, false);
+        }
+
+        if (isSelected) {
+            UIColor.matBlue().bindColor();
+            UIUtils.drawWithStencilOutside(
+                    () -> model.drawModel(placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured()),
+                    () -> {
+                        GL11.glLineWidth(4);
+                        GL11.glDisable(GL11.GL_DEPTH_TEST);
+                        model.drawModelWireframe(null, false);
+                        GL11.glEnable(GL11.GL_DEPTH_TEST);
+                    });
         }
         //</editor-fold>
 
@@ -1611,17 +1615,17 @@ public class MainScreen extends FluidUIScreen {
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-        //<editor-fold desc="Draw blue wireframe if selected, else draw orange wireframe (Ignores depth test - Is semi transparent)">
-        if (isSelected) {
-            UIColor.matBlue(0.05).bindColor();
-        } else {
-            UIColor.matBlue(0.02).bindColor();
-        }
-
-        if (SMBLWSettings.showAllWireframes || isSelected) {
-            model.drawModelWireframe(null, false);
-        }
-        //</editor-fold>
+//        //<editor-fold desc="Draw blue wireframe if selected, else draw orange wireframe (Ignores depth test - Is semi transparent)">
+//        if (isSelected) {
+//            UIColor.matBlue(0.05).bindColor();
+//        } else {
+//            UIColor.matOrange(0.02).bindColor();
+//        }
+//
+//        if (SMBLWSettings.showAllWireframes || isSelected) {
+//            model.drawModelWireframe(null, false);
+//        }
+//        //</editor-fold>
 
         Window.logOpenGLError("After MainScreen.drawPlaceable() - Drawing placeable " + name + " wireframe (Depth test off)");
 

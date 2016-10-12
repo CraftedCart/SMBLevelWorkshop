@@ -19,8 +19,13 @@ public class ResourceModel implements IResource {
     public void drawModel(ResourceShaderProgram shaderProgram, boolean setTexture) {
         scene.renderAll(shaderProgram, setTexture);
     }
+
     public void drawModel(ResourceShaderProgram shaderProgram, boolean setTexture, UIColor color) {
         scene.renderAll(shaderProgram, setTexture, color);
+    }
+
+    public void drawModelObject(ResourceShaderProgram shaderProgram, boolean setTexture, String name) {
+        scene.renderObjectByName(shaderProgram, setTexture, name);
     }
 
     public void drawModelWireframe(ResourceShaderProgram shaderProgram, boolean setTexture) {
