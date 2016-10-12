@@ -1106,38 +1106,6 @@ public class MainScreen extends FluidUIScreen {
 
         Window.logOpenGLError("After MainScreen.super.preDraw()");
 
-        if (ProjectManager.getCurrentProject().clientLevelData != null) {
-            //<editor-fold desc="Darken selected placeables in the outliner">
-            synchronized (outlinerPlaceablesListBoxLock) {
-                for (Map.Entry<String, Component> entry : outlinerPlaceablesListBox.childComponents.entrySet()) {
-                    assert entry.getValue() instanceof TextButton;
-                    TextButton button = (TextButton) entry.getValue();
-
-                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
-                        button.setBackgroundIdleColor(UIColor.matBlue900());
-                    } else {
-                        button.setBackgroundIdleColor(UIColor.matBlue());
-                    }
-                }
-            }
-            //</editor-fold>
-
-            //<editor-fold desc="Darken selected object in the outliner">
-            synchronized (outlinerObjectsListBoxLock) {
-                for (Map.Entry<String, Component> entry : outlinerObjectsListBox.childComponents.entrySet()) {
-                    assert entry.getValue() instanceof TextButton;
-                    TextButton button = (TextButton) entry.getValue();
-
-                    if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
-                        button.setBackgroundIdleColor(UIColor.matBlue900());
-                    } else {
-                        button.setBackgroundIdleColor(UIColor.matBlue());
-                    }
-                }
-            }
-            //</editor-fold>
-        }
-
         if (Mouse.isButtonDown(2)) { //If MMB down
             //<editor-fold desc="Rotate camera on MMB & Move camera with MMB & WASDQE">
             cameraRot = cameraRot.add(UIUtils.getMouseDelta().toPosXY());
@@ -1725,6 +1693,8 @@ public class MainScreen extends FluidUIScreen {
                                     outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
                                 }
 
+                                updateOutlinerPlaceablesPanel();
+
                                 ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
                             }
                         }
@@ -1827,6 +1797,8 @@ public class MainScreen extends FluidUIScreen {
             synchronized (outlinerPlaceablesListBoxLock) {
                 outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
             }
+
+            updateOutlinerPlaceablesPanel();
         } else {
             notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
@@ -1933,6 +1905,8 @@ public class MainScreen extends FluidUIScreen {
                         outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
                         outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
                     }
+
+                    updateOutlinerPlaceablesPanel();
                 }
 
                 if (replace) {
@@ -2073,6 +2047,8 @@ public class MainScreen extends FluidUIScreen {
                                 outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
                             }
                         }
+
+                        updateOutlinerObjectsPanel();
                     } catch (IOException e) {
                         LogHelper.error(getClass(), "Failed to open file");
                         LogHelper.error(getClass(), e);
@@ -2100,6 +2076,7 @@ public class MainScreen extends FluidUIScreen {
 
     private void onSelectedPlaceablesChanged() {
         updatePropertiesPlaceablesPanel();
+        updateOutlinerPlaceablesPanel();
     }
 
     private void updatePropertiesPlaceablesPanel() {
@@ -2277,6 +2254,7 @@ public class MainScreen extends FluidUIScreen {
 
     private void onSelectedObjectsChanged() {
         updatePropertiesObjectsPanel();
+        updateOutlinerObjectsPanel();
     }
 
     private void updatePropertiesObjectsPanel() {
@@ -2301,6 +2279,42 @@ public class MainScreen extends FluidUIScreen {
         } else {
             backgroundObjectCheckBox.setEnabled(false);
         }
+    }
+
+    private void updateOutlinerPlaceablesPanel() {
+        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+            //<editor-fold desc="Darken selected placeables in the outliner">
+            synchronized (outlinerPlaceablesListBoxLock) {
+                for (Map.Entry<String, Component> entry : outlinerPlaceablesListBox.childComponents.entrySet()) {
+                    assert entry.getValue() instanceof TextButton;
+                    TextButton button = (TextButton) entry.getValue();
+
+                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
+                        button.setBackgroundIdleColor(UIColor.matBlue900());
+                    } else {
+                        button.setBackgroundIdleColor(UIColor.matBlue());
+                    }
+                }
+            }
+            //</editor-fold>
+        }
+    }
+
+    private void updateOutlinerObjectsPanel() {
+        //<editor-fold desc="Darken selected object in the outliner">
+        synchronized (outlinerObjectsListBoxLock) {
+            for (Map.Entry<String, Component> entry : outlinerObjectsListBox.childComponents.entrySet()) {
+                assert entry.getValue() instanceof TextButton;
+                TextButton button = (TextButton) entry.getValue();
+
+                if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(button.text)) { //TODO: Using button.text feels hacky - Extend TextButton and add id field
+                    button.setBackgroundIdleColor(UIColor.matBlue900());
+                } else {
+                    button.setBackgroundIdleColor(UIColor.matBlue());
+                }
+            }
+        }
+        //</editor-fold>
     }
 
     private PosXYZ normalizeRotation(PosXYZ rot) {
