@@ -4,6 +4,7 @@ import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
+import craftedcart.smblevelworkshop.level.LevelData;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
@@ -92,6 +93,9 @@ public class MainScreen extends FluidUIScreen {
 
     //UI: Object Properties
     private final CheckBox backgroundObjectCheckBox = new CheckBox();
+
+    //UI: Text Fields
+    private final Set<TextField> textFields = new HashSet<>();
 
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
@@ -359,12 +363,45 @@ public class MainScreen extends FluidUIScreen {
         outlinerObjectsListBox.setOnInitAction(() -> {
             outlinerObjectsListBox.setBackgroundColor(UIColor.transparent());
             outlinerObjectsListBox.setTopLeftPos(0, 24);
-            outlinerObjectsListBox.setBottomRightPos(0, 0);
+            outlinerObjectsListBox.setBottomRightPos(0, -24);
             outlinerObjectsListBox.setTopLeftAnchor(0, 0);
             outlinerObjectsListBox.setBottomRightAnchor(1, 1);
         });
         outlinerObjectsPanel.addChildComponent("outlinerObjectsListBox", outlinerObjectsListBox);
         //</editor-fold>
+
+        final TextField addExternalBackgroundObjectTextField = new TextField();
+        addExternalBackgroundObjectTextField.setOnInitAction(() -> {
+            addExternalBackgroundObjectTextField.setTopLeftPos(0, -24);
+            addExternalBackgroundObjectTextField.setBottomRightPos(0, 0);
+            addExternalBackgroundObjectTextField.setTopLeftAnchor(0, 1);
+            addExternalBackgroundObjectTextField.setBottomRightAnchor(1, 1);
+            addExternalBackgroundObjectTextField.setPlaceholder(LangManager.getItem("addExternalBackgroundObject"));
+            addExternalBackgroundObjectTextField.setBackgroundColor(UIColor.transparent());
+        });
+        addExternalBackgroundObjectTextField.setOnReturnAction(() -> {
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+                if (!Objects.equals(addExternalBackgroundObjectTextField.value, "")) {
+                    if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackgroundExternal(addExternalBackgroundObjectTextField.text) &&
+                            !ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(addExternalBackgroundObjectTextField.text)) {
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().addBackgroundExternalObject(addExternalBackgroundObjectTextField.text);
+
+                        outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(addExternalBackgroundObjectTextField.text));
+                    } else {
+                        notify(LangManager.getItem("alreadyObject"), UIColor.matRed());
+                    }
+
+                    addExternalBackgroundObjectTextField.setValue(""); //Clear text field
+                } else {
+                    //Text field is blank
+                    notify(LangManager.getItem("noObjectSpecified"), UIColor.matRed());
+                }
+            } else {
+                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            }
+        });
+        outlinerObjectsPanel.addChildComponent("addExternalBackgroundObjectTextField", addExternalBackgroundObjectTextField);
+        textFields.add(addExternalBackgroundObjectTextField);
 
         final Panel rightPanel = new Panel();
         rightPanel.setOnInitAction(() -> {
@@ -509,6 +546,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("positionXTextField", positionXTextField);
+        textFields.add(positionXTextField);
         //</editor-fold>
 
         //<editor-fold desc="Position Y Text Field">
@@ -567,6 +605,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("positionYTextField", positionYTextField);
+        textFields.add(positionYTextField);
         //</editor-fold>
 
         //<editor-fold desc="Position Z Text Field">
@@ -625,6 +664,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("positionZTextField", positionZTextField);
+        textFields.add(positionZTextField);
         //</editor-fold>
 
         final Label rotationLabel = new Label();
@@ -692,6 +732,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("rotationXTextField", rotationXTextField);
+        textFields.add(rotationXTextField);
         //</editor-fold>
 
         //<editor-fold desc="Rotation Y Text Field">
@@ -750,6 +791,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("rotationYTextField", rotationYTextField);
+        textFields.add(rotationYTextField);
         //</editor-fold>
 
         //<editor-fold desc="Rotation Z Text Field">
@@ -808,6 +850,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("rotationZTextField", rotationZTextField);
+        textFields.add(rotationZTextField);
         //</editor-fold>
 
         final Label scaleLabel = new Label();
@@ -875,6 +918,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("scaleXTextField", scaleXTextField);
+        textFields.add(scaleXTextField);
         //</editor-fold>
 
         //<editor-fold desc="Scale Y Text Field">
@@ -933,6 +977,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("scaleYTextField", scaleYTextField);
+        textFields.add(scaleYTextField);
         //</editor-fold>
 
         //<editor-fold desc="Scale Z Text Field">
@@ -988,6 +1033,7 @@ public class MainScreen extends FluidUIScreen {
             updatePropertiesPlaceablesPanel();
         });
         propertiesPlaceablesListBox.addChildComponent("scaleZTextField", scaleZTextField);
+        textFields.add(scaleZTextField);
         //</editor-fold>
 
         final Label typeLabel = new Label();
@@ -1486,6 +1532,9 @@ public class MainScreen extends FluidUIScreen {
                     drawPlaceable(placeable, isSelected);
 
                 }
+
+                drawSelectedPlaceables(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables(),
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData());
                 //</editor-fold>
             }
 
@@ -1567,18 +1616,6 @@ public class MainScreen extends FluidUIScreen {
         if (SMBLWSettings.showAllWireframes) {
             model.drawModelWireframe(null, false);
         }
-
-        if (isSelected) {
-            UIColor.matBlue().bindColor();
-            UIUtils.drawWithStencilOutside(
-                    () -> model.drawModel(placeable.getAsset().getShaderProgram(), placeable.getAsset().isShaderTextured()),
-                    () -> {
-                        GL11.glLineWidth(4);
-                        GL11.glDisable(GL11.GL_DEPTH_TEST);
-                        model.drawModelWireframe(null, false);
-                        GL11.glEnable(GL11.GL_DEPTH_TEST);
-                    });
-        }
         //</editor-fold>
 
         Window.logOpenGLError("After MainScreen.drawPlaceable() - Drawing placeable " + name + " wireframe (Depth test on)");
@@ -1602,6 +1639,48 @@ public class MainScreen extends FluidUIScreen {
         GL11.glPopMatrix();
     }
 
+    private void drawSelectedPlaceables(Collection<String> placeables, LevelData levelData) {
+        UIColor.matBlue().bindColor();
+        UIUtils.drawWithStencilOutside(
+                () -> {
+                    for (String name : placeables) {
+                        Placeable placeable = levelData.getPlaceable(name);
+
+                        GL11.glPushMatrix();
+
+                        GL11.glTranslated(placeable.getPosition().x, placeable.getPosition().y, placeable.getPosition().z);
+                        GL11.glRotated(placeable.getRotation().z, 0, 0, 1);
+                        GL11.glRotated(placeable.getRotation().y, 0, 1, 0);
+                        GL11.glRotated(placeable.getRotation().x, 1, 0, 0);
+                        GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
+
+                        placeable.getAsset().getModel().drawModel(null, false);
+
+                        GL11.glPopMatrix();
+                    }
+                },
+                () -> {
+                    GL11.glLineWidth(4);
+                    GL11.glDisable(GL11.GL_DEPTH_TEST);
+                    for (String name : placeables) {
+                        Placeable placeable = levelData.getPlaceable(name);
+
+                        GL11.glPushMatrix();
+
+                        GL11.glTranslated(placeable.getPosition().x, placeable.getPosition().y, placeable.getPosition().z);
+                        GL11.glRotated(placeable.getRotation().z, 0, 0, 1);
+                        GL11.glRotated(placeable.getRotation().y, 0, 1, 0);
+                        GL11.glRotated(placeable.getRotation().x, 1, 0, 0);
+                        GL11.glScaled(placeable.getScale().x, placeable.getScale().y, placeable.getScale().z);
+
+                        placeable.getAsset().getModel().drawModelWireframe(null, false);
+
+                        GL11.glPopMatrix();
+                    }
+                    GL11.glEnable(GL11.GL_DEPTH_TEST);
+                });
+    }
+
     @Override
     public void onClick(int button, PosXY mousePos) {
         if (button == 0 && ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) { //LMB: Confirm action
@@ -1615,128 +1694,151 @@ public class MainScreen extends FluidUIScreen {
 
     @Override
     public void onKey(int key, char keyChar) {
+
         if (overlayUiScreen != null) {
             overlayUiScreen.onKey(key, keyChar);
-        } else if (!Mouse.isButtonDown(2)) { //If MMB not down
-            if (key == Keyboard.KEY_F1) { //F1 to hide / show the ui
-                mainUI.setVisible(!mainUI.isVisible());
+        } else {
 
-            } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
-                    if (key == Keyboard.KEY_G) { //G: Grab
-                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                        ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
-                    } else if (key == Keyboard.KEY_R) { //R: Rotate
-                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                        ProjectManager.getCurrentProject().mode = EnumActionMode.ROTATE;
-                    } else if (key == Keyboard.KEY_S) { //S: Scale
-                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                        ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE;
+            boolean isTextFieldSelected = false;
+            for (TextField textField : textFields) {
+                if (textField.isSelected) {
+                    isTextFieldSelected = true;
+                    break;
+                }
+            }
 
-                    } else if (key == Keyboard.KEY_Z) { //Ctrl / Cmd Z: Undo - Ctrl / Cmd Shift Z: Redo
-                        if (Window.isCtrlOrCmdDown()) {
-                            if (Window.isShiftDown()) {
-                                //Redo
-                                redo();
-                            } else {
-                                //Undo
-                                undo();
-                            }
-                        }
-                    } else if (key == Keyboard.KEY_Y) {
-                        if (Window.isCtrlOrCmdDown()) {
-                            redo();
-                        }
+            if (!isTextFieldSelected) {
+                if (!Mouse.isButtonDown(2)) { //If MMB not down
+                    if (key == Keyboard.KEY_F1) { //F1 to hide / show the ui
+                        mainUI.setVisible(!mainUI.isVisible());
 
-                    } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables
-                        if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
+                    } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                        if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
+                            if (key == Keyboard.KEY_G) { //G: Grab
+                                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
+                            } else if (key == Keyboard.KEY_R) { //R: Rotate
+                                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                ProjectManager.getCurrentProject().mode = EnumActionMode.ROTATE;
+                            } else if (key == Keyboard.KEY_S) { //S: Scale
+                                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE;
 
-                            List<String> toDelete = new ArrayList<>();
-
-                            for (String name : new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables())) {
-                                if (!(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
-                                        !(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
-                                    toDelete.add(name);
+                            } else if (key == Keyboard.KEY_Z) { //Ctrl / Cmd Z: Undo - Ctrl / Cmd Shift Z: Redo
+                                if (Window.isCtrlOrCmdDown()) {
+                                    if (Window.isShiftDown()) {
+                                        //Redo
+                                        redo();
+                                    } else {
+                                        //Undo
+                                        undo();
+                                    }
                                 }
-                            }
+                            } else if (key == Keyboard.KEY_Y) {
+                                if (Window.isCtrlOrCmdDown()) {
+                                    redo();
+                                }
 
-                            removePlaceables(toDelete);
+                            } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables
+                                if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
 
-                            if (toDelete.size() > 1) {
-                                notify(String.format(LangManager.getItem("placeableRemovedPlural"), toDelete.size()));
+                                    List<String> toDelete = new ArrayList<>();
+
+                                    for (String name : new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables())) {
+                                        if (!(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
+                                                !(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
+                                            toDelete.add(name);
+                                        }
+                                    }
+
+                                    removePlaceables(toDelete);
+
+                                    if (toDelete.size() > 1) {
+                                        notify(String.format(LangManager.getItem("placeableRemovedPlural"), toDelete.size()));
+                                    } else {
+                                        notify(LangManager.getItem("placeableRemoved"));
+                                    }
+
+                                } else {
+                                    notify(LangManager.getItem("nothingSelected"));
+                                }
+
+                            } else if (key == Keyboard.KEY_D && Window.isCtrlOrCmdDown()) { //Ctrl / Cmd D: Duplicate
+                                Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables());
+                                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
+
+                                Map<String, Placeable> newPlaceables = new HashMap<>();
+
+                                int duplicated = 0;
+
+                                for (String name : selectedPlaceables) {
+                                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+                                    if (!(placeable.getAsset() instanceof AssetStartPos) &&
+                                            !(placeable.getAsset() instanceof AssetFalloutY)) { //If the placeable isn't the start pos or fallout Y
+
+                                        duplicated++;
+
+                                        Placeable newPlaceable = placeable.getCopy();
+                                        String newPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(newPlaceable);
+                                        newPlaceables.put(newPlaceableName, newPlaceable);
+
+                                        synchronized (outlinerPlaceablesListBoxLock) {
+                                            outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
+                                        }
+
+                                        updateOutlinerPlaceablesPanel();
+
+                                        ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
+                                    }
+                                }
+
+                                if (duplicated > 0) {
+                                    addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
+
+                                    //Grab after duplicating
+                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
+                                }
                             } else {
-                                notify(LangManager.getItem("placeableRemoved"));
+                                super.onKey(key, keyChar);
                             }
+
+                        } else if (key == Keyboard.KEY_X) { //X Axis
+                            ProjectManager.getCurrentProject().modeDirection = new PosXYZ(1, 0, 0);
+                            modeCursor.setColor(UIColor.matRed());
+                        } else if (key == Keyboard.KEY_Y) { //Y Axis
+                            ProjectManager.getCurrentProject().modeDirection = new PosXYZ(0, 1, 0);
+                            modeCursor.setColor(UIColor.matGreen());
+                        } else if (key == Keyboard.KEY_Z) { //Z Axis
+                            ProjectManager.getCurrentProject().modeDirection = new PosXYZ(0, 0, 1);
+                            modeCursor.setColor(UIColor.matBlue());
+                        } else if (key == Keyboard.KEY_U) { //XYZ (Uniform)
+                            ProjectManager.getCurrentProject().modeDirection = new PosXYZ(1, 1, 1);
+                            modeCursor.setColor(UIColor.matWhite());
+
+                        } else if (key == Keyboard.KEY_ESCAPE) {
+                            discardModeAction();
+                        } else if (key == Keyboard.KEY_RETURN) {
+                            confirmModeAction();
 
                         } else {
-                            notify(LangManager.getItem("nothingSelected"));
-                        }
-
-                    } else if (key == Keyboard.KEY_D && Window.isCtrlOrCmdDown()) { //Ctrl / Cmd D: Duplicate
-                        Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables());
-                        ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
-
-                        Map<String, Placeable> newPlaceables = new HashMap<>();
-
-                        int duplicated = 0;
-
-                        for (String name : selectedPlaceables) {
-                            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                            if (!(placeable.getAsset() instanceof AssetStartPos) &&
-                                    !(placeable.getAsset() instanceof AssetFalloutY)) { //If the placeable isn't the start pos or fallout Y
-
-                                duplicated++;
-
-                                Placeable newPlaceable = placeable.getCopy();
-                                String newPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(newPlaceable);
-                                newPlaceables.put(newPlaceableName, newPlaceable);
-
-                                synchronized (outlinerPlaceablesListBoxLock) {
-                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
-                                }
-
-                                updateOutlinerPlaceablesPanel();
-
-                                ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
-                            }
-                        }
-
-                        if (duplicated > 0) {
-                            addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
-
-                            //Grab after duplicating
-                            addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                            ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
+                            super.onKey(key, keyChar);
                         }
                     } else {
                         super.onKey(key, keyChar);
                     }
-
-                } else if (key == Keyboard.KEY_X) { //X Axis
-                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(1, 0, 0);
-                    modeCursor.setColor(UIColor.matRed());
-                } else if (key == Keyboard.KEY_Y) { //Y Axis
-                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(0, 1, 0);
-                    modeCursor.setColor(UIColor.matGreen());
-                } else if (key == Keyboard.KEY_Z) { //Z Axis
-                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(0, 0, 1);
-                    modeCursor.setColor(UIColor.matBlue());
-                } else if (key == Keyboard.KEY_U) { //XYZ (Uniform)
-                    ProjectManager.getCurrentProject().modeDirection = new PosXYZ(1, 1, 1);
-                    modeCursor.setColor(UIColor.matWhite());
-
-                } else if (key == Keyboard.KEY_ESCAPE) {
-                    discardModeAction();
-                } else if (key == Keyboard.KEY_RETURN) {
-                    confirmModeAction();
-
-                } else {
-                    super.onKey(key, keyChar);
                 }
             } else {
                 super.onKey(key, keyChar);
+
+                if (key == Keyboard.KEY_ESCAPE) { //Deselect text fields on escape
+                    for (TextField textField : textFields) {
+                        textField.setSelected(false);
+                    }
+                }
             }
         }
+
     }
 
     private void confirmModeAction() {
@@ -1875,6 +1977,7 @@ public class MainScreen extends FluidUIScreen {
                     ProjectManager.getCurrentProject().clientLevelData = new ClientLevelData();
                     ProjectManager.getCurrentProject().clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
                     ProjectManager.getCurrentProject().clientLevelData.setOnSelectedObjectsChanged(this::onSelectedObjectsChanged);
+                    ProjectManager.getCurrentProject().clientLevelData.setOnSelectedExternalBackgroundObjectsChanged(this::onSelectedExternalBackgroundObjectsChanged);
                 }
 
                 ResourceModel model = OBJLoader.loadModel(file.getPath());
@@ -1933,6 +2036,20 @@ public class MainScreen extends FluidUIScreen {
                     setOverlayUiScreen(new DialogOverlayUIScreen(LangManager.getItem("warning"), LangManager.getItem("notTriangulated")));
                 }
 
+                synchronized (outlinerObjectsListBoxLock) {
+                    outlinerObjectsListBox.clearChildComponents();
+                    for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
+                        outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
+                    }
+                }
+
+                if (replace) {
+                    //Replace all external background objects in the objects outliner that were removed
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundExternalObjects()) {
+                        outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(name));
+                    }
+                }
+
                 GL11.glFlush();
 
                 Window.drawable.releaseContext();
@@ -1985,6 +2102,7 @@ public class MainScreen extends FluidUIScreen {
             if (Window.isShiftDown()) { //Toggle selection on shift
                 ProjectManager.getCurrentProject().clientLevelData.toggleSelectedPlaceable(name);
             } else {
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedExternalBackgroundObjects();
                 ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
                 ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(name);
             }
@@ -2007,8 +2125,33 @@ public class MainScreen extends FluidUIScreen {
             if (Window.isShiftDown()) { //Toggle selection on shift
                 ProjectManager.getCurrentProject().clientLevelData.toggleSelectedObject(name);
             } else {
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedExternalBackgroundObjects();
                 ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
                 ProjectManager.getCurrentProject().clientLevelData.addSelectedObject(name);
+            }
+        });
+        objectButton.setName(name + "OutlinerObject");
+
+        return objectButton;
+    }
+
+    public Component getOutlinerExternalBackgroundObjectComponent(String name) {
+        final TextButton objectButton = new TextButton();
+        objectButton.setOnInitAction(() -> {
+            objectButton.setTopLeftPos(0, 0);
+            objectButton.setBottomRightPos(0, 18);
+            objectButton.setText(name);
+            objectButton.setBackgroundIdleColor(UIColor.matPink());
+        });
+        objectButton.setOnLMBAction(() -> {
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+
+            if (Window.isShiftDown()) { //Toggle selection on shift
+                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedExternalBackgroundObject(name);
+            } else {
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedExternalBackgroundObjects();
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
+                ProjectManager.getCurrentProject().clientLevelData.addSelectedExternalBackgroundObject(name);
             }
         });
         objectButton.setName(name + "OutlinerObject");
@@ -2041,13 +2184,6 @@ public class MainScreen extends FluidUIScreen {
                             newLevelData(file, shouldRepalce);
                         } else {
                             newLevelData(file, false);
-                        }
-
-                        synchronized (outlinerObjectsListBoxLock) {
-                            outlinerObjectsListBox.clearChildComponents();
-                            for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
-                                outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
-                            }
                         }
 
                         updateOutlinerObjectsPanel();
@@ -2317,12 +2453,23 @@ public class MainScreen extends FluidUIScreen {
         //</editor-fold>
     }
 
+    private void onSelectedExternalBackgroundObjectsChanged() {
+        updatePropertiesObjectsPanel();
+        updateOutlinerObjectsPanel();
+    }
+
     private UIColor getOutlinerObjectColor(String name) {
         if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackground(name)) {
             if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
                 return UIColor.matPurple900();
             } else {
                 return UIColor.matPurple();
+            }
+        } else if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackgroundExternal(name)) {
+            if (ProjectManager.getCurrentProject().clientLevelData.isExternalBackgroundObjectSelected(name)) {
+                return UIColor.matPink900();
+            } else {
+                return UIColor.matPink();
             }
         } else {
             if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {

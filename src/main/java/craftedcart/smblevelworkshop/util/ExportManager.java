@@ -60,9 +60,12 @@ public class ExportManager {
 
         for (String name : levelData.getBackgroundObjects()) {
             appendBackgroundPrefix(sb, true); sb.append(". x . x = ").append(name).append("\r\n");
-
-            sb.append("\r\n");
         }
+
+        for (String name : levelData.getBackgroundExternalObjects()) {
+            appendBackgroundPrefix(sb, true); sb.append(". x . x = ").append(name).append("\r\n");
+        }
+        sb.append("\r\n");
 
         return sb.toString();
     }

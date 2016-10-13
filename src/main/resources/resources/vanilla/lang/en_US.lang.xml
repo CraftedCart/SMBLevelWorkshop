@@ -82,12 +82,16 @@
     <!-- Object properties -->
     <entry key="backgroundObject" val="Background Object" />
 
+    <entry key="addExternalBackgroundObject" val="Add External Background Object" />
+
     <!-- Errors -->
     <entry key="warning" val="Warning" />
     <entry key="notTriangulated" val="Mesh is not triangulated&#10;Expect broken mesh and collision when importing into SMB" />
     <entry key="noLevelLoaded" val="No level has been loaded!" />
     <entry key="invalidNumber" val="Invalid number!" />
     <entry key="nothingSelected" val="Nothing is selected!" />
+    <entry key="alreadyObject" val="Already an object!" />
+    <entry key="noObjectSpecified" val="No object specified!" />
 
     <!-- Undo / Redo -->
     <entry key="undoTransform" val="Undo: Transformation" />

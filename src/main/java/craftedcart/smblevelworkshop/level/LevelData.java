@@ -22,6 +22,7 @@ public class LevelData {
     @Nullable private File modelObjSource;
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
     @NotNull private Set<String> backgroundObjects = new HashSet<>();
+    @NotNull private Set<String> backgroundExternalObjects = new HashSet<>();
 
     public void setModel(@Nullable ResourceModel model) {
         this.model = model;
@@ -114,6 +115,37 @@ public class LevelData {
     @NotNull
     public Set<String> getBackgroundObjects() {
         return backgroundObjects;
+    }
+
+    public void addBackgroundExternalObject(String name) {
+        backgroundExternalObjects.add(name);
+    }
+
+    public void removeBackgroundExternalObject(String name) {
+        if (backgroundExternalObjects.contains(name)) {
+            backgroundExternalObjects.remove(name);
+        }
+    }
+
+    public boolean isObjectBackgroundExternal(String name) {
+        return backgroundExternalObjects.contains(name);
+    }
+
+    public void toggleBackgroundExternalObject(String name) {
+        if (isObjectBackgroundExternal(name)) {
+            removeBackgroundExternalObject(name);
+        } else {
+            addBackgroundExternalObject(name);
+        }
+    }
+
+    public void clearBackgroundExternalObjects() {
+        backgroundExternalObjects.clear();
+    }
+
+    @NotNull
+    public Set<String> getBackgroundExternalObjects() {
+        return backgroundExternalObjects;
     }
 
 }

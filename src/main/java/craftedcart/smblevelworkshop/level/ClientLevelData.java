@@ -20,6 +20,9 @@ public class ClientLevelData {
 
     private Set<String> selectedObjects = new HashSet<>();
     @Nullable private UIAction onSelectedObjectsChanged;
+    
+    private Set<String> selectedExternalBackgroundObjects = new HashSet<>();
+    @Nullable private UIAction onSelectedExternalBackgroundObjectsChanged;
 
     public void setLevelData(@NotNull LevelData levelData) {
         this.levelData = levelData;
@@ -128,6 +131,56 @@ public class ClientLevelData {
 
     public void setOnSelectedObjectsChanged(@Nullable UIAction onSelectedObjectsChanged) {
         this.onSelectedObjectsChanged = onSelectedObjectsChanged;
+    }
+
+    public void addSelectedExternalBackgroundObject(String name) {
+        if (!selectedExternalBackgroundObjects.contains(name)) {
+            selectedExternalBackgroundObjects.add(name);
+            if (onSelectedExternalBackgroundObjectsChanged != null) {
+                onSelectedExternalBackgroundObjectsChanged.execute();
+            }
+        }
+    }
+
+    public void removeSelectedExternalBackgroundObject(String name) {
+        if (selectedExternalBackgroundObjects.contains(name)) {
+            selectedExternalBackgroundObjects.remove(name);
+            if (onSelectedExternalBackgroundObjectsChanged != null) {
+                onSelectedExternalBackgroundObjectsChanged.execute();
+            }
+        }
+    }
+
+    public boolean isExternalBackgroundObjectSelected(String name) {
+        return selectedExternalBackgroundObjects.contains(name);
+    }
+
+    public void toggleSelectedExternalBackgroundObject(String name) {
+        if (isExternalBackgroundObjectSelected(name)) {
+            removeSelectedExternalBackgroundObject(name);
+        } else {
+            addSelectedExternalBackgroundObject(name);
+        }
+        if (onSelectedExternalBackgroundObjectsChanged != null) {
+            onSelectedExternalBackgroundObjectsChanged.execute();
+        }
+    }
+
+    public void clearSelectedExternalBackgroundObjects() {
+        if (selectedExternalBackgroundObjects.size() != 0) {
+            selectedExternalBackgroundObjects.clear();
+            if (onSelectedExternalBackgroundObjectsChanged != null) {
+                onSelectedExternalBackgroundObjectsChanged.execute();
+            }
+        }
+    }
+
+    public Set<String> getSelectedExternalBackgroundObjects() {
+        return selectedExternalBackgroundObjects;
+    }
+
+    public void setOnSelectedExternalBackgroundObjectsChanged(@Nullable UIAction onSelectedExternalBackgroundObjectsChanged) {
+        this.onSelectedExternalBackgroundObjectsChanged = onSelectedExternalBackgroundObjectsChanged;
     }
     
 }
