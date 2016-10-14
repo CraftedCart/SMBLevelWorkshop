@@ -20,7 +20,9 @@ public class ClientLevelData {
 
     private Set<String> selectedObjects = new HashSet<>();
     @Nullable private UIAction onSelectedObjectsChanged;
-    
+    private Set<String> hiddenObjects = new HashSet<>();
+    @Nullable private UIAction onHiddenObjectsChanged;
+
     private Set<String> selectedExternalBackgroundObjects = new HashSet<>();
     @Nullable private UIAction onSelectedExternalBackgroundObjectsChanged;
 
@@ -181,6 +183,56 @@ public class ClientLevelData {
 
     public void setOnSelectedExternalBackgroundObjectsChanged(@Nullable UIAction onSelectedExternalBackgroundObjectsChanged) {
         this.onSelectedExternalBackgroundObjectsChanged = onSelectedExternalBackgroundObjectsChanged;
+    }
+
+    public void addHiddenObject(String name) {
+        if (!hiddenObjects.contains(name)) {
+            hiddenObjects.add(name);
+            if (onHiddenObjectsChanged != null) {
+                onHiddenObjectsChanged.execute();
+            }
+        }
+    }
+
+    public void removeHiddenObject(String name) {
+        if (hiddenObjects.contains(name)) {
+            hiddenObjects.remove(name);
+            if (onHiddenObjectsChanged != null) {
+                onHiddenObjectsChanged.execute();
+            }
+        }
+    }
+
+    public boolean isObjectHidden(String name) {
+        return hiddenObjects.contains(name);
+    }
+
+    public void toggleHiddenObject(String name) {
+        if (isObjectHidden(name)) {
+            removeHiddenObject(name);
+        } else {
+            addHiddenObject(name);
+        }
+        if (onHiddenObjectsChanged != null) {
+            onHiddenObjectsChanged.execute();
+        }
+    }
+
+    public void clearHiddenObjects() {
+        if (hiddenObjects.size() != 0) {
+            hiddenObjects.clear();
+            if (onHiddenObjectsChanged != null) {
+                onHiddenObjectsChanged.execute();
+            }
+        }
+    }
+
+    public Set<String> getHiddenObjects() {
+        return hiddenObjects;
+    }
+
+    public void setOnHiddenObjectsChanged(@Nullable UIAction onHiddenObjectsChanged) {
+        this.onHiddenObjectsChanged = onHiddenObjectsChanged;
     }
     
 }

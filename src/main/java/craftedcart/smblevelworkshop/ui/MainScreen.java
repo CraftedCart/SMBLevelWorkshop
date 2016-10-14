@@ -1460,7 +1460,11 @@ public class MainScreen extends FluidUIScreen {
                 }
 
                 GL20.glUseProgram(currentShaderProgram.getProgramID());
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModel(currentShaderProgram, useTextures);
+                for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
+                    if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(currentShaderProgram, useTextures, object.name);
+                    }
+                }
                 GL20.glUseProgram(0);
 
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
@@ -2039,6 +2043,9 @@ public class MainScreen extends FluidUIScreen {
 
                 synchronized (outlinerObjectsListBoxLock) {
                     outlinerObjectsListBox.clearChildComponents();
+
+                    ProjectManager.getCurrentProject().clientLevelData.clearHiddenObjects(); //Unhide all objects
+
                     for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
                         outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
                     }
@@ -2431,7 +2438,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Darken selected object in the outliner">
         synchronized (outlinerObjectsListBoxLock) {
             for (Map.Entry<String, Component> entry : outlinerObjectsListBox.childComponents.entrySet()) {
-                assert entry.getValue() instanceof TextButton;
+                assert entry.getValue() instanceof OutlinerObject;
                 OutlinerObject outlinerObject = (OutlinerObject) entry.getValue();
 
                 outlinerObject.setButtonColor(getOutlinerObjectColor(outlinerObject.getObjectName()));
