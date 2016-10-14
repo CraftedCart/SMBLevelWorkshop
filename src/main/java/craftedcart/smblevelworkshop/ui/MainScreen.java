@@ -12,6 +12,7 @@ import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
+import craftedcart.smblevelworkshop.ui.component.OutlinerObject;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -2113,26 +2114,13 @@ public class MainScreen extends FluidUIScreen {
     }
 
     public Component getOutlinerObjectComponent(String name) {
-        final TextButton objectButton = new TextButton();
-        objectButton.setOnInitAction(() -> {
-            objectButton.setTopLeftPos(0, 0);
-            objectButton.setBottomRightPos(0, 18);
-            objectButton.setText(name);
+        final OutlinerObject outlinerObject = new OutlinerObject(name);
+        outlinerObject.setOnInitAction(() -> {
+            outlinerObject.setTopLeftPos(0, 0);
+            outlinerObject.setBottomRightPos(0, 18);
         });
-        objectButton.setOnLMBAction(() -> {
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
 
-            if (Window.isShiftDown()) { //Toggle selection on shift
-                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedObject(name);
-            } else {
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedExternalBackgroundObjects();
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
-                ProjectManager.getCurrentProject().clientLevelData.addSelectedObject(name);
-            }
-        });
-        objectButton.setName(name + "OutlinerObject");
-
-        return objectButton;
+        return outlinerObject;
     }
 
     public Component getOutlinerExternalBackgroundObjectComponent(String name) {
@@ -2444,10 +2432,9 @@ public class MainScreen extends FluidUIScreen {
         synchronized (outlinerObjectsListBoxLock) {
             for (Map.Entry<String, Component> entry : outlinerObjectsListBox.childComponents.entrySet()) {
                 assert entry.getValue() instanceof TextButton;
-                TextButton button = (TextButton) entry.getValue();
+                OutlinerObject outlinerObject = (OutlinerObject) entry.getValue();
 
-                //TODO: Using button.text feels hacky - Extend TextButton and add id field
-                button.setBackgroundIdleColor(getOutlinerObjectColor(button.text));
+                outlinerObject.setButtonColor(getOutlinerObjectColor(outlinerObject.getObjectName()));
             }
         }
         //</editor-fold>
