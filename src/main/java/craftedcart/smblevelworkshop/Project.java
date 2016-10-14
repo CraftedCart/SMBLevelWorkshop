@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop;
 
 import craftedcart.smblevelworkshop.level.ClientLevelData;
+import craftedcart.smblevelworkshop.ui.MainScreen;
 import craftedcart.smblevelworkshop.util.EnumActionMode;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import org.jetbrains.annotations.NotNull;

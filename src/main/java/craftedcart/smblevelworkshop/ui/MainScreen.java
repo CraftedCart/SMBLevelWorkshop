@@ -13,6 +13,7 @@ import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.ui.community.CommunityScreen;
+import craftedcart.smblevelworkshop.ui.component.OutlinerObject;
 import craftedcart.smblevelworkshop.ui.theme.DefaultUITheme;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
@@ -419,7 +420,7 @@ public class MainScreen extends FluidUIScreen {
         final ListBox actionsListBox = new ListBox();
         actionsListBox.setOnInitAction(() -> {
             actionsListBox.setTopLeftPos(0, 0);
-            actionsListBox.setBottomRightPos(0, 78);
+            actionsListBox.setBottomRightPos(0, 104);
             actionsListBox.setTopLeftAnchor(0, 0);
             actionsListBox.setBottomRightAnchor(1, 0);
             actionsListBox.setBackgroundColor(UIColor.transparent());
@@ -473,7 +474,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Placeable Properties">
         //Defined at class level
         propertiesPlaceablesListBox.setOnInitAction(() -> {
-            propertiesPlaceablesListBox.setTopLeftPos(0, 78);
+            propertiesPlaceablesListBox.setTopLeftPos(0, 104);
             propertiesPlaceablesListBox.setBottomRightPos(0, 0);
             propertiesPlaceablesListBox.setTopLeftAnchor(0, 0);
             propertiesPlaceablesListBox.setBottomRightAnchor(1, 1);
@@ -1076,7 +1077,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Object Properties">
         //Defined at class level
         propertiesObjectsListBox.setOnInitAction(() -> {
-            propertiesObjectsListBox.setTopLeftPos(0, 78);
+            propertiesObjectsListBox.setTopLeftPos(0, 104);
             propertiesObjectsListBox.setBottomRightPos(0, 0);
             propertiesObjectsListBox.setTopLeftAnchor(0, 0);
             propertiesObjectsListBox.setBottomRightAnchor(1, 1);

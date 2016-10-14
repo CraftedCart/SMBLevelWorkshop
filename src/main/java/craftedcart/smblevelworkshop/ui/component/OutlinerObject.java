@@ -5,13 +5,11 @@ import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.resource.ResourceTexture;
-import craftedcart.smblevelworkshop.ui.DefaultUITheme;
+import craftedcart.smblevelworkshop.ui.theme.DefaultUITheme;
 import io.github.craftedcart.fluidui.component.Button;
-import io.github.craftedcart.fluidui.component.Component;
 import io.github.craftedcart.fluidui.component.Panel;
 import io.github.craftedcart.fluidui.component.TextButton;
 import io.github.craftedcart.fluidui.util.UIColor;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author CraftedCart
