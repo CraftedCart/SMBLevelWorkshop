@@ -54,6 +54,7 @@ public class OutlinerObject extends Panel {
 
     public void setObjectName(String objectName) {
         this.objectName = objectName;
+        setName(objectName + "OutlinerObject");
     }
 
     public String getObjectName() {
