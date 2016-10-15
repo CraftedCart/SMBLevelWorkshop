@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <langPack locale="en_US">
     <entry key="importObj" val="Import OBJ" />
+    <entry key="importConfig" val="Import Config" />
     <entry key="settings" val="Settings" />
     <entry key="ok" val="OK" />
     <entry key="cancel" val="Cancel" />

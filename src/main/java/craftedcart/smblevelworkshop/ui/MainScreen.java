@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop.ui;
 
+import craftedcart.smblevelworkshop.Project;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.*;
@@ -16,6 +17,7 @@ import craftedcart.smblevelworkshop.ui.component.OutlinerObject;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
+import craftedcart.smbworkshopexporter.ConfigData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Component;
@@ -70,6 +72,7 @@ public class MainScreen extends FluidUIScreen {
     public final ListBox outlinerObjectsListBox = new ListBox();
 
     private final TextButton importObjButton = new TextButton();
+    private final TextButton importConfigButton = new TextButton();
     private final TextButton exportButton = new TextButton();
     private final TextButton settingsButton = new TextButton();
 
@@ -417,7 +420,7 @@ public class MainScreen extends FluidUIScreen {
         final ListBox actionsListBox = new ListBox();
         actionsListBox.setOnInitAction(() -> {
             actionsListBox.setTopLeftPos(0, 0);
-            actionsListBox.setBottomRightPos(0, 78);
+            actionsListBox.setBottomRightPos(0, 104);
             actionsListBox.setTopLeftAnchor(0, 0);
             actionsListBox.setBottomRightAnchor(1, 0);
             actionsListBox.setBackgroundColor(UIColor.transparent());
@@ -433,6 +436,17 @@ public class MainScreen extends FluidUIScreen {
         });
         importObjButton.setOnLMBAction(this::importObj);
         actionsListBox.addChildComponent("importObjButton", importObjButton);
+        //</editor-fold>
+
+        //<editor-fold desc="ImportConfig TextButton">
+        //Defined at class level
+        importConfigButton.setOnInitAction(() -> {
+            importConfigButton.setText(LangManager.getItem("importConfig"));
+            importConfigButton.setTopLeftPos(0, 0);
+            importConfigButton.setBottomRightPos(0, 24);
+        });
+        importConfigButton.setOnLMBAction(this::importConfig);
+        actionsListBox.addChildComponent("importConfigButton", importConfigButton);
         //</editor-fold>
 
         //<editor-fold desc="Export TextButton">
@@ -460,7 +474,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Placeable Properties">
         //Defined at class level
         propertiesPlaceablesListBox.setOnInitAction(() -> {
-            propertiesPlaceablesListBox.setTopLeftPos(0, 78);
+            propertiesPlaceablesListBox.setTopLeftPos(0, 104);
             propertiesPlaceablesListBox.setBottomRightPos(0, 0);
             propertiesPlaceablesListBox.setTopLeftAnchor(0, 0);
             propertiesPlaceablesListBox.setBottomRightAnchor(1, 1);
@@ -1063,7 +1077,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Object Properties">
         //Defined at class level
         propertiesObjectsListBox.setOnInitAction(() -> {
-            propertiesObjectsListBox.setTopLeftPos(0, 78);
+            propertiesObjectsListBox.setTopLeftPos(0, 104);
             propertiesObjectsListBox.setBottomRightPos(0, 0);
             propertiesObjectsListBox.setTopLeftAnchor(0, 0);
             propertiesObjectsListBox.setBottomRightAnchor(1, 1);
@@ -1510,21 +1524,25 @@ public class MainScreen extends FluidUIScreen {
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframe (Depth test off)");
                 //</editor-fold>
 
-                //<editor-fold desc="draw placeables">
+                //<editor-fold desc="Draw placeables">
                 List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
 
-                for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                    Placeable placeable = placeableEntry.getValue();
+                synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
 
-                    double distance;
+                    for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                        Placeable placeable = placeableEntry.getValue();
 
-                    if (placeable.getAsset() instanceof AssetFalloutY) {
-                        distance = getDistance(cameraPos, new PosXYZ(cameraPos.x, placeable.getPosition().y, cameraPos.z));
-                    } else {
-                        distance = getDistance(cameraPos, placeable.getPosition());
+                        double distance;
+
+                        if (placeable.getAsset() instanceof AssetFalloutY) {
+                            distance = getDistance(cameraPos, new PosXYZ(cameraPos.x, placeable.getPosition().y, cameraPos.z));
+                        } else {
+                            distance = getDistance(cameraPos, placeable.getPosition());
+                        }
+
+                        depthSortedMap.add(new DepthSortedPlaceable(distance, placeableEntry));
                     }
 
-                    depthSortedMap.add(new DepthSortedPlaceable(distance, placeableEntry));
                 }
 
                 Collections.sort(depthSortedMap, new DepthComparator());
@@ -1989,34 +2007,38 @@ public class MainScreen extends FluidUIScreen {
                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().setModel(model);
                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().setModelObjSource(file);
 
-                Placeable startPosPlaceable;
-                String startPosPlaceableName = null;
-                Placeable falloutYPlaceable;
-                String falloutYPlaceableName = null;
-                if (!replace) {
-                    startPosPlaceable = new Placeable(new AssetStartPos());
-                    startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-                    startPosPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+                synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
 
-                    if (objectMode == EnumObjectMode.PLACEABLE_EDIT) {
-                        ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+                    Placeable startPosPlaceable;
+                    String startPosPlaceableName = null;
+                    Placeable falloutYPlaceable;
+                    String falloutYPlaceableName = null;
+                    if (!replace) {
+                        startPosPlaceable = new Placeable(new AssetStartPos());
+                        startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
+                        startPosPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+
+                        if (objectMode == EnumObjectMode.PLACEABLE_EDIT) {
+                            ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+                        }
+
+                        falloutYPlaceable = new Placeable(new AssetFalloutY());
+                        falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
+                        falloutYPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+
                     }
 
-                    falloutYPlaceable = new Placeable(new AssetFalloutY());
-                    falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-                    falloutYPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+                    Window.drawable.makeCurrent();
 
-                }
+                    if (!replace) {
+                        synchronized (outlinerPlaceablesListBoxLock) {
+                            outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
+                            outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+                        }
 
-                Window.drawable.makeCurrent();
-
-                if (!replace) {
-                    synchronized (outlinerPlaceablesListBoxLock) {
-                        outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(startPosPlaceableName));
-                        outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutYPlaceableName));
+                        updateOutlinerPlaceablesPanel();
                     }
 
-                    updateOutlinerPlaceablesPanel();
                 }
 
                 if (replace) {
@@ -2159,6 +2181,7 @@ public class MainScreen extends FluidUIScreen {
             new Thread(() -> {
                 isLoadingProject = true;
                 importObjButton.setEnabled(false);
+                importConfigButton.setEnabled(false);
                 exportButton.setEnabled(false);
                 settingsButton.setEnabled(false);
                 FileDialog fd = new FileDialog((Frame) null);
@@ -2189,6 +2212,7 @@ public class MainScreen extends FluidUIScreen {
                 }
                 settingsButton.setEnabled(true);
                 exportButton.setEnabled(true);
+                importConfigButton.setEnabled(true);
                 importObjButton.setEnabled(true);
                 isLoadingProject = false;
             }, "ObjFileOpenThread").start();
@@ -2559,6 +2583,143 @@ public class MainScreen extends FluidUIScreen {
 
     private double getDistance(PosXYZ p1, PosXYZ p2) {
         return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2) + Math.pow(p2.z - p1.z, 2));
+    }
+
+    private void importConfig() {
+        if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+            if (!isLoadingProject) {
+                new Thread(() -> {
+                    isLoadingProject = true;
+                    importObjButton.setEnabled(false);
+                    importConfigButton.setEnabled(false);
+                    exportButton.setEnabled(false);
+                    settingsButton.setEnabled(false);
+                    FileDialog fd = new FileDialog((Frame) null);
+                    fd.setMode(FileDialog.LOAD);
+                    fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".TXT"));
+                    fd.setVisible(true);
+
+                    File[] files = fd.getFiles();
+                    if (files != null && files.length > 0) {
+                        File file = files[0];
+                        LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
+
+                        try {
+                            ConfigData configData = new ConfigData();
+                            configData.parseConfig(file);
+
+                            ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+                            LevelData ld = cld.getLevelData();
+
+                            synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
+
+                                cld.clearSelectedPlaceables();
+                                ld.clearPlacedObjects();
+                                outlinerPlaceablesListBox.clearChildComponents();
+
+                                //Add start pos
+                                if (configData.startList.size() > 0) {
+                                    ConfigData.Start start = configData.startList.entrySet().iterator().next().getValue();
+                                    Placeable startPlaceable = new Placeable(new AssetStartPos());
+                                    startPlaceable.setPosition(new PosXYZ(start.posX, start.posY, start.posZ));
+                                    startPlaceable.setRotation(new PosXYZ(start.rotX, start.rotY, start.rotZ));
+                                    String name = ld.addPlaceable(startPlaceable);
+                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                                } else {
+                                    //No start found - use default start
+                                    Placeable startPlaceable = new Placeable(new AssetStartPos());
+                                    startPlaceable.setPosition(new PosXYZ(0, 1, 0));
+                                    String name = ld.addPlaceable(startPlaceable);
+                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                                }
+
+                                //Add fallout y
+                                Placeable falloutPlaceable = new Placeable(new AssetFalloutY());
+                                falloutPlaceable.setPosition(new PosXYZ(0, configData.falloutPlane, 0));
+                                String falloutName = ld.addPlaceable(falloutPlaceable);
+                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutName));
+
+                                //Add goals
+                                for (Map.Entry<String, ConfigData.Goal> entry : configData.goalList.entrySet()) {
+                                    ConfigData.Goal goal = entry.getValue();
+                                    Placeable goalPlaceable = new Placeable(new AssetGoal());
+                                    goalPlaceable.setPosition(new PosXYZ(goal.posX, goal.posY, goal.posZ));
+                                    goalPlaceable.setRotation(new PosXYZ(goal.rotX, goal.rotY, goal.rotZ));
+
+                                    String type = "blueGoal";
+                                    //Type 0 = blueGoal
+                                    if (goal.type == 1) {
+                                        type = "greenGoal";
+                                    } else if (goal.type == 2) {
+                                        type = "redGoal";
+                                    }
+
+                                    goalPlaceable.getAsset().setType(type);
+                                    String name = ld.addPlaceable(goalPlaceable);
+                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                                }
+
+                                //Add bumpers
+                                for (Map.Entry<String, ConfigData.Bumper> entry : configData.bumperList.entrySet()) {
+                                    ConfigData.Bumper bumper = entry.getValue();
+                                    Placeable bumperPlaceable = new Placeable(new AssetBumper());
+                                    bumperPlaceable.setPosition(new PosXYZ(bumper.posX, bumper.posY, bumper.posZ));
+                                    bumperPlaceable.setRotation(new PosXYZ(bumper.rotX, bumper.rotY, bumper.rotZ));
+                                    bumperPlaceable.setScale(new PosXYZ(bumper.sclX, bumper.sclY, bumper.sclZ));
+
+                                    String name = ld.addPlaceable(bumperPlaceable);
+                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                                }
+
+                                //Add jamabars
+                                for (Map.Entry<String, ConfigData.Jamabar> entry : configData.jamabarList.entrySet()) {
+                                    ConfigData.Jamabar jamabar = entry.getValue();
+                                    Placeable jamabarPlaceable = new Placeable(new AssetJamabar());
+                                    jamabarPlaceable.setPosition(new PosXYZ(jamabar.posX, jamabar.posY, jamabar.posZ));
+                                    jamabarPlaceable.setRotation(new PosXYZ(jamabar.rotX, jamabar.rotY, jamabar.rotZ));
+                                    jamabarPlaceable.setScale(new PosXYZ(jamabar.sclX, jamabar.sclY, jamabar.sclZ));
+
+                                    String name = ld.addPlaceable(jamabarPlaceable);
+                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                                }
+
+                                //Add bananas
+                                for (Map.Entry<String, ConfigData.Banana> entry : configData.bananaList.entrySet()) {
+                                    ConfigData.Banana banana = entry.getValue();
+                                    Placeable bananaPlaceable = new Placeable(new AssetBanana());
+                                    bananaPlaceable.setPosition(new PosXYZ(banana.posX, banana.posY, banana.posZ));
+
+                                    String type = "singleBanana";
+                                    //Type 0 = singleBanana
+                                    if (banana.type == 1) {
+                                        type = "bunchBanana";
+                                    }
+
+                                    bananaPlaceable.getAsset().setType(type);
+                                    String name = ld.addPlaceable(bananaPlaceable);
+                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                                }
+
+                            }
+
+                            updateOutlinerPlaceablesPanel();
+                        } catch (IOException e) {
+                            LogHelper.error(getClass(), "Failed to open file");
+                            LogHelper.error(getClass(), e);
+                        }
+                    }
+                    settingsButton.setEnabled(true);
+                    exportButton.setEnabled(true);
+                    importConfigButton.setEnabled(true);
+                    importObjButton.setEnabled(true);
+                    isLoadingProject = false;
+                }, "ObjFileOpenThread").start();
+            } else {
+                LogHelper.warn(getClass(), "Tried importing OBJ when already importing OBJ");
+            }
+        } else {
+            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+        }
     }
 
 }

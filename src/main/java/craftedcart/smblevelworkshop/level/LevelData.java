@@ -86,6 +86,10 @@ public class LevelData {
         placedObjects.replace(name, placeable);
     }
 
+    public void clearPlacedObjects() {
+        placedObjects.clear();
+    }
+
     public void addBackgroundObject(String name) {
         backgroundObjects.add(name);
     }
