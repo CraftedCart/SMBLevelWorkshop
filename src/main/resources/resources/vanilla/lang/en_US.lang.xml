@@ -20,7 +20,7 @@
     <entry key="exportConfig" val="Export smbcnv config" />
     <entry key="exportLzRawSmb1" val="Export raw LZ (SMB 1)" />
     <entry key="exportLzRawSmb2" val="Export raw LZ (SMB 2)" />
-    <entry key="exportLzRawDefaultName" val="output.raw.lz" />
+    <entry key="exportLzRawDefaultName" val="output.lz.raw" />
     <entry key="exportLzCompressedSmb1" val="Export compressed LZ (SMB 1)" />
     <entry key="exportLzCompressedSmb2" val="Export compressed LZ (SMB 2)" />
     <entry key="exportLzCompressedDefaultName" val="output.lz" />
