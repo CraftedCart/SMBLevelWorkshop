@@ -8,7 +8,7 @@
 	<tr>
 		<td>0</td>
 		<td>0x08</td>
-		<td>Unknown</td>
+		<td>Unknown (0x00000000, 0x00000064)</td>
 	</tr>
 	<tr>
 		<td>8</td>
@@ -482,7 +482,7 @@
 	<tr>
 		<td>60</td>
 		<td>0x88</td>
-		<td>Copy of file header, starts from offset 0x18 in the original header, includes only the objects/entities that move with the collision, which obviously excludes background models</td>
+		<td>Copy of file header, starts from offset 0x18 in the original header, includes only the objects/entities that move with the collision, which obviously excludes background models (put 0 for number/offset for those excluded)</td>
 	</tr>
 </table>
 
@@ -745,35 +745,65 @@
 	<tr>
 		<td>0</td>
 		<td>0x04</td>
-		<td><a href="#animframe">Number of frames for X animation</a></td>
+		<td><a href="#animframe">Number of frames for X rotation animation</a></td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td>0x04</td>
-		<td><a href="#animframe">Offset to X animation frames</a></td>
+		<td><a href="#animframe">Offset to X rotation animation frames</a></td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td>0x04</td>
-		<td><a href="#animframe">Number of frames for Y animation</a></td>
+		<td><a href="#animframe">Number of frames for Y rotation animation</a></td>
 	</tr>
 	<tr>
 		<td>12</td>
 		<td>0x04</td>
-		<td><a href="#animframe">Offset to Y animation frames</a></td>
+		<td><a href="#animframe">Offset to Y rotation animation frames</a></td>
 	</tr>
 	<tr>
 		<td>16</td>
 		<td>0x04</td>
-		<td><a href="#animframe">Number of frames for Z animation</a></td>
+		<td><a href="#animframe">Number of frames for Z rotation animation</a></td>
 	</tr>
 	<tr>
 		<td>20</td>
 		<td>0x04</td>
-		<td><a href="#animframe">Offset to Z animation frames</a></td>
+		<td><a href="#animframe">Offset to Z rotation animation frames</a></td>
 	</tr>
 	<tr>
 		<td>24</td>
+		<td>0x04</td>
+		<td><a href="#animframe">Number of frames for X translation animation</a></td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td>0x04</td>
+		<td><a href="#animframe">Offset to X translation animation frames</a></td>
+	</tr>
+	<tr>
+		<td>32</td>
+		<td>0x04</td>
+		<td><a href="#animframe">Number of frames for Y translation animation</a></td>
+	</tr>
+	<tr>
+		<td>36</td>
+		<td>0x04</td>
+		<td><a href="#animframe">Offset to Y translation animation frames</a></td>
+	</tr>
+	<tr>
+		<td>40</td>
+		<td>0x04</td>
+		<td><a href="#animframe">Number of frames for Z translation animation</a></td>
+	</tr>
+	<tr>
+		<td>44</td>
+		<td>0x04</td>
+		<td><a href="#animframe">Offset to Z translation animation frames</a></td>
+	</tr>
+	<tr>
+		<td>48</td>
 		<td>0x18</td>
 		<td>Zero</td>
 	</tr>
@@ -794,30 +824,48 @@
 	<tr>
 		<td>4</td>
 		<td>0x04</td>
-		<td>Time, in percent allotted time? (must start at 0.0 and go all the way to 100.0 or game will complain?), single precision float, big endian</td>
+		<td>Time, in percent allotted time? (must start at 0.0 and go to 100.0 or game will complain?), single precision float, big endian</td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td>0x04</td>
-		<td>Rotation in degrees, single precision float, big endian</td>
+		<td>Rotation in degrees or translation in units, single precision float, big endian</td>
 	</tr>
 	<tr>
 		<td>12</td>
 		<td>0x04</td>
-		<td>Translation, single precision float, big endian</td>
+		<td>Unknown, zero works</td>
 	</tr>
 	<tr>
 		<td>16</td>
 		<td>0x04</td>
-		<td>Translation (copy), single precision float, big endian</td>
+		<td>Unknown, zero works</td>
 	</tr>
 </table>
 
 <h3>Additional Notes</h3>
 <ul>
 	<li>All offsets written to file are relative to the beginning of the file</li>
-	<li>Try to keep things 4 byte aligned if possible (based on the specs, it seems to be built like this)</li>
+	<li>Try to keep things 4 byte aligned if possible other than the collision grid triangle list (based on the specs, it seems to be built like this)</li>
 	<li>Objects names need to be put somewhere in the file</li>
+	<li>Put an extra 4 zero bytes after the level models?</li>
+	<li>The order you write objects into the file can matter</li>
+	<li>Recommended order (it works, other orders may work as well)</li>
+			<ul>
+			<li>File Header</li>
+			<li>Start positions</li>
+			<li>Fallout Y</li>
+			<li>Other config items</li>
+            <li>Collision field headers</li>
+            <li>Collision triangles</li>
+			<li>Collision grid triangle list</li>
+			<li>Collision grid pointers</li>
+			<li>Level models</li>
+			<li>Reflective models</li>
+			<li>Background models</li>
+			<li>Object name offset</li>
+			<li>Object name ascii</li>
+        </ul>
 	<li>The Collision Grid is used for optimization
 		<ul>
 			<li>Collisions are divided into a matrix based on triangle position</li>
@@ -829,5 +877,4 @@
             <li>If not optimizing, triangle lists can just count through the number of triangles</li>
         </ul>
 	</li>
-
 </ul>
