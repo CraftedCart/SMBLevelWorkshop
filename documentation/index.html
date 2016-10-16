@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="documentationApp">
+    <head>
+        <base href="/SMBLevelWorkshop/documentation/index.html">
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="SMB Level Workshop - Documentation">
+        <meta name="author" content="CraftedCart">
+        <link rel="icon" href="/SMBLevelWorkshop/favicon.ico">
+
+        <title>Documentation - SMB Level Workshop</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="/SMBLevelWorkshop/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom styles for this website -->
+        <link href="/SMBLevelWorkshop/css/custom.css" rel="stylesheet">
+
+        <!-- Highlight.js syntax highlighting -->
+        <!-- <link href="/SMBLevelWorkshop/bower_components/highlightjs/styles/github.css" rel="stylesheet"> -->
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <!-- Angular.js -->
+        <script src="/SMBLevelWorkshop/bower_components/angular/angular.min.js"></script>
+        <!--
+        <script src="/SMBLevelWorkshop/bower_components/angular-animate/angular-animate.min.js"></script>
+        <script src="/SMBLevelWorkshop/bower_components/angular-touch/angular-touch.min.js"></script>
+        <script src="/SMBLevelWorkshop/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+        <script src="/SMBLevelWorkshop/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        -->
+        <script src="/SMBLevelWorkshop/js/documentationApp.js"></script>
+    </head>
+
+  <body ng-controller="DocumentationController as docController">
+
+    <div class="main-image-min" data-stellar-background-ratio="0.5">
+        <ng-include src="'/SMBLevelWorkshop/components/navbar.html'"></ng-include>
+
+        <div class="container">
+            <div class="jumbotron home-jumbotron">
+                <h2>{{getPageName()}}</h2>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="container-fluid">
+
+        <div class="col-md-3">
+            <ul class="nav nav-pills nav-stacked" ng-repeat="(key, page) in docController.pages">
+                <li ng-class="{active: isPageIDSelected(key)}"><a ng-href="/SMBLevelWorkshop/documentation/index.html?page={{key}}">{{page.name}}</a></li>
+            </ul>
+        </div>
+
+        <div class="col-md-9" ng-include="getPageLink()"></div>
+
+    </div>
+
+    <br>
+
+    <div ng-include="'/SMBLevelWorkshop/components/footer.html'"></div>
+
+    <!-- Core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/SMBLevelWorkshop/bower_components/jquery/dist/jquery.min.js"></script> <!-- jQuery -->
+    <script src="/SMBLevelWorkshop/bower_components/jquery.stellar/jquery.stellar.min.js"></script> <!-- Stellar.js -->
+    <script src="/SMBLevelWorkshop/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> <!-- Bootstrap -->
+    <!-- <script src="/SMBLevelWorkshop/bower_components/highlightjs/highlight.pack.min.js"></script> --> <!-- Highlight.js -->
+
+    <script>$(window).stellar({horizontalScrolling: false});</script> <!-- Initialize Stellar.jQuery - For parallax -->
+  </body>
+</html>

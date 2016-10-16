@@ -1,0 +1,92 @@
+html, body {
+	height: 100%;
+}
+
+.main-image {
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	background: url("/SMBLevelWorkshop/img/mainBanner.jpg") center center;
+	background-repeat: no-repeat;
+	background-color: #212121;
+	background-size: cover;
+}
+
+.main-image-min {
+	width: 100%;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	background: url("/SMBLevelWorkshop/img/mainBanner.jpg") center center;
+	background-repeat: no-repeat;
+	background-color: #212121;
+	background-size: cover;
+}
+
+.home-jumbotron {
+	background-color: rgba(33, 33, 33, 0.4);
+	color: #FAFAFA;
+	text-shadow: 0 0 4px #212121;
+}
+
+.home-jumbotron small {
+	color: #FAFAFA;
+}
+
+.home-jumbotron .btn {
+	background-color: rgba(0, 0, 0, 0);
+	border-color: #FAFAFA;
+
+	transition: 0.2s;
+}
+
+.home-jumbotron .btn:hover {
+	background-color: rgba(33, 33, 33, 0.5);
+}
+
+.home-navbar {
+	background-color: rgba(33, 33, 33, 0.7);
+}
+
+.scroll-down-arrow {
+	position: absolute;
+	left: 50%;
+	margin-left: -64px;
+	bottom: 72px;
+	width: 128px;
+	height: 128px;
+
+	border-color: #FAFAFA;
+	border-radius: 64px;
+	border-width: 1px;
+	border-style: solid;
+	background-color: rgba(33, 33, 33, 0.3);
+
+	color: #FAFAFA;
+	font-size: 48px;
+
+	text-align: center;
+	vertical-align: middle;
+	line-height: 128px;
+
+	transition: 0.2s;
+}
+
+.scroll-down-arrow:hover {
+	background-color: rgba(33, 33, 33, 0.5);
+	font-size: 64px;
+}
+
+footer {
+	padding-top: 24px;
+	padding-bottom: 24px;
+	background-color: #212121;
+	color: #616161;
+    box-shadow: 0px 4096px 0px 4096px #212121;
+}
+
+ul {
+    list-style-type: none;
+}

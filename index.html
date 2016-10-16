@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="SMB Level Workshop">
+        <meta name="author" content="CraftedCart">
+        <link rel="icon" href="/SMBLevelWorkshop/favicon.ico">
+
+        <title>SMB Level Workshop</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="/SMBLevelWorkshop/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom styles for this website -->
+        <link href="/SMBLevelWorkshop/css/custom.css" rel="stylesheet">
+
+        <!-- Highlight.js syntax highlighting -->
+        <link href="/SMBLevelWorkshop/bower_components/highlightjs/styles/github.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <!-- Angular.js -->
+        <script src="/SMBLevelWorkshop/bower_components/angular/angular.min.js"></script>
+    </head>
+
+  <body>
+
+    <div class="main-image" data-stellar-background-ratio="0.5">
+        <div ng-include="'/SMBLevelWorkshop/components/navbar.html'"></div>
+
+        <div class="container">
+        	<div class="jumbotron home-jumbotron">
+        		<h1>SMB Level Workshop</h1>
+        		<h2>Level Editor for Super Monkey Ball 1 &amp; 2<h2>
+
+        		<br>
+
+        		<a class="btn btn-primary btn-lg center-block" href="https://github.com/CraftedCart/SMBLevelWorkshop/releases">
+        			<span class=" glyphicon glyphicon-download" aria-hidden="true"></span> Download Now!
+        		</a>
+        	</div>
+        </div>
+
+
+        <button class="scroll-down-arrow" onclick="scrollDown()">
+            <span class="glyphicon glyphicon-menu-down"></span>
+        </button>
+    </div>
+
+    <br>
+
+    <div class="container">
+        <h3>In the beginning, there were config files...</h3>
+        <div class="container">
+            <div class="col-md-6">
+                <p>
+                    Doesn't this seem fun, punching in numbers into your config file and hoping that you didn't screw up and misplace something.
+                    Misplacing something meant having to go back to the config file, edit it again, convert your level into one that SMB could understand, rebuild the disk image and test again.
+                </p>
+
+                <p>
+                    Creating config files, or even compressed LZ files, is as easy as positioning your objects in 3D space with SMB Level Workshop and hitting a button.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <pre><code>goal [ 0 ] . pos . x = 0.0
+                    goal [ 0 ] . pos . y = -19.18
+                    goal [ 0 ] . pos . z = 14.16
+                    goal [ 0 ] . rot . x = 0.0
+                    goal [ 0 ] . rot . y = -180.0
+                    goal [ 0 ] . rot . z = 0.0
+                    goal [ 0 ] . type . x = B
+
+                    goal [ 1 ] . pos . x = 0.0
+                    goal [ 1 ] . pos . y = -29.17
+                    goal [ 1 ] . pos . z = 24.13
+                    goal [ 1 ] . rot . x = 0.0
+                    goal [ 1 ] . rot . y = 180.0
+                    goal [ 1 ] . rot . z = 0.0
+                    goal [ 1 ] . type . x = G
+
+                    start [ 0 ] . pos . x = -10.51
+                    start [ 0 ] . pos . y = 2.82
+                    start [ 0 ] . pos . z = -10.39
+                    start [ 0 ] . rot . x = 0.0
+                    start [ 0 ] . rot . y = -90.0
+                    start [ 0 ] . rot . z = 0.0
+
+                    fallout [ 0 ] . pos . y = -42.66
+
+                    goal [ 2 ] . pos . x = 0.0
+                    goal [ 2 ] . pos . y = -39.18
+                    goal [ 2 ] . pos . z = 34.03
+                    goal [ 2 ] . rot . x = 0.0
+                    goal [ 2 ] . rot . y = -180.0
+                    goal [ 2 ] . rot . z = 0.0
+                    goal [ 2 ] . type . x = R</code></pre>
+            </div>
+        </div>
+
+        <br>
+    </div>
+
+    <div class="main-image-min" data-stellar-background-ratio="0.5" data-stellar-vertical-offset="350">
+        <br>
+        <div class="container">
+            <div class="jumbotron home-jumbotron">
+                <h2>So hey, why not give it a try?<h2>
+
+                <a class="btn btn-primary btn-lg center-block" href="https://github.com/CraftedCart/SMBLevelWorkshop/releases">
+                    <span class=" glyphicon glyphicon-download" aria-hidden="true"></span> Download Now!
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div ng-include="'/SMBLevelWorkshop/components/footer.html'"></div>
+
+
+    <!-- Core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/SMBLevelWorkshop/bower_components/jquery/dist/jquery.min.js"></script> <!-- jQuery -->
+    <script src="/SMBLevelWorkshop/bower_components/jquery.stellar/jquery.stellar.min.js"></script> <!-- Stellar.js -->
+    <script src="/SMBLevelWorkshop/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> <!-- Bootstrap -->
+    <script src="/SMBLevelWorkshop/bower_components/highlightjs/highlight.pack.min.js"></script> <!-- Highlight.js -->
+
+    <script src="/SMBLevelWorkshop/js/homePage.js"></script>
+
+    <script>$(window).stellar({horizontalScrolling: false});</script> <!-- Initialize Stellar.jQuery - For parallax -->
+  </body>
+</html>

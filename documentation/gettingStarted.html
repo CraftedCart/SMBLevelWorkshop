@@ -1,0 +1,104 @@
+<h1>Getting Started</h1>
+
+<h3>Prerequisites</h3>
+<p>
+	First of all, make sure that you have the Java Runtime Environment 8 or higher installed on your system.
+	Downloads for the Oracle JRE 8 can be found here: <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</a>
+</p>
+<p>
+	You can then launch SMB Level Workshop by opening `SMBLevelWorkshop-x.y.z.jar`.
+	If that fails, you can launch it from the terminal.
+	<pre><code>cd path/to/folder
+java -Djava.library.path=. -jar="smblevelworkshop-x.y.z.jar"</code></pre>
+</p>
+
+<h3>Your First Project</h3>
+<p>
+	Assuming that you have already modeled and textured a level, as well as exported it to an OBJ file format, go ahead and click on the "Import OBJ" button and find your OBJ.
+	You will notice that upon importing, two placeables have been added for you. One that defines the starting position, and one that defines the fallout plane.
+</p>
+
+<h4>Navigating the viewport</h4>
+<p>
+	Hold down the middle mouse button and use the WASDQE keys to fly around your scene in first person.
+</p>
+
+<h4>Adding placeables</h4>
+<p>
+	Being able to see a stage is nice, but what't the point if you can't add any goals, bananas or the like.
+	Go ahead and click on a placeable to add in the top left. It will be added at the position <code>0, 0, 0</code>.
+You can also add a placeable by duplicating an existing one using Ctrl D / Cmd D.
+</p>
+
+<h4>Selecting placeables</h4>
+<p>
+	Selecting placeables is done by simply clicking on it in the outliner on the left. Multiple can be selected if you hold down shift.
+</p>
+
+<h4>Transforming</h4>
+<p>
+	All transforming of placeables, is done using shortcuts.
+	If you've used Blender before, these should be familiar; if not, they should be easy to pick up.
+</p>
+<table class="table">
+	<tr>
+		<td>G</td>
+		<td>Grab</td>
+	</tr>
+	<tr>
+		<td>R</td>
+		<td>Rotate</td>
+	</tr>
+	<tr>
+		<td>S</td>
+		<td>Scale</td>
+	</tr>
+</table>
+
+<p>
+	After pressing G, R or S, you then need to define an axis to constrain transformations to.
+	This is also done on the keyboard.
+</p>
+
+<table class="table">
+	<tr>
+		<td>X</td>
+		<td>Constrain to the X axis</td>
+	</tr>
+	<tr>
+		<td>Y</td>
+		<td>Constrain to the Y axis</td>
+	</tr>
+	<tr>
+		<td>Z</td>
+		<td>Constrain to the Z axis</td>
+	</tr>
+	<tr>
+		<td>U</td>
+		<td>Constrain to the X, Y and Z axis uniformly (Useful for scaling)</td>
+	</tr>
+</table>
+
+<p>
+	Afterwards, move your mouse left or right to transform the placeable.
+	You can also use your scroll wheel for more precise transformations.
+	Holding shift allows for even more precise transformations.
+	Holding alt enables snapping.
+</p>
+<p>
+	Left click or press return to confirm your transformation.
+	Right click or press escape to discard it.
+</p>
+<p>
+	You can also enter values into the properties panel on the right if you want to be spot on.
+</p>
+
+<h4>Changing types</h4>
+<p>
+	Certain assets have different types. For example, a goal can be blue, green or red. Simply select your goal (or goals), and select the type using the properties panel on the right.
+</p>
+
+<h4>Exporting</h4>
+<p>
+	Exporting an LZ for SMB 1 or SMB 2 is done by clicking the export button, and choosing the game version you want to modify. Make sure to export the compressed LZ if you with to directly patch the game. You can also export an smbcnv config and create the LZ using other tools if you wish.
+</p>

@@ -1,0 +1,989 @@
+<h2>File header</h2>
+<h4>Header is 2228 / <code>0x8B4</code> bytes long</h4>
+
+<br>
+
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x12</code></td>
+		<td>12</td>
+		<td><code>00 00 00 00 44 7A 00 00 00 00 00 01</code></td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to collision header</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x08</code></td>
+		<td>8</td>
+		<td><code>00 00 9C 00 00 08 B0</code></td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of goals</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to goal data (Can be 4x <code>00</code> if there are no goals)<td>
+	</tr>
+	<tr>
+		<td>32</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of bumpers</td>
+	</tr>
+	<tr>
+		<td>36</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to bumper data (Can be 4x <code>00</code> if there are no bumpers)<td>
+	</tr>
+	<tr>
+		<td>40</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of jamabars</td>
+	</tr>
+	<tr>
+		<td>44</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to jamabar data (Can be 4x <code>00</code> if there are no jamabars)<td>
+	</tr>
+	<tr>
+		<td>48</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of bananas</td>
+	</tr>
+	<tr>
+		<td>52</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to banana data (Can be 4x <code>00</code> if there are no bananas)<td>
+	</tr>
+	<tr>
+		<td>56</td>
+		<td><code>0x20</code></td>
+		<td>32</td>
+		<td>32x <code>00</code></td>
+	</tr>
+	<tr>
+		<td>88</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of background models</td>
+	</tr>
+	<tr>
+		<td>92</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to background model data (Can be 4x <code>00</code> if there are no background models)</td>
+	</tr>
+	<tr>
+		<td>96</td>
+		<td><code>0x2C</code></td>
+		<td>44</td>
+		<td>15x <code>00</code>, 1x <code>01</code>, 28x <code>00</code></td>
+	</tr>
+	<tr>
+		<td>140</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of level models<td>
+	</tr>
+	<tr>
+		<td>144</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to list of <a href="#levmodeloffseta">level model offsets - Type A</a><td>
+	</tr>
+	<tr>
+		<td>148</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of level models<td>
+	</tr>
+	<tr>
+		<td>152</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to list of <a href="#levmodeloffsetb">level model offsets - Type B</a><td>
+	</tr>
+	<tr>
+		<td>156</td>
+		<td><code>0x800</code></td>
+		<td>2048</td>
+		<td>2048x <code>00</code></td>
+	</tr>
+	<tr>
+		<td>2204</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Start X Position</td>
+	</tr>
+	<tr>
+		<td>2208</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Start Y Position</td>
+	</tr>
+	<tr>
+		<td>2212</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Start Z Position</td>
+	</tr>
+	<tr>
+		<td>2216</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - Start X Rotation</td>
+	</tr>
+	<tr>
+		<td>2218</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - Start Y Rotation</td>
+	</tr>
+	<tr>
+		<td>2220</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - Start Z Rotation</td>
+	</tr>
+	<tr>
+		<td>2222</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td><code>00 00</code></td>
+	</tr>
+	<tr>
+		<td>2224</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Fallout Y Position</td>
+	</tr>
+</table><br />
+
+<h2 id="goal">Goal</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>X rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>14</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Y rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Z rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>18</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Type of goal (<code>0x4200 is blue, 0x4700 is green, 0x5200 is red)</code></td>
+	</tr>
+</table>
+
+<h2 id="bumper">Bumper</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>X rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>14</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Y rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Z rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>18</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Zero</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X scale, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y scale, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z scale, single precision float, big endian</td>
+	</tr>
+</table>
+
+<h2 id="jamabar">Jamabar</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>X rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>14</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Y rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Z rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>18</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Zero</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X scale, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y scale, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z scale, single precision float, big endian</td>
+	</tr>
+</table>
+
+<h2 id="banana">Banana</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Type of banana (<code>0x00000000 is single, 0x00000001 is bunch)</code></td>
+	</tr>
+</table>
+
+<h2 id="collision">Collision header</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x24</code></td>
+		<td>36</td>
+		<td>Presumably animation data (Center XYZ position, Initial XYZ rotation, Offset to animation data, and some other currently unknown stuff)</td>
+	</tr>
+	<tr>
+		<td>36</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to model reference (points to a pointer that in turn points to the model name string)</td>
+	</tr>
+	<tr>
+		<td>40</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#coltri">Offset to triangle data, integer, big endian</a></td>
+	</tr>
+	<tr>
+		<td>44</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#coltrilistptr">Offset to collision grid pointers, integer, big endian</a></td>
+	</tr>
+	<tr>
+		<td>48</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Start X value for collision grid, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>52</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Start Z value for collision grid, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>56</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Step X value for collision grid, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>60</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Step Z value for collision grid, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>52</td>
+		<td><code>0x08</code></td>
+		<td>8</td>
+		<td><code>00 00 00 10 00 00 00 10</code></td>
+	</tr>
+	<tr>
+		<td>60</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of goals</td>
+	</tr>
+	<tr>
+		<td>64</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to goal data (Can be 4x <code>00</code> if there are no goals)<td>
+	</tr>
+	<tr>
+		<td>68</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of bumpers</td>
+	</tr>
+	<tr>
+		<td>72</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to bumper data (Can be 4x <code>00</code> if there are no bumpers)<td>
+	</tr>
+	<tr>
+		<td>76</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of jamabars</td>
+	</tr>
+	<tr>
+		<td>80</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to jamabar data (Can be 4x <code>00</code> if there are no jamabars)<td>
+	</tr>
+	<tr>
+		<td>84</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of bananas</td>
+	</tr>
+	<tr>
+		<td>88</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to banana data (Can be 4x <code>00</code> if there are no bananas)<td>
+	</tr>
+	<tr>
+		<td>92</td>
+		<td><code>0x30</code></td>
+		<td>48</td>
+		<td>48x <code>00</code><td>
+	</tr>
+	<tr>
+		<td>140</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of level models<td>
+	</tr>
+	<tr>
+		<td>144</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to something? <code>((numberOfObjects - numberOfBackgroundObjects) * 28) + realColSize + sizeOfConfigurationData + sideOfHeader</code><td>
+	</tr>
+	<tr>
+		<td>148</td>
+		<td><code>0x400</code></td>
+		<td>1024</td>
+		<td>1024x <code>00</code></td>
+	</tr>
+</table>
+
+<h2 id="levmodeloffseta">Level model offset - Type A</h2>
+<h4>This is repeated for each level model</h4>
+<br>
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x08</code></td>
+		<td>8</td>
+		<td><code>00 00 00 00 00 00 00 01</code></td>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to <a href="#levmodela">level model Type A</a> + 8 bytes</td>
+	</tr>
+</table>
+
+<h2 id="levmodela">Level model - Type A</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x0C</code></td>
+		<td>12</td>
+		<td>12x <code>00</code></td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to model name to use</td>
+	</tr>
+</table>
+
+<h2 id="levmodeloffsetb">Level model offset - Type B</h2>
+<h4>This is repeated for each level model</h4>
+<br>
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td><code>4</code></td>
+		<td>Integer - Big Endian - Offset to <a href="#levmodelb">level model Type B</a></td>
+	</tr>
+</table>
+
+<h2 id="levmodelb">Level model - Type B</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x08</code></td>
+		<td>8</td>
+		<td><code>00 00 00 00 00 00 00 01</code></td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to <a href="#levmodela">level model Type A</a> + 8 bytes</td>
+	</tr>
+</table>
+
+<h2 id="bgmodel">Background model</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><code>0x0000001F</code></td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to model name to use, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><code>0x00000000</code></td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>X rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>26</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Y rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Z rotation, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>30</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Zero</td>
+	</tr>
+	<tr>
+		<td>32</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X scale, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>36</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y scale, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>40</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z scale, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>44</td>
+		<td><code>0x0C</code></td>
+		<td>12</td>
+		<td>Zero</td>
+	</tr>
+</table>
+
+<!-- <h2 id="reflmodel">Reflective model</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>Offset to model name to use, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td><code>0x00000000</code></td>
+	</tr>
+</table> -->
+
+<h2 id="coltri">Collision triangle</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X1 position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y1 position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z1 position, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>X normal, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Y normal, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Z normal, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>X rotation from XY plane, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>26</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Y rotation from XY plane, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Z rotation from XY plane, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>30</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Zero</td>
+	</tr>
+	<tr>
+		<td>32</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>DX2X1, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>36</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>DY2Y1, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>40</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>DX3X1, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>44</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>DY3Y1, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>48</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Tangent X, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>52</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Tangent Y, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>56</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Bitangent X, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>60</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Bitangent Y, single precision float, big endian</td>
+	</tr>
+</table>
+
+<h2 id="colgridlist">Collision grid triangle list</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Triangle index, integer, big endian, <code>0xFFFF terminates a list</code></td>
+	</tr>
+</table>
+
+<h2 id="colgridlistptr">Collision grid triangle list pointer</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#coltrilist">Pointer to a triangle list for the collision grid section, integer, big endian</a></td>
+	</tr>
+</table>
+
+<!-- <h2 id="animation">Animation frame header</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td><a href="#animframe">Number of frames for X animation</a></td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td><a href="#animframe">Offset to X animation frames</a></td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td><a href="#animframe">Number of frames for Y animation</a></td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td><a href="#animframe">Offset to Y animation frames</a></td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+		<td><a href="#animframe">Number of frames for Z animation</a></td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td><a href="#animframe">Offset to Z animation frames</a></td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x18</code></td>
+		<td>Zero</td>
+	</tr>
+</table>
+
+<h2 id="animframe">Animation frame</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td><code>0x00000002</code></td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>Time, in percent allotted time? (must start at 0.0 and go all the way to 100.0 or game will complain?), single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>Rotation in degrees, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td>Translation, single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+		<td>Translation (copy), single precision float, big endian</td>
+	</tr>
+</table> -->
+
+<h3>Additional Notes</h3>
+<ul>
+	<li>All offsets written to file are relative to the beginning of the file</li>
+	<li>Try to keep things 4 byte aligned if possible (based on the specs, it seems to be built like this)</li>
+	<li>Objects names need to be put somewhere in the file</li>
+	<li>The Collision Grid is used for optimization
+		<ul>
+			<li>Collisions are divided into a matrix based on triangle position</li>
+			<li>The matrix elements start at (startX + (stepX * i), startZ + (stepZ * j)) position</li>
+			<li>Each collision grid pointer is used for a different element in the matrix</li>
+			<li>By dividing the triangles into spatial sections, it allows the game to not test every triangle every frame</li>
+            <li>It is recommended to start at -256 with a x/z step of 32 (because it works)</li>
+            <li>Have 256 collision grid pointers that point to <b>different</b> triangle lists</li>
+            <li>If not optimizing, triangle lists can just count through the number of triangles</li>
+        </ul>
+	</li>
+
+</ul>
