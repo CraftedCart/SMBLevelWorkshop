@@ -539,7 +539,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
             } catch (NumberFormatException e) {
-
+                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
                 try {
                     newValue = Double.parseDouble(positionXTextField.prevValue);
                 } catch (NumberFormatException e1) {
@@ -554,7 +554,8 @@ public class MainScreen extends FluidUIScreen {
                         if (placeable.getAsset().canGrabX()) {
                             placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
                         }
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -613,7 +614,8 @@ public class MainScreen extends FluidUIScreen {
                     for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
                         Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                         placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -672,7 +674,8 @@ public class MainScreen extends FluidUIScreen {
                     for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -740,7 +743,8 @@ public class MainScreen extends FluidUIScreen {
                     for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -799,7 +803,8 @@ public class MainScreen extends FluidUIScreen {
                     for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
                         Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                         placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -858,7 +863,8 @@ public class MainScreen extends FluidUIScreen {
                     for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -926,7 +932,8 @@ public class MainScreen extends FluidUIScreen {
                     for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -985,7 +992,8 @@ public class MainScreen extends FluidUIScreen {
                     for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
                         Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
                         placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
@@ -1041,7 +1049,8 @@ public class MainScreen extends FluidUIScreen {
                     for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = entry.getValue();
                         placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
-                    }}
+                    }
+                }
             }
             //</editor-fold>
 
