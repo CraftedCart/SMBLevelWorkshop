@@ -2057,9 +2057,11 @@ public class MainScreen extends FluidUIScreen {
                     }
 
                     //Remove background objects if they no longer exist in the new OBJ
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
-                        if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(name)) {
-                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
+                    synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
+                        for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
+                            if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(name)) {
+                                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
+                            }
                         }
                     }
                 } else {
@@ -2706,6 +2708,8 @@ public class MainScreen extends FluidUIScreen {
                                     String name = ld.addPlaceable(bananaPlaceable);
                                     outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
                                 }
+
+                                //TODO: Backgrounds
 
                             }
 

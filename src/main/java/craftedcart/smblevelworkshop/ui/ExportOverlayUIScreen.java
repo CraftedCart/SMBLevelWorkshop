@@ -420,7 +420,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             //onSuccessAction
 
             try {
-                craftedcart.smblevelworkshop.Window.drawable.makeCurrent();
+                Window.drawable.makeCurrent();
             } catch (LWJGLException e) {
                 e.printStackTrace();
             }
@@ -444,6 +444,13 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
                 Window.drawable.releaseContext();
             } catch (LWJGLException e) {
                 e.printStackTrace();
+            }
+
+            if (file.exists()) { //Delete the file and recreate it if it exists
+                if (!file.delete()) {
+                    craftedcart.smbworkshopexporter.util.LogHelper.warn(getClass(), "Failed to delete original LZ file: " + file.getAbsolutePath());
+                    craftedcart.smbworkshopexporter.util.LogHelper.warn(getClass(), "Output LZ file may be corrupt");
+                }
             }
 
             LogHelper.info(getClass(), "Exporting config file: " + file.getAbsolutePath());
