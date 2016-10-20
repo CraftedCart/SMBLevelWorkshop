@@ -65,8 +65,8 @@
     <entry key="singleBanana" val="Single (x1)" />
     <entry key="bunchBanana" val="Bunch (x10)" />
     <entry key="blueGoal" val="Blue" />
-    <entry key="greenGoal" val="Green (Warp 1)" />
-    <entry key="redGoal" val="Red (Warp 2)" />
+    <entry key="greenGoal" val="Green" />
+    <entry key="redGoal" val="Red" />
 
     <entry key="addPlaceable" val="Add Placeable" />
     <entry key="outliner" val="Outliner" />
