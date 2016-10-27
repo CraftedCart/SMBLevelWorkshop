@@ -26,13 +26,13 @@
 		<td>16</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Offset to start position data</td>
+		<td>Integer - Big Endian - Offset to start position data</td>
 	</tr>
 	<tr>
 		<td>20</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Offset to fallout position data</td>
+		<td>Integer - Big Endian - Offset to fallout position data</td>
 	</tr>
 	<tr>
 		<td>24</td>
@@ -44,7 +44,7 @@
 		<td>28</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Offset to goal data (Can be 4x <code>00</code> if there are no goals)<td>
+		<td>Integer - Big Endian - Offset to goal data (Can be 4x <code>00</code> if there are no goals)<td>
 	</tr>
 	<tr>
 		<td>32</td>
@@ -56,7 +56,7 @@
 		<td>36</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Offset to bumper data (Can be 4x <code>00</code> if there are no bumpers)<td>
+		<td>Integer - Big Endian - Offset to bumper data (Can be 4x <code>00</code> if there are no bumpers)<td>
 	</tr>
 	<tr>
 		<td>40</td>
@@ -68,7 +68,7 @@
 		<td>44</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Offset to jamabar data (Can be 4x <code>00</code> if there are no jamabars)<td>
+		<td>Integer - Big Endian - Offset to jamabar data (Can be 4x <code>00</code> if there are no jamabars)<td>
 	</tr>
 	<tr>
 		<td>48</td>
@@ -80,7 +80,7 @@
 		<td>52</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Offset to banana data (Can be 4x <code>00</code> if there are no bananas)<td>
+		<td>Integer - Big Endian - Offset to banana data (Can be 4x <code>00</code> if there are no bananas)<td>
 	</tr>
 	<tr>
 		<td>56</td>
@@ -206,37 +206,37 @@
 		<td>0</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>X position, single precision float, big endian</td>
+		<td>ISingle Precision Float - Big Endian - X position</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Y position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Y position</td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Z position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Z position</td>
 	</tr>
 	<tr>
 		<td>12</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>X rotation, integer, big endian</td>
+		<td>Integer - Big Endian - X rotation</td>
 	</tr>
 	<tr>
 		<td>14</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>Y rotation, integer, big endian</td>
+		<td>Integer - Big Endian - Y rotation</td>
 	</tr>
 	<tr>
 		<td>16</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>Z rotation, integer, big endian</td>
+		<td>Integer - Big Endian - Z rotation</td>
 	</tr>
 	<tr>
 		<td>18</td>
@@ -258,37 +258,37 @@
 		<td>0</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>X position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - X position</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Y position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Y position</td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Z position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Z position</td>
 	</tr>
 	<tr>
 		<td>12</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>X rotation, integer, big endian</td>
+		<td>Integer - Big Endian - X rotation</td>
 	</tr>
 	<tr>
 		<td>14</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>Y rotation, integer, big endian</td>
+		<td>Integer - Big Endian - Y rotation</td>
 	</tr>
 	<tr>
 		<td>16</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>Z rotation, integer, big endian</td>
+		<td>Integer - Big Endian - Z rotation</td>
 	</tr>
 	<tr>
 		<td>18</td>
@@ -300,19 +300,19 @@
 		<td>20</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>X scale, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - X scale</td>
 	</tr>
 	<tr>
 		<td>24</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Y scale, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Y scale</td>
 	</tr>
 	<tr>
 		<td>28</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Z scale, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Z scale</td>
 	</tr>
 </table>
 
@@ -328,37 +328,37 @@
 		<td>0</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>X position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - X position</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Y position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Y position</td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Z position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Z position</td>
 	</tr>
 	<tr>
 		<td>12</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>X rotation, integer, big endian</td>
+		<td>Integer - Big Endian - X rotation</td>
 	</tr>
 	<tr>
 		<td>14</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>Y rotation, integer, big endian</td>
+		<td>Integer - Big Endian - Y rotation</td>
 	</tr>
 	<tr>
 		<td>16</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td>Z rotation, integer, big endian</td>
+		<td>Integer - Big Endian - Z rotation</td>
 	</tr>
 	<tr>
 		<td>18</td>
@@ -370,19 +370,19 @@
 		<td>20</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>X scale, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - X scale</td>
 	</tr>
 	<tr>
 		<td>24</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Y scale, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Y scale</td>
 	</tr>
 	<tr>
 		<td>28</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Z scale, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Z scale</td>
 	</tr>
 </table>
 
@@ -398,19 +398,19 @@
 		<td>0</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>X position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - X position</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Y position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Y position</td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Z position, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Z position</td>
 	</tr>
 	<tr>
 		<td>12</td>
@@ -444,37 +444,37 @@
 		<td>40</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#coltri">Offset to triangle data, integer, big endian</a></td>
+		<td><a href="#coltri">Integer - Big Endian - Offset to triangle data</a></td>
 	</tr>
 	<tr>
 		<td>44</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#coltrilistptr">Offset to collision grid pointers, integer, big endian</a></td>
+		<td><a href="#coltrilistptr">Integer - Big Endian - Offset to collision grid pointers</a></td>
 	</tr>
 	<tr>
 		<td>48</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Start X value for collision grid, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Start X value for collision grid</td>
 	</tr>
 	<tr>
 		<td>52</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Start Z value for collision grid, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Start Z value for collision grid</td>
 	</tr>
 	<tr>
 		<td>56</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Step X value for collision grid, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Step X value for collision grid</td>
 	</tr>
 	<tr>
 		<td>60</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Step Z value for collision grid, single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Step Z value for collision grid</td>
 	</tr>
 	<tr>
 		<td>52</td>
