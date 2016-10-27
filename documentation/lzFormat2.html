@@ -1,5 +1,5 @@
 <h2>File header</h2>
-<h4>Header is 2228 / <code>0x8B4</code> bytes long</h4>
+<h4>Header is 2204 / <code>0x089C</code> bytes long</h4>
 
 <br>
 
@@ -24,9 +24,15 @@
 	</tr>
 	<tr>
 		<td>16</td>
-		<td><code>0x08</code></td>
-		<td>8</td>
-		<td><code>00 00 08 9C 00 00 08 B0</code></td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to start position data</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to fallout position data</td>
 	</tr>
 	<tr>
 		<td>24</td>
@@ -130,55 +136,63 @@
 		<td>2048</td>
 		<td>2048x <code>00</code></td>
 	</tr>
+</table><br />
+
+<h2 id="start">Start Position Data</h2>
+<table class="table">
 	<tr>
-		<td>2204</td>
+		<td>0</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
 		<td>Single Precision Float - Big Endian - Start X Position</td>
 	</tr>
 	<tr>
-		<td>2208</td>
+		<td>4</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
 		<td>Single Precision Float - Big Endian - Start Y Position</td>
 	</tr>
 	<tr>
-		<td>2212</td>
+		<td>8</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
 		<td>Single Precision Float - Big Endian - Start Z Position</td>
 	</tr>
 	<tr>
-		<td>2216</td>
+		<td>12</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
 		<td>Integer - Big Endian - Start X Rotation</td>
 	</tr>
 	<tr>
-		<td>2218</td>
+		<td>14</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
 		<td>Integer - Big Endian - Start Y Rotation</td>
 	</tr>
 	<tr>
-		<td>2220</td>
+		<td>16</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
 		<td>Integer - Big Endian - Start Z Rotation</td>
 	</tr>
 	<tr>
-		<td>2222</td>
+		<td>18</td>
 		<td><code>0x02</code></td>
 		<td>2</td>
-		<td><code>00 00</code></td>
+		<td><code>00 00</code> - Exists to keep stuff 4 byte aligned</td>
 	</tr>
+</table>
+
+<h2 id="fallout">Fallout Position Data</h2>
+<table class="table">
 	<tr>
-		<td>2224</td>
+		<td>0</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
 		<td>Single Precision Float - Big Endian - Fallout Y Position</td>
 	</tr>
-</table><br />
+</table>
 
 <h2 id="goal">Goal</h2><br />
 <table class="table">
