@@ -2081,6 +2081,7 @@ public class MainScreen extends FluidUIScreen {
 
                                 cld.clearSelectedPlaceables();
                                 ld.clearPlacedObjects();
+                                ld.clearBackgroundObjects();
                                 outlinerPlaceablesListBox.clearChildComponents();
 
                                 //Add start pos
@@ -2166,11 +2167,19 @@ public class MainScreen extends FluidUIScreen {
                                     outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
                                 }
 
-                                //TODO: Backgrounds
+                                //Mark background objects
+                                for (String name : configData.backgroundList) {
+                                    for (OBJObject object : ld.getModel().scene.getObjectList()) {
+                                        if (Objects.equals(object.name, name)) {
+                                            ld.addBackgroundObject(name);
+                                        }
+                                    }
+                                }
 
                             }
 
                             updateOutlinerPlaceablesPanel();
+                            updateOutlinerObjectsPanel();
                         } catch (IOException e) {
                             LogHelper.error(getClass(), "Failed to open file");
                             LogHelper.error(getClass(), e);
