@@ -1,6 +1,5 @@
 package craftedcart.smblevelworkshop.ui;
 
-import craftedcart.smblevelworkshop.Project;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.asset.*;
@@ -14,9 +13,13 @@ import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.ui.component.OutlinerObject;
+import craftedcart.smblevelworkshop.ui.component.PositionTextFields;
+import craftedcart.smblevelworkshop.ui.component.RotationTextFields;
+import craftedcart.smblevelworkshop.ui.component.ScaleTextFields;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
+import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smbworkshopexporter.ConfigData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
@@ -80,17 +83,9 @@ public class MainScreen extends FluidUIScreen {
     private final ListBox propertiesPlaceablesListBox = new ListBox();
     private final ListBox propertiesObjectsListBox = new ListBox();
 
-    private final TextField positionXTextField = new TextField();
-    private final TextField positionYTextField = new TextField();
-    private final TextField positionZTextField = new TextField();
-
-    private final TextField rotationXTextField = new TextField();
-    private final TextField rotationYTextField = new TextField();
-    private final TextField rotationZTextField = new TextField();
-
-    private final TextField scaleXTextField = new TextField();
-    private final TextField scaleYTextField = new TextField();
-    private final TextField scaleZTextField = new TextField();
+    private final PositionTextFields scaleTextFields = new PositionTextFields(this, null);
+    private final RotationTextFields rotationTextFields = new RotationTextFields(this, scaleTextFields.getFirstTextField());
+    private final ScaleTextFields positionTextFields = new ScaleTextFields(this, rotationTextFields.getFirstTextField());
 
     private final TextButton typeButton = new TextButton();
     @Nullable private List<String> typeList = null;
@@ -367,45 +362,46 @@ public class MainScreen extends FluidUIScreen {
         outlinerObjectsListBox.setOnInitAction(() -> {
             outlinerObjectsListBox.setBackgroundColor(UIColor.transparent());
             outlinerObjectsListBox.setTopLeftPos(0, 24);
-            outlinerObjectsListBox.setBottomRightPos(0, -24);
+//            outlinerObjectsListBox.setBottomRightPos(0, -24); //TODO: When external backgrounds are figured out, uncomment this
+            outlinerObjectsListBox.setBottomRightPos(0, 0);
             outlinerObjectsListBox.setTopLeftAnchor(0, 0);
             outlinerObjectsListBox.setBottomRightAnchor(1, 1);
         });
         outlinerObjectsPanel.addChildComponent("outlinerObjectsListBox", outlinerObjectsListBox);
         //</editor-fold>
 
-        final TextField addExternalBackgroundObjectTextField = new TextField();
-        addExternalBackgroundObjectTextField.setOnInitAction(() -> {
-            addExternalBackgroundObjectTextField.setTopLeftPos(0, -24);
-            addExternalBackgroundObjectTextField.setBottomRightPos(0, 0);
-            addExternalBackgroundObjectTextField.setTopLeftAnchor(0, 1);
-            addExternalBackgroundObjectTextField.setBottomRightAnchor(1, 1);
-            addExternalBackgroundObjectTextField.setPlaceholder(LangManager.getItem("addExternalBackgroundObject"));
-            addExternalBackgroundObjectTextField.setBackgroundColor(UIColor.transparent());
-        });
-        addExternalBackgroundObjectTextField.setOnReturnAction(() -> {
-            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
-                if (!Objects.equals(addExternalBackgroundObjectTextField.value, "")) {
-                    if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackgroundExternal(addExternalBackgroundObjectTextField.text) &&
-                            !ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(addExternalBackgroundObjectTextField.text)) {
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().addBackgroundExternalObject(addExternalBackgroundObjectTextField.text);
-
-                        outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(addExternalBackgroundObjectTextField.text));
-                    } else {
-                        notify(LangManager.getItem("alreadyObject"), UIColor.matRed());
-                    }
-
-                    addExternalBackgroundObjectTextField.setValue(""); //Clear text field
-                } else {
-                    //Text field is blank
-                    notify(LangManager.getItem("noObjectSpecified"), UIColor.matRed());
-                }
-            } else {
-                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
-            }
-        });
-        outlinerObjectsPanel.addChildComponent("addExternalBackgroundObjectTextField", addExternalBackgroundObjectTextField);
-        textFields.add(addExternalBackgroundObjectTextField);
+//        final TextField addExternalBackgroundObjectTextField = new TextField();
+//        addExternalBackgroundObjectTextField.setOnInitAction(() -> {
+//            addExternalBackgroundObjectTextField.setTopLeftPos(0, -24);
+//            addExternalBackgroundObjectTextField.setBottomRightPos(0, 0);
+//            addExternalBackgroundObjectTextField.setTopLeftAnchor(0, 1);
+//            addExternalBackgroundObjectTextField.setBottomRightAnchor(1, 1);
+//            addExternalBackgroundObjectTextField.setPlaceholder(LangManager.getItem("addExternalBackgroundObject"));
+//            addExternalBackgroundObjectTextField.setBackgroundColor(UIColor.transparent());
+//        });
+//        addExternalBackgroundObjectTextField.setOnReturnAction(() -> {
+//            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+//                if (!Objects.equals(addExternalBackgroundObjectTextField.value, "")) {
+//                    if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackgroundExternal(addExternalBackgroundObjectTextField.text) &&
+//                            !ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(addExternalBackgroundObjectTextField.text)) {
+//                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().addBackgroundExternalObject(addExternalBackgroundObjectTextField.text);
+//
+//                        outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(addExternalBackgroundObjectTextField.text));
+//                    } else {
+//                        notify(LangManager.getItem("alreadyObject"), UIColor.matRed());
+//                    }
+//
+//                    addExternalBackgroundObjectTextField.setValue(""); //Clear text field
+//                } else {
+//                    //Text field is blank
+//                    notify(LangManager.getItem("noObjectSpecified"), UIColor.matRed());
+//                }
+//            } else {
+//                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+//            }
+//        });
+//        outlinerObjectsPanel.addChildComponent("addExternalBackgroundObjectTextField", addExternalBackgroundObjectTextField);
+//        textFields.add(addExternalBackgroundObjectTextField);
 
         final Panel rightPanel = new Panel();
         rightPanel.setOnInitAction(() -> {
@@ -503,187 +499,12 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesPlaceablesListBox.addChildComponent("positionLabel", positionLabel);
 
-        //<editor-fold desc="Position X Text Field">
         //Defined at class level
-        positionXTextField.setOnInitAction(() -> {
-            positionXTextField.setValue("0.00");
-            positionXTextField.cursorPos = positionXTextField.value.length();
-            positionXTextField.setVerticalAlign(EnumVAlignment.centre);
-            positionXTextField.setTopLeftPos(0, 0);
-            positionXTextField.setBottomRightPos(0, 24);
-            positionXTextField.setBackgroundColor(UIColor.matRed900());
-            positionXTextField.setInputRegexCheck("[0-9.-]");
-            positionXTextField.setEnabled(false);
+        positionTextFields.setOnInitAction(() -> {
+            positionTextFields.setTopLeftPos(0, 0);
+            positionTextFields.setBottomRightPos(0, 76);
         });
-        positionXTextField.setOnSelectedAction(() -> positionXTextField.cursorPos = positionXTextField.value.length());
-        positionXTextField.setOnTabAction(() -> {
-            positionXTextField.setSelected(false);
-            positionYTextField.setSelected(true);
-        });
-        positionXTextField.setOnReturnAction(() -> positionXTextField.setSelected(false));
-        positionXTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(positionXTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canGrabX()) {
-                        placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(positionXTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                        Placeable placeable = entry.getValue();
-                        if (placeable.getAsset().canGrabX()) {
-                            placeable.setPosition(new PosXYZ(newValue, placeable.getPosition().y, placeable.getPosition().z));
-                        }
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("positionXTextField", positionXTextField);
-        textFields.add(positionXTextField);
-        //</editor-fold>
-
-        //<editor-fold desc="Position Y Text Field">
-        //Defined at class level
-        positionYTextField.setOnInitAction(() -> {
-            positionYTextField.setValue("0.00");
-            positionYTextField.cursorPos = positionYTextField.value.length();
-            positionYTextField.setVerticalAlign(EnumVAlignment.centre);
-            positionYTextField.setTopLeftPos(0, 0);
-            positionYTextField.setBottomRightPos(0, 24);
-            positionYTextField.setBackgroundColor(UIColor.matGreen900());
-            positionYTextField.setInputRegexCheck("[0-9.-]");
-            positionYTextField.setEnabled(false);
-        });
-        positionYTextField.setOnSelectedAction(() -> positionYTextField.cursorPos = positionYTextField.value.length());
-        positionYTextField.setOnTabAction(() -> {
-            positionYTextField.setSelected(false);
-            positionZTextField.setSelected(true);
-        });
-        positionYTextField.setOnReturnAction(() -> positionYTextField.setSelected(false));
-        positionYTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(positionYTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canGrabY()) {
-                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(positionYTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("positionYTextField", positionYTextField);
-        textFields.add(positionYTextField);
-        //</editor-fold>
-
-        //<editor-fold desc="Position Z Text Field">
-        //Defined at class level
-        positionZTextField.setOnInitAction(() -> {
-            positionZTextField.setValue("0.00");
-            positionZTextField.cursorPos = positionZTextField.value.length();
-            positionZTextField.setVerticalAlign(EnumVAlignment.centre);
-            positionZTextField.setTopLeftPos(0, 0);
-            positionZTextField.setBottomRightPos(0, 24);
-            positionZTextField.setBackgroundColor(UIColor.matBlue900());
-            positionZTextField.setInputRegexCheck("[0-9.-]");
-            positionZTextField.setEnabled(false);
-        });
-        positionZTextField.setOnSelectedAction(() -> positionZTextField.cursorPos = positionZTextField.value.length());
-        positionZTextField.setOnTabAction(() -> {
-            positionZTextField.setSelected(false);
-            rotationXTextField.setSelected(true);
-        });
-        positionZTextField.setOnReturnAction(() -> positionZTextField.setSelected(false));
-        positionZTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(positionZTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canGrabZ()) {
-                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, placeable.getPosition().y, newValue));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(positionZTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                        Placeable placeable = entry.getValue();
-                        placeable.setPosition(new PosXYZ(placeable.getPosition().x, newValue, placeable.getPosition().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("positionZTextField", positionZTextField);
-        textFields.add(positionZTextField);
-        //</editor-fold>
+        propertiesPlaceablesListBox.addChildComponent("positionTextFields", positionTextFields);
 
         final Label rotationLabel = new Label();
         rotationLabel.setOnInitAction(() -> {
@@ -694,185 +515,12 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesPlaceablesListBox.addChildComponent("rotationLabel", rotationLabel);
 
-        //<editor-fold desc="Rotation X Text Field">
         //Defined at class level
-        rotationXTextField.setOnInitAction(() -> {
-            rotationXTextField.setValue("0.00");
-            rotationXTextField.cursorPos = rotationXTextField.value.length();
-            rotationXTextField.setVerticalAlign(EnumVAlignment.centre);
-            rotationXTextField.setTopLeftPos(0, 0);
-            rotationXTextField.setBottomRightPos(0, 24);
-            rotationXTextField.setBackgroundColor(UIColor.matRed900());
-            rotationXTextField.setInputRegexCheck("[0-9.-]");
-            rotationXTextField.setEnabled(false);
+        rotationTextFields.setOnInitAction(() -> {
+            rotationTextFields.setTopLeftPos(0, 0);
+            rotationTextFields.setBottomRightPos(0, 76);
         });
-        rotationXTextField.setOnSelectedAction(() -> rotationXTextField.cursorPos = rotationXTextField.value.length());
-        rotationXTextField.setOnTabAction(() -> {
-            rotationXTextField.setSelected(false);
-            rotationYTextField.setSelected(true);
-        });
-        rotationXTextField.setOnReturnAction(() -> rotationXTextField.setSelected(false));
-        rotationXTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(rotationXTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canRotate()) {
-                        placeable.setRotation(normalizeRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z)));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(rotationXTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                        Placeable placeable = entry.getValue();
-                        placeable.setRotation(new PosXYZ(newValue, placeable.getRotation().y, placeable.getRotation().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("rotationXTextField", rotationXTextField);
-        textFields.add(rotationXTextField);
-        //</editor-fold>
-
-        //<editor-fold desc="Rotation Y Text Field">
-        //Defined at class level
-        rotationYTextField.setOnInitAction(() -> {
-            rotationYTextField.setValue("0.00");
-            rotationYTextField.cursorPos = rotationYTextField.value.length();
-            rotationYTextField.setVerticalAlign(EnumVAlignment.centre);
-            rotationYTextField.setTopLeftPos(0, 0);
-            rotationYTextField.setBottomRightPos(0, 24);
-            rotationYTextField.setBackgroundColor(UIColor.matGreen900());
-            rotationYTextField.setInputRegexCheck("[0-9.-]");
-            rotationYTextField.setEnabled(false);
-        });
-        rotationYTextField.setOnSelectedAction(() -> rotationYTextField.cursorPos = rotationYTextField.value.length());
-        rotationYTextField.setOnTabAction(() -> {
-            rotationYTextField.setSelected(false);
-            rotationZTextField.setSelected(true);
-        });
-        rotationYTextField.setOnReturnAction(() -> rotationYTextField.setSelected(false));
-        rotationYTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(rotationYTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canRotate()) {
-                        placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z)));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(rotationYTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                        placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("rotationYTextField", rotationYTextField);
-        textFields.add(rotationYTextField);
-        //</editor-fold>
-
-        //<editor-fold desc="Rotation Z Text Field">
-        //Defined at class level
-        rotationZTextField.setOnInitAction(() -> {
-            rotationZTextField.setValue("0.00");
-            rotationZTextField.cursorPos = rotationZTextField.value.length();
-            rotationZTextField.setVerticalAlign(EnumVAlignment.centre);
-            rotationZTextField.setTopLeftPos(0, 0);
-            rotationZTextField.setBottomRightPos(0, 24);
-            rotationZTextField.setBackgroundColor(UIColor.matBlue900());
-            rotationZTextField.setInputRegexCheck("[0-9.-]");
-            rotationZTextField.setEnabled(false);
-        });
-        rotationZTextField.setOnSelectedAction(() -> rotationZTextField.cursorPos = rotationZTextField.value.length());
-        rotationZTextField.setOnTabAction(() -> {
-            rotationZTextField.setSelected(false);
-            scaleXTextField.setSelected(true);
-        });
-        rotationZTextField.setOnReturnAction(() -> rotationZTextField.setSelected(false));
-        rotationZTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(rotationZTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canRotate()) {
-                        placeable.setRotation(normalizeRotation(new PosXYZ(placeable.getRotation().x, placeable.getRotation().y, newValue)));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(rotationZTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                        Placeable placeable = entry.getValue();
-                        placeable.setRotation(new PosXYZ(placeable.getRotation().x, newValue, placeable.getRotation().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("rotationZTextField", rotationZTextField);
-        textFields.add(rotationZTextField);
-        //</editor-fold>
+        propertiesPlaceablesListBox.addChildComponent("rotationTextFields", rotationTextFields);
 
         final Label scaleLabel = new Label();
         scaleLabel.setOnInitAction(() -> {
@@ -883,182 +531,12 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesPlaceablesListBox.addChildComponent("scaleLabel", scaleLabel);
 
-        //<editor-fold desc="Scale X Text Field">
         //Defined at class level
-        scaleXTextField.setOnInitAction(() -> {
-            scaleXTextField.setValue("0.00");
-            scaleXTextField.cursorPos = scaleXTextField.value.length();
-            scaleXTextField.setVerticalAlign(EnumVAlignment.centre);
-            scaleXTextField.setTopLeftPos(0, 0);
-            scaleXTextField.setBottomRightPos(0, 24);
-            scaleXTextField.setBackgroundColor(UIColor.matRed900());
-            scaleXTextField.setInputRegexCheck("[0-9.-]");
-            scaleXTextField.setEnabled(false);
+        scaleTextFields.setOnInitAction(() -> {
+            scaleTextFields.setTopLeftPos(0, 0);
+            scaleTextFields.setBottomRightPos(0, 76);
         });
-        scaleXTextField.setOnSelectedAction(() -> scaleXTextField.cursorPos = scaleXTextField.value.length());
-        scaleXTextField.setOnTabAction(() -> {
-            scaleXTextField.setSelected(false);
-            scaleYTextField.setSelected(true);
-        });
-        scaleXTextField.setOnReturnAction(() -> scaleXTextField.setSelected(false));
-        scaleXTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(scaleXTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canScale()) {
-                        placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(scaleXTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                        Placeable placeable = entry.getValue();
-                        placeable.setScale(new PosXYZ(newValue, placeable.getScale().y, placeable.getScale().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("scaleXTextField", scaleXTextField);
-        textFields.add(scaleXTextField);
-        //</editor-fold>
-
-        //<editor-fold desc="Scale Y Text Field">
-        //Defined at class level
-        scaleYTextField.setOnInitAction(() -> {
-            scaleYTextField.setValue("0.00");
-            scaleYTextField.cursorPos = scaleYTextField.value.length();
-            scaleYTextField.setVerticalAlign(EnumVAlignment.centre);
-            scaleYTextField.setTopLeftPos(0, 0);
-            scaleYTextField.setBottomRightPos(0, 24);
-            scaleYTextField.setBackgroundColor(UIColor.matGreen900());
-            scaleYTextField.setInputRegexCheck("[0-9.-]");
-            scaleYTextField.setEnabled(false);
-        });
-        scaleYTextField.setOnSelectedAction(() -> scaleYTextField.cursorPos = scaleYTextField.value.length());
-        scaleYTextField.setOnTabAction(() -> {
-            scaleYTextField.setSelected(false);
-            scaleZTextField.setSelected(true);
-        });
-        scaleYTextField.setOnReturnAction(() -> scaleYTextField.setSelected(false));
-        scaleYTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(scaleYTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canScale()) {
-                        placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(scaleYTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                        placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("scaleYTextField", scaleYTextField);
-        textFields.add(scaleYTextField);
-        //</editor-fold>
-
-        //<editor-fold desc="Scale Z Text Field">
-        //Defined at class level
-        scaleZTextField.setOnInitAction(() -> {
-            scaleZTextField.setValue("0.00");
-            scaleZTextField.cursorPos = scaleZTextField.value.length();
-            scaleZTextField.setVerticalAlign(EnumVAlignment.centre);
-            scaleZTextField.setTopLeftPos(0, 0);
-            scaleZTextField.setBottomRightPos(0, 24);
-            scaleZTextField.setBackgroundColor(UIColor.matBlue900());
-            scaleZTextField.setInputRegexCheck("[0-9.-]");
-            scaleZTextField.setEnabled(false);
-        });
-        scaleZTextField.setOnSelectedAction(() -> scaleZTextField.cursorPos = scaleZTextField.value.length());
-        scaleZTextField.setOnTabAction(() -> scaleZTextField.setSelected(false));
-        scaleZTextField.setOnReturnAction(() -> scaleZTextField.setSelected(false));
-        scaleZTextField.setOnValueConfirmedAction(() -> {
-            double newValue;
-
-            //<editor-fold desc="Parse the number">
-            try {
-                newValue = Double.parseDouble(scaleZTextField.value);
-
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                    if (placeable.getAsset().canScale()) {
-                        placeable.setScale(new PosXYZ(placeable.getScale().x, placeable.getScale().y, newValue));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-                try {
-                    newValue = Double.parseDouble(scaleZTextField.prevValue);
-                } catch (NumberFormatException e1) {
-                    LogHelper.error(getClass(), "prevValue was not a number!");
-                    LogHelper.error(getClass(), e1);
-                    newValue = 0;
-
-                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-                    for (Map.Entry<String, Placeable> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
-                        Placeable placeable = entry.getValue();
-                        placeable.setScale(new PosXYZ(placeable.getScale().x, newValue, placeable.getScale().z));
-                    }
-                }
-            }
-            //</editor-fold>
-
-            updatePropertiesPlaceablesPanel();
-        });
-        propertiesPlaceablesListBox.addChildComponent("scaleZTextField", scaleZTextField);
-        textFields.add(scaleZTextField);
-        //</editor-fold>
+        propertiesPlaceablesListBox.addChildComponent("scaleTextFields", scaleTextFields);
 
         final Label typeLabel = new Label();
         typeLabel.setOnInitAction(() -> {
@@ -1283,14 +761,14 @@ public class MainScreen extends FluidUIScreen {
                                 deltaX = deltaX % SMBLWSettings.rotationSnap;
                             }
                         } else if (Window.isShiftDown()) { //Precise movement with Shift
-                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                            placeable.setRotation(MathUtils.normalizeRotation(placeable.getRotation()
                                     .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseShiftSensitivity))));
-                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                            placeable.setRotation(MathUtils.normalizeRotation(placeable.getRotation()
                                     .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelShiftSensitivity))));
                         } else {
-                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                            placeable.setRotation(MathUtils.normalizeRotation(placeable.getRotation()
                                     .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDelta().x * SMBLWSettings.modeMouseSensitivity))));
-                            placeable.setRotation(normalizeRotation(placeable.getRotation()
+                            placeable.setRotation(MathUtils.normalizeRotation(placeable.getRotation()
                                     .add(ProjectManager.getCurrentProject().modeDirection.multiply(UIUtils.getMouseDWheel() * SMBLWSettings.modeMouseWheelSensitivity))));
                         }
                     }
@@ -2109,7 +1587,7 @@ public class MainScreen extends FluidUIScreen {
         }
     }
 
-    private void addUndoCommand(UndoCommand undoCommand) {
+    public void addUndoCommand(UndoCommand undoCommand) {
         undoCommandList.add(undoCommand);
         redoCommandList.clear();
     }
@@ -2254,9 +1732,7 @@ public class MainScreen extends FluidUIScreen {
         updateOutlinerPlaceablesPanel();
     }
 
-    private void updatePropertiesPlaceablesPanel() {
-        DecimalFormat df = new DecimalFormat("0.00");
-
+    public void updatePropertiesPlaceablesPanel() {
         double posAvgX = 0;
         boolean canGrabX = false;
         double posAvgY = 0;
@@ -2332,35 +1808,35 @@ public class MainScreen extends FluidUIScreen {
             posAvgZ = posAvgZ / (double) selectedCount;
 
             if (canGrabX) {
-                positionXTextField.setEnabled(true);
+                positionTextFields.setXEnabled(true);
             } else {
-                positionXTextField.setEnabled(false);
-                positionXTextField.setValue("0.00");
+                positionTextFields.setXEnabled(false);
+                positionTextFields.setXValue(0);
             }
             if (canGrabY) {
-                positionYTextField.setEnabled(true);
+                positionTextFields.setYEnabled(true);
             } else {
-                positionYTextField.setEnabled(false);
-                positionYTextField.setValue("0.00");
+                positionTextFields.setYEnabled(false);
+                positionTextFields.setYValue(0);
             }
             if (canGrabZ) {
-                positionZTextField.setEnabled(true);
+                positionTextFields.setZEnabled(true);
             } else {
-                positionZTextField.setEnabled(false);
-                positionZTextField.setValue("0.00");
+                positionTextFields.setZEnabled(false);
+                positionTextFields.setZValue(0);
             }
 
-            positionXTextField.setValue(df.format(posAvgX));
-            positionYTextField.setValue(df.format(posAvgY));
-            positionZTextField.setValue(df.format(posAvgZ));
+            positionTextFields.setXValue(posAvgX);
+            positionTextFields.setYValue(posAvgY);
+            positionTextFields.setZValue(posAvgZ);
         } else {
-            positionXTextField.setEnabled(false);
-            positionYTextField.setEnabled(false);
-            positionZTextField.setEnabled(false);
+            positionTextFields.setXEnabled(false);
+            positionTextFields.setYEnabled(false);
+            positionTextFields.setZEnabled(false);
 
-            positionXTextField.setValue("0.00");
-            positionYTextField.setValue("0.00");
-            positionZTextField.setValue("0.00");
+            positionTextFields.setXValue(0);
+            positionTextFields.setYValue(0);
+            positionTextFields.setZValue(0);
         }
 
         if (selectedCount != 0 && canRotate) {
@@ -2368,21 +1844,21 @@ public class MainScreen extends FluidUIScreen {
             rotAvgY = rotAvgY / (double) selectedCount;
             rotAvgZ = rotAvgZ / (double) selectedCount;
 
-            rotationXTextField.setEnabled(true);
-            rotationYTextField.setEnabled(true);
-            rotationZTextField.setEnabled(true);
+            rotationTextFields.setXEnabled(true);
+            rotationTextFields.setYEnabled(true);
+            rotationTextFields.setZEnabled(true);
 
-            rotationXTextField.setValue(df.format(rotAvgX));
-            rotationYTextField.setValue(df.format(rotAvgY));
-            rotationZTextField.setValue(df.format(rotAvgZ));
+            rotationTextFields.setXValue(rotAvgX);
+            rotationTextFields.setYValue(rotAvgY);
+            rotationTextFields.setZValue(rotAvgZ);
         } else {
-            rotationXTextField.setEnabled(false);
-            rotationYTextField.setEnabled(false);
-            rotationZTextField.setEnabled(false);
+            rotationTextFields.setXEnabled(false);
+            rotationTextFields.setYEnabled(false);
+            rotationTextFields.setZEnabled(false);
 
-            rotationXTextField.setValue("0.00");
-            rotationYTextField.setValue("0.00");
-            rotationZTextField.setValue("0.00");
+            rotationTextFields.setXValue(0);
+            rotationTextFields.setYValue(0);
+            rotationTextFields.setZValue(0);
         }
 
         if (selectedCount != 0 && canScale) {
@@ -2390,21 +1866,21 @@ public class MainScreen extends FluidUIScreen {
             sclAvgY = sclAvgY / (double) selectedCount;
             sclAvgZ = sclAvgZ / (double) selectedCount;
 
-            scaleXTextField.setEnabled(true);
-            scaleYTextField.setEnabled(true);
-            scaleZTextField.setEnabled(true);
+            scaleTextFields.setXEnabled(true);
+            scaleTextFields.setYEnabled(true);
+            scaleTextFields.setZEnabled(true);
 
-            scaleXTextField.setValue(df.format(sclAvgX));
-            scaleYTextField.setValue(df.format(sclAvgY));
-            scaleZTextField.setValue(df.format(sclAvgZ));
+            scaleTextFields.setXValue(sclAvgX);
+            scaleTextFields.setYValue(sclAvgY);
+            scaleTextFields.setZValue(sclAvgZ);
         } else {
-            scaleXTextField.setEnabled(false);
-            scaleYTextField.setEnabled(false);
-            scaleZTextField.setEnabled(false);
+            scaleTextFields.setXEnabled(false);
+            scaleTextFields.setYEnabled(false);
+            scaleTextFields.setZEnabled(false);
 
-            scaleXTextField.setValue("1.00");
-            scaleYTextField.setValue("1.00");
-            scaleZTextField.setValue("1.00");
+            scaleTextFields.setXValue(1);
+            scaleTextFields.setYValue(1);
+            scaleTextFields.setZValue(1);
         }
 
         if (selectedIAsset != null) {
@@ -2514,34 +1990,6 @@ public class MainScreen extends FluidUIScreen {
                 return UIColor.matBlue();
             }
         }
-    }
-
-    private PosXYZ normalizeRotation(PosXYZ rot) {
-        while (rot.x >= 360) {
-            rot.x -= 360;
-        }
-
-        while (rot.y >= 360) {
-            rot.y -= 360;
-        }
-
-        while (rot.z >= 360) {
-            rot.z -= 360;
-        }
-
-        while (rot.x < 0) {
-            rot.x += 360;
-        }
-
-        while (rot.y < 0) {
-            rot.y += 360;
-        }
-
-        while (rot.z < 0) {
-            rot.z += 360;
-        }
-
-        return rot;
     }
 
     private IUIScreen getTypeSelectorOverlayScreen(double mouseY) {
