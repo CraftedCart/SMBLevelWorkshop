@@ -115,7 +115,7 @@ public abstract class XYZTextFields extends Panel {
         yTextField.setOnSelectedAction(() -> yTextField.cursorPos = yTextField.value.length());
         yTextField.setOnTabAction(() -> {
             yTextField.setSelected(false);
-            yTextField.setSelected(true);
+            zTextField.setSelected(true);
         });
         yTextField.setOnReturnAction(() -> yTextField.setSelected(false));
         yTextField.setOnValueConfirmedAction(() -> {
