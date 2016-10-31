@@ -640,6 +640,14 @@ public class MainScreen extends FluidUIScreen {
             addAnimDataButton.setText(LangManager.getItem("addAnimData"));
             addAnimDataButton.setVisible(false);
         });
+        addAnimDataButton.setOnLMBAction(() -> {
+            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().addAnimData(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
+                updatePropertiesObjectsPanel();
+            } else {
+                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            }
+        });
         propertiesObjectsListBox.addChildComponent("addAnimDataButton", addAnimDataButton);
         //</editor-fold>
 
@@ -1961,11 +1969,11 @@ public class MainScreen extends FluidUIScreen {
                 if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackground(name)) {
                     //At least one selected object isn't marked as in the background
                     areBackgroundObjects = false;
+                }
 
+                if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
                     //At least one selected object doesn't have anim data
                     allHaveAnimData = false;
-
-                    break;
                 }
             }
 

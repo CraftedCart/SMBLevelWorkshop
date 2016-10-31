@@ -158,4 +158,12 @@ public class LevelData {
         return modelAnimDataMap.containsKey(name);
     }
 
+    public void addAnimData(Set<String> selectedObjects) {
+        for (String name : selectedObjects) {
+            if (!modelAnimDataMap.containsKey(name)) { //If the object doesn't already have animation data
+                modelAnimDataMap.put(name, new AnimData());
+            }
+        }
+    }
+
 }
