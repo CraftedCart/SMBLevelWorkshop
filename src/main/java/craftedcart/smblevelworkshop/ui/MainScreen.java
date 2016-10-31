@@ -12,10 +12,7 @@ import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
-import craftedcart.smblevelworkshop.ui.component.OutlinerObject;
-import craftedcart.smblevelworkshop.ui.component.PositionTextFields;
-import craftedcart.smblevelworkshop.ui.component.RotationTextFields;
-import craftedcart.smblevelworkshop.ui.component.ScaleTextFields;
+import craftedcart.smblevelworkshop.ui.component.*;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -44,7 +41,6 @@ import org.lwjgl.util.glu.GLU;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -53,6 +49,8 @@ import java.util.List;
  * Created on 02/04/2016 (DD/MM/YYYY)
  */
 public class MainScreen extends FluidUIScreen {
+
+    private static final double TIMELINE_HEIGHT = 72;
 
     //Camera
     @NotNull private PosXYZ cameraPos = new PosXYZ(5, 5, 5);
@@ -64,6 +62,7 @@ public class MainScreen extends FluidUIScreen {
     private final Label modeLabel = new Label();
     private final Label modeDirectionLabel = new Label();
     private final Panel notifPanel = new Panel();
+    private final Timeline timeline = new Timeline(this);
 
     private EnumObjectMode objectMode = EnumObjectMode.PLACEABLE_EDIT;
 
@@ -92,9 +91,10 @@ public class MainScreen extends FluidUIScreen {
 
     //UI: Object Properties
     private final CheckBox backgroundObjectCheckBox = new CheckBox();
+    private final TextButton addAnimDataButton = new TextButton();
 
     //UI: Text Fields
-    private final Set<TextField> textFields = new HashSet<>();
+    private Set<TextField> textFields;
 
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
@@ -120,6 +120,10 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void init() {
+
+        if (textFields == null) {
+            textFields = new HashSet<>();
+        }
 
         try {
             Window.drawable.makeCurrent();
@@ -153,8 +157,8 @@ public class MainScreen extends FluidUIScreen {
         final Panel bottomPanel = new Panel();
         bottomPanel.setOnInitAction(() -> {
             bottomPanel.setBackgroundColor(UIColor.matGrey900(0.75));
-            bottomPanel.setTopLeftPos(260, -50);
-            bottomPanel.setBottomRightPos(-260, -4);
+            bottomPanel.setTopLeftPos(260, -50 - TIMELINE_HEIGHT);
+            bottomPanel.setBottomRightPos(-260, -4 - TIMELINE_HEIGHT);
             bottomPanel.setTopLeftAnchor(0, 1);
             bottomPanel.setBottomRightAnchor(1, 1);
         });
@@ -188,7 +192,7 @@ public class MainScreen extends FluidUIScreen {
         leftPanel.setOnInitAction(() -> {
             leftPanel.setBackgroundColor(UIColor.matGrey900(0.75));
             leftPanel.setTopLeftPos(0, 0);
-            leftPanel.setBottomRightPos(256, 0);
+            leftPanel.setBottomRightPos(256, 0 - TIMELINE_HEIGHT);
             leftPanel.setTopLeftAnchor(0, 0);
             leftPanel.setBottomRightAnchor(0, 1);
         });
@@ -407,7 +411,7 @@ public class MainScreen extends FluidUIScreen {
         rightPanel.setOnInitAction(() -> {
             rightPanel.setBackgroundColor(UIColor.matGrey900(0.75));
             rightPanel.setTopLeftPos(-256, 0);
-            rightPanel.setBottomRightPos(0, 0);
+            rightPanel.setBottomRightPos(0, 0 - TIMELINE_HEIGHT);
             rightPanel.setTopLeftAnchor(1, 0);
             rightPanel.setBottomRightAnchor(1, 1);
         });
@@ -628,6 +632,15 @@ public class MainScreen extends FluidUIScreen {
             }
         });
         backgroundObjectPanel.addChildComponent("backgroundObjectCheckBox", backgroundObjectCheckBox);
+
+        //Defined at class level
+        addAnimDataButton.setOnInitAction(() -> {
+            addAnimDataButton.setTopLeftPos(0, 0);
+            addAnimDataButton.setBottomRightPos(0, 24);
+            addAnimDataButton.setText(LangManager.getItem("addAnimData"));
+            addAnimDataButton.setVisible(false);
+        });
+        propertiesObjectsListBox.addChildComponent("addAnimDataButton", addAnimDataButton);
         //</editor-fold>
 
         //Defined at class level
@@ -639,6 +652,16 @@ public class MainScreen extends FluidUIScreen {
             notifPanel.setBackgroundColor(UIColor.transparent());
         });
         mainUI.addChildComponent("notifPanel", notifPanel);
+
+        //Defined at class level
+        timeline.setOnInitAction(() -> {
+            timeline.setTopLeftPos(0, -TIMELINE_HEIGHT);
+            timeline.setBottomRightPos(0, 0);
+            timeline.setTopLeftAnchor(0, 1);
+            timeline.setBottomRightAnchor(1, 1);
+            timeline.setBackgroundColor(UIColor.matGrey900(0.75));
+        });
+        mainUI.addChildComponent("timeline", timeline);
 
         Window.logOpenGLError("After MainScreen.init()");
 
@@ -655,6 +678,10 @@ public class MainScreen extends FluidUIScreen {
         super.preDraw();
 
         Window.logOpenGLError("After MainScreen.super.preDraw()");
+
+        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+            ProjectManager.getCurrentProject().clientLevelData.update((float) UIUtils.getDelta());
+        }
 
         if (Mouse.isButtonDown(2)) { //If MMB down
             //<editor-fold desc="Rotate camera on MMB & Move camera with MMB & WASDQE">
@@ -1316,6 +1343,14 @@ public class MainScreen extends FluidUIScreen {
                                     addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
                                 }
+
+                            } else if (key == Keyboard.KEY_SPACE) { //Spacebar: Play / pause animation
+                                if (ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed() != 0) {
+                                    ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+                                } else {
+                                    ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(1.0f);
+                                }
+
                             } else {
                                 super.onKey(key, keyChar);
                             }
@@ -1383,8 +1418,8 @@ public class MainScreen extends FluidUIScreen {
 
         final Panel panel = new Panel();
         panel.setOnInitAction(() -> {
-            panel.setTopLeftPos(260, -80);
-            panel.setBottomRightPos(-260, -56);
+            panel.setTopLeftPos(260, -80 - TIMELINE_HEIGHT);
+            panel.setBottomRightPos(-260, -56 - TIMELINE_HEIGHT);
             panel.setTopLeftAnchor(0, 1.2);
             panel.setBottomRightAnchor(1, 1.2);
             panel.setBackgroundColor(color.alpha(0.75));
@@ -1495,6 +1530,7 @@ public class MainScreen extends FluidUIScreen {
                     ProjectManager.getCurrentProject().clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
                     ProjectManager.getCurrentProject().clientLevelData.setOnSelectedObjectsChanged(this::onSelectedObjectsChanged);
                     ProjectManager.getCurrentProject().clientLevelData.setOnSelectedExternalBackgroundObjectsChanged(this::onSelectedExternalBackgroundObjectsChanged);
+                    ProjectManager.getCurrentProject().clientLevelData.setOnTimelinePosChanged(this::onTimelinePosChanged);
                 }
 
                 ResourceModel model = OBJLoader.loadModel(file.getPath());
@@ -1575,6 +1611,10 @@ public class MainScreen extends FluidUIScreen {
                         outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(name));
                     }
                 }
+
+                //Update the timeline
+                timeline.updatePercent(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
+                timeline.updateMaxTime(ProjectManager.getCurrentProject().clientLevelData.getMaxTime());
 
                 GL11.glFlush();
 
@@ -1915,20 +1955,26 @@ public class MainScreen extends FluidUIScreen {
             backgroundObjectCheckBox.setEnabled(true);
 
             boolean areBackgroundObjects = true;
+            boolean allHaveAnimData = true;
 
             for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
                 if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackground(name)) {
                     //At least one selected object isn't marked as in the background
                     areBackgroundObjects = false;
 
+                    //At least one selected object doesn't have anim data
+                    allHaveAnimData = false;
+
                     break;
                 }
             }
 
             backgroundObjectCheckBox.setValue(areBackgroundObjects);
+            addAnimDataButton.setVisible(!allHaveAnimData);
 
         } else {
             backgroundObjectCheckBox.setEnabled(false);
+            addAnimDataButton.setVisible(false);
         }
     }
 
@@ -2197,6 +2243,18 @@ public class MainScreen extends FluidUIScreen {
         } else {
             notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
+    }
+
+    private void onTimelinePosChanged(Float percent) {
+        timeline.updatePercent(percent);
+    }
+
+    public void addTextField(TextField textField) {
+        if (textFields == null) {
+            textFields = new HashSet<>();
+        }
+
+        textFields.add(textField);
     }
 
 }

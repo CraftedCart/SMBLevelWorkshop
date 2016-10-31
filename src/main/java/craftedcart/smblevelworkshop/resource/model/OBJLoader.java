@@ -4,13 +4,13 @@ import com.owens.oobjloader.builder.Build;
 import com.owens.oobjloader.builder.Face;
 import com.owens.oobjloader.builder.FaceVertex;
 import com.owens.oobjloader.builder.Material;
-import com.owens.oobjloader.lwjgl.DisplayModel;
 import com.owens.oobjloader.lwjgl.TextureLoader;
 import com.owens.oobjloader.lwjgl.VBO;
 import com.owens.oobjloader.lwjgl.VBOFactory;
 import com.owens.oobjloader.parser.Parse;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.util.LogHelper;
+import craftedcart.smblevelworkshop.util.Vec3f;
 import org.lwjgl.LWJGLException;
 
 import java.io.File;
@@ -54,6 +54,11 @@ public class OBJLoader {
         List<OBJObject> objectList = new ArrayList<>();
 
         for (ArrayList<Face> faceList : facesByObjectList) { //Split objects by material
+            //Aggregate lists to average to get a center point
+            List<Float> aggregateX = new ArrayList<>();
+            List<Float> aggregateY = new ArrayList<>();
+            List<Float> aggregateZ = new ArrayList<>();
+
             ArrayList<ArrayList<Face>> facesByMaterialList = createFaceListsByMaterial(faceList);
 
             OBJObject object = new OBJObject();
@@ -66,6 +71,36 @@ public class OBJLoader {
                 facesByMaterial.setFaceList(faceMatList);
                 object.addFacesByMaterial(facesByMaterial);
             }
+
+            //Add vertex positions to the aggregate lists to average later
+            for (Face face : faceList) {
+                for (FaceVertex vertex : face.vertices) {
+                    aggregateX.add(vertex.v.x);
+                    aggregateY.add(vertex.v.y);
+                    aggregateZ.add(vertex.v.z);
+                }
+            }
+
+            //Average vertex positions
+            float avgX = 0;
+            for (Float val : aggregateX) {
+                avgX += val;
+            }
+            avgX = avgX / aggregateX.size();
+
+            float avgY = 0;
+            for (Float val : aggregateY) {
+                avgY += val;
+            }
+            avgY = avgY / aggregateY.size();
+
+            float avgZ = 0;
+            for (Float val : aggregateZ) {
+                avgZ += val;
+            }
+            avgZ = avgZ / aggregateZ.size();
+
+            object.setCenterPoint(new Vec3f(avgX, avgY, avgZ));
 
             objectList.add(object);
         }

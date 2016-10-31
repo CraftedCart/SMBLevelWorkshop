@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop.level;
 
+import craftedcart.smblevelworkshop.animation.AnimData;
 import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
@@ -23,6 +24,7 @@ public class LevelData {
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
     @NotNull private Set<String> backgroundObjects = new HashSet<>();
     @NotNull private Set<String> backgroundExternalObjects = new HashSet<>();
+    @NotNull private Map<String, AnimData> modelAnimDataMap = new HashMap<>();
 
     public void setModel(@Nullable ResourceModel model) {
         this.model = model;
@@ -150,6 +152,10 @@ public class LevelData {
     @NotNull
     public Set<String> getBackgroundExternalObjects() {
         return backgroundExternalObjects;
+    }
+
+    public boolean doesObjectHaveAnimData(String name) {
+        return modelAnimDataMap.containsKey(name);
     }
 
 }

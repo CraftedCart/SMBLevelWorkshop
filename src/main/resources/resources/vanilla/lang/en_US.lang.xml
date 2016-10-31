@@ -90,6 +90,9 @@
     <entry key="notTriangulated" val="Mesh is not triangulated&#10;Expect broken mesh and collision when importing into SMB" />
     <entry key="noLevelLoaded" val="No level has been loaded!" />
     <entry key="invalidNumber" val="Invalid number!" />
+    <entry key="numberMustBeGreaterThanZero" val="Number must be greater than zero!" />
+    <entry key="numberMustBeGreaterThanOrEqualToZero" val="Number must be greater than or equal to zero!" />
+    <entry key="numberMustBeLessThanMaxTime" val="Number must be less than the max time!" />
     <entry key="nothingSelected" val="Nothing is selected!" />
     <entry key="alreadyObject" val="Already an object!" />
     <entry key="noObjectSpecified" val="No object specified!" />
@@ -108,5 +111,11 @@
 
     <entry key="placeableRemoved" val="Removed placeable" />
     <entry key="placeableRemovedPlural" val="Removed %d placeables" />
+
+    <!-- Animation -->
+    <entry key="addAnimData" val="Add animation data" />
+    <entry key="timeline" val="Timeline" />
+    <entry key="secondsAbbr" val="s" />
+    <entry key="secondsOutOfAbbr" val="s /" />
 
 </langPack>

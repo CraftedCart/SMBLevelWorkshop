@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.level;
 
 import io.github.craftedcart.fluidui.uiaction.UIAction;
+import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,14 @@ public class ClientLevelData {
 
     private Set<String> selectedExternalBackgroundObjects = new HashSet<>();
     @Nullable private UIAction onSelectedExternalBackgroundObjectsChanged;
+
+    /**
+     * Timeline position as a percentage
+     */
+    private float timelinePos = 0.0f;
+    @Nullable private UIAction1<Float> onTimelinePosChanged;
+    private float maxTime = 60.0f;
+    private float playbackSpeed = 0.0f;
 
     public void setLevelData(@NotNull LevelData levelData) {
         this.levelData = levelData;
@@ -234,5 +243,52 @@ public class ClientLevelData {
     public void setOnHiddenObjectsChanged(@Nullable UIAction onHiddenObjectsChanged) {
         this.onHiddenObjectsChanged = onHiddenObjectsChanged;
     }
-    
+
+    public void setTimelinePos(float timelinePos) {
+        if (timelinePos != this.timelinePos) {
+            this.timelinePos = timelinePos;
+            if (onTimelinePosChanged != null) {
+                onTimelinePosChanged.execute(timelinePos);
+            }
+        }
+    }
+
+    public float getTimelinePos() {
+        return timelinePos;
+    }
+
+    public void setOnTimelinePosChanged(@Nullable UIAction1<Float> onTimelinePosChanged) {
+        this.onTimelinePosChanged = onTimelinePosChanged;
+    }
+
+    public void setPlaybackSpeed(float playbackSpeed) {
+        this.playbackSpeed = playbackSpeed;
+    }
+
+    public float getPlaybackSpeed() {
+        return playbackSpeed;
+    }
+
+    public void setMaxTime(float maxTime) {
+        this.maxTime = maxTime;
+    }
+
+    public float getMaxTime() {
+        return maxTime;
+    }
+
+    public void update(float deltaTime) {
+        float newPos = timelinePos + (deltaTime / maxTime * playbackSpeed);
+
+        if (newPos > 1) {
+            setTimelinePos(1);
+            setPlaybackSpeed(0);
+        } else if (newPos < 0) {
+            setTimelinePos(0);
+            setPlaybackSpeed(0);
+        } else {
+            setTimelinePos(newPos);
+        }
+    }
+
 }
