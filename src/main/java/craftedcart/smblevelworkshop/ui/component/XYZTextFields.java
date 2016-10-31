@@ -57,6 +57,7 @@ public abstract class XYZTextFields extends Panel {
         zTextField = new TextField();
 
         setBackgroundColor(UIColor.transparent());
+        listBox.setUseStencil(false);
 
         listBox.setOnInitAction(() -> {
             listBox.setTopLeftPos(0, 0);
@@ -91,9 +92,7 @@ public abstract class XYZTextFields extends Panel {
             List<Placeable> placeables = new ArrayList<>();
             Double newValue = parseNumberAndAddUndoCommandAndPopulatePlaceablesList(xTextField.value, placeables);
             if (newValue != null) {
-                for (Placeable placeable : placeables) {
-                    valueChanged(new PosXYZ(newValue, 0, 0), EnumAxis.X, placeables);
-                }
+                valueChanged(new PosXYZ(newValue, 0, 0), EnumAxis.X, placeables);
             }
 
             mainScreen.updatePropertiesPlaceablesPanel();
