@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop.asset;
 
+import craftedcart.smblevelworkshop.util.ITransformable;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @author CraftedCart
  *         Created on 10/09/2016 (DD/MM/YYYY)
  */
-public class Placeable implements Cloneable {
+public class Placeable implements Cloneable, ITransformable {
 
     @NotNull private IAsset asset;
 
@@ -36,6 +37,31 @@ public class Placeable implements Cloneable {
     @NotNull
     public PosXYZ getPosition() {
         return position;
+    }
+
+    @Override
+    public boolean canMoveX() {
+        return getAsset().canGrabX();
+    }
+
+    @Override
+    public boolean canMoveY() {
+        return getAsset().canGrabY();
+    }
+
+    @Override
+    public boolean canMoveZ() {
+        return getAsset().canGrabZ();
+    }
+
+    @Override
+    public boolean canRotate() {
+        return getAsset().canRotate();
+    }
+
+    @Override
+    public boolean canScale() {
+        return getAsset().canScale();
     }
 
     public void setRotation(@NotNull PosXYZ rotation) {

@@ -1,12 +1,9 @@
-package craftedcart.smblevelworkshop.ui.component;
+package craftedcart.smblevelworkshop.ui.component.transform;
 
-import craftedcart.smblevelworkshop.asset.Placeable;
-import craftedcart.smblevelworkshop.project.ProjectManager;
-import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.ui.DefaultUITheme;
 import craftedcart.smblevelworkshop.ui.MainScreen;
-import craftedcart.smblevelworkshop.undo.UndoAssetTransform;
 import craftedcart.smblevelworkshop.util.EnumAxis;
+import craftedcart.smblevelworkshop.util.ITransformable;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.component.ListBox;
 import io.github.craftedcart.fluidui.component.Panel;
@@ -26,7 +23,7 @@ import java.util.List;
  */
 public abstract class XYZTextFields extends Panel {
 
-    @NotNull private MainScreen mainScreen;
+    @NotNull protected MainScreen mainScreen;
     @Nullable private TextField nextTextField;
 
     private ListBox listBox;
@@ -89,10 +86,10 @@ public abstract class XYZTextFields extends Panel {
         });
         xTextField.setOnReturnAction(() -> xTextField.setSelected(false));
         xTextField.setOnValueConfirmedAction(() -> {
-            List<Placeable> placeables = new ArrayList<>();
-            Double newValue = parseNumberAndAddUndoCommandAndPopulatePlaceablesList(xTextField.value, placeables);
+            List<ITransformable> transformables = new ArrayList<>();
+            Double newValue = valueConfirmedParseNumber(xTextField.value, transformables);
             if (newValue != null) {
-                valueChanged(new PosXYZ(newValue, 0, 0), EnumAxis.X, placeables);
+                valueChanged(new PosXYZ(newValue, 0, 0), EnumAxis.X, transformables);
             }
 
             mainScreen.updatePropertiesPlaceablesPanel();
@@ -119,10 +116,10 @@ public abstract class XYZTextFields extends Panel {
         });
         yTextField.setOnReturnAction(() -> yTextField.setSelected(false));
         yTextField.setOnValueConfirmedAction(() -> {
-            List<Placeable> placeables = new ArrayList<>();
-            Double newValue = parseNumberAndAddUndoCommandAndPopulatePlaceablesList(yTextField.value, placeables);
+            List<ITransformable> transformables = new ArrayList<>();
+            Double newValue = valueConfirmedParseNumber(yTextField.value, transformables);
             if (newValue != null) {
-                valueChanged(new PosXYZ(0, newValue, 0), EnumAxis.Y, placeables);
+                valueChanged(new PosXYZ(0, newValue, 0), EnumAxis.Y, transformables);
             }
 
             mainScreen.updatePropertiesPlaceablesPanel();
@@ -151,10 +148,10 @@ public abstract class XYZTextFields extends Panel {
         });
         zTextField.setOnReturnAction(() -> zTextField.setSelected(false));
         zTextField.setOnValueConfirmedAction(() -> {
-            List<Placeable> placeables = new ArrayList<>();
-            Double newValue = parseNumberAndAddUndoCommandAndPopulatePlaceablesList(zTextField.value, placeables);
+            List<ITransformable> transformables = new ArrayList<>();
+            Double newValue = valueConfirmedParseNumber(zTextField.value, transformables);
             if (newValue != null) {
-                valueChanged(new PosXYZ(0, 0, newValue), EnumAxis.Z, placeables);
+                valueChanged(new PosXYZ(0, 0, newValue), EnumAxis.Z, transformables);
             }
 
             mainScreen.updatePropertiesPlaceablesPanel();
@@ -164,29 +161,7 @@ public abstract class XYZTextFields extends Panel {
     }
 
     @Nullable
-    private Double parseNumberAndAddUndoCommandAndPopulatePlaceablesList(String value, List<Placeable> placeablesToPopulate) {
-        double newValue;
-
-        try {
-            newValue = Double.parseDouble(value);
-
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
-
-            mainScreen.addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData,
-                    ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-
-            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                placeablesToPopulate.add(placeable);
-            }
-
-            return newValue;
-        } catch (NumberFormatException e) {
-            mainScreen.notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
-        }
-
-        return null; //Failed to parse the number
-    }
+    abstract protected Double valueConfirmedParseNumber(String value, List<ITransformable> transformablesToPopulate);
 
     public void setXEnabled(boolean enabled) {
         xTextField.setEnabled(enabled);
@@ -216,6 +191,6 @@ public abstract class XYZTextFields extends Panel {
         return xTextField;
     }
 
-    public abstract void valueChanged(PosXYZ newValue, EnumAxis axis, List<Placeable> placeables);
+    public abstract void valueChanged(PosXYZ newValue, EnumAxis axis, List<ITransformable> transformables);
 
 }

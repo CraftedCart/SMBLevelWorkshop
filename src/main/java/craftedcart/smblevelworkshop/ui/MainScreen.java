@@ -13,6 +13,11 @@ import craftedcart.smblevelworkshop.resource.model.OBJLoader;
 import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.ui.component.*;
+import craftedcart.smblevelworkshop.ui.component.timeline.Timeline;
+import craftedcart.smblevelworkshop.ui.component.transform.ObjectPositionTextFields;
+import craftedcart.smblevelworkshop.ui.component.transform.PlaceablePositionTextFields;
+import craftedcart.smblevelworkshop.ui.component.transform.PlaceableRotationTextFields;
+import craftedcart.smblevelworkshop.ui.component.transform.PlaceableScaleTextFields;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -82,9 +87,9 @@ public class MainScreen extends FluidUIScreen {
     private final ListBox propertiesPlaceablesListBox = new ListBox();
     private final ListBox propertiesObjectsListBox = new ListBox();
 
-    private final PositionTextFields scaleTextFields = new PositionTextFields(this, null);
-    private final RotationTextFields rotationTextFields = new RotationTextFields(this, scaleTextFields.getFirstTextField());
-    private final ScaleTextFields positionTextFields = new ScaleTextFields(this, rotationTextFields.getFirstTextField());
+    private final PlaceableScaleTextFields placeableScaleTextFields = new PlaceableScaleTextFields(this, null);
+    private final PlaceableRotationTextFields placeableRotationTextFields = new PlaceableRotationTextFields(this, placeableScaleTextFields.getFirstTextField());
+    private final PlaceablePositionTextFields placeablePositionTextFields = new PlaceablePositionTextFields(this, placeableRotationTextFields.getFirstTextField());
 
     private final TextButton typeButton = new TextButton();
     @Nullable private List<String> typeList = null;
@@ -92,6 +97,10 @@ public class MainScreen extends FluidUIScreen {
     //UI: Object Properties
     private final CheckBox backgroundObjectCheckBox = new CheckBox();
     private final TextButton addAnimDataButton = new TextButton();
+
+    private final List<Component> objectAnimationComponents = new ArrayList<>();
+
+    private final ObjectPositionTextFields objectPositionTextFields = new ObjectPositionTextFields(this, /*objectRotationTextFields.getFirstTextField()*/ null);
 
     //UI: Text Fields
     private Set<TextField> textFields;
@@ -494,21 +503,21 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesPlaceablesListBox.addChildComponent("placeablesPropertiesLabel", placeablesPropertiesLabel);
 
-        final Label positionLabel = new Label();
-        positionLabel.setOnInitAction(() -> {
-            positionLabel.setText(LangManager.getItem("position"));
-            positionLabel.setVerticalAlign(EnumVAlignment.centre);
-            positionLabel.setTopLeftPos(0, 0);
-            positionLabel.setBottomRightPos(0, 24);
+        final Label placeablePositionLabel = new Label();
+        placeablePositionLabel.setOnInitAction(() -> {
+            placeablePositionLabel.setText(LangManager.getItem("position"));
+            placeablePositionLabel.setVerticalAlign(EnumVAlignment.centre);
+            placeablePositionLabel.setTopLeftPos(0, 0);
+            placeablePositionLabel.setBottomRightPos(0, 24);
         });
-        propertiesPlaceablesListBox.addChildComponent("positionLabel", positionLabel);
+        propertiesPlaceablesListBox.addChildComponent("placeablePositionLabel", placeablePositionLabel);
 
         //Defined at class level
-        positionTextFields.setOnInitAction(() -> {
-            positionTextFields.setTopLeftPos(0, 0);
-            positionTextFields.setBottomRightPos(0, 76);
+        placeablePositionTextFields.setOnInitAction(() -> {
+            placeablePositionTextFields.setTopLeftPos(0, 0);
+            placeablePositionTextFields.setBottomRightPos(0, 76);
         });
-        propertiesPlaceablesListBox.addChildComponent("positionTextFields", positionTextFields);
+        propertiesPlaceablesListBox.addChildComponent("placeablePositionTextFields", placeablePositionTextFields);
 
         final Label rotationLabel = new Label();
         rotationLabel.setOnInitAction(() -> {
@@ -520,11 +529,11 @@ public class MainScreen extends FluidUIScreen {
         propertiesPlaceablesListBox.addChildComponent("rotationLabel", rotationLabel);
 
         //Defined at class level
-        rotationTextFields.setOnInitAction(() -> {
-            rotationTextFields.setTopLeftPos(0, 0);
-            rotationTextFields.setBottomRightPos(0, 76);
+        placeableRotationTextFields.setOnInitAction(() -> {
+            placeableRotationTextFields.setTopLeftPos(0, 0);
+            placeableRotationTextFields.setBottomRightPos(0, 76);
         });
-        propertiesPlaceablesListBox.addChildComponent("rotationTextFields", rotationTextFields);
+        propertiesPlaceablesListBox.addChildComponent("placeableRotationTextFields", placeableRotationTextFields);
 
         final Label scaleLabel = new Label();
         scaleLabel.setOnInitAction(() -> {
@@ -536,11 +545,11 @@ public class MainScreen extends FluidUIScreen {
         propertiesPlaceablesListBox.addChildComponent("scaleLabel", scaleLabel);
 
         //Defined at class level
-        scaleTextFields.setOnInitAction(() -> {
-            scaleTextFields.setTopLeftPos(0, 0);
-            scaleTextFields.setBottomRightPos(0, 76);
+        placeableScaleTextFields.setOnInitAction(() -> {
+            placeableScaleTextFields.setTopLeftPos(0, 0);
+            placeableScaleTextFields.setBottomRightPos(0, 76);
         });
-        propertiesPlaceablesListBox.addChildComponent("scaleTextFields", scaleTextFields);
+        propertiesPlaceablesListBox.addChildComponent("placeableScaleTextFields", placeableScaleTextFields);
 
         final Label typeLabel = new Label();
         typeLabel.setOnInitAction(() -> {
@@ -644,11 +653,32 @@ public class MainScreen extends FluidUIScreen {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().addAnimData(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
                 updatePropertiesObjectsPanel();
+                //TODO: Add undo command
             } else {
                 notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         propertiesObjectsListBox.addChildComponent("addAnimDataButton", addAnimDataButton);
+
+        final Label objectPositionLabel = new Label();
+        objectPositionLabel.setOnInitAction(() -> {
+            objectPositionLabel.setText(LangManager.getItem("position"));
+            objectPositionLabel.setVerticalAlign(EnumVAlignment.centre);
+            objectPositionLabel.setTopLeftPos(0, 0);
+            objectPositionLabel.setBottomRightPos(0, 24);
+            objectPositionLabel.setVisible(false);
+        });
+        objectAnimationComponents.add(objectPositionLabel);
+        propertiesObjectsListBox.addChildComponent("objectPositionLabel", objectPositionLabel);
+
+        //Defined at class level
+        objectPositionTextFields.setOnInitAction(() -> {
+            objectPositionTextFields.setTopLeftPos(0, 0);
+            objectPositionTextFields.setBottomRightPos(0, 76);
+            objectPositionTextFields.setVisible(false);
+        });
+        objectAnimationComponents.add(objectPositionTextFields);
+        propertiesObjectsListBox.addChildComponent("objectPositionTextFields", objectPositionTextFields);
         //</editor-fold>
 
         //Defined at class level
@@ -1856,35 +1886,35 @@ public class MainScreen extends FluidUIScreen {
             posAvgZ = posAvgZ / (double) selectedCount;
 
             if (canGrabX) {
-                positionTextFields.setXEnabled(true);
+                placeablePositionTextFields.setXEnabled(true);
             } else {
-                positionTextFields.setXEnabled(false);
-                positionTextFields.setXValue(0);
+                placeablePositionTextFields.setXEnabled(false);
+                placeablePositionTextFields.setXValue(0);
             }
             if (canGrabY) {
-                positionTextFields.setYEnabled(true);
+                placeablePositionTextFields.setYEnabled(true);
             } else {
-                positionTextFields.setYEnabled(false);
-                positionTextFields.setYValue(0);
+                placeablePositionTextFields.setYEnabled(false);
+                placeablePositionTextFields.setYValue(0);
             }
             if (canGrabZ) {
-                positionTextFields.setZEnabled(true);
+                placeablePositionTextFields.setZEnabled(true);
             } else {
-                positionTextFields.setZEnabled(false);
-                positionTextFields.setZValue(0);
+                placeablePositionTextFields.setZEnabled(false);
+                placeablePositionTextFields.setZValue(0);
             }
 
-            positionTextFields.setXValue(posAvgX);
-            positionTextFields.setYValue(posAvgY);
-            positionTextFields.setZValue(posAvgZ);
+            placeablePositionTextFields.setXValue(posAvgX);
+            placeablePositionTextFields.setYValue(posAvgY);
+            placeablePositionTextFields.setZValue(posAvgZ);
         } else {
-            positionTextFields.setXEnabled(false);
-            positionTextFields.setYEnabled(false);
-            positionTextFields.setZEnabled(false);
+            placeablePositionTextFields.setXEnabled(false);
+            placeablePositionTextFields.setYEnabled(false);
+            placeablePositionTextFields.setZEnabled(false);
 
-            positionTextFields.setXValue(0);
-            positionTextFields.setYValue(0);
-            positionTextFields.setZValue(0);
+            placeablePositionTextFields.setXValue(0);
+            placeablePositionTextFields.setYValue(0);
+            placeablePositionTextFields.setZValue(0);
         }
 
         if (selectedCount != 0 && canRotate) {
@@ -1892,21 +1922,21 @@ public class MainScreen extends FluidUIScreen {
             rotAvgY = rotAvgY / (double) selectedCount;
             rotAvgZ = rotAvgZ / (double) selectedCount;
 
-            rotationTextFields.setXEnabled(true);
-            rotationTextFields.setYEnabled(true);
-            rotationTextFields.setZEnabled(true);
+            placeableRotationTextFields.setXEnabled(true);
+            placeableRotationTextFields.setYEnabled(true);
+            placeableRotationTextFields.setZEnabled(true);
 
-            rotationTextFields.setXValue(rotAvgX);
-            rotationTextFields.setYValue(rotAvgY);
-            rotationTextFields.setZValue(rotAvgZ);
+            placeableRotationTextFields.setXValue(rotAvgX);
+            placeableRotationTextFields.setYValue(rotAvgY);
+            placeableRotationTextFields.setZValue(rotAvgZ);
         } else {
-            rotationTextFields.setXEnabled(false);
-            rotationTextFields.setYEnabled(false);
-            rotationTextFields.setZEnabled(false);
+            placeableRotationTextFields.setXEnabled(false);
+            placeableRotationTextFields.setYEnabled(false);
+            placeableRotationTextFields.setZEnabled(false);
 
-            rotationTextFields.setXValue(0);
-            rotationTextFields.setYValue(0);
-            rotationTextFields.setZValue(0);
+            placeableRotationTextFields.setXValue(0);
+            placeableRotationTextFields.setYValue(0);
+            placeableRotationTextFields.setZValue(0);
         }
 
         if (selectedCount != 0 && canScale) {
@@ -1914,21 +1944,21 @@ public class MainScreen extends FluidUIScreen {
             sclAvgY = sclAvgY / (double) selectedCount;
             sclAvgZ = sclAvgZ / (double) selectedCount;
 
-            scaleTextFields.setXEnabled(true);
-            scaleTextFields.setYEnabled(true);
-            scaleTextFields.setZEnabled(true);
+            placeableScaleTextFields.setXEnabled(true);
+            placeableScaleTextFields.setYEnabled(true);
+            placeableScaleTextFields.setZEnabled(true);
 
-            scaleTextFields.setXValue(sclAvgX);
-            scaleTextFields.setYValue(sclAvgY);
-            scaleTextFields.setZValue(sclAvgZ);
+            placeableScaleTextFields.setXValue(sclAvgX);
+            placeableScaleTextFields.setYValue(sclAvgY);
+            placeableScaleTextFields.setZValue(sclAvgZ);
         } else {
-            scaleTextFields.setXEnabled(false);
-            scaleTextFields.setYEnabled(false);
-            scaleTextFields.setZEnabled(false);
+            placeableScaleTextFields.setXEnabled(false);
+            placeableScaleTextFields.setYEnabled(false);
+            placeableScaleTextFields.setZEnabled(false);
 
-            scaleTextFields.setXValue(1);
-            scaleTextFields.setYValue(1);
-            scaleTextFields.setZValue(1);
+            placeableScaleTextFields.setXValue(1);
+            placeableScaleTextFields.setYValue(1);
+            placeableScaleTextFields.setZValue(1);
         }
 
         if (selectedIAsset != null) {
@@ -1980,9 +2010,12 @@ public class MainScreen extends FluidUIScreen {
             backgroundObjectCheckBox.setValue(areBackgroundObjects);
             addAnimDataButton.setVisible(!allHaveAnimData);
 
+            setObjectAnimationComponentsVisible(allHaveAnimData); //If all selected objects have anim data, show anim components
+
         } else {
             backgroundObjectCheckBox.setEnabled(false);
             addAnimDataButton.setVisible(false);
+            setObjectAnimationComponentsVisible(false);
         }
     }
 
@@ -2263,6 +2296,13 @@ public class MainScreen extends FluidUIScreen {
         }
 
         textFields.add(textField);
+    }
+
+    private void setObjectAnimationComponentsVisible(boolean isVisible) {
+        for (Component component : objectAnimationComponents) {
+            component.setVisible(isVisible);
+        }
+        propertiesObjectsListBox.reorganizeChildComponents();
     }
 
 }

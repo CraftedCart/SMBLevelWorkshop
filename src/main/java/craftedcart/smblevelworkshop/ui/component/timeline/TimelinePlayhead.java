@@ -1,4 +1,4 @@
-package craftedcart.smblevelworkshop.ui.component;
+package craftedcart.smblevelworkshop.ui.component.timeline;
 
 import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.Panel;

@@ -1,4 +1,4 @@
-package craftedcart.smblevelworkshop.ui.component;
+package craftedcart.smblevelworkshop.ui.component.timeline;
 
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.project.ProjectManager;
@@ -270,7 +270,8 @@ public class Timeline extends Panel {
             percentTextField.setInputRegexCheck("[0-9.]");
             percentTextField.setValue(df.format(0));
         });
-        percentTextField.setOnReturnAction(() -> {
+        percentTextField.setOnReturnAction(() -> percentTextField.setSelected(false));
+        percentTextField.setOnValueConfirmedAction(() -> {
             try {
                 float newValue = Float.parseFloat(percentTextField.value);
                 if (ProjectManager.getCurrentProject().clientLevelData != null) {
@@ -285,8 +286,6 @@ public class Timeline extends Panel {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 updatePercent(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
             }
-
-            percentTextField.setSelected(false);
         });
         mainScreen.addTextField(percentTextField);
         headingPanel.addChildComponent("percentTextField", percentTextField);
@@ -310,7 +309,8 @@ public class Timeline extends Panel {
             maxTimeTextField.setInputRegexCheck("[0-9.]");
             maxTimeTextField.setValue(df.format(0));
         });
-        maxTimeTextField.setOnReturnAction(() -> {
+        maxTimeTextField.setOnReturnAction(() -> maxTimeTextField.setSelected(false));
+        maxTimeTextField.setOnValueConfirmedAction(() -> {
             try {
                 float newValue = Float.parseFloat(maxTimeTextField.value);
                 if (ProjectManager.getCurrentProject().clientLevelData != null) {
@@ -329,8 +329,6 @@ public class Timeline extends Panel {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 updateMaxTime(ProjectManager.getCurrentProject().clientLevelData.getMaxTime());
             }
-
-            maxTimeTextField.setSelected(false);
         });
         mainScreen.addTextField(maxTimeTextField);
         headingPanel.addChildComponent("maxTimeTextField", maxTimeTextField);
@@ -354,7 +352,8 @@ public class Timeline extends Panel {
             timeTextField.setInputRegexCheck("[0-9.]");
             timeTextField.setValue(df.format(0));
         });
-        timeTextField.setOnReturnAction(() -> {
+        timeTextField.setOnReturnAction(() -> timeTextField.setSelected(false));
+        timeTextField.setOnValueConfirmedAction(() -> {
             try {
                 float newValue = Float.parseFloat(timeTextField.value);
                 if (ProjectManager.getCurrentProject().clientLevelData != null) {
@@ -377,8 +376,6 @@ public class Timeline extends Panel {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 updatePercent(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
             }
-
-            timeTextField.setSelected(false);
         });
         mainScreen.addTextField(timeTextField);
         headingPanel.addChildComponent("timeTextField", timeTextField);
