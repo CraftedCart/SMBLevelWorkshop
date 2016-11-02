@@ -130,11 +130,47 @@
 		<td>4</td>
 		<td>Integer - Big Endian - Offset to list of <a href="#levmodeloffsetb">level model offsets - Type B</a><td>
 	</tr>
-	<tr>
+    <tr>
 		<td>156</td>
-		<td><code>0x800</code></td>
-		<td>2048</td>
-		<td>2048x <code>00</code></td>
+		<td><code>0x14</code></td>
+		<td>20</td>
+		<td>Zero/Unknown<td>
+	</tr>
+    <tr>
+		<td>176</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to some sort of animation (Mystery One)<td>
+	</tr>
+    <tr>
+		<td>180</td>
+		<td><code>0x08</code></td>
+		<td>8</td>
+		<td>Unknown/Zero<td>
+	</tr>
+	<tr>
+		<td>188</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to Mystery Two</td>
+	</tr>
+    <tr>
+		<td>192</td>
+		<td><code>0x14</code></td>
+		<td>20</td>
+		<td>Unknown/Zero</td>
+	</tr>
+    <tr>
+		<td>212</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to Mystery Three</td>
+	</tr>
+    <tr>
+		<td>216</td>
+		<td><code>0x7C4</code></td>
+		<td>1988</td>
+		<td>Unknown/Zero</td>
 	</tr>
 </table>
 
@@ -902,6 +938,147 @@
 		<td><code>0x04</code></td>
 		<td>4</td>
 		<td><a href="#coltrilist">Pointer to a triangle list for the collision grid section, integer, big endian</a></td>
+	</tr>
+</table>
+
+<h2 id="goal">Mystery One (Some Animation)</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td><a href="#animframe">Number of frames for X animation</a></td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td><a href="#animframe">Offset to X animation frames</a></td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td><a href="#animframe">Number of frames for Y animation</a></td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td><a href="#animframe">Offset to Y animation frames</a></td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td><a href="#animframe">Number of frames for Z animation</a></td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td><a href="#animframe">Offset to Z animation frames</a></td>
+	</tr>
+</table>
+
+<h2 id="animframe">Mystery One Animation frame</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+        <th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td><code>0x00000002</code></td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td>Time, in percent allotted time? (must start at 0.0 and go all the way to 100.0 or game will complain?), single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+        <td>4</td>
+		<td>Displacement (rotation or translation), single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x08</code></td>
+        <td>8</td>
+		<td>Unknown/Zero</td>
+	</tr>
+</table>
+
+<h2 id="animframe">Mystery Two</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x20</code></td>
+        <td>36</td>
+		<td>Unknown (non-zero. not floats or shorts. big/little endian doesn't change the values)</td>
+	</tr>
+</table>
+
+<h2 id="animframe">Mystery Three</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+        <th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x4</code></td>
+        <td>4</td>
+		<td>Probably a single precision float, big endian</td>
+	</tr>
+    <tr>
+		<td>4</td>
+		<td><code>0x4</code></td>
+        <td>4</td>
+		<td>Probably a single precision float, big endian</td>
+	</tr>
+    <tr>
+		<td>4</td>
+		<td><code>0x4</code></td>
+        <td>4</td>
+		<td>Probably a single precision float, big endian</td>
+	</tr>
+    <tr>
+		<td>12</td>
+		<td><code>0x2</code></td>
+        <td>2</td>
+		<td>Zero/Padding?</td>
+	</tr>
+    <tr>
+		<td>14</td>
+		<td><code>0x2</code></td>
+        <td>2</td>
+		<td>Some marker (endianess doesn't affect this)</td>
+	</tr>
+    <tr>
+		<td>16</td>
+		<td><code>0x14</code></td>
+        <td>20</td>
+		<td>Zero/Unknown</td>
 	</tr>
 </table>
 
