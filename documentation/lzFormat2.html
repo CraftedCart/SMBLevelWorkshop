@@ -140,7 +140,7 @@
 		<td>176</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Integer - Big Endian - Offset to some sort of animation (Mystery One)<td>
+		<td>Integer - Big Endian - Offset to some sort of animation frame (Mystery One)<td>
 	</tr>
 	<tr>
 		<td>180</td>
@@ -808,9 +808,21 @@
 	</tr>
 	<tr>
 		<td>44</td>
-		<td><code>0x0C</code></td>
-		<td>12</td>
-		<td>Zero</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Offset to BG Animation Header, integer, big endian</td>
+	</tr>
+	<tr>
+		<td>48</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Offset to BG Animation Header, integer, big endian (different than previous animation)</td>
+	</tr>
+	<tr>
+		<td>52</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Mystery 4</td>
 	</tr>
 </table>
 
@@ -983,7 +995,7 @@
 	</tr>
 </table>
 
-<h2 id="goal">Mystery One (Some Animation)</h2><br />
+<h2 id="goal">Animation Header</h2><br />
 <table class="table">
 	<tr>
 		<th>Relative Offset (decimal)</th>
@@ -1029,7 +1041,71 @@
 	</tr>
 </table>
 
-<h2 id="animframe">Mystery One Animation frame</h2><br />
+<h2 id="goal">Background Animation Header</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Zero/Unknown</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><code>0x41000000</code> (ascii 'A')</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x18</code></td>
+		<td>24</td>
+		<td>Zero/Unknown</td>
+	</tr>
+	<tr>
+		<td>32</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Number of frames for X animation</a></td>
+	</tr>
+	<tr>
+		<td>36</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Offset to X animation frames</a></td>
+	</tr>
+	<tr>
+		<td>40</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Number of frames for Y animation</a></td>
+	</tr>
+	<tr>
+		<td>44</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Offset to Y animation frames</a></td>
+	</tr>
+	<tr>
+		<td>48</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Number of frames for Z animation</a></td>
+	</tr>
+	<tr>
+		<td>52</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Offset to Z animation frames</a></td>
+	</tr>
+</table>
+
+<h2 id="animframe">Animation frame</h2><br />
 <table class="table">
 	<tr>
 		<th>Relative Offset (decimal)</th>
@@ -1122,6 +1198,56 @@
 		<td><code>0x14</code></td>
 		<td>20</td>
 		<td>Zero/Unknown</td>
+	</tr>
+</table>
+
+<h2 id="animframe">Mystery Four</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x10</code></td>
+		<td>16</td>
+		<td>Zero/Unknown</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Offset to Mystery four-a</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x1C</code></td>
+		<td>28</td>
+		<td>Zero/Unknown</td>
+	</tr>
+</table>
+
+<h2 id="animframe">Mystery Four-A</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Probably a single precision float, big endian</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Probably a single precision float, big endian</td>
 	</tr>
 </table>
 
