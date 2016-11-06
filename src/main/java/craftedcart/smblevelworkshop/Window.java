@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop;
 
+import com.apple.eawt.Application;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.util.CrashHandler;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -15,9 +16,13 @@ import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.opengl.SharedDrawable;
 import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.ImageIOImageData;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -27,7 +32,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Window {
 
     public static SharedDrawable drawable;
-    public static ReentrantLock lock = new ReentrantLock();
     public static IUIScreen uiScreen;
 
     public static boolean running = true;
@@ -44,6 +48,23 @@ public class Window {
         Display.create(pxFormat);
         openGLVersion = GL11.glGetString(GL11.GL_VERSION);
         drawable = new SharedDrawable(Display.getDrawable());
+
+        //Set icon
+        LogHelper.info(SMBLevelWorkshop.class, "Setting icon");
+
+        ByteBuffer icon16 = new ImageIOImageData().imageToByteBuffer(ImageIO.read(SMBLevelWorkshop.class.getResourceAsStream("/icon16.png")), false, false, null);
+        ByteBuffer icon32 = new ImageIOImageData().imageToByteBuffer(ImageIO.read(SMBLevelWorkshop.class.getResourceAsStream("/icon32.png")), false, false, null);
+        ByteBuffer icon128 = new ImageIOImageData().imageToByteBuffer(ImageIO.read(SMBLevelWorkshop.class.getResourceAsStream("/icon128.png")), false, false, null);
+
+        String OS = System.getProperty("os.name").toUpperCase();
+        if (OS.contains("WIN")) {
+            Display.setIcon(new ByteBuffer[] {icon16, icon32});
+        } else if (OS.contains("MAC")) {
+            Display.setIcon(new ByteBuffer[] {icon128});
+            Application.getApplication().setDockIconImage(new ImageIcon(SMBLevelWorkshop.class.getResource("/icon128.png")).getImage());
+        } else {
+            Display.setIcon(new ByteBuffer[] {icon32});
+        }
 
         new Thread(() -> {
             try {
