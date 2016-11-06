@@ -2,6 +2,7 @@ package craftedcart.smblevelworkshop.ui;
 
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
+import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.level.LevelData;
@@ -14,10 +15,7 @@ import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.ui.component.*;
 import craftedcart.smblevelworkshop.ui.component.timeline.Timeline;
-import craftedcart.smblevelworkshop.ui.component.transform.ObjectPositionTextFields;
-import craftedcart.smblevelworkshop.ui.component.transform.PlaceablePositionTextFields;
-import craftedcart.smblevelworkshop.ui.component.transform.PlaceableRotationTextFields;
-import craftedcart.smblevelworkshop.ui.component.transform.PlaceableScaleTextFields;
+import craftedcart.smblevelworkshop.ui.component.transform.*;
 import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
@@ -101,6 +99,7 @@ public class MainScreen extends FluidUIScreen {
     private final List<Component> objectAnimationComponents = new ArrayList<>();
 
     private final ObjectPositionTextFields objectPositionTextFields = new ObjectPositionTextFields(this, /*objectRotationTextFields.getFirstTextField()*/ null);
+    private final XYZKeyframeButtons objectPositionKeyframeButtons = new XYZKeyframeButtons();
 
     //UI: Text Fields
     private Set<TextField> textFields;
@@ -671,14 +670,37 @@ public class MainScreen extends FluidUIScreen {
         objectAnimationComponents.add(objectPositionLabel);
         propertiesObjectsListBox.addChildComponent("objectPositionLabel", objectPositionLabel);
 
+        final Panel objectPositionPropertiesPanel = new Panel();
+        objectPositionPropertiesPanel.setOnInitAction(() -> {
+            objectPositionPropertiesPanel.setTopLeftPos(0, 0);
+            objectPositionPropertiesPanel.setBottomRightPos(0, 76);
+            objectPositionPropertiesPanel.setBackgroundColor(UIColor.transparent());
+            objectPositionPropertiesPanel.setVisible(false);
+        });
+        objectAnimationComponents.add(objectPositionPropertiesPanel);
+        propertiesObjectsListBox.addChildComponent("objectPositionPropertiesPanel", objectPositionPropertiesPanel);
+
         //Defined at class level
         objectPositionTextFields.setOnInitAction(() -> {
             objectPositionTextFields.setTopLeftPos(0, 0);
-            objectPositionTextFields.setBottomRightPos(0, 76);
-            objectPositionTextFields.setVisible(false);
+            objectPositionTextFields.setBottomRightPos(-24, 76);
+            objectPositionTextFields.setTopLeftAnchor(0, 0);
+            objectPositionTextFields.setBottomRightAnchor(1, 0);
+            objectPositionTextFields.setXEnabled(true);
+            objectPositionTextFields.setYEnabled(true);
+            objectPositionTextFields.setZEnabled(true);
         });
-        objectAnimationComponents.add(objectPositionTextFields);
-        propertiesObjectsListBox.addChildComponent("objectPositionTextFields", objectPositionTextFields);
+        objectPositionPropertiesPanel.addChildComponent("objectPositionTextFields", objectPositionTextFields);
+
+        //Defined at class level
+        objectPositionKeyframeButtons.setOnInitAction(() -> {
+            objectPositionKeyframeButtons.setTopLeftPos(-24, 0);
+            objectPositionKeyframeButtons.setBottomRightPos(0, 76);
+            objectPositionKeyframeButtons.setTopLeftAnchor(1, 0);
+            objectPositionKeyframeButtons.setBottomRightAnchor(1, 0);
+        });
+        objectPositionKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onKeyframeActivated(axis, ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()));
+        objectPositionPropertiesPanel.addChildComponent("objectPositionKeyframeButtons", objectPositionKeyframeButtons);
         //</editor-fold>
 
         //Defined at class level
@@ -1025,31 +1047,52 @@ public class MainScreen extends FluidUIScreen {
                     UIColor.pureWhite().bindColor();
                 }
 
+
+                float time = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+
                 GL20.glUseProgram(currentShaderProgram.getProgramID());
                 for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
+                    GL11.glPushMatrix();
+
+                    ITransformable transform = ProjectManager.getCurrentProject().clientLevelData.getObjectNamedTransform(object.name, time);
+                    PosXYZ translate = transform.getPosition();
+                    GL11.glTranslated(translate.x, translate.y, translate.z);
+                    //TODO: Rotation
+
                     if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
                         ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(currentShaderProgram, useTextures, object.name);
                     }
+
+                    GL11.glPopMatrix();
                 }
                 GL20.glUseProgram(0);
 
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model filled");
 
                 if (SMBLWSettings.showAllWireframes) {
-                    GL11.glColor4f(0, 0, 0, 1);
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelWireframe(null, false);
 
-                    Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test on)");
+                    for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
+                        GL11.glPushMatrix();
 
-                    GL11.glDisable(GL11.GL_DEPTH_TEST);
+                        transformObjectAtTime(object.name);
 
-                    GL11.glColor4f(0, 0, 0, 0.01f);
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelWireframe(null, false);
+                        if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
+                            GL11.glColor4f(0, 0, 0, 1);
+                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, object.name);
 
-                    GL11.glEnable(GL11.GL_DEPTH_TEST);
+                            GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-                    Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframe (Depth test off)");
+                            GL11.glColor4f(0, 0, 0, 0.01f);
+                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, object.name);
+
+                            GL11.glEnable(GL11.GL_DEPTH_TEST);
+                        }
+
+                        GL11.glPopMatrix();
+                    }
                 }
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframes");
+
                 //</editor-fold>
 
                 //<editor-fold desc="Draw placeables">
@@ -1094,27 +1137,34 @@ public class MainScreen extends FluidUIScreen {
                 UIUtils.drawWithStencilOutside(
                         () -> {
                             for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(null, false, name);
+                                GL11.glPushMatrix();
+
+                                transformObjectAtTime(name);
+
+                                if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(name)) {
+                                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(null, false, name);
+                                }
+
+                                GL11.glPopMatrix();
                             }
                         },
                         () -> {
                             GL11.glDisable(GL11.GL_DEPTH_TEST);
                             for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+                                GL11.glPushMatrix();
+
+                                transformObjectAtTime(name);
+
+                                if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(name)) {
+                                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+                                }
+
+                                GL11.glPopMatrix();
                             }
                             GL11.glEnable(GL11.GL_DEPTH_TEST);
                         });
 
-                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframe (Depth test on)");
-
-//                GL11.glDisable(GL11.GL_DEPTH_TEST);
-//                UIColor.matBlue(0.05).bindColor();
-//                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-//                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
-//                }
-//                GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframe (Depth test off)");
+                Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model selection wireframes");
                 //</editor-fold>
                 //</editor-fold>
 
@@ -1986,7 +2036,7 @@ public class MainScreen extends FluidUIScreen {
         updateOutlinerObjectsPanel();
     }
 
-    private void updatePropertiesObjectsPanel() {
+    public void updatePropertiesObjectsPanel() {
         if (ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size() > 0) {
 
             //Enable UI components
@@ -2011,6 +2061,37 @@ public class MainScreen extends FluidUIScreen {
             addAnimDataButton.setVisible(!allHaveAnimData);
 
             setObjectAnimationComponentsVisible(allHaveAnimData); //If all selected objects have anim data, show anim components
+
+            //<editor-fold desc="Average out positions">
+            double posAvgX = 0;
+            double posAvgY = 0;
+            double posAvgZ = 0;
+
+            float time = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+
+            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                NamedTransform transform = new NamedTransform(name);
+                if (ProjectManager.getCurrentProject().clientLevelData.doesCurrentFrameObjectHaveAnimData(name)) {
+                    transform = ProjectManager.getCurrentProject().clientLevelData.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name);
+                } else if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                    transform = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(name).getNamedTransformAtTime(time, name);
+                }
+
+                posAvgX += transform.getPosition().x;
+                posAvgY += transform.getPosition().y;
+                posAvgZ += transform.getPosition().z;
+            }
+
+            int selectedCount = ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size();
+
+            posAvgX = posAvgX / (double) selectedCount;
+            posAvgY = posAvgY / (double) selectedCount;
+            posAvgZ = posAvgZ / (double) selectedCount;
+
+            objectPositionTextFields.setXValue(posAvgX);
+            objectPositionTextFields.setYValue(posAvgY);
+            objectPositionTextFields.setZValue(posAvgZ);
+            //</editor-fold>
 
         } else {
             backgroundObjectCheckBox.setEnabled(false);
@@ -2287,7 +2368,13 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void onTimelinePosChanged(Float percent) {
+        assert ProjectManager.getCurrentProject().clientLevelData != null;
+        if (ProjectManager.getCurrentProject().clientLevelData.getTimelinePos() != percent) {
+            ProjectManager.getCurrentProject().clientLevelData.clearCurrentFrameObjectAnimData();
+        }
+
         timeline.updatePercent(percent);
+        updatePropertiesObjectsPanel();
     }
 
     public void addTextField(TextField textField) {
@@ -2303,6 +2390,49 @@ public class MainScreen extends FluidUIScreen {
             component.setVisible(isVisible);
         }
         propertiesObjectsListBox.reorganizeChildComponents();
+    }
+
+    private void onKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
+        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        LevelData ld = cld.getLevelData();
+        float time = cld.getTimelinePos();
+
+        if (axis == EnumAxis.X) {
+            for (String name : selectedObjects) {
+                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
+                    ld.getObjectAnimData(name).setPosXFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().x);
+                } else {
+                    ld.getObjectAnimData(name).setPosXFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().x);
+                }
+            }
+        } else if (axis == EnumAxis.Y) {
+            for (String name : selectedObjects) {
+                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
+                    ld.getObjectAnimData(name).setPosYFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().y);
+                } else {
+                    ld.getObjectAnimData(name).setPosYFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().y);
+                }
+            }
+        } else if (axis == EnumAxis.Z) {
+            for (String name : selectedObjects) {
+                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
+                    ld.getObjectAnimData(name).setPosZFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().z);
+                } else {
+                    ld.getObjectAnimData(name).setPosZFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().z);
+                }
+            }
+        }
+    }
+
+    private void transformObjectAtTime(String name, float time) {
+        ITransformable transform = ProjectManager.getCurrentProject().clientLevelData.getObjectNamedTransform(name, time);
+        PosXYZ translate = transform.getPosition();
+        GL11.glTranslated(translate.x, translate.y, translate.z);
+        //TODO: Rotation
+    }
+
+    private void transformObjectAtTime(String name) {
+        transformObjectAtTime(name, ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
     }
 
 }

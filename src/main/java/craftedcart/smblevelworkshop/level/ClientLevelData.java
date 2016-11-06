@@ -1,11 +1,16 @@
 package craftedcart.smblevelworkshop.level;
 
+import craftedcart.smblevelworkshop.animation.AnimData;
+import craftedcart.smblevelworkshop.animation.NamedTransform;
+import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,6 +39,8 @@ public class ClientLevelData {
     @Nullable private UIAction1<Float> onTimelinePosChanged;
     private float maxTime = 60.0f;
     private float playbackSpeed = 0.0f;
+
+    @NotNull private Map<String, AnimData> currentFrameObjectAnimDataMap = new HashMap<>();
 
     public void setLevelData(@NotNull LevelData levelData) {
         this.levelData = levelData;
@@ -250,6 +257,8 @@ public class ClientLevelData {
             if (onTimelinePosChanged != null) {
                 onTimelinePosChanged.execute(timelinePos);
             }
+
+            currentFrameObjectAnimDataMap.clear(); //Clear non-keyframed changes
         }
     }
 
@@ -289,6 +298,40 @@ public class ClientLevelData {
         } else {
             setTimelinePos(newPos);
         }
+    }
+
+    public boolean doesCurrentFrameObjectHaveAnimData(String name) {
+        return currentFrameObjectAnimDataMap.containsKey(name);
+    }
+
+    public void addCurrentFrameAnimData(Set<String> selectedObjects) {
+        for (String name : selectedObjects) {
+            if (!currentFrameObjectAnimDataMap.containsKey(name)) { //If the object doesn't already have animation data
+                currentFrameObjectAnimDataMap.put(name, new AnimData());
+            }
+        }
+    }
+
+    public AnimData getCurrentFrameObjectAnimData(String name) {
+        return currentFrameObjectAnimDataMap.get(name);
+    }
+
+    public void clearCurrentFrameObjectAnimData() {
+        currentFrameObjectAnimDataMap.clear();
+    }
+
+    public NamedTransform getObjectNamedTransform(String name, float time) {
+        AnimData animData = new AnimData();
+
+        if (getLevelData().doesObjectHaveAnimData(name)) {
+            animData.mergeWith(getLevelData().getObjectAnimData(name));
+        }
+
+        if (doesCurrentFrameObjectHaveAnimData(name)) {
+            animData.mergeWith(getCurrentFrameObjectAnimData(name));
+        }
+
+        return animData.getNamedTransformAtTime(time, name);
     }
 
 }

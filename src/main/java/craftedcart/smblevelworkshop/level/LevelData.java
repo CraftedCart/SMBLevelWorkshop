@@ -8,10 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author CraftedCart
@@ -24,7 +21,7 @@ public class LevelData {
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
     @NotNull private Set<String> backgroundObjects = new HashSet<>();
     @NotNull private Set<String> backgroundExternalObjects = new HashSet<>();
-    @NotNull private Map<String, AnimData> modelAnimDataMap = new HashMap<>();
+    @NotNull private TreeMap<String, AnimData> objectAnimDataMap = new TreeMap<>();
 
     public void setModel(@Nullable ResourceModel model) {
         this.model = model;
@@ -155,15 +152,19 @@ public class LevelData {
     }
 
     public boolean doesObjectHaveAnimData(String name) {
-        return modelAnimDataMap.containsKey(name);
+        return objectAnimDataMap.containsKey(name);
     }
 
     public void addAnimData(Set<String> selectedObjects) {
         for (String name : selectedObjects) {
-            if (!modelAnimDataMap.containsKey(name)) { //If the object doesn't already have animation data
-                modelAnimDataMap.put(name, new AnimData());
+            if (!objectAnimDataMap.containsKey(name)) { //If the object doesn't already have animation data
+                objectAnimDataMap.put(name, new AnimData());
             }
         }
+    }
+
+    public AnimData getObjectAnimData(String name) {
+        return objectAnimDataMap.get(name);
     }
 
 }

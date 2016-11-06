@@ -49,4 +49,9 @@ public class PlaceablePositionTextFields extends PositionTextFields {
         return null; //Failed to parse the number
     }
 
+    @Override
+    public void postValuesChanged() {
+        mainScreen.updatePropertiesPlaceablesPanel();
+    }
+
 }

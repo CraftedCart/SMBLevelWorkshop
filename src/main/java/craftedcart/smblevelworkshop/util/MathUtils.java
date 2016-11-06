@@ -6,6 +6,10 @@ package craftedcart.smblevelworkshop.util;
  */
 public class MathUtils {
 
+    public static double lerp(double a, double b, double f) {
+        return a + f * (b - a);
+    }
+
     public static double clamp(double val, double min, double max) {
         return Math.max(min, Math.min(max, val));
     }

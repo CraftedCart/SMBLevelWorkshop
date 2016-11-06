@@ -49,4 +49,9 @@ public class PlaceableRotationTextFields extends RotationTextFields {
         return null; //Failed to parse the number
     }
 
+    @Override
+    public void postValuesChanged() {
+        mainScreen.updatePropertiesPlaceablesPanel();
+    }
+
 }

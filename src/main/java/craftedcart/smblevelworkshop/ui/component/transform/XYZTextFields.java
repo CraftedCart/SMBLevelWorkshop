@@ -91,8 +91,7 @@ public abstract class XYZTextFields extends Panel {
             if (newValue != null) {
                 valueChanged(new PosXYZ(newValue, 0, 0), EnumAxis.X, transformables);
             }
-
-            mainScreen.updatePropertiesPlaceablesPanel();
+            postValuesChanged();
         });
         listBox.addChildComponent("xTextField", xTextField);
         //</editor-fold>
@@ -121,8 +120,7 @@ public abstract class XYZTextFields extends Panel {
             if (newValue != null) {
                 valueChanged(new PosXYZ(0, newValue, 0), EnumAxis.Y, transformables);
             }
-
-            mainScreen.updatePropertiesPlaceablesPanel();
+            postValuesChanged();
         });
         listBox.addChildComponent("yTextField", yTextField);
         //</editor-fold>
@@ -153,8 +151,7 @@ public abstract class XYZTextFields extends Panel {
             if (newValue != null) {
                 valueChanged(new PosXYZ(0, 0, newValue), EnumAxis.Z, transformables);
             }
-
-            mainScreen.updatePropertiesPlaceablesPanel();
+            postValuesChanged();
         });
         listBox.addChildComponent("zTextField", zTextField);
         //</editor-fold>
@@ -192,5 +189,7 @@ public abstract class XYZTextFields extends Panel {
     }
 
     public abstract void valueChanged(PosXYZ newValue, EnumAxis axis, List<ITransformable> transformables);
+
+    public abstract void postValuesChanged();
 
 }

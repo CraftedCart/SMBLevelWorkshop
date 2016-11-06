@@ -49,4 +49,9 @@ public class PlaceableScaleTextFields extends ScaleTextFields {
         return null; //Failed to parse the number
     }
 
+    @Override
+    public void postValuesChanged() {
+        mainScreen.updatePropertiesPlaceablesPanel();
+    }
+
 }
