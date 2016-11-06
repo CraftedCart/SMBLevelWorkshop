@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop.ui.component.timeline;
 
+import craftedcart.smblevelworkshop.animation.AnimData;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
@@ -15,10 +16,16 @@ import io.github.craftedcart.fluidui.plugin.AbstractComponentPlugin;
 import io.github.craftedcart.fluidui.util.EnumHAlignment;
 import io.github.craftedcart.fluidui.util.PosXY;
 import io.github.craftedcart.fluidui.util.UIColor;
+import io.github.craftedcart.fluidui.util.UIUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
 
 import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @author CraftedCart
@@ -39,6 +46,9 @@ public class Timeline extends Panel {
     private DecimalFormat df;
 
     private String secondsSuffix; //Used for caching instead of fetching every frame
+
+    @Nullable private Map<String, AnimData> objectAnimDataMap;
+    private Collection<String> selectedObjects = new HashSet<>();
 
     public Timeline(@NotNull MainScreen mainScreen) {
         init(mainScreen);
@@ -81,6 +91,7 @@ public class Timeline extends Panel {
             timelineUseablePanel.setBottomRightAnchor(1, 1);
             timelineUseablePanel.setBackgroundColor(UIColor.matGrey(0.25));
         });
+        timelineUseablePanel.addPlugin(new TimelineUseablePlugin());
         timelinePanel.addChildComponent("timelineUseablePanel", timelineUseablePanel);
 
         //Defined at class level
@@ -401,6 +412,7 @@ public class Timeline extends Panel {
 
         @Override
         public void onPreDraw() {
+            //<editor-fold desc="Manage cursorPosPanel">
             if (linkedComponent.mouseOver) {
                 double percent = 0;
                 if (linkedComponent.mousePos != null) {
@@ -428,6 +440,7 @@ public class Timeline extends Panel {
             } else {
                 cursorPosPanel.setVisible(false);
             }
+            //</editor-fold>
         }
 
         @Override
@@ -437,6 +450,130 @@ public class Timeline extends Panel {
             }
         }
 
+    }
+
+    private class TimelineUseablePlugin extends AbstractComponentPlugin {
+
+        Texture keyframeTex;
+
+        @Override
+        public void onPostInit() {
+            keyframeTex = ResourceManager.getTexture("image/keyframe").getTexture();
+        }
+
+        @Override
+        public void onPreDraw() {
+            if (objectAnimDataMap != null) {
+                drawKeyframesBackgrounds();
+                drawKeyframes();
+            }
+        }
+
+        private void drawKeyframesBackgrounds() {
+            for (Map.Entry<String, AnimData> entry : objectAnimDataMap.entrySet()) {
+                String name = entry.getKey();
+                AnimData ad = entry.getValue();
+
+                if (ad.getPosXFrames().size() > 0) {
+                    float low = ad.getPosXFrames().firstKey();
+                    float high = ad.getPosXFrames().lastKey();
+
+                    PosXY pos = linkedComponent.topLeftPx.add(0, 12);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
+                        UIColor.matRed(0.25).bindColor();
+                    } else {
+                        UIColor.matRed(0.05).bindColor();
+                    }
+
+                    UIUtils.drawQuad(pos.add(linkedComponent.width * low, 8), pos.add(linkedComponent.width * high, 12));
+                }
+
+                if (ad.getPosYFrames().size() > 0) {
+                    float low = ad.getPosYFrames().firstKey();
+                    float high = ad.getPosYFrames().lastKey();
+
+                    PosXY pos = linkedComponent.topLeftPx.add(0, 28);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
+                        UIColor.matGreen(0.25).bindColor();
+                    } else {
+                        UIColor.matGreen(0.05).bindColor();
+                    }
+
+                    UIUtils.drawQuad(pos.add(linkedComponent.width * low, 8), pos.add(linkedComponent.width * high, 12));
+                }
+
+                if (ad.getPosZFrames().size() > 0) {
+                    float low = ad.getPosZFrames().firstKey();
+                    float high = ad.getPosZFrames().lastKey();
+
+                    PosXY pos = linkedComponent.topLeftPx.add(0, 44);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
+                        UIColor.matBlue(0.25).bindColor();
+                    } else {
+                        UIColor.matBlue(0.05).bindColor();
+                    }
+
+                    UIUtils.drawQuad(pos.add(linkedComponent.width * low, 8), pos.add(linkedComponent.width * high, 12));
+                }
+            }
+        }
+
+        private void drawKeyframes() {
+            for (Map.Entry<String, AnimData> entry : objectAnimDataMap.entrySet()) {
+                String name = entry.getKey();
+
+                for (Map.Entry<Float, Float> xEntry : entry.getValue().getPosXFrames().entrySet()) {
+                    float time = xEntry.getKey();
+
+                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, 12);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
+                        UIColor.matRed().bindColor();
+                    } else {
+                        UIColor.matRed(0.1).bindColor();
+                    }
+                    UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
+                }
+
+                for (Map.Entry<Float, Float> yEntry : entry.getValue().getPosYFrames().entrySet()) {
+                    float time = yEntry.getKey();
+
+                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, 28);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
+                        UIColor.matGreen().bindColor();
+                    } else {
+                        UIColor.matGreen(0.1).bindColor();
+                    }
+                    UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
+                }
+
+                for (Map.Entry<Float, Float> zEntry : entry.getValue().getPosZFrames().entrySet()) {
+                    float time = zEntry.getKey();
+
+                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, 44);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
+                        UIColor.matBlue().bindColor();
+                    } else {
+                        UIColor.matBlue(0.1).bindColor();
+                    }
+                    UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
+                }
+            }
+        }
+
+    }
+
+    public void setObjectAnimDataMap(@Nullable Map<String, AnimData> objectAnimDataMap) {
+        this.objectAnimDataMap = objectAnimDataMap;
+    }
+
+    public void setSelectedObjects(Collection<String> selectedObjects) {
+        this.selectedObjects = selectedObjects;
     }
 
 }

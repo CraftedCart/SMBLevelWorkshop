@@ -53,7 +53,7 @@ import java.util.List;
  */
 public class MainScreen extends FluidUIScreen {
 
-    private static final double TIMELINE_HEIGHT = 72;
+    private static final double TIMELINE_HEIGHT = 86;
 
     //Camera
     @NotNull private PosXYZ cameraPos = new PosXYZ(5, 5, 5);
@@ -1677,6 +1677,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 } else {
                     ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
+                    timeline.setObjectAnimDataMap(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap());
                 }
 
                 if (!OBJLoader.isLastObjTriangulated) {
@@ -2034,6 +2035,7 @@ public class MainScreen extends FluidUIScreen {
     private void onSelectedObjectsChanged() {
         updatePropertiesObjectsPanel();
         updateOutlinerObjectsPanel();
+        timeline.setSelectedObjects(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
     }
 
     public void updatePropertiesObjectsPanel() {

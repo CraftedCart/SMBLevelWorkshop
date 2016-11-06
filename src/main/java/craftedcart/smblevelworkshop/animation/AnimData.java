@@ -81,4 +81,17 @@ public class AnimData {
         posYFrames.putAll(other.posYFrames);
         posZFrames.putAll(other.posZFrames);
     }
+
+    public TreeMap<Float, Float> getPosXFrames() {
+        return posXFrames;
+    }
+
+    public TreeMap<Float, Float> getPosYFrames() {
+        return posYFrames;
+    }
+
+    public TreeMap<Float, Float> getPosZFrames() {
+        return posZFrames;
+    }
+
 }

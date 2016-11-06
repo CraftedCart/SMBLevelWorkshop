@@ -167,4 +167,9 @@ public class LevelData {
         return objectAnimDataMap.get(name);
     }
 
+    @NotNull
+    public TreeMap<String, AnimData> getObjectAnimDataMap() {
+        return objectAnimDataMap;
+    }
+
 }
