@@ -19,6 +19,8 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5' //Log4J 2 API
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5' //Log4J 2 Core
 
+    compile group: 'com.apple', name: 'AppleJavaExtensions', version: '1.4' //Apple Java Extensions - For setting the dock icon
+
     compile project(':FluidUI')
     compile project(':SMBWorkshopExporter')
 
