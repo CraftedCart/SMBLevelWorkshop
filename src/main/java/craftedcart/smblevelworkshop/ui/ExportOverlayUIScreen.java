@@ -201,7 +201,6 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             setOverlayUiScreen(progScreen);
 
             //Add tasks to progScreen
-            progScreen.addTask("exportGenConfig", LangManager.getItem("exportGenConfig"));
             progScreen.addTask("exportWriteConfig", LangManager.getItem("exportWriteConfig"));
 
             try {
@@ -212,24 +211,19 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             LogHelper.info(getClass(), "Exporting config file: " + file.getAbsolutePath());
 
-            progScreen.activateTask("exportGenConfig");
-
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
-            String exportContents = ExportManager.getConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData());
-
-            progScreen.completeTask("exportGenConfig");
             progScreen.activateTask("exportWriteConfig");
 
             try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-                writer.write(exportContents);
-                writer.close();
-                progScreen.completeTask("exportWriteConfig");
+                assert ProjectManager.getCurrentProject().clientLevelData != null;
+                ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), file);
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
                 LogHelper.error(getClass(), e);
                 progScreen.errorTask("exportWriteConfig");
+                return;
             }
+
+            progScreen.completeTask("exportWriteConfig");
 
             progScreen.finish();
 

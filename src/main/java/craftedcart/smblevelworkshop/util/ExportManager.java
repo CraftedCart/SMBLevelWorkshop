@@ -1,9 +1,16 @@
 package craftedcart.smblevelworkshop.util;
 
+import craftedcart.smblevelworkshop.animation.AnimData;
+import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.LevelData;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * @author CraftedCart
@@ -16,6 +23,26 @@ public class ExportManager {
     private static int goalCount;
     private static int jamabarCount;
     private static int backgroundCount;
+    private static int animCount;
+    private static int frameCount;
+
+    public static void writeConfig(LevelData levelData, File configFile) throws IOException {
+        String configContents = getConfig(levelData);
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
+        writer.write(configContents);
+        writer.close();
+
+        for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
+            File animFile = new File(configFile.getParentFile(), "anim-" + entry.getKey() + ".txt");
+
+            String animConfigContents = getAnimConfig(entry.getValue());
+
+            BufferedWriter animWriter = new BufferedWriter(new FileWriter(animFile));
+            animWriter.write(animConfigContents);
+            animWriter.close();
+        }
+    }
 
     public static String getConfig(LevelData levelData) {
         StringBuilder sb = new StringBuilder();
@@ -25,6 +52,7 @@ public class ExportManager {
         goalCount = -1;
         jamabarCount = -1;
         backgroundCount = -1;
+        animCount = -1;
 
         for (Map.Entry<String, Placeable> entry : levelData.getPlacedObjects().entrySet()) {
             Placeable placeable = entry.getValue();
@@ -67,6 +95,56 @@ public class ExportManager {
         }
         sb.append("\r\n");
 
+        for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
+            appendAnimPrefix(sb, true); sb.append(". file . x = ").append("anim-").append(entry.getKey()).append(".txt").append("\r\n");
+            appendAnimPrefix(sb, false); sb.append(". name . x = ").append(entry.getKey()).append("\r\n");
+            appendAnimPrefix(sb, false); sb.append(". center . x = ").append(entry.getValue().getRotationCenter().x).append("\r\n");
+            appendAnimPrefix(sb, false); sb.append(". center . y = ").append(entry.getValue().getRotationCenter().y).append("\r\n");
+            appendAnimPrefix(sb, false); sb.append(". center . z = ").append(entry.getValue().getRotationCenter().z).append("\r\n");
+            sb.append("\r\n");
+        }
+        sb.append("\r\n");
+
+        return sb.toString();
+    }
+
+    private static String getAnimConfig(AnimData animData) {
+        StringBuilder sb = new StringBuilder();
+
+        frameCount = -1;
+
+        TreeSet<Float> frames = new TreeSet<>();
+
+        frames.add(0.0f);
+        frames.add(1.0f);
+
+        for (Float time : animData.getPosXFrames().keySet()) {
+            frames.add(time);
+        }
+
+        for (Float time : animData.getPosYFrames().keySet()) {
+            frames.add(time);
+        }
+
+        for (Float time : animData.getPosZFrames().keySet()) {
+            frames.add(time);
+        }
+
+        for (float time : frames) {
+            NamedTransform transform = animData.getNamedTransformAtTime(time, null);
+
+            appendFramePrefix(sb, true); sb.append(". pos . x = ").append(transform.getPosition().x).append("\r\n");
+            appendFramePrefix(sb, false); sb.append(". pos . y = ").append(transform.getPosition().y).append("\r\n");
+            appendFramePrefix(sb, false); sb.append(". pos . z = ").append(transform.getPosition().z).append("\r\n");
+
+            appendFramePrefix(sb, false); sb.append(". rot . x = ").append(transform.getRotation().x).append("\r\n");
+            appendFramePrefix(sb, false); sb.append(". rot . y = ").append(transform.getRotation().y).append("\r\n");
+            appendFramePrefix(sb, false); sb.append(". rot . z = ").append(transform.getRotation().z).append("\r\n");
+
+            appendFramePrefix(sb, false); sb.append(". time . x = ").append(time * 100.0f).append("\r\n");
+            sb.append("\r\n");
+        }
+
         return sb.toString();
     }
 
@@ -103,6 +181,20 @@ public class ExportManager {
             backgroundCount++;
         }
         sb.append("background [ ").append(backgroundCount).append(" ] ");
+    }
+
+    private static void appendAnimPrefix(StringBuilder sb, boolean incrementCounter) {
+        if (incrementCounter) {
+            animCount++;
+        }
+        sb.append("animobj [ ").append(animCount).append(" ] ");
+    }
+
+    private static void appendFramePrefix(StringBuilder sb, boolean incrementCounter) {
+        if (incrementCounter) {
+            frameCount++;
+        }
+        sb.append("frame [ ").append(frameCount).append(" ] ");
     }
 
 }

@@ -3,6 +3,7 @@ package craftedcart.smblevelworkshop.animation;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import craftedcart.smblevelworkshop.util.QuickMapEntry;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import java.util.TreeMap;
  */
 public class AnimData {
 
-    private PosXYZ rotationCenter;
+    @NotNull private PosXYZ rotationCenter = new PosXYZ();
 
     private TreeMap<Float, Float> posXFrames = new TreeMap<>();
     private TreeMap<Float, Float> posYFrames = new TreeMap<>();

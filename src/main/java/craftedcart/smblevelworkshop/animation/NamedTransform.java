@@ -11,6 +11,7 @@ public class NamedTransform implements ITransformable {
 
     private String name;
     private PosXYZ position = new PosXYZ();
+    private PosXYZ rotation = new PosXYZ();
 
     public NamedTransform(String name) {
         this.name = name;
@@ -24,6 +25,16 @@ public class NamedTransform implements ITransformable {
     @Override
     public PosXYZ getPosition() {
         return position;
+    }
+
+    @Override
+    public void setRotation(PosXYZ rotation) {
+        this.rotation = rotation;
+    }
+
+    @Override
+    public PosXYZ getRotation() {
+        return rotation;
     }
 
     public String getName() {
