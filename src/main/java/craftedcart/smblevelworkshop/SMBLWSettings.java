@@ -26,4 +26,7 @@ public class SMBLWSettings {
     public static double rotationSnap = 5;
     public static double scaleSnap = 0.5;
 
+    //UI
+    public static boolean showOnScreenCameraControls = false;
+
 }

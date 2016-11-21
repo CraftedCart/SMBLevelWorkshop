@@ -15,6 +15,7 @@
     <entry key="settingShowTextures" val="Show textures" />
     <entry key="settingIsUnlit" val="Is unlit" />
     <entry key="settingShowAllWireframes" val="Show all wireframes" />
+    <entry key="settingShowOnScreenCameraControls" val="Show on screen camera controls" />
 
     <!-- Export -->
     <entry key="export" val="Export" />

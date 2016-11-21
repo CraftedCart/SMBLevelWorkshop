@@ -188,6 +188,38 @@ public class SettingsOverlayUIScreen extends FluidUIScreen {
         showAllWireframesCheckBox.setOnLMBAction(() -> SMBLWSettings.showAllWireframes = showAllWireframesCheckBox.value);
         showAllWireframesPanel.addChildComponent("showAllWireframesCheckBox", showAllWireframesCheckBox);
         //</editor-fold>
+
+        //<editor-fold desc="Show on screen camera controls">
+        final Panel showOnScreenCameraControlsPanel = new Panel();
+        showOnScreenCameraControlsPanel.setOnInitAction(() -> {
+            showOnScreenCameraControlsPanel.setTopLeftPos(0, 0);
+            showOnScreenCameraControlsPanel.setBottomRightPos(0, 24);
+            showOnScreenCameraControlsPanel.setBackgroundColor(UIColor.transparent());
+        });
+        listBox.addChildComponent("showOnScreenCameraControlsPanel", showOnScreenCameraControlsPanel);
+
+        final Label showOnScreenCameraControlsLabel = new Label();
+        showOnScreenCameraControlsLabel.setOnInitAction(() -> {
+            showOnScreenCameraControlsLabel.setTopLeftPos(0, 0);
+            showOnScreenCameraControlsLabel.setBottomRightPos(-24, 0);
+            showOnScreenCameraControlsLabel.setTopLeftAnchor(0, 0);
+            showOnScreenCameraControlsLabel.setBottomRightAnchor(1, 1);
+            showOnScreenCameraControlsLabel.setText(LangManager.getItem("settingShowOnScreenCameraControls"));
+        });
+        showOnScreenCameraControlsPanel.addChildComponent("showOnScreenCameraControlsLabel", showOnScreenCameraControlsLabel);
+
+        final CheckBox showOnScreenCameraControlsCheckBox = new CheckBox();
+        showOnScreenCameraControlsCheckBox.setOnInitAction(() -> {
+            showOnScreenCameraControlsCheckBox.setTopLeftPos(-24, 0);
+            showOnScreenCameraControlsCheckBox.setBottomRightPos(0, 0);
+            showOnScreenCameraControlsCheckBox.setTopLeftAnchor(1, 0);
+            showOnScreenCameraControlsCheckBox.setBottomRightAnchor(1, 1);
+            showOnScreenCameraControlsCheckBox.setValue(SMBLWSettings.showOnScreenCameraControls);
+            showOnScreenCameraControlsCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        });
+        showOnScreenCameraControlsCheckBox.setOnLMBAction(() -> SMBLWSettings.showOnScreenCameraControls = showOnScreenCameraControlsCheckBox.value);
+        showOnScreenCameraControlsPanel.addChildComponent("showOnScreenCameraControlsCheckBox", showOnScreenCameraControlsCheckBox);
+        //</editor-fold>
     }
 
 }

@@ -23,12 +23,14 @@ import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smbworkshopexporter.ConfigData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
+import io.github.craftedcart.fluidui.component.Button;
 import io.github.craftedcart.fluidui.component.Component;
 import io.github.craftedcart.fluidui.component.Image;
 import io.github.craftedcart.fluidui.component.Label;
 import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.component.Panel;
 import io.github.craftedcart.fluidui.component.TextField;
+import io.github.craftedcart.fluidui.plugin.AbstractComponentPlugin;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.util.*;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +68,7 @@ public class MainScreen extends FluidUIScreen {
     private final Label modeDirectionLabel = new Label();
     private final Panel notifPanel = new Panel();
     private final Timeline timeline = new Timeline(this);
+    final Panel onScreenCameraControlsPanel = new Panel();
 
     private EnumObjectMode objectMode = EnumObjectMode.PLACEABLE_EDIT;
 
@@ -723,6 +726,146 @@ public class MainScreen extends FluidUIScreen {
         });
         mainUI.addChildComponent("timeline", timeline);
 
+        //On screen camera controls - For those with difficulty controlling the camera with MMB / WASDQE
+        //Declared at class level
+        onScreenCameraControlsPanel.setOnInitAction(() -> {
+            onScreenCameraControlsPanel.setBackgroundColor(UIColor.matGrey900(0.75));
+            onScreenCameraControlsPanel.setTopLeftAnchor(0.5, 1);
+            onScreenCameraControlsPanel.setBottomRightAnchor(0.5, 1);
+            onScreenCameraControlsPanel.setTopLeftPos(-36, -72 -TIMELINE_HEIGHT - 52);
+            onScreenCameraControlsPanel.setBottomRightPos(36, -TIMELINE_HEIGHT - 52);
+            onScreenCameraControlsPanel.setVisible(false);
+        });
+        mainUI.addChildComponent("onScreenCameraControlsPanel", onScreenCameraControlsPanel);
+
+        final Button cameraPanDownButton = new Button();
+        cameraPanDownButton.setOnInitAction(() -> {
+            cameraPanDownButton.setTopLeftAnchor(0, 0);
+            cameraPanDownButton.setBottomRightAnchor(0, 0);
+            cameraPanDownButton.setTopLeftPos(0, 0);
+            cameraPanDownButton.setBottomRightPos(24, 24);
+            cameraPanDownButton.setTexture(ResourceManager.getTexture("image/arrowRightDown").getTexture());
+        });
+        cameraPanDownButton.addPlugin(new AbstractComponentPlugin() {
+            @Override
+            public void onPostDraw() {
+                if (linkedComponent.mouseOver && Mouse.isButtonDown(0)) {
+                    double speed = Window.isShiftDown() ? SMBLWSettings.cameraSprintSpeedMultiplier * SMBLWSettings.cameraSpeed : SMBLWSettings.cameraSpeed;
+                    cameraPos = cameraPos.add(0, -UIUtils.getDelta() * speed, 0);
+                }
+            }
+        });
+        onScreenCameraControlsPanel.addChildComponent("cameraPanDownButton", cameraPanDownButton);
+
+        final Button cameraPanLeftButton = new Button();
+        cameraPanLeftButton.setOnInitAction(() -> {
+            cameraPanLeftButton.setTopLeftAnchor(0, 0);
+            cameraPanLeftButton.setBottomRightAnchor(0, 0);
+            cameraPanLeftButton.setTopLeftPos(0, 24);
+            cameraPanLeftButton.setBottomRightPos(24, 48);
+            cameraPanLeftButton.setTexture(ResourceManager.getTexture("image/arrowLeft").getTexture());
+        });
+        cameraPanLeftButton.addPlugin(new AbstractComponentPlugin() {
+            @Override
+            public void onPostDraw() {
+                if (linkedComponent.mouseOver && Mouse.isButtonDown(0)) {
+                    double speed = Window.isShiftDown() ? SMBLWSettings.cameraSprintSpeedMultiplier * SMBLWSettings.cameraSpeed : SMBLWSettings.cameraSpeed;
+                    PosXYZ rightVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x + 90)), 0, -Math.cos(Math.toRadians(cameraRot.x + 90)));
+                    cameraPos = cameraPos.subtract(rightVector.multiply(UIUtils.getDelta()).multiply(speed));
+                }
+            }
+        });
+        onScreenCameraControlsPanel.addChildComponent("cameraPanLeftButton", cameraPanLeftButton);
+
+        final Button cameraPanForwardButton = new Button();
+        cameraPanForwardButton.setOnInitAction(() -> {
+            cameraPanForwardButton.setTopLeftAnchor(0, 0);
+            cameraPanForwardButton.setBottomRightAnchor(0, 0);
+            cameraPanForwardButton.setTopLeftPos(24, 0);
+            cameraPanForwardButton.setBottomRightPos(48, 24);
+            cameraPanForwardButton.setTexture(ResourceManager.getTexture("image/arrowUp").getTexture());
+        });
+        cameraPanForwardButton.addPlugin(new AbstractComponentPlugin() {
+            @Override
+            public void onPostDraw() {
+                if (linkedComponent.mouseOver && Mouse.isButtonDown(0)) {
+                    double speed = Window.isShiftDown() ? SMBLWSettings.cameraSprintSpeedMultiplier * SMBLWSettings.cameraSpeed : SMBLWSettings.cameraSpeed;
+                    PosXYZ forwardVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x)), 0, -Math.cos(Math.toRadians(cameraRot.x)));
+                    cameraPos = cameraPos.add(forwardVector.multiply(UIUtils.getDelta()).multiply(speed));
+                }
+            }
+        });
+        onScreenCameraControlsPanel.addChildComponent("cameraPanForwardButton", cameraPanForwardButton);
+
+        final Image cameraPanIcon = new Image();
+        cameraPanIcon.setOnInitAction(() -> {
+            cameraPanIcon.setTexture(ResourceManager.getTexture("image/arrowAll").getTexture());
+            cameraPanIcon.setTopLeftAnchor(0, 0);
+            cameraPanIcon.setBottomRightAnchor(0, 0);
+            cameraPanIcon.setTopLeftPos(24, 24);
+            cameraPanIcon.setBottomRightPos(48, 48);
+        });
+        onScreenCameraControlsPanel.addChildComponent("cameraPanIcon", cameraPanIcon);
+
+        final Button cameraPanBackwardsButton = new Button();
+        cameraPanBackwardsButton.setOnInitAction(() -> {
+            cameraPanBackwardsButton.setTopLeftAnchor(0, 0);
+            cameraPanBackwardsButton.setBottomRightAnchor(0, 0);
+            cameraPanBackwardsButton.setTopLeftPos(24, 48);
+            cameraPanBackwardsButton.setBottomRightPos(48, 72);
+            cameraPanBackwardsButton.setTexture(ResourceManager.getTexture("image/arrowDown").getTexture());
+        });
+        cameraPanBackwardsButton.addPlugin(new AbstractComponentPlugin() {
+            @Override
+            public void onPostDraw() {
+                if (linkedComponent.mouseOver && Mouse.isButtonDown(0)) {
+                    double speed = Window.isShiftDown() ? SMBLWSettings.cameraSprintSpeedMultiplier * SMBLWSettings.cameraSpeed : SMBLWSettings.cameraSpeed;
+                    PosXYZ forwardVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x)), 0, -Math.cos(Math.toRadians(cameraRot.x)));
+                    cameraPos = cameraPos.subtract(forwardVector.multiply(UIUtils.getDelta()).multiply(speed));
+                }
+            }
+        });
+        onScreenCameraControlsPanel.addChildComponent("cameraPanBackwardsButton", cameraPanBackwardsButton);
+
+        final Button cameraPanUpButton = new Button();
+        cameraPanUpButton.setOnInitAction(() -> {
+            cameraPanUpButton.setTopLeftAnchor(0, 0);
+            cameraPanUpButton.setBottomRightAnchor(0, 0);
+            cameraPanUpButton.setTopLeftPos(48, 0);
+            cameraPanUpButton.setBottomRightPos(72, 24);
+            cameraPanUpButton.setTexture(ResourceManager.getTexture("image/arrowLeftUp").getTexture());
+        });
+        cameraPanUpButton.addPlugin(new AbstractComponentPlugin() {
+            @Override
+            public void onPostDraw() {
+                if (linkedComponent.mouseOver && Mouse.isButtonDown(0)) {
+                    double speed = Window.isShiftDown() ? SMBLWSettings.cameraSprintSpeedMultiplier * SMBLWSettings.cameraSpeed : SMBLWSettings.cameraSpeed;
+                    cameraPos = cameraPos.add(0, UIUtils.getDelta() * speed, 0);
+                }
+            }
+        });
+        onScreenCameraControlsPanel.addChildComponent("cameraPanUpButton", cameraPanUpButton);
+
+        final Button cameraPanRightButton = new Button();
+        cameraPanRightButton.setOnInitAction(() -> {
+            cameraPanRightButton.setTopLeftAnchor(0, 0);
+            cameraPanRightButton.setBottomRightAnchor(0, 0);
+            cameraPanRightButton.setTopLeftPos(48, 24);
+            cameraPanRightButton.setBottomRightPos(72, 48);
+            cameraPanRightButton.setTexture(ResourceManager.getTexture("image/arrowRight").getTexture());
+        });
+        cameraPanRightButton.addPlugin(new AbstractComponentPlugin() {
+            @Override
+            public void onPostDraw() {
+                if (linkedComponent.mouseOver && Mouse.isButtonDown(0)) {
+                    double speed = Window.isShiftDown() ? SMBLWSettings.cameraSprintSpeedMultiplier * SMBLWSettings.cameraSpeed : SMBLWSettings.cameraSpeed;
+                    PosXYZ rightVector = new PosXYZ(Math.sin(Math.toRadians(cameraRot.x + 90)), 0, -Math.cos(Math.toRadians(cameraRot.x + 90)));
+                    cameraPos = cameraPos.add(rightVector.multiply(UIUtils.getDelta()).multiply(speed));
+                }
+            }
+        });
+        onScreenCameraControlsPanel.addChildComponent("cameraPanRightButton", cameraPanRightButton);
+
         Window.logOpenGLError("After MainScreen.init()");
 
         try {
@@ -738,6 +881,9 @@ public class MainScreen extends FluidUIScreen {
         super.preDraw();
 
         Window.logOpenGLError("After MainScreen.super.preDraw()");
+
+        //Show on screen camera controls if setting enabled
+        onScreenCameraControlsPanel.setVisible(SMBLWSettings.showOnScreenCameraControls);
 
         if (ProjectManager.getCurrentProject().clientLevelData != null) {
             ProjectManager.getCurrentProject().clientLevelData.update((float) UIUtils.getDelta());
