@@ -1,5 +1,7 @@
 package craftedcart.smblevelworkshop.ui.component.timeline;
 
+import craftedcart.smblevelworkshop.SMBLWSettings;
+import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.animation.AnimData;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.project.ProjectManager;
@@ -414,11 +416,17 @@ public class Timeline extends Panel {
         public void onPreDraw() {
             //<editor-fold desc="Manage cursorPosPanel">
             if (linkedComponent.mouseOver) {
-                double percent = 0;
+                float percent = 0;
                 if (linkedComponent.mousePos != null) {
-                    percent = MathUtils.clamp(((linkedComponent.mousePos.x - linkedComponent.topLeftPx.x) /
+                    percent = (float) MathUtils.clamp(((linkedComponent.mousePos.x - linkedComponent.topLeftPx.x) /
                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                             0, 1);
+
+                    if (Window.isAltDown()) { //Alt to snap - Shift for precision
+                        float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
+                        float roundMultiplier = 1.0f / snapTo;
+                        percent = Math.round(percent * roundMultiplier) / roundMultiplier; //newTimeSnapped
+                    }
                 }
 
                 double seconds = 0;
@@ -434,7 +442,7 @@ public class Timeline extends Panel {
 
                 if (Mouse.isButtonDown(0)) { //If LMB down
                     if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                        ProjectManager.getCurrentProject().clientLevelData.setTimelinePos((float) percent);
+                        ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(percent);
                     }
                 }
             } else {
