@@ -25,6 +25,8 @@ public class SMBLWSettings {
     public static double grabSnap = 0.5;
     public static double rotationSnap = 5;
     public static double scaleSnap = 0.5;
+    public static float animSnap = 0.05f;
+    public static float animSnapShift = 0.01f;
 
     //UI
     public static boolean showOnScreenCameraControls = false;

@@ -1585,6 +1585,48 @@ public class MainScreen extends FluidUIScreen {
                                     ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(1.0f);
                                 }
 
+                            } else if (key == Keyboard.KEY_J) { //J: Rewind animation
+                                if (Window.isAltDown()) { //Snap when holding alt
+                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+                                    float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
+                                    float newTime = currentTime - snapTo;
+                                    float roundMultiplier = 1.0f / snapTo;
+                                    float newTimeSnapped = Math.round(newTime * roundMultiplier) / roundMultiplier;
+
+                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(newTimeSnapped);
+
+                                } else {
+                                    float currentSpeed = ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed();
+
+                                    if (currentSpeed > 1) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 0.5f);
+                                    else if (currentSpeed < 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 2.0f);
+                                    else if (currentSpeed == 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(-1.0f);
+                                    else if (currentSpeed > 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+                                }
+
+                            } else if (key == Keyboard.KEY_K) { //K: Stop animation
+                                ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+
+                            } else if (key == Keyboard.KEY_L) { //L: Forward animation
+
+                                if (Window.isAltDown()) { //Snap when holding alt
+                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+                                    float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
+                                    float newTime = currentTime + snapTo;
+                                    float roundMultiplier = 1.0f / snapTo;
+                                    float newTimeSnapped = Math.round(newTime * roundMultiplier) / roundMultiplier;
+
+                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(newTimeSnapped);
+
+                                } else {
+                                    float currentSpeed = ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed();
+
+                                    if (currentSpeed < -1) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 0.5f);
+                                    else if (currentSpeed > 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 2.0f);
+                                    else if (currentSpeed == 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(1.0f);
+                                    else if (currentSpeed < 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+                                }
+
                             } else {
                                 super.onKey(key, keyChar);
                             }

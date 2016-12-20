@@ -9,6 +9,7 @@ import craftedcart.smblevelworkshop.util.CrashHandler;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import io.github.craftedcart.fluidui.FontCache;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.SlickException;
 
@@ -63,6 +64,8 @@ public class SMBLevelWorkshop {
 //        } catch (SoundSystemException e) {
 //            LogHelper.error(SMBLevelWorkshop.class, "Error while initializing AudioUtils\n" + CrashHandler.getStackTraceString(e));
 //        }
+
+        Keyboard.enableRepeatEvents(true);
 
         ProjectManager.setCurrentProject(new Project());
 
