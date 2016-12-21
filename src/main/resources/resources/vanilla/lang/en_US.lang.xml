@@ -135,6 +135,7 @@
     <entry key="GRAVE" val="`" />
     <entry key="SLASH" val="/" />
     <entry key="BACKSLASH" val="\" />
+    <entry key="SECTION" val="§" />
     <entry key="SPACE" val="Space" />
     <entry key="COMMA" val="," />
     <entry key="PERIOD" val=". (Period)" />
