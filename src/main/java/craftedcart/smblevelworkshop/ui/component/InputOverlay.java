@@ -24,10 +24,10 @@ public class InputOverlay extends Panel {
 
         modKeyListBox = new ListBox();
         modKeyListBox.setOnInitAction(() -> {
-            modKeyListBox.setTopLeftPos(4, 4);
-            modKeyListBox.setBottomRightPos(180, 0);
-            modKeyListBox.setTopLeftAnchor(0, 0);
-            modKeyListBox.setBottomRightAnchor(0, 1);
+            modKeyListBox.setTopLeftPos(-364, 4);
+            modKeyListBox.setBottomRightPos(-184, 0);
+            modKeyListBox.setTopLeftAnchor(1, 0);
+            modKeyListBox.setBottomRightAnchor(1, 1);
             modKeyListBox.setCanScroll(false);
             modKeyListBox.setBackgroundColor(UIColor.transparent());
         });
@@ -35,10 +35,10 @@ public class InputOverlay extends Panel {
 
         keyListBox = new ListBox();
         keyListBox.setOnInitAction(() -> {
-            keyListBox.setTopLeftPos(184, 4);
-            keyListBox.setBottomRightPos(364, 0);
-            keyListBox.setTopLeftAnchor(0, 0);
-            keyListBox.setBottomRightAnchor(0, 1);
+            keyListBox.setTopLeftPos(-180, 4);
+            keyListBox.setBottomRightPos(-4, 0);
+            keyListBox.setTopLeftAnchor(1, 0);
+            keyListBox.setBottomRightAnchor(1, 1);
             keyListBox.setCanScroll(false);
             keyListBox.setBackgroundColor(UIColor.transparent());
         });

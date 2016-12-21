@@ -5,6 +5,7 @@ import io.github.craftedcart.fluidui.component.Label;
 import io.github.craftedcart.fluidui.component.ListBox;
 import io.github.craftedcart.fluidui.component.Panel;
 import io.github.craftedcart.fluidui.theme.UITheme;
+import io.github.craftedcart.fluidui.util.EnumHAlignment;
 import io.github.craftedcart.fluidui.util.EnumVAlignment;
 import io.github.craftedcart.fluidui.util.UIColor;
 import io.github.craftedcart.fluidui.util.UIUtils;
@@ -38,6 +39,7 @@ public class KeyDisplay extends Panel {
             label.setTopLeftAnchor(0, 0);
             label.setBottomRightAnchor(1, 1);
             label.setVerticalAlign(EnumVAlignment.centre);
+            label.setHorizontalAlign(EnumHAlignment.right);
             label.setText(string);
             label.setFont(theme.headerFont);
         });
