@@ -172,6 +172,7 @@ public class Window {
             case 219: //LMETA
             case 220: //RMETA
             case 196: //FUNCTION
+            case 58: //CAPITAL
                 return true;
             default:
                 return false;
