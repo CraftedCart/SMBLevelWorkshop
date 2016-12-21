@@ -934,6 +934,8 @@ public class MainScreen extends FluidUIScreen {
 
         //Show on screen camera controls if setting enabled
         onScreenCameraControlsPanel.setVisible(SMBLWSettings.showOnScreenCameraControls);
+        //Show on screen input if setting enabled
+        inputOverlay.setVisible(SMBLWSettings.showOnScreenInput);
 
         if (ProjectManager.getCurrentProject().clientLevelData != null) {
             ProjectManager.getCurrentProject().clientLevelData.update((float) UIUtils.getDelta());

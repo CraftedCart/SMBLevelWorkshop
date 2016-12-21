@@ -220,6 +220,38 @@ public class SettingsOverlayUIScreen extends FluidUIScreen {
         showOnScreenCameraControlsCheckBox.setOnLMBAction(() -> SMBLWSettings.showOnScreenCameraControls = showOnScreenCameraControlsCheckBox.value);
         showOnScreenCameraControlsPanel.addChildComponent("showOnScreenCameraControlsCheckBox", showOnScreenCameraControlsCheckBox);
         //</editor-fold>
+
+        //<editor-fold desc="Show on screen input">
+        final Panel showOnScreenInputPanel = new Panel();
+        showOnScreenInputPanel.setOnInitAction(() -> {
+            showOnScreenInputPanel.setTopLeftPos(0, 0);
+            showOnScreenInputPanel.setBottomRightPos(0, 24);
+            showOnScreenInputPanel.setBackgroundColor(UIColor.transparent());
+        });
+        listBox.addChildComponent("showOnScreenInputPanel", showOnScreenInputPanel);
+
+        final Label showOnScreenInputLabel = new Label();
+        showOnScreenInputLabel.setOnInitAction(() -> {
+            showOnScreenInputLabel.setTopLeftPos(0, 0);
+            showOnScreenInputLabel.setBottomRightPos(-24, 0);
+            showOnScreenInputLabel.setTopLeftAnchor(0, 0);
+            showOnScreenInputLabel.setBottomRightAnchor(1, 1);
+            showOnScreenInputLabel.setText(LangManager.getItem("settingShowOnScreenInput"));
+        });
+        showOnScreenInputPanel.addChildComponent("showOnScreenInputLabel", showOnScreenInputLabel);
+
+        final CheckBox showOnScreenInputCheckBox = new CheckBox();
+        showOnScreenInputCheckBox.setOnInitAction(() -> {
+            showOnScreenInputCheckBox.setTopLeftPos(-24, 0);
+            showOnScreenInputCheckBox.setBottomRightPos(0, 0);
+            showOnScreenInputCheckBox.setTopLeftAnchor(1, 0);
+            showOnScreenInputCheckBox.setBottomRightAnchor(1, 1);
+            showOnScreenInputCheckBox.setValue(SMBLWSettings.showOnScreenInput);
+            showOnScreenInputCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        });
+        showOnScreenInputCheckBox.setOnLMBAction(() -> SMBLWSettings.showOnScreenInput = showOnScreenInputCheckBox.value);
+        showOnScreenInputPanel.addChildComponent("showOnScreenInputCheckBox", showOnScreenInputCheckBox);
+        //</editor-fold>
     }
 
 }
