@@ -319,6 +319,15 @@ public class ClientLevelData {
         return currentFrameObjectAnimDataMap.get(name);
     }
 
+    @NotNull
+    public Map<String, AnimData> getCurrentFrameObjectAnimDataMap() {
+        return currentFrameObjectAnimDataMap;
+    }
+
+    public void removeCurrentFrameObjectAnimData(String name) {
+        currentFrameObjectAnimDataMap.remove(name);
+    }
+
     public void clearCurrentFrameObjectAnimData() {
         currentFrameObjectAnimDataMap.clear();
     }
@@ -335,11 +344,6 @@ public class ClientLevelData {
         }
 
         return animData.getNamedTransformAtTime(time, name);
-    }
-
-    @NotNull
-    public Map<String, AnimData> getCurrentFrameObjectAnimDataMap() {
-        return currentFrameObjectAnimDataMap;
     }
 
 }

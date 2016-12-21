@@ -663,9 +663,14 @@ public class MainScreen extends FluidUIScreen {
         });
         addAnimDataButton.setOnLMBAction(() -> {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().addAnimData(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
+                Set<String> selected = ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects();
+
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().addAnimData(selected);
+
+                //Add undo command
+                addUndoCommand(new UndoAddAnimData(ProjectManager.getCurrentProject().clientLevelData, this, selected));
+
                 updatePropertiesObjectsPanel();
-                //TODO: Add undo command
             } else {
                 notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
@@ -681,9 +686,13 @@ public class MainScreen extends FluidUIScreen {
         });
         removeAnimDataButton.setOnLMBAction(() -> {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeAnimData(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
+                Set<String> selected = ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects();
+
+                //Add undo command
+                addUndoCommand(new UndoRemoveAnimData(ProjectManager.getCurrentProject().clientLevelData, this, selected));
+
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeAnimData(selected);
                 updatePropertiesObjectsPanel();
-                //TODO: Add undo command
             } else {
                 notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
@@ -2002,6 +2011,9 @@ public class MainScreen extends FluidUIScreen {
             undoCommandList.remove(undoCommandList.size() - 1);
 
             updatePropertiesPlaceablesPanel();
+            updatePropertiesObjectsPanel();
+            updateOutlinerPlaceablesPanel();
+            updateOutlinerObjectsPanel();
         }
 
     }
@@ -2014,6 +2026,9 @@ public class MainScreen extends FluidUIScreen {
             redoCommandList.remove(redoCommandList.size() - 1);
 
             updatePropertiesPlaceablesPanel();
+            updatePropertiesObjectsPanel();
+            updateOutlinerPlaceablesPanel();
+            updateOutlinerObjectsPanel();
         }
     }
 

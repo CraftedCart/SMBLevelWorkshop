@@ -163,6 +163,10 @@ public class LevelData {
         }
     }
 
+    public void setAnimData(String name, AnimData animData) {
+        objectAnimDataMap.put(name, animData);
+    }
+
     public AnimData getObjectAnimData(String name) {
         return objectAnimDataMap.get(name);
     }
@@ -179,4 +183,5 @@ public class LevelData {
             }
         }
     }
+
 }

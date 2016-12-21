@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop.animation;
 
+import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import craftedcart.smblevelworkshop.util.QuickMapEntry;
@@ -13,7 +14,7 @@ import java.util.TreeMap;
  * @author CraftedCart
  *         Created on 30/10/2016 (DD/MM/YYYY)
  */
-public class AnimData {
+public class AnimData implements Cloneable {
 
     @NotNull private PosXYZ rotationCenter = new PosXYZ();
 
@@ -115,5 +116,15 @@ public class AnimData {
         }
 
         //TODO: Rotation
+    }
+
+    public AnimData getCopy() {
+        try {
+            return (AnimData) clone();
+        } catch (CloneNotSupportedException e) {
+            LogHelper.error(getClass(), "Failed to clone AnimData");
+            LogHelper.error(getClass(), e);
+            return null;
+        }
     }
 }
