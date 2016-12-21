@@ -31,4 +31,7 @@ public class SMBLWSettings {
     //UI
     public static boolean showOnScreenCameraControls = false;
 
+    //Properties
+    public static boolean autoUpdateProperties = true;
+
 }

@@ -115,8 +115,67 @@
 
     <!-- Animation -->
     <entry key="addAnimData" val="Add animation data" />
+    <entry key="autoUpdateProperties" val="Auto update properties" />
     <entry key="timeline" val="Timeline" />
     <entry key="secondsAbbr" val="s" />
     <entry key="secondsOutOfAbbr" val="s /" />
+
+    <!-- Key Translations -->
+    <entry key="ESCAPE" val="Escape" />
+    <entry key="MINUS" val="-" />
+    <entry key="EQUALS" val="=" />
+    <entry key="BACK" val="Backspace" />
+    <entry key="TAB" val="Tab" />
+    <entry key="LBRACKET" val="[" />
+    <entry key="RBRACKET" val="]" />
+    <entry key="RETURN" val="Return" />
+    <entry key="SEMICOLON" val=";" />
+    <entry key="APOSTROPHE" val="'" />
+    <entry key="GRAVE" val="`" />
+    <entry key="SLASH" val="/" />
+    <entry key="BACKSLASH" val="\" />
+    <entry key="SPACE" val="Space" />
+    <entry key="COMMA" val="," />
+    <entry key="PERIOD" val=". (Period)" />
+    <entry key="MULTIPLY" val="*" />
+    <entry key="CAPITAL" val="Caps Lock" />
+    <entry key="NUMLOCK" val="Num Lock" />
+    <entry key="SCROLL" val="Scroll Lock" />
+    <entry key="SUBTRACT" val="-" />
+    <entry key="ADD" val="+" />
+    <entry key="DIVIDE" val="/ (Divide)" />
+    <entry key="." val=". (Decimal)" />
+    <entry key="NUMPAD0" val="NumPad 0" />
+    <entry key="NUMPAD1" val="NumPad 1" />
+    <entry key="NUMPAD2" val="NumPad 2" />
+    <entry key="NUMPAD3" val="NumPad 3" />
+    <entry key="NUMPAD4" val="NumPad 4" />
+    <entry key="NUMPAD5" val="NumPad 5" />
+    <entry key="NUMPAD6" val="NumPad 6" />
+    <entry key="NUMPAD7" val="NumPad 7" />
+    <entry key="NUMPAD8" val="NumPad 8" />
+    <entry key="NUMPAD9" val="NumPad 9" />
+    <entry key="NUMPADEQUALS" val="= (NumPad)" />
+    <entry key="NUMPADENTER" val="Enter (NumPad)" />
+    <entry key="DECIMAL" val=". (Decimal)" />
+    <entry key="CLEAR" val="Clear" />
+    <entry key="FUNCTION" val="Function" />
+    <entry key="UP" val="Up Arrow" />
+    <entry key="DOWN" val="Down Arrow" />
+    <entry key="LEFT" val="Left Arrow" />
+    <entry key="RIGHT" val="Right Arrow" />
+    <entry key="HOME" val="Home" />
+    <entry key="END" val="End" />
+    <entry key="PRIOR" val="Page Up" />
+    <entry key="NEXT" val="Page Down" />
+    <entry key="DELETE" val="Delete" />
+    <entry key="LCONTROL" val="L Control" />
+    <entry key="RCONTROL" val="R Control" />
+    <entry key="LSHIFT" val="L Shift" />
+    <entry key="RSHIFT" val="R Shift" />
+    <entry key="LMENU" val="L Alt" />
+    <entry key="RMENU" val="R Alt" />
+    <entry key="LMETA" val="L Command" />
+    <entry key="RMETA" val="R Command" />
 
 </langPack>

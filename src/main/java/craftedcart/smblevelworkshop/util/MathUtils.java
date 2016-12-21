@@ -1,5 +1,7 @@
 package craftedcart.smblevelworkshop.util;
 
+import io.github.craftedcart.fluidui.util.UIColor;
+
 /**
  * @author CraftedCart
  *         Created on 30/10/2016 (DD/MM/YYYY)
@@ -8,6 +10,21 @@ public class MathUtils {
 
     public static double lerp(double a, double b, double f) {
         return a + f * (b - a);
+    }
+
+    /**
+     * Linearly interpolates between two {@link UIColor}s
+     *
+     * @param a The starting {@link UIColor}
+     * @param b The ending {@link UIColor}
+     * @param f The percentage between the two {@link UIColor}
+     * @return The {@link UIColor} which if f% between a and b
+     */
+    public static UIColor lerpUIColor(UIColor a, UIColor b, float f) {
+        return new UIColor(a.r * 255 + f * (b.r * 255 - a.r * 255),
+                a.g * 255 + f * (b.g * 255 - a.g * 255),
+                a.b * 255 + f * (b.b * 255 - a.b * 255),
+                a.a * 255 + f * (b.a * 255 - a.a * 255));
     }
 
     public static double clamp(double val, double min, double max) {

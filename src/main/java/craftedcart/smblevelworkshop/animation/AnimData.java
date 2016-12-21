@@ -95,4 +95,25 @@ public class AnimData {
         return posZFrames;
     }
 
+    public void moveFirstFrame(float percent) {
+        Map.Entry<Float, Float> firstX = posXFrames.firstEntry();
+        if (firstX != null) {
+            posXFrames.remove(firstX.getKey());
+            posXFrames.put(percent, firstX.getValue());
+        }
+
+        Map.Entry<Float, Float> firstY = posYFrames.firstEntry();
+        if (firstY != null) {
+            posYFrames.remove(firstY.getKey());
+            posYFrames.put(percent, firstY.getValue());
+        }
+
+        Map.Entry<Float, Float> firstZ = posZFrames.firstEntry();
+        if (firstZ != null) {
+            posXFrames.remove(firstZ.getKey());
+            posXFrames.put(percent, firstZ.getValue());
+        }
+
+        //TODO: Rotation
+    }
 }

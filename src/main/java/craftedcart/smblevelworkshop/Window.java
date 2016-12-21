@@ -23,7 +23,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author CraftedCart
@@ -114,7 +113,9 @@ public class Window {
             Keyboard.poll();
             while (Keyboard.next()) {
                 if (Keyboard.getEventKeyState()) {
-                    uiScreen.onKey(Keyboard.getEventKey(), Keyboard.getEventCharacter());
+                    uiScreen.onKeyDown(Keyboard.getEventKey(), Keyboard.getEventCharacter());
+                } else {
+                    uiScreen.onKeyReleased(Keyboard.getEventKey(), Keyboard.getEventCharacter());
                 }
             }
 
@@ -157,6 +158,23 @@ public class Window {
         int error = GL11.glGetError();
         if (error != 0) {
             LogHelper.error(Window.class, "OpenGL Error #" + String.valueOf(error) + " - " + GLU.gluErrorString(error) + " @ " + location);
+        }
+    }
+
+    public static boolean isModifierKey(int keyCode) {
+        switch (keyCode) {
+            case 29: //LCONTROL
+            case 157: //RCONTROL
+            case 56: //LMENU
+            case 184: //RMENU
+            case 42: //LSHIFT
+            case 54: //RSHIFT
+            case 219: //LMETA
+            case 220: //RMETA
+            case 196: //FUNCTION
+                return true;
+            default:
+                return false;
         }
     }
 

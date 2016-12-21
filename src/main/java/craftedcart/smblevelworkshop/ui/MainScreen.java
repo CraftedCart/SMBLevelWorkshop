@@ -2,6 +2,7 @@ package craftedcart.smblevelworkshop.ui;
 
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
+import craftedcart.smblevelworkshop.animation.AnimData;
 import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
@@ -22,6 +23,7 @@ import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smbworkshopexporter.ConfigData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
+import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Button;
 import io.github.craftedcart.fluidui.component.Component;
@@ -42,6 +44,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.opengl.TextureImpl;
 
 import java.awt.*;
 import java.io.File;
@@ -106,6 +111,9 @@ public class MainScreen extends FluidUIScreen {
 
     //UI: Text Fields
     private Set<TextField> textFields;
+
+    //UI: Input Overlay
+    private final InputOverlay inputOverlay = new InputOverlay();
 
     //Undo
     @NotNull private List<UndoCommand> undoCommandList = new ArrayList<>();
@@ -662,6 +670,38 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesObjectsListBox.addChildComponent("addAnimDataButton", addAnimDataButton);
 
+        final Panel autoUpdatePropertiesPanel = new Panel();
+        autoUpdatePropertiesPanel.setOnInitAction(() -> {
+            autoUpdatePropertiesPanel.setTopLeftPos(0, 0);
+            autoUpdatePropertiesPanel.setBottomRightPos(0, 24);
+            autoUpdatePropertiesPanel.setBackgroundColor(UIColor.transparent());
+            autoUpdatePropertiesPanel.setVisible(false);
+        });
+        propertiesObjectsListBox.addChildComponent("autoUpdatePropertiesPanel", autoUpdatePropertiesPanel);
+        objectAnimationComponents.add(autoUpdatePropertiesPanel);
+
+        final Label autoUpdatePropertiesLabel = new Label();
+        autoUpdatePropertiesLabel.setOnInitAction(() -> {
+            autoUpdatePropertiesLabel.setTopLeftPos(4, 0);
+            autoUpdatePropertiesLabel.setBottomRightPos(-24, 0);
+            autoUpdatePropertiesLabel.setTopLeftAnchor(0, 0);
+            autoUpdatePropertiesLabel.setBottomRightAnchor(1, 1);
+            autoUpdatePropertiesLabel.setText(LangManager.getItem("autoUpdateProperties"));
+        });
+        autoUpdatePropertiesPanel.addChildComponent("autoUpdatePropertiesLabel", autoUpdatePropertiesLabel);
+
+        final CheckBox autoUpdatePropertiesCheckBox = new CheckBox();
+        autoUpdatePropertiesCheckBox.setOnInitAction(() -> {
+            autoUpdatePropertiesCheckBox.setTopLeftPos(-24, 0);
+            autoUpdatePropertiesCheckBox.setBottomRightPos(0, 0);
+            autoUpdatePropertiesCheckBox.setTopLeftAnchor(1, 0);
+            autoUpdatePropertiesCheckBox.setBottomRightAnchor(1, 1);
+            autoUpdatePropertiesCheckBox.setValue(SMBLWSettings.autoUpdateProperties);
+            autoUpdatePropertiesCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        });
+        autoUpdatePropertiesCheckBox.setOnLMBAction(() -> SMBLWSettings.autoUpdateProperties = autoUpdatePropertiesCheckBox.getValue());
+        autoUpdatePropertiesPanel.addChildComponent("autoUpdatePropertiesCheckBox", autoUpdatePropertiesCheckBox);
+
         final Label objectPositionLabel = new Label();
         objectPositionLabel.setOnInitAction(() -> {
             objectPositionLabel.setText(LangManager.getItem("position"));
@@ -865,6 +905,16 @@ public class MainScreen extends FluidUIScreen {
             }
         });
         onScreenCameraControlsPanel.addChildComponent("cameraPanRightButton", cameraPanRightButton);
+
+        //Defined at class level
+        inputOverlay.setOnInitAction(() -> {
+            inputOverlay.setTopLeftPos(256, 0);
+            inputOverlay.setBottomRightPos(-256, -TIMELINE_HEIGHT);
+            inputOverlay.setTopLeftAnchor(0, 0);
+            inputOverlay.setBottomRightAnchor(1, 1);
+            inputOverlay.setBackgroundColor(UIColor.transparent());
+        });
+        mainUI.addChildComponent("inputOverlay", inputOverlay);
 
         Window.logOpenGLError("After MainScreen.init()");
 
@@ -1471,10 +1521,11 @@ public class MainScreen extends FluidUIScreen {
     }
 
     @Override
-    public void onKey(int key, char keyChar) {
+    public void onKeyDown(int key, char keyChar) {
+        inputOverlay.onKeyDownManual(key, keyChar);
 
         if (overlayUiScreen != null) {
-            overlayUiScreen.onKey(key, keyChar);
+            overlayUiScreen.onKeyDown(key, keyChar);
         } else {
 
             boolean isTextFieldSelected = false;
@@ -1628,7 +1679,7 @@ public class MainScreen extends FluidUIScreen {
                                 }
 
                             } else {
-                                super.onKey(key, keyChar);
+                                super.onKeyDown(key, keyChar);
                             }
 
                         } else if (key == Keyboard.KEY_X) { //X Axis
@@ -1650,14 +1701,14 @@ public class MainScreen extends FluidUIScreen {
                             confirmModeAction();
 
                         } else {
-                            super.onKey(key, keyChar);
+                            super.onKeyDown(key, keyChar);
                         }
                     } else {
-                        super.onKey(key, keyChar);
+                        super.onKeyDown(key, keyChar);
                     }
                 }
             } else {
-                super.onKey(key, keyChar);
+                super.onKeyDown(key, keyChar);
 
                 if (key == Keyboard.KEY_ESCAPE) { //Deselect text fields on escape
                     for (TextField textField : textFields) {
@@ -1667,6 +1718,13 @@ public class MainScreen extends FluidUIScreen {
             }
         }
 
+    }
+
+    @Override
+    public void onKeyReleased(int key, char keyChar) {
+        inputOverlay.onKeyReleasedManual(key, keyChar);
+
+        super.onKeyReleased(key, keyChar);
     }
 
     private void confirmModeAction() {
@@ -2558,13 +2616,19 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void onTimelinePosChanged(Float percent) {
-        assert ProjectManager.getCurrentProject().clientLevelData != null;
-        if (ProjectManager.getCurrentProject().clientLevelData.getTimelinePos() != percent) {
-            ProjectManager.getCurrentProject().clientLevelData.clearCurrentFrameObjectAnimData();
-        }
-
         timeline.updatePercent(percent);
-        updatePropertiesObjectsPanel();
+        if (SMBLWSettings.autoUpdateProperties) {
+            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            if (ProjectManager.getCurrentProject().clientLevelData.getTimelinePos() != percent) {
+                ProjectManager.getCurrentProject().clientLevelData.clearCurrentFrameObjectAnimData();
+            }
+
+            updatePropertiesObjectsPanel();
+        } else {
+            for (Map.Entry<String, AnimData> entry : ProjectManager.getCurrentProject().clientLevelData.getCurrentFrameObjectAnimDataMap().entrySet()) {
+                entry.getValue().moveFirstFrame(percent);
+            }
+        }
     }
 
     public void addTextField(TextField textField) {

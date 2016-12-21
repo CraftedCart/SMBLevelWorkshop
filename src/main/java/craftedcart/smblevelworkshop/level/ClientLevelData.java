@@ -1,5 +1,6 @@
 package craftedcart.smblevelworkshop.level;
 
+import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.animation.AnimData;
 import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.util.PosXYZ;
@@ -258,7 +259,9 @@ public class ClientLevelData {
                 onTimelinePosChanged.execute(timelinePos);
             }
 
-            currentFrameObjectAnimDataMap.clear(); //Clear non-keyframed changes
+            if (SMBLWSettings.autoUpdateProperties) {
+                currentFrameObjectAnimDataMap.clear(); //Clear non-keyframed changes
+            }
         }
     }
 
@@ -332,6 +335,11 @@ public class ClientLevelData {
         }
 
         return animData.getNamedTransformAtTime(time, name);
+    }
+
+    @NotNull
+    public Map<String, AnimData> getCurrentFrameObjectAnimDataMap() {
+        return currentFrameObjectAnimDataMap;
     }
 
 }
