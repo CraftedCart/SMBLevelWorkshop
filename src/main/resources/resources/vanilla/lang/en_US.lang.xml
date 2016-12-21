@@ -116,6 +116,7 @@
 
     <!-- Animation -->
     <entry key="addAnimData" val="Add animation data" />
+    <entry key="removeAnimData" val="Remove animation data" />
     <entry key="autoUpdateProperties" val="Auto update properties" />
     <entry key="timeline" val="Timeline" />
     <entry key="secondsAbbr" val="s" />

@@ -172,4 +172,11 @@ public class LevelData {
         return objectAnimDataMap;
     }
 
+    public void removeAnimData(Set<String> selectedObjects) {
+        for (String name : selectedObjects) {
+            if (objectAnimDataMap.containsKey(name)) { //If the object doesn't already have animation data
+                objectAnimDataMap.remove(name);
+            }
+        }
+    }
 }

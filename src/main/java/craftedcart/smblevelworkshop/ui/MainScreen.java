@@ -34,6 +34,7 @@ import io.github.craftedcart.fluidui.component.Panel;
 import io.github.craftedcart.fluidui.component.TextField;
 import io.github.craftedcart.fluidui.plugin.AbstractComponentPlugin;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
+import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,6 +134,7 @@ public class MainScreen extends FluidUIScreen {
     private final Object outlinerObjectsListBoxLock = new Object();
     private final Object renderingLock = new Object();
 
+    private final Set<UIAction> nextFrameActions = new HashSet<>();
 
     public MainScreen() {
         init();
@@ -670,6 +672,25 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesObjectsListBox.addChildComponent("addAnimDataButton", addAnimDataButton);
 
+        TextButton removeAnimDataButton = new TextButton();
+        removeAnimDataButton.setOnInitAction(() -> {
+            removeAnimDataButton.setTopLeftPos(0, 0);
+            removeAnimDataButton.setBottomRightPos(0, 24);
+            removeAnimDataButton.setText(LangManager.getItem("removeAnimData"));
+            removeAnimDataButton.setVisible(false);
+        });
+        removeAnimDataButton.setOnLMBAction(() -> {
+            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeAnimData(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
+                updatePropertiesObjectsPanel();
+                //TODO: Add undo command
+            } else {
+                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            }
+        });
+        propertiesObjectsListBox.addChildComponent("removeAnimDataButton", removeAnimDataButton);
+        objectAnimationComponents.add(removeAnimDataButton);
+
         final Panel autoUpdatePropertiesPanel = new Panel();
         autoUpdatePropertiesPanel.setOnInitAction(() -> {
             autoUpdatePropertiesPanel.setTopLeftPos(0, 0);
@@ -931,6 +952,10 @@ public class MainScreen extends FluidUIScreen {
         super.preDraw();
 
         Window.logOpenGLError("After MainScreen.super.preDraw()");
+
+        //Run next frame actions
+        nextFrameActions.forEach(UIAction::execute);
+        nextFrameActions.clear();
 
         //Show on screen camera controls if setting enabled
         onScreenCameraControlsPanel.setVisible(SMBLWSettings.showOnScreenCameraControls);
@@ -2310,7 +2335,8 @@ public class MainScreen extends FluidUIScreen {
             backgroundObjectCheckBox.setValue(areBackgroundObjects);
             addAnimDataButton.setVisible(!allHaveAnimData);
 
-            setObjectAnimationComponentsVisible(allHaveAnimData); //If all selected objects have anim data, show anim components
+            final boolean finalAllHaveAnimData = allHaveAnimData;
+            addNextFrameAction(() -> setObjectAnimationComponentsVisible(finalAllHaveAnimData)); //If all selected objects have anim data, show anim components
 
             //<editor-fold desc="Average out positions">
             double posAvgX = 0;
@@ -2689,6 +2715,10 @@ public class MainScreen extends FluidUIScreen {
 
     private void transformObjectAtTime(String name) {
         transformObjectAtTime(name, ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
+    }
+
+    private void addNextFrameAction(UIAction action) {
+        nextFrameActions.add(action);
     }
 
 }
