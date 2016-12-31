@@ -16,7 +16,7 @@
     <entry key="settingIsUnlit" val="Is unlit" />
     <entry key="settingShowAllWireframes" val="Show all wireframes" />
     <entry key="settingShowOnScreenCameraControls" val="Show on screen camera controls" />
-    <entry key="settingShowOnScreenInput" val="Show on screen input" />
+    <entry key="settingShowOnScreenInput" val="Show on screen input (Useful for screencasts)" />
 
     <!-- Export -->
     <entry key="export" val="Export" />
