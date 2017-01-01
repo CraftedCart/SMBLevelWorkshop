@@ -1612,23 +1612,34 @@ public class MainScreen extends FluidUIScreen {
                                     if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes().size() > 0 ||
                                             ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes().size() > 0 ||
                                             ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes().size() > 0 /* TODO: Rotation */) {
+
+                                        int keyframesRemoved = 0;
+
                                         for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes()) {
                                             ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosXFrame(entry.getTime());
+                                            keyframesRemoved++;
                                         }
 
                                         for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes()) {
                                             ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosYFrame(entry.getTime());
+                                            keyframesRemoved++;
                                         }
 
                                         for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes()) {
                                             ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosZFrame(entry.getTime());
+                                            keyframesRemoved++;
                                         }
 
                                         //TODO: Rotation
                                         //TODO: Undo command
-                                        //TODO: Notification
 
                                         ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
+
+                                        if (keyframesRemoved > 1) {
+                                            notify(String.format(LangManager.getItem("keyframeRemovedPlural"), keyframesRemoved));
+                                        } else {
+                                            notify(LangManager.getItem("keyframeRemoved"));
+                                        }
 
                                     } else {
                                         notify(LangManager.getItem("nothingSelected"));
