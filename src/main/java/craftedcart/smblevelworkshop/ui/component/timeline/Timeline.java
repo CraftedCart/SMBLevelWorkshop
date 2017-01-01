@@ -37,6 +37,10 @@ public class Timeline extends Panel {
 
     private static final double TIMELINE_PADDING = 24;
 
+    private static final int POS_X_KEYFRAME_Y_POS = 12;
+    private static final int POS_Y_KEYFRAME_Y_POS = 28;
+    private static final int POS_Z_KEYFRAME_Y_POS = 44;
+
     private MainScreen mainScreen;
 
     private TimelinePlayhead posPanel;
@@ -412,43 +416,67 @@ public class Timeline extends Panel {
 
     private class TimelinePlugin extends AbstractComponentPlugin {
 
+        private PosXY selectionStartPos = new PosXY();
+
         @Override
         public void onPreDraw() {
-            //<editor-fold desc="Manage cursorPosPanel">
             if (linkedComponent.mouseOver) {
-                float percent = 0;
-                if (linkedComponent.mousePos != null) {
-                    percent = (float) MathUtils.clamp(((linkedComponent.mousePos.x - linkedComponent.topLeftPx.x) /
-                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
-                            0, 1);
 
-                    if (Window.isAltDown()) { //Alt to snap - Shift for precision
-                        float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
-                        float roundMultiplier = 1.0f / snapTo;
-                        percent = Math.round(percent * roundMultiplier) / roundMultiplier; //newTimeSnapped
+                if (Mouse.isButtonDown(1)) { //If RMB down
+                    
+                    PosXY topLeftPos = new PosXY(
+                            Math.min(selectionStartPos.x, linkedComponent.mousePos.x),
+                            Math.min(selectionStartPos.y, linkedComponent.mousePos.y));
+                    PosXY bottomRightPos = new PosXY(
+                            Math.max(selectionStartPos.x, linkedComponent.mousePos.x),
+                            Math.max(selectionStartPos.y, linkedComponent.mousePos.y));
+                    
+                    UIUtils.drawQuad(topLeftPos, new PosXY(bottomRightPos.x, bottomRightPos.y), UIColor.matBlue(0.25));
+                    UIUtils.drawQuad(topLeftPos, new PosXY(bottomRightPos.x, topLeftPos.y + 2), UIColor.matBlue());
+                    UIUtils.drawQuad(topLeftPos, new PosXY(topLeftPos.x + 2, bottomRightPos.y), UIColor.matBlue());
+                    UIUtils.drawQuad(new PosXY(bottomRightPos.x - 2, topLeftPos.y),
+                            new PosXY(bottomRightPos.x, bottomRightPos.y), UIColor.matBlue());
+                    UIUtils.drawQuad(new PosXY(topLeftPos.x, bottomRightPos.y - 2), bottomRightPos, UIColor.matBlue());
+
+                    cursorPosPanel.setVisible(false);
+
+                } else {
+                    //<editor-fold desc="Manage cursorPosPanel">
+                    float percent = 0;
+                    if (linkedComponent.mousePos != null) {
+                        percent = (float) MathUtils.clamp(((linkedComponent.mousePos.x - linkedComponent.topLeftPx.x) /
+                                        (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                0, 1);
+
+                        if (Window.isAltDown()) { //Alt to snap - Shift for precision
+                            float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
+                            float roundMultiplier = 1.0f / snapTo;
+                            percent = Math.round(percent * roundMultiplier) / roundMultiplier; //newTimeSnapped
+                        }
                     }
-                }
 
-                double seconds = 0;
-                if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                    seconds = percent * ProjectManager.getCurrentProject().clientLevelData.getMaxTime();
-                }
-
-                cursorPosPanel.setTopLeftAnchor(percent, 0);
-                cursorPosPanel.setBottomRightAnchor(percent, 1);
-                cursorPosPanel.setRightText(df.format(percent * 100) + "%");
-                cursorPosPanel.setLeftText(df.format(seconds) + secondsSuffix);
-                cursorPosPanel.setVisible(true);
-
-                if (Mouse.isButtonDown(0)) { //If LMB down
+                    double seconds = 0;
                     if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                        ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(percent);
+                        seconds = percent * ProjectManager.getCurrentProject().clientLevelData.getMaxTime();
                     }
+
+                    cursorPosPanel.setTopLeftAnchor(percent, 0);
+                    cursorPosPanel.setBottomRightAnchor(percent, 1);
+                    cursorPosPanel.setRightText(df.format(percent * 100) + "%");
+                    cursorPosPanel.setLeftText(df.format(seconds) + secondsSuffix);
+                    cursorPosPanel.setVisible(true);
+
+                    if (Mouse.isButtonDown(0)) { //If LMB down
+                        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                            ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(percent);
+                        }
+                    }
+                    //</editor-fold>
                 }
+
             } else {
                 cursorPosPanel.setVisible(false);
             }
-            //</editor-fold>
         }
 
         @Override
@@ -456,17 +484,119 @@ public class Timeline extends Panel {
             if (ProjectManager.getCurrentProject().clientLevelData == null) {
                 mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
+
+            if (button == 1) { //RMB: Start selection
+                startSelection(mousePos);
+            }
+        }
+
+        @Override
+        public void onClick(int button, PosXY mousePos) {
+            if (button == 1) { //RMB: Start selection
+                startSelection(mousePos);
+            }
+        }
+
+        @Override
+        public void onClickReleased(int button, PosXY mousePos) {
+            if (button == 1) { //RMB released: End selection
+                endSelection(mousePos);
+            }
+        }
+
+        @Override
+        public void onClickChildComponentReleased(int button, PosXY mousePos) {
+            if (button == 1) { //RMB released: End selection
+                endSelection(mousePos);
+            }
+        }
+
+        private void startSelection(PosXY mousePos) {
+            selectionStartPos = mousePos;
+            if (!Window.isShiftDown() && ProjectManager.getCurrentProject().clientLevelData != null) { //Deselect all keyframes if shift not down
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
+            }
+        }
+
+        private void endSelection(PosXY mousePos) {
+            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                PosXY topLeftPos = new PosXY(
+                        Math.min(selectionStartPos.x, mousePos.x),
+                        Math.min(selectionStartPos.y, mousePos.y));
+                PosXY bottomRightPos = new PosXY(
+                        Math.max(selectionStartPos.x, mousePos.x),
+                        Math.max(selectionStartPos.y, mousePos.y));
+
+                //<editor-fold desc="Pos X">
+                if (MathUtils.isInRange(linkedComponent.topLeftPx.y + POS_X_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are X pos keyframes in selection Y range
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+
+                            float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            float maxPercent = (float) MathUtils.clamp(((bottomRightPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            ProjectManager.getCurrentProject().clientLevelData.selectPosXKeyframesInRange(name, minPercent, maxPercent);
+                        }
+                    }
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Pos Y">
+                if (MathUtils.isInRange(linkedComponent.topLeftPx.y + POS_Y_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y pos keyframes in selection Y range
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+
+                            float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            float maxPercent = (float) MathUtils.clamp(((bottomRightPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            ProjectManager.getCurrentProject().clientLevelData.selectPosYKeyframesInRange(name, minPercent, maxPercent);
+                        }
+                    }
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Pos Z">
+                if (MathUtils.isInRange(linkedComponent.topLeftPx.y + POS_Z_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y pos keyframes in selection Y range
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+
+                            float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            float maxPercent = (float) MathUtils.clamp(((bottomRightPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            ProjectManager.getCurrentProject().clientLevelData.selectPosZKeyframesInRange(name, minPercent, maxPercent);
+                        }
+                    }
+                }
+                //</editor-fold>
+            }
         }
 
     }
 
     private class TimelineUseablePlugin extends AbstractComponentPlugin {
 
-        Texture keyframeTex;
+        private Texture keyframeTex;
+        private Texture keyframeSelectionTex;
 
         @Override
         public void onPostInit() {
             keyframeTex = ResourceManager.getTexture("image/keyframe").getTexture();
+            keyframeSelectionTex = ResourceManager.getTexture("image/keyframeSelected").getTexture();
         }
 
         @Override
@@ -477,6 +607,9 @@ public class Timeline extends Panel {
             }
         }
 
+        /**
+         * Draws the line between the first and last keyframes
+         */
         private void drawKeyframesBackgrounds() {
             for (Map.Entry<String, AnimData> entry : objectAnimDataMap.entrySet()) {
                 String name = entry.getKey();
@@ -486,7 +619,7 @@ public class Timeline extends Panel {
                     float low = ad.getPosXFrames().firstKey();
                     float high = ad.getPosXFrames().lastKey();
 
-                    PosXY pos = linkedComponent.topLeftPx.add(0, 12);
+                    PosXY pos = linkedComponent.topLeftPx.add(0, POS_X_KEYFRAME_Y_POS);
 
                     if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
                         UIColor.matRed(0.25).bindColor();
@@ -501,7 +634,7 @@ public class Timeline extends Panel {
                     float low = ad.getPosYFrames().firstKey();
                     float high = ad.getPosYFrames().lastKey();
 
-                    PosXY pos = linkedComponent.topLeftPx.add(0, 28);
+                    PosXY pos = linkedComponent.topLeftPx.add(0, POS_Y_KEYFRAME_Y_POS);
 
                     if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
                         UIColor.matGreen(0.25).bindColor();
@@ -516,7 +649,7 @@ public class Timeline extends Panel {
                     float low = ad.getPosZFrames().firstKey();
                     float high = ad.getPosZFrames().lastKey();
 
-                    PosXY pos = linkedComponent.topLeftPx.add(0, 44);
+                    PosXY pos = linkedComponent.topLeftPx.add(0, POS_Z_KEYFRAME_Y_POS);
 
                     if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
                         UIColor.matBlue(0.25).bindColor();
@@ -529,6 +662,9 @@ public class Timeline extends Panel {
             }
         }
 
+        /**
+         * Draws the keyframe textures
+         */
         private void drawKeyframes() {
             for (Map.Entry<String, AnimData> entry : objectAnimDataMap.entrySet()) {
                 String name = entry.getKey();
@@ -536,40 +672,60 @@ public class Timeline extends Panel {
                 for (Map.Entry<Float, Float> xEntry : entry.getValue().getPosXFrames().entrySet()) {
                     float time = xEntry.getKey();
 
-                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, 12);
+                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, POS_X_KEYFRAME_Y_POS);
 
                     if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
                         UIColor.matRed().bindColor();
+                        UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
+
+                        if (ProjectManager.getCurrentProject().clientLevelData.isPosXKeyframeSelected(time)) { //Draw selection tex if selected
+                            UIColor.matYellow().bindColor();
+                            UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeSelectionTex);
+                        }
+
                     } else {
                         UIColor.matRed(0.1).bindColor();
+                        UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
                     }
-                    UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
+
                 }
 
                 for (Map.Entry<Float, Float> yEntry : entry.getValue().getPosYFrames().entrySet()) {
                     float time = yEntry.getKey();
 
-                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, 28);
+                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, POS_Y_KEYFRAME_Y_POS);
 
                     if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
                         UIColor.matGreen().bindColor();
+                        UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
+
+                        if (ProjectManager.getCurrentProject().clientLevelData.isPosYKeyframeSelected(time)) { //Draw selection tex if selected
+                            UIColor.matYellow().bindColor();
+                            UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeSelectionTex);
+                        }
                     } else {
                         UIColor.matGreen(0.1).bindColor();
+                        UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
                     }
-                    UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
                 }
 
                 for (Map.Entry<Float, Float> zEntry : entry.getValue().getPosZFrames().entrySet()) {
                     float time = zEntry.getKey();
 
-                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, 44);
+                    PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, POS_Z_KEYFRAME_Y_POS);
 
                     if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
                         UIColor.matBlue().bindColor();
+                        UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
+
+                        if (ProjectManager.getCurrentProject().clientLevelData.isPosZKeyframeSelected(time)) { //Draw selection tex if selected
+                            UIColor.matYellow().bindColor();
+                            UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeSelectionTex);
+                        }
                     } else {
                         UIColor.matBlue(0.1).bindColor();
+                        UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
                     }
-                    UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
                 }
             }
         }

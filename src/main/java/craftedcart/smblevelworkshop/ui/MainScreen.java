@@ -3,6 +3,7 @@ package craftedcart.smblevelworkshop.ui;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.animation.AnimData;
+import craftedcart.smblevelworkshop.animation.KeyframeEntry;
 import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
@@ -692,6 +693,7 @@ public class MainScreen extends FluidUIScreen {
                 //Add undo command
                 addUndoCommand(new UndoRemoveAnimData(ProjectManager.getCurrentProject().clientLevelData, this, selected));
 
+                ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframesForObjects(selected);
                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeAnimData(selected);
                 updatePropertiesObjectsPanel();
             } else {
@@ -1605,28 +1607,56 @@ public class MainScreen extends FluidUIScreen {
                                     redo();
                                 }
 
-                            } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables
-                                if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
-
-                                    List<String> toDelete = new ArrayList<>();
-
-                                    for (String name : new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables())) {
-                                        if (!(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
-                                                !(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
-                                            toDelete.add(name);
+                            } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables / Remove keyframes if mouse over timeline
+                                if (timeline.mouseOver) {
+                                    if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes().size() > 0 /* TODO: Rotation */) {
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes()) {
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosXFrame(entry.getTime());
                                         }
-                                    }
 
-                                    removePlaceables(toDelete);
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes()) {
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosYFrame(entry.getTime());
+                                        }
 
-                                    if (toDelete.size() > 1) {
-                                        notify(String.format(LangManager.getItem("placeableRemovedPlural"), toDelete.size()));
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes()) {
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosZFrame(entry.getTime());
+                                        }
+
+                                        //TODO: Rotation
+                                        //TODO: Undo command
+                                        //TODO: Notification
+
+                                        ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
+
                                     } else {
-                                        notify(LangManager.getItem("placeableRemoved"));
+                                        notify(LangManager.getItem("nothingSelected"));
                                     }
 
                                 } else {
-                                    notify(LangManager.getItem("nothingSelected"));
+                                    if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
+
+                                        List<String> toDelete = new ArrayList<>();
+
+                                        for (String name : new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables())) {
+                                            if (!(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
+                                                    !(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
+                                                toDelete.add(name);
+                                            }
+                                        }
+
+                                        removePlaceables(toDelete);
+
+                                        if (toDelete.size() > 1) {
+                                            notify(String.format(LangManager.getItem("placeableRemovedPlural"), toDelete.size()));
+                                        } else {
+                                            notify(LangManager.getItem("placeableRemoved"));
+                                        }
+
+                                    } else {
+                                        notify(LangManager.getItem("nothingSelected"));
+                                    }
                                 }
 
                             } else if (key == Keyboard.KEY_D && Window.isCtrlOrCmdDown()) { //Ctrl / Cmd D: Duplicate
@@ -2325,6 +2355,7 @@ public class MainScreen extends FluidUIScreen {
         updatePropertiesObjectsPanel();
         updateOutlinerObjectsPanel();
         timeline.setSelectedObjects(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
+        ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframesForDeselectedObjects(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
     }
 
     public void updatePropertiesObjectsPanel() {

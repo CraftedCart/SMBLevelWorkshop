@@ -2,6 +2,7 @@ package craftedcart.smblevelworkshop.level;
 
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.animation.AnimData;
+import craftedcart.smblevelworkshop.animation.KeyframeEntry;
 import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.uiaction.UIAction;
@@ -9,10 +10,7 @@ import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author CraftedCart
@@ -32,6 +30,10 @@ public class ClientLevelData {
 
     private Set<String> selectedExternalBackgroundObjects = new HashSet<>();
     @Nullable private UIAction onSelectedExternalBackgroundObjectsChanged;
+
+    private Set<KeyframeEntry> selectedPosXKeyframes = new HashSet<>();
+    private Set<KeyframeEntry> selectedPosYKeyframes = new HashSet<>();
+    private Set<KeyframeEntry> selectedPosZKeyframes = new HashSet<>();
 
     /**
      * Timeline position as a percentage
@@ -344,6 +346,107 @@ public class ClientLevelData {
         }
 
         return animData.getNamedTransformAtTime(time, name);
+    }
+
+    public void clearSelectedKeyframes() {
+        selectedPosXKeyframes.clear();
+        selectedPosYKeyframes.clear();
+        selectedPosZKeyframes.clear();
+
+        //TODO: Rotation
+    }
+
+    public void addSelectedPosXKeyframe(KeyframeEntry entry) {
+        selectedPosXKeyframes.add(entry);
+    }
+
+    public void addSelectedPosYKeyframe(KeyframeEntry entry) {
+        selectedPosYKeyframes.add(entry);
+    }
+
+    public void addSelectedPosZKeyframe(KeyframeEntry entry) {
+        selectedPosZKeyframes.add(entry);
+    }
+
+    public boolean isPosXKeyframeSelected(float time) {
+        for (KeyframeEntry entry : selectedPosXKeyframes) {
+            if (entry.getTime() == time) return true;
+        }
+
+        return false;
+    }
+
+    public boolean isPosYKeyframeSelected(float time) {
+        for (KeyframeEntry entry : selectedPosYKeyframes) {
+            if (entry.getTime() == time) return true;
+        }
+
+        return false;
+    }
+
+    public boolean isPosZKeyframeSelected(float time) {
+        for (KeyframeEntry entry : selectedPosZKeyframes) {
+            if (entry.getTime() == time) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * If the object isn't selected, remove the selected keyframes
+     *
+     * @param selectedObjects A collection of selected object names
+     */
+    public void clearSelectedKeyframesForDeselectedObjects(Collection<String> selectedObjects) {
+        selectedPosXKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
+        selectedPosYKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
+        selectedPosZKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
+
+        //TODO: Rotation
+    }
+
+    public void clearSelectedKeyframesForObjects(Collection<String> objects) {
+        selectedPosXKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
+        selectedPosYKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
+        selectedPosZKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
+
+        //TODO: Rotation
+    }
+
+    public void selectPosXKeyframesInRange(String name, float minPercent, float maxPercent) {
+        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getPosXFrames().subMap(minPercent, true, maxPercent, true);
+
+        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
+            addSelectedPosXKeyframe(new KeyframeEntry(name, entry.getKey()));
+        }
+    }
+
+    public void selectPosYKeyframesInRange(String name, float minPercent, float maxPercent) {
+        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getPosYFrames().subMap(minPercent, true, maxPercent, true);
+
+        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
+            addSelectedPosYKeyframe(new KeyframeEntry(name, entry.getKey()));
+        }
+    }
+
+    public void selectPosZKeyframesInRange(String name, float minPercent, float maxPercent) {
+        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getPosZFrames().subMap(minPercent, true, maxPercent, true);
+
+        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
+            addSelectedPosZKeyframe(new KeyframeEntry(name, entry.getKey()));
+        }
+    }
+
+    public Set<KeyframeEntry> getSelectedPosXKeyframes() {
+        return selectedPosXKeyframes;
+    }
+
+    public Set<KeyframeEntry> getSelectedPosYKeyframes() {
+        return selectedPosYKeyframes;
+    }
+
+    public Set<KeyframeEntry> getSelectedPosZKeyframes() {
+        return selectedPosZKeyframes;
     }
 
 }

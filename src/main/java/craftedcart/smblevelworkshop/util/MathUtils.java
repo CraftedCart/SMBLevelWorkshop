@@ -59,4 +59,8 @@ public class MathUtils {
         return rot;
     }
 
+    public static boolean isInRange(double val, double min, double max) {
+        return val >= min && val <= max;
+    }
+
 }

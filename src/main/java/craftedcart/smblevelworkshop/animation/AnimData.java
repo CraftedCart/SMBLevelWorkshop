@@ -78,6 +78,18 @@ public class AnimData implements Cloneable {
         posZFrames.put(time, pos);
     }
 
+    public void removePosXFrame(float time) {
+        posXFrames.remove(time);
+    }
+
+    public void removePosYFrame(float time) {
+        posYFrames.remove(time);
+    }
+
+    public void removePosZFrame(float time) {
+        posZFrames.remove(time);
+    }
+
     public void mergeWith(AnimData other) {
         posXFrames.putAll(other.posXFrames);
         posYFrames.putAll(other.posYFrames);

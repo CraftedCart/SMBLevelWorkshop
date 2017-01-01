@@ -107,6 +107,8 @@ public class Window {
             while (Mouse.next()) {
                 if (Mouse.getEventButtonState()) {
                     uiScreen.onClick(Mouse.getEventButton(), new PosXY(Mouse.getEventX(), Display.getHeight() - Mouse.getEventY()));
+                } else {
+                    uiScreen.onClickReleased(Mouse.getEventButton(), new PosXY(Mouse.getEventX(), Display.getHeight() - Mouse.getEventY()));
                 }
             }
 
