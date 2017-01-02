@@ -28,7 +28,7 @@ public class SMBLevelWorkshop {
             System.loadLibrary("fixXInitThreads");
         }
 
-        LogHelper.info(SMBLevelWorkshop.class, "SMB Level workshop launched");
+        LogHelper.info(SMBLevelWorkshop.class, "SMB Level Workshop launched");
 
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler.UNCAUGHT_EXCEPTION_HANDLER_NO_GUI); //Set the uncaught exception handler (Create a crash report)
 
