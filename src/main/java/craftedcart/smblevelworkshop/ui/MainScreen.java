@@ -1611,7 +1611,7 @@ public class MainScreen extends FluidUIScreen {
                             if (key == Keyboard.KEY_G) { //G: Grab
                                 if (timeline.mouseOver) { //Grab keyframes when the cursor is over the timeline
                                     //TODO: Undo command
-                                    moveSelectedKeyframesToBuffer();
+                                    moveSelectedKeyframesToBuffer(false);
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
                                 } else {
                                     addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
@@ -1625,7 +1625,7 @@ public class MainScreen extends FluidUIScreen {
                             } else if (key == Keyboard.KEY_S) { //S: Scale
                                 if (timeline.mouseOver) { //Scale keyframes when the cursor is over the timeline
                                     //TODO: Undo command
-                                    moveSelectedKeyframesToBuffer();
+                                    moveSelectedKeyframesToBuffer(false);
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_KEYFRAME;
                                 } else {
                                     addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
@@ -1711,40 +1711,48 @@ public class MainScreen extends FluidUIScreen {
                                 }
 
                             } else if (key == Keyboard.KEY_D && Window.isCtrlOrCmdDown()) { //Ctrl / Cmd D: Duplicate
-                                Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables());
-                                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
 
-                                Map<String, Placeable> newPlaceables = new HashMap<>();
+                                if (timeline.mouseOver) { //Duplicate keyframes when the cursor is over the timeline
+                                    //TODO: Undo command
+                                    moveSelectedKeyframesToBuffer(true);
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
 
-                                int duplicated = 0;
+                                } else {
+                                    Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables());
+                                    ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
 
-                                for (String name : selectedPlaceables) {
-                                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
-                                    if (!(placeable.getAsset() instanceof AssetStartPos) &&
-                                            !(placeable.getAsset() instanceof AssetFalloutY)) { //If the placeable isn't the start pos or fallout Y
+                                    Map<String, Placeable> newPlaceables = new HashMap<>();
 
-                                        duplicated++;
+                                    int duplicated = 0;
 
-                                        Placeable newPlaceable = placeable.getCopy();
-                                        String newPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(newPlaceable);
-                                        newPlaceables.put(newPlaceableName, newPlaceable);
+                                    for (String name : selectedPlaceables) {
+                                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+                                        if (!(placeable.getAsset() instanceof AssetStartPos) &&
+                                                !(placeable.getAsset() instanceof AssetFalloutY)) { //If the placeable isn't the start pos or fallout Y
 
-                                        synchronized (outlinerPlaceablesListBoxLock) {
-                                            outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
+                                            duplicated++;
+
+                                            Placeable newPlaceable = placeable.getCopy();
+                                            String newPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(newPlaceable);
+                                            newPlaceables.put(newPlaceableName, newPlaceable);
+
+                                            synchronized (outlinerPlaceablesListBoxLock) {
+                                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(newPlaceableName));
+                                            }
+
+                                            updateOutlinerPlaceablesPanel();
+
+                                            ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
                                         }
-
-                                        updateOutlinerPlaceablesPanel();
-
-                                        ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
                                     }
-                                }
 
-                                if (duplicated > 0) {
-                                    addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
+                                    if (duplicated > 0) {
+                                        addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
 
-                                    //Grab after duplicating
-                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_PLACEABLE;
+                                        //Grab after duplicating
+                                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                        ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_PLACEABLE;
+                                    }
                                 }
 
                             } else if (key == Keyboard.KEY_SPACE) { //Spacebar: Play / pause animation
@@ -2820,7 +2828,7 @@ public class MainScreen extends FluidUIScreen {
         nextFrameActions.add(action);
     }
 
-    private void moveSelectedKeyframesToBuffer() {
+    private void moveSelectedKeyframesToBuffer(boolean makeCopy) {
         ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
         LevelData ld = cld.getLevelData();
 
@@ -2841,7 +2849,9 @@ public class MainScreen extends FluidUIScreen {
 
             bad.setPosXFrame(entry.getTime(), ad.getPosXFrames().get(entry.getTime()));
 
-            ad.removePosXFrame(entry.getTime());
+            if (!makeCopy) {
+                ad.removePosXFrame(entry.getTime());
+            }
 
             iterPosX.remove(); //Deselect the keyframe
         }
@@ -2864,7 +2874,9 @@ public class MainScreen extends FluidUIScreen {
 
             bad.setPosYFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getPosYFrames().get(entry.getTime()));
 
-            ad.removePosYFrame(entry.getTime());
+            if (!makeCopy) {
+                ad.removePosYFrame(entry.getTime());
+            }
 
             iterPosY.remove(); //Deselect the keyframe
         }
@@ -2887,7 +2899,9 @@ public class MainScreen extends FluidUIScreen {
 
             bad.setPosZFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getPosZFrames().get(entry.getTime()));
 
-            ad.removePosZFrame(entry.getTime());
+            if (!makeCopy) {
+                ad.removePosZFrame(entry.getTime());
+            }
 
             iterPosZ.remove(); //Deselect the keyframe
         }
