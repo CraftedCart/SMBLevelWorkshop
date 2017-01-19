@@ -3,6 +3,7 @@ package craftedcart.smblevelworkshop.ui;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.animation.AnimData;
+import craftedcart.smblevelworkshop.animation.BufferedAnimData;
 import craftedcart.smblevelworkshop.animation.KeyframeEntry;
 import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.asset.*;
@@ -24,7 +25,6 @@ import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smbworkshopexporter.ConfigData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
-import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Button;
 import io.github.craftedcart.fluidui.component.Component;
@@ -46,9 +46,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.opengl.TextureImpl;
 
 import java.awt.*;
 import java.io.File;
@@ -1026,7 +1023,7 @@ public class MainScreen extends FluidUIScreen {
             }
             //</editor-fold>
         } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
-            if (ProjectManager.getCurrentProject().mode == EnumActionMode.GRAB) {
+            if (ProjectManager.getCurrentProject().mode == EnumActionMode.GRAB_PLACEABLE) {
                 //<editor-fold desc="Grab">
 
                 for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
@@ -1061,7 +1058,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
                 //</editor-fold>
-            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.ROTATE) {
+            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.ROTATE_PLACEABLE) {
                 //<editor-fold desc="Rotate">
                 for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
@@ -1096,7 +1093,7 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
                 //</editor-fold>
-            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.SCALE) {
+            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.SCALE_PLACEABLE) {
                 //<editor-fold desc="Scale">
                 for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
                     Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
@@ -1127,6 +1124,29 @@ public class MainScreen extends FluidUIScreen {
                     }
                 }
                 //</editor-fold>
+            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.GRAB_KEYFRAME) {
+                //<editor-fold desc="Grab">
+                for (Map.Entry<String, BufferedAnimData> entry : ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap().entrySet()) {
+                    BufferedAnimData bad = entry.getValue();
+
+                    if (Window.isAltDown()) { //Snap with Alt
+                        float snapToTranslation = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap; //Precise movement with shift
+                        bad.setSnapToTranslation(snapToTranslation);
+                    } else {
+                        bad.setSnapToTranslation(null);
+                    }
+
+                    if (Window.isShiftDown()) { //Precise movement with Shift
+                        float newTranslation = (float) (bad.getKeyframeBufferTranslation() + UIUtils.getMouseDelta().x * SMBLWSettings.modeKeyframeMouseShiftSensitivity +
+                                UIUtils.getMouseDWheel() * SMBLWSettings.modeKeyframeMouseWheelShiftSensitivity);
+                        bad.setKeyframeBufferTranslation(newTranslation);
+                    } else {
+                        float newTranslation = (float) (bad.getKeyframeBufferTranslation() + UIUtils.getMouseDelta().x * SMBLWSettings.modeKeyframeMouseSensitivity +
+                                UIUtils.getMouseDWheel() * SMBLWSettings.modeKeyframeMouseWheelSensitivity);
+                        bad.setKeyframeBufferTranslation(newTranslation);
+                    }
+                }
+                //</editor-fold>
             }
 
             if (ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) {
@@ -1141,14 +1161,20 @@ public class MainScreen extends FluidUIScreen {
             case NONE:
                 modeStringKey = "none";
                 break;
-            case GRAB:
-                modeStringKey = "grab";
+            case GRAB_PLACEABLE:
+                modeStringKey = "grabPlaceable";
                 break;
-            case ROTATE:
-                modeStringKey = "rotate";
+            case ROTATE_PLACEABLE:
+                modeStringKey = "rotatePlaceable";
                 break;
-            case SCALE:
-                modeStringKey = "scale";
+            case SCALE_PLACEABLE:
+                modeStringKey = "scalePlaceable";
+                break;
+            case GRAB_KEYFRAME:
+                modeStringKey = "grabKeyframe";
+                break;
+            case SCALE_KEYFRAME:
+                modeStringKey = "scaleKeyframe";
                 break;
             default:
                 //This shouldn't happen
@@ -1439,7 +1465,7 @@ public class MainScreen extends FluidUIScreen {
         GL11.glLineWidth(2);
 
         if (isSelected) {
-            if (ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) {
+            if (ProjectManager.getCurrentProject().mode.isPlaceableMode()) {
                 GL11.glPushMatrix();
 
                 GL11.glRotated(-placeable.getRotation().x, 1, 0, 0);
@@ -1583,14 +1609,28 @@ public class MainScreen extends FluidUIScreen {
                     } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
                         if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
                             if (key == Keyboard.KEY_G) { //G: Grab
-                                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                                ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
+                                if (timeline.mouseOver) { //Grab keyframes when the cursor is over the timeline
+                                    //TODO: Undo command
+                                    moveSelectedKeyframesToBuffer();
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
+                                } else {
+                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_PLACEABLE;
+                                }
                             } else if (key == Keyboard.KEY_R) { //R: Rotate
-                                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                                ProjectManager.getCurrentProject().mode = EnumActionMode.ROTATE;
+                                if (!timeline.mouseOver) { //Do nothing if the cursor is over the timeline
+                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.ROTATE_PLACEABLE;
+                                }
                             } else if (key == Keyboard.KEY_S) { //S: Scale
-                                addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                                ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE;
+                                if (timeline.mouseOver) { //Scale keyframes when the cursor is over the timeline
+                                    //TODO: Undo command
+                                    moveSelectedKeyframesToBuffer();
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_KEYFRAME;
+                                } else {
+                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_PLACEABLE;
+                                }
 
                             } else if (key == Keyboard.KEY_Z) { //Ctrl / Cmd Z: Undo - Ctrl / Cmd Shift Z: Redo
                                 if (Window.isCtrlOrCmdDown()) {
@@ -1704,7 +1744,7 @@ public class MainScreen extends FluidUIScreen {
 
                                     //Grab after duplicating
                                     addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
-                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB;
+                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_PLACEABLE;
                                 }
 
                             } else if (key == Keyboard.KEY_SPACE) { //Spacebar: Play / pause animation
@@ -1808,6 +1848,7 @@ public class MainScreen extends FluidUIScreen {
     private void confirmModeAction() {
         ProjectManager.getCurrentProject().mode = EnumActionMode.NONE;
         assert ProjectManager.getCurrentProject().clientLevelData != null;
+        commitBufferedKeyframes();
         updatePropertiesPlaceablesPanel();
         deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
     }
@@ -2777,6 +2818,95 @@ public class MainScreen extends FluidUIScreen {
 
     private void addNextFrameAction(UIAction action) {
         nextFrameActions.add(action);
+    }
+
+    private void moveSelectedKeyframesToBuffer() {
+        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        LevelData ld = cld.getLevelData();
+
+        //<editor-fold desc="Pos X">
+        Iterator<KeyframeEntry> iterPosX = cld.getSelectedPosXKeyframes().iterator();
+        while (iterPosX.hasNext()) {
+            KeyframeEntry entry = iterPosX.next();
+            BufferedAnimData bad;
+            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
+
+            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
+                bad = new BufferedAnimData();
+                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
+                bad.setRotationCenter(ld.getObjectAnimData(entry.getObjectName()).getRotationCenter()); //Copy the rotation center
+            } else {
+                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
+            }
+
+            bad.setPosXFrame(entry.getTime(), ad.getPosXFrames().get(entry.getTime()));
+
+            ad.removePosXFrame(entry.getTime());
+
+            iterPosX.remove(); //Deselect the keyframe
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Pos Y">
+        Iterator<KeyframeEntry> iterPosY = cld.getSelectedPosYKeyframes().iterator();
+        while (iterPosY.hasNext()) {
+            KeyframeEntry entry = iterPosY.next();
+            BufferedAnimData bad;
+            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
+
+            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
+                bad = new BufferedAnimData();
+                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
+                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
+            } else {
+                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
+            }
+
+            bad.setPosYFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getPosYFrames().get(entry.getTime()));
+
+            ad.removePosYFrame(entry.getTime());
+
+            iterPosY.remove(); //Deselect the keyframe
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Pos Z">
+        Iterator<KeyframeEntry> iterPosZ = cld.getSelectedPosZKeyframes().iterator();
+        while (iterPosZ.hasNext()) {
+            KeyframeEntry entry = iterPosZ.next();
+            BufferedAnimData bad;
+            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
+
+            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
+                bad = new BufferedAnimData();
+                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
+                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
+            } else {
+                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
+            }
+
+            bad.setPosZFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getPosZFrames().get(entry.getTime()));
+
+            ad.removePosZFrame(entry.getTime());
+
+            iterPosZ.remove(); //Deselect the keyframe
+        }
+        //</editor-fold>
+
+        //TODO: Rotation
+    }
+
+    private void commitBufferedKeyframes() {
+        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        LevelData ld = cld.getLevelData();
+
+        for (Map.Entry<String, BufferedAnimData> entry : cld.getAnimDataBufferMap().entrySet()) { //Loop through buffered anim data objects
+            AnimData ad = ld.getObjectAnimData(entry.getKey());
+            ad.mergeWith(entry.getValue().getTransformedAnimData());
+            ad.clampKeyframeTimes();
+        }
+
+        cld.getAnimDataBufferMap().clear();
     }
 
 }

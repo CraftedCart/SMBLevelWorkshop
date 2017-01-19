@@ -5,6 +5,7 @@ import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import craftedcart.smblevelworkshop.util.QuickMapEntry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
@@ -16,21 +17,22 @@ import java.util.TreeMap;
  */
 public class AnimData implements Cloneable {
 
-    @NotNull private PosXYZ rotationCenter = new PosXYZ();
+    @NotNull protected PosXYZ rotationCenter = new PosXYZ();
 
-    private TreeMap<Float, Float> posXFrames = new TreeMap<>();
-    private TreeMap<Float, Float> posYFrames = new TreeMap<>();
-    private TreeMap<Float, Float> posZFrames = new TreeMap<>();
+    protected TreeMap<Float, Float> posXFrames = new TreeMap<>();
+    protected TreeMap<Float, Float> posYFrames = new TreeMap<>();
+    protected TreeMap<Float, Float> posZFrames = new TreeMap<>();
 
     public void setRotationCenter(PosXYZ rotationCenter) {
         this.rotationCenter = rotationCenter;
     }
 
+    @NotNull
     public PosXYZ getRotationCenter() {
         return rotationCenter;
     }
 
-    public NamedTransform getNamedTransformAtTime(float time, String name) {
+    public NamedTransform getNamedTransformAtTime(float time, @Nullable String name) {
         NamedTransform transform = new NamedTransform(name);
 
         Map.Entry<Float, Float> floorX = posXFrames.floorEntry(time);
@@ -90,10 +92,22 @@ public class AnimData implements Cloneable {
         posZFrames.remove(time);
     }
 
-    public void mergeWith(AnimData other) {
-        posXFrames.putAll(other.posXFrames);
-        posYFrames.putAll(other.posYFrames);
-        posZFrames.putAll(other.posZFrames);
+    public void movePosXFrame(float time, float newTime) {
+        float pos = posXFrames.get(time);
+        posXFrames.remove(time);
+        posXFrames.put(newTime, pos);
+    }
+
+    public void movePosYFrame(float time, float newTime) {
+        float pos = posYFrames.get(time);
+        posYFrames.remove(time);
+        posYFrames.put(newTime, pos);
+    }
+
+    public void movePosZFrame(float time, float newTime) {
+        float pos = posZFrames.get(time);
+        posZFrames.remove(time);
+        posZFrames.put(newTime, pos);
     }
 
     public TreeMap<Float, Float> getPosXFrames() {
@@ -106,6 +120,29 @@ public class AnimData implements Cloneable {
 
     public TreeMap<Float, Float> getPosZFrames() {
         return posZFrames;
+    }
+
+    public void mergeWith(AnimData other) {
+        posXFrames.putAll(other.posXFrames);
+        posYFrames.putAll(other.posYFrames);
+        posZFrames.putAll(other.posZFrames);
+
+        //TODO: Rotation
+    }
+
+    public AnimData mergeWithCopy(AnimData other) {
+        AnimData ad = getCopy();
+
+        ad.posXFrames = new TreeMap<>(posXFrames);
+        ad.posXFrames.putAll(other.posXFrames);
+        ad.posYFrames = new TreeMap<>(posYFrames);
+        ad.posYFrames.putAll(other.posYFrames);
+        ad.posZFrames = new TreeMap<>(posZFrames);
+        ad.posZFrames.putAll(other.posZFrames);
+
+        //TODO: Rotation
+
+        return ad;
     }
 
     public void moveFirstFrame(float percent) {
@@ -138,5 +175,39 @@ public class AnimData implements Cloneable {
             LogHelper.error(getClass(), e);
             return null;
         }
+    }
+
+    public void clampKeyframeTimes() {
+        NamedTransform time0 = getNamedTransformAtTime(0.0f, null);
+        NamedTransform time1 = getNamedTransformAtTime(1.0f, null);
+
+        if (posXFrames.size() > 0 && posXFrames.firstKey() < 0) {
+            posXFrames.put(0.0f, (float) time0.getPosition().x);
+        }
+        if (posYFrames.size() > 0 && posYFrames.firstKey() < 0) {
+            posYFrames.put(0.0f, (float) time0.getPosition().y);
+        }
+        if (posZFrames.size() > 0 && posZFrames.firstKey() < 0) {
+            posZFrames.put(0.0f, (float) time0.getPosition().z);
+        }
+
+        if (posXFrames.size() > 0 && posXFrames.lastKey() > 1) {
+            posXFrames.put(1.0f, (float) time1.getPosition().x);
+        }
+        if (posYFrames.size() > 0 && posYFrames.lastKey() > 1) {
+            posYFrames.put(1.0f, (float) time1.getPosition().y);
+        }
+        if (posZFrames.size() > 0 && posZFrames.lastKey() > 1) {
+            posZFrames.put(1.0f, (float) time1.getPosition().z);
+        }
+
+        posXFrames.headMap(0.0f, false).clear();
+        posYFrames.headMap(0.0f, false).clear();
+        posZFrames.headMap(0.0f, false).clear();
+        posXFrames.tailMap(1.0f, false).clear();
+        posYFrames.tailMap(1.0f, false).clear();
+        posZFrames.tailMap(1.0f, false).clear();
+
+        //TODO: Rotation
     }
 }

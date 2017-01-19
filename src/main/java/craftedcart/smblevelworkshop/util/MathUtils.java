@@ -1,5 +1,7 @@
 package craftedcart.smblevelworkshop.util;
 
+import craftedcart.smblevelworkshop.SMBLWSettings;
+import craftedcart.smblevelworkshop.Window;
 import io.github.craftedcart.fluidui.util.UIColor;
 
 /**
@@ -61,6 +63,11 @@ public class MathUtils {
 
     public static boolean isInRange(double val, double min, double max) {
         return val >= min && val <= max;
+    }
+
+    public static float snapTo(float val, float snapTo) {
+        float roundMultiplier = 1.0f / snapTo;
+        return Math.round(val * roundMultiplier) / roundMultiplier;
     }
 
 }

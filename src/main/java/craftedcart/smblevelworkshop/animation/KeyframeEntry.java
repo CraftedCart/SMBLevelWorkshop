@@ -22,4 +22,7 @@ public class KeyframeEntry {
         return time;
     }
 
+    public void setTime(float time) {
+        this.time = time;
+    }
 }

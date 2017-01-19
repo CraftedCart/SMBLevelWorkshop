@@ -15,6 +15,10 @@ public class SMBLWSettings {
     public static double modeMouseShiftSensitivity = 0.02;
     public static double modeMouseWheelSensitivity = 0.001;
     public static double modeMouseWheelShiftSensitivity = 0.0001;
+    public static double modeKeyframeMouseSensitivity = 0.002;
+    public static double modeKeyframeMouseShiftSensitivity = 0.0002;
+    public static double modeKeyframeMouseWheelSensitivity = 0.00001;
+    public static double modeKeyframeMouseWheelShiftSensitivity = 0.000001;
 
     //Rendering
     public static boolean showTextures = true;

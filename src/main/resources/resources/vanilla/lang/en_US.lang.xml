@@ -43,9 +43,11 @@
     <entry key="modeLabelFormat" val="Mode: %s" />
     <entry key="modeDirectionLabelFormat" val="Working Direction: %s" />
     <entry key="none" val="None" />
-    <entry key="grab" val="Grab" />
-    <entry key="rotate" val="Rotate" />
-    <entry key="scale" val="Scale" />
+    <entry key="grabPlaceable" val="Grab (Placeables)" />
+    <entry key="rotatePlaceable" val="Rotate (Placeables)" />
+    <entry key="scalePlaceable" val="Scale (Placeables)" />
+    <entry key="grabKeyframe" val="Grab (Keyframes)" />
+    <entry key="scaleKeyframe" val="Scale (Keyframes)" />
 
     <!-- Axis directions -->
     <entry key="axisX" val="X" />

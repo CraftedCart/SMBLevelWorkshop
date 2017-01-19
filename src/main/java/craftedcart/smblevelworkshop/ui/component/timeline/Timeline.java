@@ -3,12 +3,14 @@ package craftedcart.smblevelworkshop.ui.component.timeline;
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.animation.AnimData;
+import craftedcart.smblevelworkshop.animation.BufferedAnimData;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.ui.DefaultUITheme;
 import craftedcart.smblevelworkshop.ui.MainScreen;
+import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import io.github.craftedcart.fluidui.component.Button;
 import io.github.craftedcart.fluidui.component.Label;
@@ -614,6 +616,10 @@ public class Timeline extends Panel {
             for (Map.Entry<String, AnimData> entry : objectAnimDataMap.entrySet()) {
                 String name = entry.getKey();
                 AnimData ad = entry.getValue();
+                Map<String, BufferedAnimData> animDataBufferMap = ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap();
+                if (animDataBufferMap.containsKey(entry.getKey())) {
+                    ad = ad.mergeWithCopy(animDataBufferMap.get(entry.getKey()).getTransformedAnimData());
+                }
 
                 if (ad.getPosXFrames().size() > 0) {
                     float low = ad.getPosXFrames().firstKey();
@@ -668,8 +674,14 @@ public class Timeline extends Panel {
         private void drawKeyframes() {
             for (Map.Entry<String, AnimData> entry : objectAnimDataMap.entrySet()) {
                 String name = entry.getKey();
+                AnimData ad = entry.getValue();
 
-                for (Map.Entry<Float, Float> xEntry : entry.getValue().getPosXFrames().entrySet()) {
+                Map<String, BufferedAnimData> animDataBufferMap = ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap();
+                if (animDataBufferMap.containsKey(entry.getKey())) {
+                    ad = ad.mergeWithCopy(animDataBufferMap.get(entry.getKey()).getTransformedAnimData());
+                }
+
+                for (Map.Entry<Float, Float> xEntry : ad.getPosXFrames().entrySet()) {
                     float time = xEntry.getKey();
 
                     PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, POS_X_KEYFRAME_Y_POS);
@@ -690,7 +702,7 @@ public class Timeline extends Panel {
 
                 }
 
-                for (Map.Entry<Float, Float> yEntry : entry.getValue().getPosYFrames().entrySet()) {
+                for (Map.Entry<Float, Float> yEntry : ad.getPosYFrames().entrySet()) {
                     float time = yEntry.getKey();
 
                     PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, POS_Y_KEYFRAME_Y_POS);
@@ -709,7 +721,7 @@ public class Timeline extends Panel {
                     }
                 }
 
-                for (Map.Entry<Float, Float> zEntry : entry.getValue().getPosZFrames().entrySet()) {
+                for (Map.Entry<Float, Float> zEntry : ad.getPosZFrames().entrySet()) {
                     float time = zEntry.getKey();
 
                     PosXY pos = linkedComponent.topLeftPx.add(linkedComponent.width * time, POS_Z_KEYFRAME_Y_POS);

@@ -2,9 +2,9 @@ package craftedcart.smblevelworkshop.level;
 
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.animation.AnimData;
+import craftedcart.smblevelworkshop.animation.BufferedAnimData;
 import craftedcart.smblevelworkshop.animation.KeyframeEntry;
 import craftedcart.smblevelworkshop.animation.NamedTransform;
-import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +34,8 @@ public class ClientLevelData {
     private Set<KeyframeEntry> selectedPosXKeyframes = new HashSet<>();
     private Set<KeyframeEntry> selectedPosYKeyframes = new HashSet<>();
     private Set<KeyframeEntry> selectedPosZKeyframes = new HashSet<>();
+
+    private Map<String, BufferedAnimData> animDataBufferMap = new HashMap<>();
 
     /**
      * Timeline position as a percentage
@@ -447,6 +449,10 @@ public class ClientLevelData {
 
     public Set<KeyframeEntry> getSelectedPosZKeyframes() {
         return selectedPosZKeyframes;
+    }
+
+    public Map<String, BufferedAnimData> getAnimDataBufferMap() {
+        return animDataBufferMap;
     }
 
 }
