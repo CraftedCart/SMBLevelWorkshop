@@ -80,7 +80,7 @@
     <entry key="properties" val="Properties" />
     <entry key="position" val="Position" />
     <entry key="rotation" val="Rotation" />
-    <!-- Scale already defined above -->
+    <entry key="scale" val="Scale" />
     <entry key="type" val="Type" />
     <entry key="noTypes" val="No Types" />
 
