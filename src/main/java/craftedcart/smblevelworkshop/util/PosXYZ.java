@@ -48,4 +48,8 @@ public class PosXYZ {
         }
     }
 
+    public PosXYZ getCopy() {
+        return new PosXYZ(x, y, z);
+    }
+
 }

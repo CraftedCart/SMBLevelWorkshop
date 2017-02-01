@@ -184,4 +184,24 @@ public class LevelData {
         }
     }
 
+    public void replaceObjectAnimDataMap(TreeMap<String, AnimData> newMap) {
+        objectAnimDataMap.clear();
+        objectAnimDataMap.putAll(newMap);
+    }
+
+    /**
+     * Thread safe
+     *
+     * @return A deeper clone
+     */
+    public TreeMap<String, AnimData> getObjectAnimDataMapCopy() {
+        TreeMap<String, AnimData> objectAnimDataMapClone = new TreeMap<>(objectAnimDataMap);
+        TreeMap<String, AnimData> deeperCloneMap = new TreeMap<>();
+
+        for (Map.Entry<String, AnimData> entry : objectAnimDataMapClone.entrySet()) {
+            deeperCloneMap.put(entry.getKey(), entry.getValue().getCopy());
+        }
+
+        return deeperCloneMap;
+    }
 }

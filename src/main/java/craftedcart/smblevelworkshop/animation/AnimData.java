@@ -15,7 +15,7 @@ import java.util.TreeMap;
  * @author CraftedCart
  *         Created on 30/10/2016 (DD/MM/YYYY)
  */
-public class AnimData implements Cloneable {
+public class AnimData {
 
     @NotNull protected PosXYZ rotationCenter = new PosXYZ();
 
@@ -168,13 +168,18 @@ public class AnimData implements Cloneable {
     }
 
     public AnimData getCopy() {
-        try {
-            return (AnimData) clone();
-        } catch (CloneNotSupportedException e) {
-            LogHelper.error(getClass(), "Failed to clone AnimData");
-            LogHelper.error(getClass(), e);
-            return null;
-        }
+        PosXYZ rotationCenterClone = rotationCenter.getCopy();
+        TreeMap<Float, Float> posXFramesClone = new TreeMap<>(posXFrames);
+        TreeMap<Float, Float> posYFramesClone = new TreeMap<>(posYFrames);
+        TreeMap<Float, Float> posZFramesClone = new TreeMap<>(posZFrames);
+
+        AnimData animDataClone = new AnimData();
+        animDataClone.rotationCenter = rotationCenterClone;
+        animDataClone.posXFrames = posXFramesClone;
+        animDataClone.posYFrames = posYFramesClone;
+        animDataClone.posZFrames = posZFramesClone;
+
+        return animDataClone;
     }
 
     public void clampKeyframeTimes() {

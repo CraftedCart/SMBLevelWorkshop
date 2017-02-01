@@ -72,7 +72,7 @@ public class MainScreen extends FluidUIScreen {
     private final Label modeDirectionLabel = new Label();
     private final Panel notifPanel = new Panel();
     private final Timeline timeline = new Timeline(this);
-    final Panel onScreenCameraControlsPanel = new Panel();
+    private final Panel onScreenCameraControlsPanel = new Panel();
 
     private EnumObjectMode objectMode = EnumObjectMode.PLACEABLE_EDIT;
 
@@ -1610,7 +1610,8 @@ public class MainScreen extends FluidUIScreen {
                         if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
                             if (key == Keyboard.KEY_G) { //G: Grab
                                 if (timeline.mouseOver) { //Grab keyframes when the cursor is over the timeline
-                                    //TODO: Undo command
+                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
                                     moveSelectedKeyframesToBuffer(false);
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
                                 } else {
@@ -1624,7 +1625,8 @@ public class MainScreen extends FluidUIScreen {
                                 }
                             } else if (key == Keyboard.KEY_S) { //S: Scale
                                 if (timeline.mouseOver) { //Scale keyframes when the cursor is over the timeline
-                                    //TODO: Undo command
+                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
                                     moveSelectedKeyframesToBuffer(false);
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_KEYFRAME;
                                 } else {
@@ -1864,6 +1866,7 @@ public class MainScreen extends FluidUIScreen {
     private void discardModeAction() {
         ProjectManager.getCurrentProject().mode = EnumActionMode.NONE;
         undo();
+        discardBufferedKeyframes();
         deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
     }
 
@@ -2921,6 +2924,10 @@ public class MainScreen extends FluidUIScreen {
         }
 
         cld.getAnimDataBufferMap().clear();
+    }
+
+    private void discardBufferedKeyframes() {
+        ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap().clear();
     }
 
 }
