@@ -1655,6 +1655,9 @@ public class MainScreen extends FluidUIScreen {
                                             ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes().size() > 0 ||
                                             ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes().size() > 0 /* TODO: Rotation */) {
 
+                                        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
+                                                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+
                                         int keyframesRemoved = 0;
 
                                         for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes()) {
@@ -1673,7 +1676,6 @@ public class MainScreen extends FluidUIScreen {
                                         }
 
                                         //TODO: Rotation
-                                        //TODO: Undo command
 
                                         ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
 
@@ -2785,6 +2787,10 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void onKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
+        //Add undo command
+        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+
         ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
         LevelData ld = cld.getLevelData();
         float time = cld.getTimelinePos();
