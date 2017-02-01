@@ -53,7 +53,8 @@ public class UndoAddAnimData extends UndoCommand {
 
     @Override
     public UndoCommand getRedoCommand() {
-        return new UndoRemoveAnimData(clientLevelData, mainScreen, animDataMap);
+        TreeMap<String, AnimData> preUndoAnimDataMap = clientLevelData.getLevelData().getObjectAnimDataMapCopy();
+        return new UndoRemoveAnimData(clientLevelData, mainScreen, preUndoAnimDataMap);
     }
 
     @Nullable
