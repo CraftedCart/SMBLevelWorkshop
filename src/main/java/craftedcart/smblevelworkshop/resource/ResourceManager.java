@@ -214,7 +214,7 @@ public class ResourceManager {
                 langPackResourcesToLoad.size() +
                 vertShaderResourcesToLoad.size() +
                 fragShaderResourcesToLoad.size() +
-                shaderCacheResourcesToLoad.size()+
+                shaderCacheResourcesToLoad.size() +
 //                musicOggResourcesToLoad.size();
                 objResourcesToLoad.size();
         int currentResource = 0;
