@@ -43,7 +43,7 @@ public class Window {
         Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(800, 500));
         Display.setResizable(true);
         Display.setTitle(ResourceManager.initResources.getString("smbLevelWorkshop"));
-        PixelFormat pxFormat = new PixelFormat().withStencilBits(8);
+        PixelFormat pxFormat = new PixelFormat().withStencilBits(8).withSamples(8);
         Display.create(pxFormat);
         openGLVersion = GL11.glGetString(GL11.GL_VERSION);
         drawable = new SharedDrawable(Display.getDrawable());
