@@ -35,6 +35,7 @@ public class SMBLWSettings {
     //UI
     public static boolean showOnScreenCameraControls = false;
     public static boolean showOnScreenInput = false;
+    public static boolean showFPSOverlay = false;
 
     //Properties
     public static boolean autoUpdateProperties = true;

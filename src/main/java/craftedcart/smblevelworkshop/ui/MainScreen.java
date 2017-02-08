@@ -73,6 +73,7 @@ public class MainScreen extends FluidUIScreen {
     private final Panel notifPanel = new Panel();
     private final Timeline timeline = new Timeline(this);
     private final Panel onScreenCameraControlsPanel = new Panel();
+    private final FPSOverlay fpsOverlay = new FPSOverlay();
 
     private EnumObjectMode objectMode = EnumObjectMode.PLACEABLE_EDIT;
 
@@ -946,6 +947,17 @@ public class MainScreen extends FluidUIScreen {
         });
         mainUI.addChildComponent("inputOverlay", inputOverlay);
 
+        //Defined at class level
+        fpsOverlay.setOnInitAction(() -> {
+            fpsOverlay.setTopLeftPos(260, 4);
+            fpsOverlay.setBottomRightPos(516, 28);
+            fpsOverlay.setTopLeftAnchor(0, 0);
+            fpsOverlay.setBottomRightAnchor(0, 0);
+            fpsOverlay.setBackgroundColor(UIColor.matGrey900(0.75));
+            fpsOverlay.setVisible(false);
+        });
+        mainUI.addChildComponent("fpsOverlay", fpsOverlay);
+
         Window.logOpenGLError("After MainScreen.init()");
 
         try {
@@ -970,6 +982,8 @@ public class MainScreen extends FluidUIScreen {
         onScreenCameraControlsPanel.setVisible(SMBLWSettings.showOnScreenCameraControls);
         //Show on screen input if setting enabled
         inputOverlay.setVisible(SMBLWSettings.showOnScreenInput);
+        //Show FPS if setting enabled
+        fpsOverlay.setVisible(SMBLWSettings.showFPSOverlay);
 
         if (ProjectManager.getCurrentProject().clientLevelData != null) {
             ProjectManager.getCurrentProject().clientLevelData.update((float) UIUtils.getDelta());

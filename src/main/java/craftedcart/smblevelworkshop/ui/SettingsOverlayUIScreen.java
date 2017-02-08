@@ -252,6 +252,38 @@ public class SettingsOverlayUIScreen extends FluidUIScreen {
         showOnScreenInputCheckBox.setOnLMBAction(() -> SMBLWSettings.showOnScreenInput = showOnScreenInputCheckBox.value);
         showOnScreenInputPanel.addChildComponent("showOnScreenInputCheckBox", showOnScreenInputCheckBox);
         //</editor-fold>
+
+        //<editor-fold desc="Show FPS overlay">
+        final Panel showFPSOverlayPanel = new Panel();
+        showFPSOverlayPanel.setOnInitAction(() -> {
+            showFPSOverlayPanel.setTopLeftPos(0, 0);
+            showFPSOverlayPanel.setBottomRightPos(0, 24);
+            showFPSOverlayPanel.setBackgroundColor(UIColor.transparent());
+        });
+        listBox.addChildComponent("showFPSOverlayPanel", showFPSOverlayPanel);
+
+        final Label showFPSOverlayLabel = new Label();
+        showFPSOverlayLabel.setOnInitAction(() -> {
+            showFPSOverlayLabel.setTopLeftPos(0, 0);
+            showFPSOverlayLabel.setBottomRightPos(-24, 0);
+            showFPSOverlayLabel.setTopLeftAnchor(0, 0);
+            showFPSOverlayLabel.setBottomRightAnchor(1, 1);
+            showFPSOverlayLabel.setText(LangManager.getItem("settingShowFPSOverlay"));
+        });
+        showFPSOverlayPanel.addChildComponent("showFPSOverlayLabel", showFPSOverlayLabel);
+
+        final CheckBox showFPSOverlayCheckBox = new CheckBox();
+        showFPSOverlayCheckBox.setOnInitAction(() -> {
+            showFPSOverlayCheckBox.setTopLeftPos(-24, 0);
+            showFPSOverlayCheckBox.setBottomRightPos(0, 0);
+            showFPSOverlayCheckBox.setTopLeftAnchor(1, 0);
+            showFPSOverlayCheckBox.setBottomRightAnchor(1, 1);
+            showFPSOverlayCheckBox.setValue(SMBLWSettings.showOnScreenInput);
+            showFPSOverlayCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        });
+        showFPSOverlayCheckBox.setOnLMBAction(() -> SMBLWSettings.showFPSOverlay = showFPSOverlayCheckBox.value);
+        showFPSOverlayPanel.addChildComponent("showFPSOverlayCheckBox", showFPSOverlayCheckBox);
+        //</editor-fold>
     }
 
 }

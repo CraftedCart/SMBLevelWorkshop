@@ -17,6 +17,7 @@
     <entry key="settingShowAllWireframes" val="Show all wireframes" />
     <entry key="settingShowOnScreenCameraControls" val="Show on screen camera controls" />
     <entry key="settingShowOnScreenInput" val="Show on screen input (Useful for screencasts)" />
+    <entry key="settingShowFPSOverlay" val="Show framerate overlay" />
 
     <!-- Export -->
     <entry key="export" val="Export" />
@@ -132,6 +133,10 @@
     <entry key="timeline" val="Timeline" />
     <entry key="secondsAbbr" val="s" />
     <entry key="secondsOutOfAbbr" val="s /" />
+
+    <!-- Debug -->
+    <entry key="fps" val="FPS" />
+    <entry key="5sAverage" val="5s Average" />
 
     <!-- Key Translations -->
     <entry key="ESCAPE" val="Escape" />
