@@ -32,6 +32,12 @@
 		},
 		"lzFormat2": {
 			"name": "SMB 2 LZ File Format"
+		},
+		"debugShortcuts": {
+			"name": "Debug Shortcuts"
+		},
+		"removingWorldEffects": {
+			"name": "Removing World Effects"
 		}
 	};
 })();
