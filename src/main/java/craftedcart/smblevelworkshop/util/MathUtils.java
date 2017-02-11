@@ -70,4 +70,12 @@ public class MathUtils {
         return Math.round(val * roundMultiplier) / roundMultiplier;
     }
 
+    /**
+     * @param t A value from 0 to 1
+     * @return Quadratic interpolated value between 0 and 1
+     */
+    public static float quadraticEaseInOut(float t) {
+        return t < 0.5f ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
 }

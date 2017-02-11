@@ -1,6 +1,5 @@
 package craftedcart.smblevelworkshop.animation;
 
-import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import craftedcart.smblevelworkshop.util.QuickMapEntry;
@@ -59,9 +58,9 @@ public class AnimData {
         if (ceilY.getKey() != 0 && !Objects.equals(floorY.getKey(), ceilY.getKey())) percentY = (time - floorY.getKey()) / (ceilY.getKey() - floorY.getKey());
         if (ceilZ.getKey() != 0 && !Objects.equals(floorZ.getKey(), ceilZ.getKey())) percentZ = (time - floorZ.getKey()) / (ceilZ.getKey() - floorZ.getKey());
 
-        double x = MathUtils.lerp(floorX.getValue(), ceilX.getValue(), percentX);
-        double y = MathUtils.lerp(floorY.getValue(), ceilY.getValue(), percentY);
-        double z = MathUtils.lerp(floorZ.getValue(), ceilZ.getValue(), percentZ);
+        double x = MathUtils.lerp(floorX.getValue(), ceilX.getValue(), MathUtils.quadraticEaseInOut(percentX));
+        double y = MathUtils.lerp(floorY.getValue(), ceilY.getValue(), MathUtils.quadraticEaseInOut(percentY));
+        double z = MathUtils.lerp(floorZ.getValue(), ceilZ.getValue(), MathUtils.quadraticEaseInOut(percentZ));
 
         transform.setPosition(new PosXYZ(x, y, z));
 
