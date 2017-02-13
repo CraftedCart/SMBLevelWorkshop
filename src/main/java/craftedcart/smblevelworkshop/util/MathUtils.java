@@ -74,8 +74,8 @@ public class MathUtils {
      * @param t A value from 0 to 1
      * @return Quadratic interpolated value between 0 and 1
      */
-    public static float quadraticEaseInOut(float t) {
-        return t < 0.5f ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    public static float cubicEaseInOut(float t) {
+        return t < 0.5f ? 4 * t * t * t : (t - 1f) * (2f * t - 2f) * (2f * t - 2f) + 1f;
     }
 
 }
