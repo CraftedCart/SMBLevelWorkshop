@@ -278,7 +278,7 @@ public class SettingsOverlayUIScreen extends FluidUIScreen {
             showFPSOverlayCheckBox.setBottomRightPos(0, 0);
             showFPSOverlayCheckBox.setTopLeftAnchor(1, 0);
             showFPSOverlayCheckBox.setBottomRightAnchor(1, 1);
-            showFPSOverlayCheckBox.setValue(SMBLWSettings.showOnScreenInput);
+            showFPSOverlayCheckBox.setValue(SMBLWSettings.showFPSOverlay);
             showFPSOverlayCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
         });
         showFPSOverlayCheckBox.setOnLMBAction(() -> SMBLWSettings.showFPSOverlay = showFPSOverlayCheckBox.value);
