@@ -59,7 +59,7 @@ import java.util.List;
  */
 public class MainScreen extends FluidUIScreen {
 
-    private static final double TIMELINE_HEIGHT = 148;
+    private static final double TIMELINE_HEIGHT = 136;
 
     //Camera
     @NotNull private PosXYZ cameraPos = new PosXYZ(5, 5, 5);

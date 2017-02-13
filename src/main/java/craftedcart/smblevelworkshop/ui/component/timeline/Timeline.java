@@ -10,12 +10,8 @@ import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.ui.DefaultUITheme;
 import craftedcart.smblevelworkshop.ui.MainScreen;
-import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
-import io.github.craftedcart.fluidui.component.Button;
-import io.github.craftedcart.fluidui.component.Label;
-import io.github.craftedcart.fluidui.component.Panel;
-import io.github.craftedcart.fluidui.component.TextField;
+import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.plugin.AbstractComponentPlugin;
 import io.github.craftedcart.fluidui.util.EnumHAlignment;
 import io.github.craftedcart.fluidui.util.PosXY;
@@ -94,6 +90,26 @@ public class Timeline extends Panel {
         });
         timelinePanel.addPlugin(new TimelinePlugin());
         addChildComponent("timelinePanel", timelinePanel);
+
+        final Image posImage = new Image();
+        posImage.setOnInitAction(() -> {
+            posImage.setTopLeftPos(0, POS_Y_KEYFRAME_Y_POS - 2);
+            posImage.setBottomRightPos(24, POS_Y_KEYFRAME_Y_POS + 22);
+            posImage.setTopLeftAnchor(0, 0);
+            posImage.setBottomRightAnchor(0, 0);
+            posImage.setTexture(ResourceManager.getTexture("image/arrowAll").getTexture());
+        });
+        addChildComponent("posImage", posImage);
+
+        final Image rotImage = new Image();
+        rotImage.setOnInitAction(() -> {
+            rotImage.setTopLeftPos(0, ROT_Y_KEYFRAME_Y_POS - 2);
+            rotImage.setBottomRightPos(24, ROT_Y_KEYFRAME_Y_POS + 22);
+            rotImage.setTopLeftAnchor(0, 0);
+            rotImage.setBottomRightAnchor(0, 0);
+            rotImage.setTexture(ResourceManager.getTexture("image/rotate").getTexture());
+        });
+        addChildComponent("rotImage", rotImage);
 
         final Panel timelineUseablePanel = new Panel();
         timelineUseablePanel.setOnInitAction(() -> {
@@ -670,6 +686,7 @@ public class Timeline extends Panel {
                 drawKeyframesBackgrounds();
                 drawKeyframes();
             }
+            drawBlocks();
         }
 
         /**
@@ -915,6 +932,23 @@ public class Timeline extends Panel {
                 }
                 //</editor-fold>
             }
+        }
+
+        private void drawBlocks() {
+            //Playhead block
+            UIUtils.drawQuad(
+                    new PosXY(linkedComponent.topLeftPx.x, linkedComponent.topLeftPx.y),
+                    new PosXY(linkedComponent.bottomRightPx.x, linkedComponent.topLeftPx.y + 16),
+                    UIColor.matRed(0.25)
+            );
+
+
+            //Pos and rot separator
+            UIUtils.drawQuad(
+                    new PosXY(linkedComponent.topLeftPx.x, linkedComponent.topLeftPx.y + POS_Z_KEYFRAME_Y_POS + 17),
+                    new PosXY(linkedComponent.bottomRightPx.x, linkedComponent.topLeftPx.y + ROT_X_KEYFRAME_Y_POS + 3),
+                    UIColor.matWhite(0.75)
+            );
         }
 
     }
