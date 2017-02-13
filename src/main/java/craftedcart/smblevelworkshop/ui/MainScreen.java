@@ -2961,9 +2961,9 @@ public class MainScreen extends FluidUIScreen {
         PosXYZ translate = transform.getPosition();
         PosXYZ rotate = transform.getRotation();
         GL11.glTranslated(translate.x, translate.y, translate.z);
-        GL11.glRotated(rotate.x, 1, 0, 0);
-        GL11.glRotated(rotate.y, 0, 1, 0);
         GL11.glRotated(rotate.z, 0, 0, 1);
+        GL11.glRotated(rotate.y, 0, 1, 0);
+        GL11.glRotated(rotate.x, 1, 0, 0);
     }
 
     private void transformObjectAtTime(String name) {
