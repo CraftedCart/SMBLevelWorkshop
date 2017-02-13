@@ -130,6 +130,18 @@ public class ExportManager {
             frames.add(time);
         }
 
+        for (Float time : animData.getRotXFrames().keySet()) {
+            frames.add(time);
+        }
+
+        for (Float time : animData.getRotYFrames().keySet()) {
+            frames.add(time);
+        }
+
+        for (Float time : animData.getRotZFrames().keySet()) {
+            frames.add(time);
+        }
+
         for (float time : frames) {
             NamedTransform transform = animData.getNamedTransformAtTime(time, null);
 
