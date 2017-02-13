@@ -20,10 +20,12 @@ import java.util.List;
  * @author CraftedCart
  *         Created on 01/11/2016 (DD/MM/YYYY)
  */
-public class ObjectPositionTextFields extends PositionTextFields {
+public class ObjectRotationTextFields extends RotationTextFields {
 
-    public ObjectPositionTextFields(@NotNull MainScreen mainScreen, @Nullable TextField nextTextField) {
+    public ObjectRotationTextFields(@NotNull MainScreen mainScreen, @Nullable TextField nextTextField) {
         super(mainScreen, nextTextField);
+
+        setShouldNormalizeRotation(false);
     }
 
     @Nullable
@@ -74,11 +76,11 @@ public class ObjectPositionTextFields extends PositionTextFields {
             AnimData animData = ProjectManager.getCurrentProject().clientLevelData.getCurrentFrameObjectAnimData(name);
 
             if (axis == EnumAxis.X) {
-                animData.setPosXFrame(time, (float) newValue.x);
+                animData.setRotXFrame(time, (float) newValue.x);
             } else if (axis == EnumAxis.Y) {
-                animData.setPosYFrame(time, (float) newValue.y);
+                animData.setRotYFrame(time, (float) newValue.y);
             } else if (axis == EnumAxis.Z) {
-                animData.setPosZFrame(time, (float) newValue.z);
+                animData.setRotZFrame(time, (float) newValue.z);
             }
 
          }

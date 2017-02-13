@@ -43,6 +43,10 @@ public class Timeline extends Panel {
     private static final int POS_Y_KEYFRAME_Y_POS = 28;
     private static final int POS_Z_KEYFRAME_Y_POS = 44;
 
+    private static final int ROT_X_KEYFRAME_Y_POS = 60;
+    private static final int ROT_Y_KEYFRAME_Y_POS = 76;
+    private static final int ROT_Z_KEYFRAME_Y_POS = 92;
+
     private MainScreen mainScreen;
 
     private TimelinePlayhead posPanel;
@@ -425,7 +429,8 @@ public class Timeline extends Panel {
             if (linkedComponent.mouseOver) {
 
                 if (Mouse.isButtonDown(1)) { //If RMB down
-                    
+
+                    //Calculate top left and bottom right pos of selection
                     PosXY topLeftPos = new PosXY(
                             Math.min(selectionStartPos.x, linkedComponent.mousePos.x),
                             Math.min(selectionStartPos.y, linkedComponent.mousePos.y));
@@ -433,6 +438,7 @@ public class Timeline extends Panel {
                             Math.max(selectionStartPos.x, linkedComponent.mousePos.x),
                             Math.max(selectionStartPos.y, linkedComponent.mousePos.y));
                     
+                    //Draw selection box
                     UIUtils.drawQuad(topLeftPos, new PosXY(bottomRightPos.x, bottomRightPos.y), UIColor.matBlue(0.25));
                     UIUtils.drawQuad(topLeftPos, new PosXY(bottomRightPos.x, topLeftPos.y + 2), UIColor.matBlue());
                     UIUtils.drawQuad(topLeftPos, new PosXY(topLeftPos.x + 2, bottomRightPos.y), UIColor.matBlue());
@@ -585,6 +591,63 @@ public class Timeline extends Panel {
                     }
                 }
                 //</editor-fold>
+
+                //<editor-fold desc="Rot X">
+                if (MathUtils.isInRange(linkedComponent.topLeftPx.y + ROT_X_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are X rot keyframes in selection Y range
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+
+                            float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            float maxPercent = (float) MathUtils.clamp(((bottomRightPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            ProjectManager.getCurrentProject().clientLevelData.selectRotXKeyframesInRange(name, minPercent, maxPercent);
+                        }
+                    }
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Rot Y">
+                if (MathUtils.isInRange(linkedComponent.topLeftPx.y + ROT_Y_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y rot keyframes in selection Y range
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+
+                            float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            float maxPercent = (float) MathUtils.clamp(((bottomRightPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            ProjectManager.getCurrentProject().clientLevelData.selectRotYKeyframesInRange(name, minPercent, maxPercent);
+                        }
+                    }
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="Rot Z">
+                if (MathUtils.isInRange(linkedComponent.topLeftPx.y + ROT_Z_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y rot keyframes in selection Y range
+                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+
+                            float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            float maxPercent = (float) MathUtils.clamp(((bottomRightPos.x - linkedComponent.topLeftPx.x) /
+                                            (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
+                                    0, 1);
+
+                            ProjectManager.getCurrentProject().clientLevelData.selectRotZKeyframesInRange(name, minPercent, maxPercent);
+                        }
+                    }
+                }
+                //</editor-fold>
             }
         }
 
@@ -621,6 +684,7 @@ public class Timeline extends Panel {
                     ad = ad.mergeWithCopy(animDataBufferMap.get(entry.getKey()).getTransformedAnimData());
                 }
 
+                //<editor-fold desc="Pos">
                 if (ad.getPosXFrames().size() > 0) {
                     float low = ad.getPosXFrames().firstKey();
                     float high = ad.getPosXFrames().lastKey();
@@ -665,6 +729,54 @@ public class Timeline extends Panel {
 
                     UIUtils.drawQuad(pos.add(linkedComponent.width * low, 8), pos.add(linkedComponent.width * high, 12));
                 }
+                //</editor-fold>
+
+                //<editor-fold desc="Rot">
+                if (ad.getRotXFrames().size() > 0) {
+                    float low = ad.getRotXFrames().firstKey();
+                    float high = ad.getRotXFrames().lastKey();
+
+                    PosXY rot = linkedComponent.topLeftPx.add(0, ROT_X_KEYFRAME_Y_POS);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
+                        UIColor.matRed(0.25).bindColor();
+                    } else {
+                        UIColor.matRed(0.05).bindColor();
+                    }
+
+                    UIUtils.drawQuad(rot.add(linkedComponent.width * low, 8), rot.add(linkedComponent.width * high, 12));
+                }
+
+                if (ad.getRotYFrames().size() > 0) {
+                    float low = ad.getRotYFrames().firstKey();
+                    float high = ad.getRotYFrames().lastKey();
+
+                    PosXY rot = linkedComponent.topLeftPx.add(0, ROT_Y_KEYFRAME_Y_POS);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
+                        UIColor.matGreen(0.25).bindColor();
+                    } else {
+                        UIColor.matGreen(0.05).bindColor();
+                    }
+
+                    UIUtils.drawQuad(rot.add(linkedComponent.width * low, 8), rot.add(linkedComponent.width * high, 12));
+                }
+
+                if (ad.getRotZFrames().size() > 0) {
+                    float low = ad.getRotZFrames().firstKey();
+                    float high = ad.getRotZFrames().lastKey();
+
+                    PosXY rot = linkedComponent.topLeftPx.add(0, ROT_Z_KEYFRAME_Y_POS);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with less transparency
+                        UIColor.matBlue(0.25).bindColor();
+                    } else {
+                        UIColor.matBlue(0.05).bindColor();
+                    }
+
+                    UIUtils.drawQuad(rot.add(linkedComponent.width * low, 8), rot.add(linkedComponent.width * high, 12));
+                }
+                //</editor-fold>
             }
         }
 
@@ -681,6 +793,7 @@ public class Timeline extends Panel {
                     ad = ad.mergeWithCopy(animDataBufferMap.get(entry.getKey()).getTransformedAnimData());
                 }
 
+                //<editor-fold desc="Pos">
                 for (Map.Entry<Float, Float> xEntry : ad.getPosXFrames().entrySet()) {
                     float time = xEntry.getKey();
 
@@ -739,6 +852,68 @@ public class Timeline extends Panel {
                         UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
                     }
                 }
+                //</editor-fold>
+
+                //<editor-fold desc="Rot">
+                for (Map.Entry<Float, Float> xEntry : ad.getRotXFrames().entrySet()) {
+                    float time = xEntry.getKey();
+
+                    PosXY rot = linkedComponent.topLeftPx.add(linkedComponent.width * time, ROT_X_KEYFRAME_Y_POS);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
+                        UIColor.matRed().bindColor();
+                        UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
+
+                        if (ProjectManager.getCurrentProject().clientLevelData.isRotXKeyframeSelected(time)) { //Draw selection tex if selected
+                            UIColor.matYellow().bindColor();
+                            UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeSelectionTex);
+                        }
+
+                    } else {
+                        UIColor.matRed(0.1).bindColor();
+                        UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
+                    }
+
+                }
+
+                for (Map.Entry<Float, Float> yEntry : ad.getRotYFrames().entrySet()) {
+                    float time = yEntry.getKey();
+
+                    PosXY rot = linkedComponent.topLeftPx.add(linkedComponent.width * time, ROT_Y_KEYFRAME_Y_POS);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
+                        UIColor.matGreen().bindColor();
+                        UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
+
+                        if (ProjectManager.getCurrentProject().clientLevelData.isRotYKeyframeSelected(time)) { //Draw selection tex if selected
+                            UIColor.matYellow().bindColor();
+                            UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeSelectionTex);
+                        }
+                    } else {
+                        UIColor.matGreen(0.1).bindColor();
+                        UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
+                    }
+                }
+
+                for (Map.Entry<Float, Float> zEntry : ad.getRotZFrames().entrySet()) {
+                    float time = zEntry.getKey();
+
+                    PosXY rot = linkedComponent.topLeftPx.add(linkedComponent.width * time, ROT_Z_KEYFRAME_Y_POS);
+
+                    if (selectedObjects.contains(name)) { //Draw selected objects with no transparency
+                        UIColor.matBlue().bindColor();
+                        UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
+
+                        if (ProjectManager.getCurrentProject().clientLevelData.isRotZKeyframeSelected(time)) { //Draw selection tex if selected
+                            UIColor.matYellow().bindColor();
+                            UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeSelectionTex);
+                        }
+                    } else {
+                        UIColor.matBlue(0.1).bindColor();
+                        UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
+                    }
+                }
+                //</editor-fold>
             }
         }
 

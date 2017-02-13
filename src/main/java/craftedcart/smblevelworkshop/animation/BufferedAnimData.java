@@ -45,7 +45,17 @@ public class BufferedAnimData extends AnimData {
         return getFramesBufferTransformed(posZFrames);
     }
 
-    //TODO: Rotation
+    public TreeMap<Float, Float> getRotXFramesTransformed() {
+        return getFramesBufferTransformed(rotXFrames);
+    }
+
+    public TreeMap<Float, Float> getRotYFramesTransformed() {
+        return getFramesBufferTransformed(rotYFrames);
+    }
+
+    public TreeMap<Float, Float> getRotZFramesTransformed() {
+        return getFramesBufferTransformed(rotZFrames);
+    }
 
     public AnimData getTransformedAnimData() {
         AnimData ad = new AnimData();
@@ -56,7 +66,9 @@ public class BufferedAnimData extends AnimData {
         ad.posYFrames = getPosYFramesTransformed();
         ad.posZFrames = getPosZFramesTransformed();
 
-        //TODO: Rotation
+        ad.rotXFrames = getRotXFramesTransformed();
+        ad.rotYFrames = getRotYFramesTransformed();
+        ad.rotZFrames = getRotZFramesTransformed();
 
         return ad;
     }

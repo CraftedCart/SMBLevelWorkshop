@@ -35,6 +35,10 @@ public class ClientLevelData {
     private Set<KeyframeEntry> selectedPosYKeyframes = new HashSet<>();
     private Set<KeyframeEntry> selectedPosZKeyframes = new HashSet<>();
 
+    private Set<KeyframeEntry> selectedRotXKeyframes = new HashSet<>();
+    private Set<KeyframeEntry> selectedRotYKeyframes = new HashSet<>();
+    private Set<KeyframeEntry> selectedRotZKeyframes = new HashSet<>();
+
     private Map<String, BufferedAnimData> animDataBufferMap = new HashMap<>();
 
     /**
@@ -355,7 +359,9 @@ public class ClientLevelData {
         selectedPosYKeyframes.clear();
         selectedPosZKeyframes.clear();
 
-        //TODO: Rotation
+        selectedRotXKeyframes.clear();
+        selectedRotYKeyframes.clear();
+        selectedRotZKeyframes.clear();
     }
 
     public void addSelectedPosXKeyframe(KeyframeEntry entry) {
@@ -394,6 +400,42 @@ public class ClientLevelData {
         return false;
     }
 
+    public void addSelectedRotXKeyframe(KeyframeEntry entry) {
+        selectedRotXKeyframes.add(entry);
+    }
+
+    public void addSelectedRotYKeyframe(KeyframeEntry entry) {
+        selectedRotYKeyframes.add(entry);
+    }
+
+    public void addSelectedRotZKeyframe(KeyframeEntry entry) {
+        selectedRotZKeyframes.add(entry);
+    }
+
+    public boolean isRotXKeyframeSelected(float time) {
+        for (KeyframeEntry entry : selectedRotXKeyframes) {
+            if (entry.getTime() == time) return true;
+        }
+
+        return false;
+    }
+
+    public boolean isRotYKeyframeSelected(float time) {
+        for (KeyframeEntry entry : selectedRotYKeyframes) {
+            if (entry.getTime() == time) return true;
+        }
+
+        return false;
+    }
+
+    public boolean isRotZKeyframeSelected(float time) {
+        for (KeyframeEntry entry : selectedRotZKeyframes) {
+            if (entry.getTime() == time) return true;
+        }
+
+        return false;
+    }
+
     /**
      * If the object isn't selected, remove the selected keyframes
      *
@@ -404,7 +446,9 @@ public class ClientLevelData {
         selectedPosYKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
         selectedPosZKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
 
-        //TODO: Rotation
+        selectedRotXKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
+        selectedRotYKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
+        selectedRotZKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
     }
 
     public void clearSelectedKeyframesForObjects(Collection<String> objects) {
@@ -412,7 +456,9 @@ public class ClientLevelData {
         selectedPosYKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
         selectedPosZKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
 
-        //TODO: Rotation
+        selectedRotXKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
+        selectedRotYKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
+        selectedRotZKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
     }
 
     public void selectPosXKeyframesInRange(String name, float minPercent, float maxPercent) {
@@ -439,6 +485,30 @@ public class ClientLevelData {
         }
     }
 
+    public void selectRotXKeyframesInRange(String name, float minPercent, float maxPercent) {
+        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getRotXFrames().subMap(minPercent, true, maxPercent, true);
+
+        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
+            addSelectedRotXKeyframe(new KeyframeEntry(name, entry.getKey()));
+        }
+    }
+
+    public void selectRotYKeyframesInRange(String name, float minPercent, float maxPercent) {
+        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getRotYFrames().subMap(minPercent, true, maxPercent, true);
+
+        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
+            addSelectedRotYKeyframe(new KeyframeEntry(name, entry.getKey()));
+        }
+    }
+
+    public void selectRotZKeyframesInRange(String name, float minPercent, float maxPercent) {
+        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getRotZFrames().subMap(minPercent, true, maxPercent, true);
+
+        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
+            addSelectedRotZKeyframe(new KeyframeEntry(name, entry.getKey()));
+        }
+    }
+
     public Set<KeyframeEntry> getSelectedPosXKeyframes() {
         return selectedPosXKeyframes;
     }
@@ -449,6 +519,18 @@ public class ClientLevelData {
 
     public Set<KeyframeEntry> getSelectedPosZKeyframes() {
         return selectedPosZKeyframes;
+    }
+
+    public Set<KeyframeEntry> getSelectedRotXKeyframes() {
+        return selectedRotXKeyframes;
+    }
+
+    public Set<KeyframeEntry> getSelectedRotYKeyframes() {
+        return selectedRotYKeyframes;
+    }
+
+    public Set<KeyframeEntry> getSelectedRotZKeyframes() {
+        return selectedRotZKeyframes;
     }
 
     public Map<String, BufferedAnimData> getAnimDataBufferMap() {

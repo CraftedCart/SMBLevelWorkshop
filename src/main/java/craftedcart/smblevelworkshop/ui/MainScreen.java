@@ -59,7 +59,7 @@ import java.util.List;
  */
 public class MainScreen extends FluidUIScreen {
 
-    private static final double TIMELINE_HEIGHT = 86;
+    private static final double TIMELINE_HEIGHT = 148;
 
     //Camera
     @NotNull private PosXYZ cameraPos = new PosXYZ(5, 5, 5);
@@ -106,7 +106,10 @@ public class MainScreen extends FluidUIScreen {
 
     private final List<Component> objectAnimationComponents = new ArrayList<>();
 
-    private final ObjectPositionTextFields objectPositionTextFields = new ObjectPositionTextFields(this, /*objectRotationTextFields.getFirstTextField()*/ null);
+    private final ObjectRotationTextFields objectRotationTextFields = new ObjectRotationTextFields(this, null);
+    private final XYZKeyframeButtons objectRotationKeyframeButtons = new XYZKeyframeButtons();
+
+    private final ObjectPositionTextFields objectPositionTextFields = new ObjectPositionTextFields(this, objectRotationTextFields.getFirstTextField());
     private final XYZKeyframeButtons objectPositionKeyframeButtons = new XYZKeyframeButtons();
 
     //UI: Text Fields
@@ -773,8 +776,51 @@ public class MainScreen extends FluidUIScreen {
             objectPositionKeyframeButtons.setTopLeftAnchor(1, 0);
             objectPositionKeyframeButtons.setBottomRightAnchor(1, 0);
         });
-        objectPositionKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onKeyframeActivated(axis, ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()));
+        objectPositionKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onPosKeyframeActivated(axis, ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()));
         objectPositionPropertiesPanel.addChildComponent("objectPositionKeyframeButtons", objectPositionKeyframeButtons);
+
+        final Label objectRotationLabel = new Label();
+        objectRotationLabel.setOnInitAction(() -> {
+            objectRotationLabel.setText(LangManager.getItem("rotation"));
+            objectRotationLabel.setVerticalAlign(EnumVAlignment.centre);
+            objectRotationLabel.setTopLeftPos(0, 0);
+            objectRotationLabel.setBottomRightPos(0, 24);
+            objectRotationLabel.setVisible(false);
+        });
+        objectAnimationComponents.add(objectRotationLabel);
+        propertiesObjectsListBox.addChildComponent("objectRotationLabel", objectRotationLabel);
+
+        final Panel objectRotationPropertiesPanel = new Panel();
+        objectRotationPropertiesPanel.setOnInitAction(() -> {
+            objectRotationPropertiesPanel.setTopLeftPos(0, 0);
+            objectRotationPropertiesPanel.setBottomRightPos(0, 76);
+            objectRotationPropertiesPanel.setBackgroundColor(UIColor.transparent());
+            objectRotationPropertiesPanel.setVisible(false);
+        });
+        objectAnimationComponents.add(objectRotationPropertiesPanel);
+        propertiesObjectsListBox.addChildComponent("objectRotationPropertiesPanel", objectRotationPropertiesPanel);
+
+        //Defined at class level
+        objectRotationTextFields.setOnInitAction(() -> {
+            objectRotationTextFields.setTopLeftPos(0, 0);
+            objectRotationTextFields.setBottomRightPos(-24, 76);
+            objectRotationTextFields.setTopLeftAnchor(0, 0);
+            objectRotationTextFields.setBottomRightAnchor(1, 0);
+            objectRotationTextFields.setXEnabled(true);
+            objectRotationTextFields.setYEnabled(true);
+            objectRotationTextFields.setZEnabled(true);
+        });
+        objectRotationPropertiesPanel.addChildComponent("objectRotationTextFields", objectRotationTextFields);
+
+        //Defined at class level
+        objectRotationKeyframeButtons.setOnInitAction(() -> {
+            objectRotationKeyframeButtons.setTopLeftPos(-24, 0);
+            objectRotationKeyframeButtons.setBottomRightPos(0, 76);
+            objectRotationKeyframeButtons.setTopLeftAnchor(1, 0);
+            objectRotationKeyframeButtons.setBottomRightAnchor(1, 0);
+        });
+        objectRotationKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onRotKeyframeActivated(axis, ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()));
+        objectRotationPropertiesPanel.addChildComponent("objectRotationKeyframeButtons", objectRotationKeyframeButtons);
         //</editor-fold>
 
         //Defined at class level
@@ -797,6 +843,7 @@ public class MainScreen extends FluidUIScreen {
         });
         mainUI.addChildComponent("timeline", timeline);
 
+        //<editor-fold desc="On screen camera controls">
         //On screen camera controls - For those with difficulty controlling the camera with MMB / WASDQE
         //Declared at class level
         onScreenCameraControlsPanel.setOnInitAction(() -> {
@@ -936,6 +983,7 @@ public class MainScreen extends FluidUIScreen {
             }
         });
         onScreenCameraControlsPanel.addChildComponent("cameraPanRightButton", cameraPanRightButton);
+        //</editor-fold>
 
         //Defined at class level
         inputOverlay.setOnInitAction(() -> {
@@ -1329,10 +1377,8 @@ public class MainScreen extends FluidUIScreen {
                 for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
                     GL11.glPushMatrix();
 
-                    ITransformable transform = ProjectManager.getCurrentProject().clientLevelData.getObjectNamedTransform(object.name, time);
-                    PosXYZ translate = transform.getPosition();
-                    GL11.glTranslated(translate.x, translate.y, translate.z);
-                    //TODO: Rotation
+                    //Transform at current time
+                    transformObjectAtTime(object.name, time);
 
                     if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
                         ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(currentShaderProgram, useTextures, object.name);
@@ -1665,15 +1711,23 @@ public class MainScreen extends FluidUIScreen {
 
                             } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables / Remove keyframes if mouse over timeline
                                 if (timeline.mouseOver) {
-                                    if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes().size() > 0 ||
+                                    if (
+                                            //Pos
+                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes().size() > 0 ||
                                             ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes().size() > 0 /* TODO: Rotation */) {
+                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes().size() > 0 ||
+                                            //Rot
+                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedRotXKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedRotYKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedRotZKeyframes().size() > 0
+                                            ) {
 
                                         addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
                                                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
 
                                         int keyframesRemoved = 0;
 
+                                        //Pos
                                         for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes()) {
                                             ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosXFrame(entry.getTime());
                                             keyframesRemoved++;
@@ -1689,7 +1743,21 @@ public class MainScreen extends FluidUIScreen {
                                             keyframesRemoved++;
                                         }
 
-                                        //TODO: Rotation
+                                        //Rot
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedRotXKeyframes()) {
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removeRotXFrame(entry.getTime());
+                                            keyframesRemoved++;
+                                        }
+
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedRotYKeyframes()) {
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removeRotYFrame(entry.getTime());
+                                            keyframesRemoved++;
+                                        }
+
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedRotZKeyframes()) {
+                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removeRotZFrame(entry.getTime());
+                                            keyframesRemoved++;
+                                        }
 
                                         ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
 
@@ -2464,10 +2532,14 @@ public class MainScreen extends FluidUIScreen {
             final boolean finalAllHaveAnimData = allHaveAnimData;
             addNextFrameAction(() -> setObjectAnimationComponentsVisible(finalAllHaveAnimData)); //If all selected objects have anim data, show anim components
 
-            //<editor-fold desc="Average out positions">
+            //<editor-fold desc="Average out positions and rotations">
             double posAvgX = 0;
             double posAvgY = 0;
             double posAvgZ = 0;
+
+            double rotAvgX = 0;
+            double rotAvgY = 0;
+            double rotAvgZ = 0;
 
             float time = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
 
@@ -2482,6 +2554,10 @@ public class MainScreen extends FluidUIScreen {
                 posAvgX += transform.getPosition().x;
                 posAvgY += transform.getPosition().y;
                 posAvgZ += transform.getPosition().z;
+
+                rotAvgX += transform.getRotation().x;
+                rotAvgY += transform.getRotation().y;
+                rotAvgZ += transform.getRotation().z;
             }
 
             int selectedCount = ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size();
@@ -2490,9 +2566,17 @@ public class MainScreen extends FluidUIScreen {
             posAvgY = posAvgY / (double) selectedCount;
             posAvgZ = posAvgZ / (double) selectedCount;
 
+            rotAvgX = rotAvgX / (double) selectedCount;
+            rotAvgY = rotAvgY / (double) selectedCount;
+            rotAvgZ = rotAvgZ / (double) selectedCount;
+
             objectPositionTextFields.setXValue(posAvgX);
             objectPositionTextFields.setYValue(posAvgY);
             objectPositionTextFields.setZValue(posAvgZ);
+
+            objectRotationTextFields.setXValue(rotAvgX);
+            objectRotationTextFields.setYValue(rotAvgY);
+            objectRotationTextFields.setZValue(rotAvgZ);
             //</editor-fold>
 
         } else {
@@ -2800,7 +2884,7 @@ public class MainScreen extends FluidUIScreen {
         propertiesObjectsListBox.reorganizeChildComponents();
     }
 
-    private void onKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
+    private void onPosKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
         //Add undo command
         addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
@@ -2836,11 +2920,50 @@ public class MainScreen extends FluidUIScreen {
         }
     }
 
+    private void onRotKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
+        //Add undo command
+        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+
+        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        LevelData ld = cld.getLevelData();
+        float time = cld.getTimelinePos();
+
+        if (axis == EnumAxis.X) {
+            for (String name : selectedObjects) {
+                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
+                    ld.getObjectAnimData(name).setRotXFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().x);
+                } else {
+                    ld.getObjectAnimData(name).setRotXFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().x);
+                }
+            }
+        } else if (axis == EnumAxis.Y) {
+            for (String name : selectedObjects) {
+                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
+                    ld.getObjectAnimData(name).setRotYFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().y);
+                } else {
+                    ld.getObjectAnimData(name).setRotYFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().y);
+                }
+            }
+        } else if (axis == EnumAxis.Z) {
+            for (String name : selectedObjects) {
+                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
+                    ld.getObjectAnimData(name).setRotZFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().z);
+                } else {
+                    ld.getObjectAnimData(name).setRotZFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().z);
+                }
+            }
+        }
+    }
+
     private void transformObjectAtTime(String name, float time) {
         ITransformable transform = ProjectManager.getCurrentProject().clientLevelData.getObjectNamedTransform(name, time);
         PosXYZ translate = transform.getPosition();
+        PosXYZ rotate = transform.getRotation();
         GL11.glTranslated(translate.x, translate.y, translate.z);
-        //TODO: Rotation
+        GL11.glRotated(rotate.x, 1, 0, 0);
+        GL11.glRotated(rotate.y, 0, 1, 0);
+        GL11.glRotated(rotate.z, 0, 0, 1);
     }
 
     private void transformObjectAtTime(String name) {
@@ -2930,7 +3053,80 @@ public class MainScreen extends FluidUIScreen {
         }
         //</editor-fold>
 
-        //TODO: Rotation
+        //<editor-fold desc="Rot X">
+        Iterator<KeyframeEntry> iterRotX = cld.getSelectedRotXKeyframes().iterator();
+        while (iterRotX.hasNext()) {
+            KeyframeEntry entry = iterRotX.next();
+            BufferedAnimData bad;
+            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
+
+            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
+                bad = new BufferedAnimData();
+                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
+                bad.setRotationCenter(ld.getObjectAnimData(entry.getObjectName()).getRotationCenter()); //Copy the rotation center
+            } else {
+                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
+            }
+
+            bad.setRotXFrame(entry.getTime(), ad.getRotXFrames().get(entry.getTime()));
+
+            if (!makeCopy) {
+                ad.removeRotXFrame(entry.getTime());
+            }
+
+            iterRotX.remove(); //Deselect the keyframe
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Rot Y">
+        Iterator<KeyframeEntry> iterRotY = cld.getSelectedRotYKeyframes().iterator();
+        while (iterRotY.hasNext()) {
+            KeyframeEntry entry = iterRotY.next();
+            BufferedAnimData bad;
+            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
+
+            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
+                bad = new BufferedAnimData();
+                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
+                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
+            } else {
+                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
+            }
+
+            bad.setRotYFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getRotYFrames().get(entry.getTime()));
+
+            if (!makeCopy) {
+                ad.removeRotYFrame(entry.getTime());
+            }
+
+            iterRotY.remove(); //Deselect the keyframe
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Rot Z">
+        Iterator<KeyframeEntry> iterRotZ = cld.getSelectedRotZKeyframes().iterator();
+        while (iterRotZ.hasNext()) {
+            KeyframeEntry entry = iterRotZ.next();
+            BufferedAnimData bad;
+            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
+
+            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
+                bad = new BufferedAnimData();
+                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
+                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
+            } else {
+                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
+            }
+
+            bad.setRotZFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getRotZFrames().get(entry.getTime()));
+
+            if (!makeCopy) {
+                ad.removeRotZFrame(entry.getTime());
+            }
+
+            iterRotZ.remove(); //Deselect the keyframe
+        }
+        //</editor-fold>
     }
 
     private void commitBufferedKeyframes() {
