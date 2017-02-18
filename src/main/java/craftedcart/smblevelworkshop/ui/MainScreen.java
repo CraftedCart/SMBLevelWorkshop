@@ -23,6 +23,7 @@ import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
+import craftedcart.smbworkshopexporter.ConfigAnimData;
 import craftedcart.smbworkshopexporter.ConfigData;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
@@ -2738,6 +2739,9 @@ public class MainScreen extends FluidUIScreen {
                                 ld.clearBackgroundObjects();
                                 outlinerPlaceablesListBox.clearChildComponents();
 
+                                cld.clearSelectedKeyframes();
+                                ld.clearAnimData();
+
                                 //Add start pos
                                 if (configData.startList.size() > 0) {
                                     ConfigData.Start start = configData.startList.entrySet().iterator().next().getValue();
@@ -2830,6 +2834,11 @@ public class MainScreen extends FluidUIScreen {
                                     }
                                 }
 
+                                //Add anim data
+                                for (Map.Entry<String, ConfigAnimData> entry : configData.animDataMap.entrySet()) {
+                                    ld.setAnimData(entry.getValue().getObjectName(), new AnimData(entry.getValue()));
+                                }
+
                             }
 
                             updateOutlinerPlaceablesPanel();
@@ -2844,7 +2853,7 @@ public class MainScreen extends FluidUIScreen {
                     importConfigButton.setEnabled(true);
                     importObjButton.setEnabled(true);
                     isLoadingProject = false;
-                }, "ObjFileOpenThread").start();
+                }, "ConfigFileOpenThread").start();
             } else {
                 LogHelper.warn(getClass(), "Tried importing OBJ when already importing OBJ");
             }

@@ -3,6 +3,7 @@ package craftedcart.smblevelworkshop.animation;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import craftedcart.smblevelworkshop.util.QuickMapEntry;
+import craftedcart.smbworkshopexporter.ConfigAnimData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,24 @@ public class AnimData {
     protected TreeMap<Float, Float> rotYFrames = new TreeMap<>();
     protected TreeMap<Float, Float> rotZFrames = new TreeMap<>();
 
-    public void setRotationCenter(PosXYZ rotationCenter) {
+    public AnimData() {}
+
+    /**
+     * @param cad ConfigAnimData (NOT A COPY CONSTRUCTOR! WILL NOT COPY THE CONFIG ANIM DATA!)
+     */
+    public AnimData(ConfigAnimData cad) {
+        rotationCenter = new PosXYZ(cad.getRotationCenter().x, cad.getRotationCenter().y, cad.getRotationCenter().z);
+
+        posXFrames = cad.getPosXFrames();
+        posYFrames = cad.getPosYFrames();
+        posZFrames = cad.getPosZFrames();
+
+        rotXFrames = cad.getRotXFrames();
+        rotYFrames = cad.getRotYFrames();
+        rotZFrames = cad.getRotZFrames();
+    }
+
+    public void setRotationCenter(@NotNull PosXYZ rotationCenter) {
         this.rotationCenter = rotationCenter;
     }
 

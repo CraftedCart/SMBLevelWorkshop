@@ -204,4 +204,8 @@ public class LevelData {
 
         return deeperCloneMap;
     }
+
+    public void clearAnimData() {
+        objectAnimDataMap.clear();
+    }
 }
