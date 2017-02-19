@@ -46,7 +46,6 @@ public class ClientLevelData {
      */
     private float timelinePos = 0.0f;
     @Nullable private UIAction1<Float> onTimelinePosChanged;
-    private float maxTime = 60.0f;
     private float playbackSpeed = 0.0f;
 
     @NotNull private Map<String, AnimData> currentFrameObjectAnimDataMap = new HashMap<>();
@@ -273,8 +272,17 @@ public class ClientLevelData {
         }
     }
 
+    public void setTimelinePosSeconds(float timelinePos) {
+        float newPercent = (timelinePos + levelData.getLeadInTime()) / (levelData.getLeadInTime() + levelData.getMaxTime());
+        setTimelinePos(newPercent);
+    }
+
     public float getTimelinePos() {
         return timelinePos;
+    }
+
+    public float getTimelinePosSeconds() {
+        return timelinePos * (levelData.getLeadInTime() + levelData.getMaxTime()) - levelData.getLeadInTime();
     }
 
     public void setOnTimelinePosChanged(@Nullable UIAction1<Float> onTimelinePosChanged) {
@@ -289,16 +297,8 @@ public class ClientLevelData {
         return playbackSpeed;
     }
 
-    public void setMaxTime(float maxTime) {
-        this.maxTime = maxTime;
-    }
-
-    public float getMaxTime() {
-        return maxTime;
-    }
-
     public void update(float deltaTime) {
-        float newPos = timelinePos + (deltaTime / maxTime * playbackSpeed);
+        float newPos = timelinePos + (deltaTime / (levelData.getMaxTime() + levelData.getLeadInTime()) * playbackSpeed);
 
         if (newPos > 1) {
             setTimelinePos(1);

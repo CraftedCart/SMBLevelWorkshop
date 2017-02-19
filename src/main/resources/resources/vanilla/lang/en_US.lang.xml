@@ -96,7 +96,7 @@
     <entry key="noLevelLoaded" val="No level has been loaded!" />
     <entry key="invalidNumber" val="Invalid number!" />
     <entry key="numberMustBeGreaterThanZero" val="Number must be greater than zero!" />
-    <entry key="numberMustBeGreaterThanOrEqualToZero" val="Number must be greater than or equal to zero!" />
+    <entry key="numberMustBeGreaterThanOrEqualTo" val="Number must be greater than or equal to %.2f!" />
     <entry key="numberMustBeLessThanMaxTime" val="Number must be less than the max time!" />
     <entry key="nothingSelected" val="Nothing is selected!" />
     <entry key="alreadyObject" val="Already an object!" />

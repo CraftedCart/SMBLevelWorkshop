@@ -354,7 +354,7 @@ public class Timeline extends Panel {
                 float newValue = Float.parseFloat(maxTimeTextField.value);
                 if (ProjectManager.getCurrentProject().clientLevelData != null) {
                     if (newValue > 0) {
-                        ProjectManager.getCurrentProject().clientLevelData.setMaxTime(newValue);
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().setMaxTime(newValue);
                     } else {
                         mainScreen.notify(LangManager.getItem("numberMustBeGreaterThanZero"), UIColor.matRed());
                     }
@@ -366,7 +366,8 @@ public class Timeline extends Panel {
             }
 
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                updateMaxTime(ProjectManager.getCurrentProject().clientLevelData.getMaxTime());
+                updateMaxAndLeadInTime(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime(),
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime());
             }
         });
         mainScreen.addTextField(maxTimeTextField);
@@ -388,7 +389,7 @@ public class Timeline extends Panel {
             timeTextField.setBottomRightPos(-200, 0);
             timeTextField.setTopLeftAnchor(1, 0);
             timeTextField.setBottomRightAnchor(1, 1);
-            timeTextField.setInputRegexCheck("[0-9.]");
+            timeTextField.setInputRegexCheck("[0-9.-]");
             timeTextField.setValue(df.format(0));
         });
         timeTextField.setOnReturnAction(() -> timeTextField.setSelected(false));
@@ -396,14 +397,15 @@ public class Timeline extends Panel {
             try {
                 float newValue = Float.parseFloat(timeTextField.value);
                 if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                    if (newValue >= 0) {
-                        if (newValue <= ProjectManager.getCurrentProject().clientLevelData.getMaxTime()) {
-                            ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(newValue / ProjectManager.getCurrentProject().clientLevelData.getMaxTime());
+                    if (newValue >= -ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) {
+                        if (newValue <= ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime()) {
+                            ProjectManager.getCurrentProject().clientLevelData.setTimelinePosSeconds(newValue);
                         } else {
                             mainScreen.notify(LangManager.getItem("numberMustBeLessThanMaxTime"), UIColor.matRed());
                         }
                     } else {
-                        mainScreen.notify(LangManager.getItem("numberMustBeGreaterThanOrEqualToZero"), UIColor.matRed());
+                        mainScreen.notify(String.format(LangManager.getItem("numberMustBeGreaterThanOrEqualTo"),
+                                -ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()), UIColor.matRed());
                     }
                 } else {
                     mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
@@ -422,18 +424,27 @@ public class Timeline extends Panel {
     }
 
     public void updatePercent(Float percent) {
+        float seconds =
+                percent *
+                        (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime() + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) -
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime();
+
         posPanel.setTopLeftAnchor(percent, 0);
         posPanel.setBottomRightAnchor(percent, 1);
         posPanel.setRightText(df.format(percent * 100) + "%");
-        posPanel.setLeftText(df.format(percent * ProjectManager.getCurrentProject().clientLevelData.getMaxTime()) + secondsSuffix);
+        posPanel.setLeftText(df.format(seconds) + secondsSuffix);
 
         percentTextField.setValue(df.format(percent * 100));
-        timeTextField.setValue(df.format(percent * ProjectManager.getCurrentProject().clientLevelData.getMaxTime()));
+        timeTextField.setValue(df.format(
+                percent *
+                (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime() + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) -
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()
+        ));
     }
 
-    public void updateMaxTime(float maxTime) {
+    public void updateMaxAndLeadInTime(float maxTime, float leadInTime) {
         maxTimeTextField.setValue(df.format(maxTime));
-        posPanel.setLeftText(df.format(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos() * maxTime) + secondsSuffix);
+        posPanel.setLeftText(df.format(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos() * (maxTime + leadInTime) - leadInTime) + secondsSuffix);
     }
 
     private class TimelinePlugin extends AbstractComponentPlugin {
@@ -481,7 +492,11 @@ public class Timeline extends Panel {
 
                     double seconds = 0;
                     if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                        seconds = percent * ProjectManager.getCurrentProject().clientLevelData.getMaxTime();
+                        seconds =
+                                percent *
+                                (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime()
+                                        + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) -
+                                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime();
                     }
 
                     cursorPosPanel.setTopLeftAnchor(percent, 0);
@@ -935,19 +950,32 @@ public class Timeline extends Panel {
         }
 
         private void drawBlocks() {
-            //Playhead block
-            UIUtils.drawQuad(
-                    new PosXY(linkedComponent.topLeftPx.x, linkedComponent.topLeftPx.y),
-                    new PosXY(linkedComponent.bottomRightPx.x, linkedComponent.topLeftPx.y + 16),
-                    UIColor.matRed(0.25)
-            );
-
-
             //Pos and rot separator
             UIUtils.drawQuad(
                     new PosXY(linkedComponent.topLeftPx.x, linkedComponent.topLeftPx.y + POS_Z_KEYFRAME_Y_POS + 17),
                     new PosXY(linkedComponent.bottomRightPx.x, linkedComponent.topLeftPx.y + ROT_X_KEYFRAME_Y_POS + 3),
                     UIColor.matWhite(0.75)
+            );
+
+            //Time 0 separator
+            float timeZeroPercent = 6.0f / 66.0f;
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+                timeZeroPercent = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime() /
+                        (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime() + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime());
+            }
+            double timeZeroPx = linkedComponent.topLeftPx.x + (linkedComponent.width * timeZeroPercent);
+
+            UIUtils.drawQuad(
+                    new PosXY(timeZeroPx - 1, linkedComponent.topLeftPx.y),
+                    new PosXY(timeZeroPx + 1, linkedComponent.bottomRightPx.y),
+                    UIColor.matWhite(0.75)
+            );
+
+            //Playhead block
+            UIUtils.drawQuad(
+                    new PosXY(linkedComponent.topLeftPx.x, linkedComponent.topLeftPx.y),
+                    new PosXY(linkedComponent.bottomRightPx.x, linkedComponent.topLeftPx.y + 16),
+                    UIColor.matRed(0.25)
             );
         }
 

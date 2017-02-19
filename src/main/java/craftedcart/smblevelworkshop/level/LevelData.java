@@ -22,6 +22,8 @@ public class LevelData {
     @NotNull private Set<String> backgroundObjects = new HashSet<>();
     @NotNull private Set<String> backgroundExternalObjects = new HashSet<>();
     @NotNull private TreeMap<String, AnimData> objectAnimDataMap = new TreeMap<>();
+    private float leadInTime = 6.0f;
+    private float maxTime = 60.0f;
 
     public void setModel(@Nullable ResourceModel model) {
         this.model = model;
@@ -208,4 +210,21 @@ public class LevelData {
     public void clearAnimData() {
         objectAnimDataMap.clear();
     }
+
+    public float getLeadInTime() {
+        return leadInTime;
+    }
+
+    public void setLeadInTime(float leadInTime) {
+        this.leadInTime = leadInTime;
+    }
+
+    public void setMaxTime(float maxTime) {
+        this.maxTime = maxTime;
+    }
+
+    public float getMaxTime() {
+        return maxTime;
+    }
+
 }

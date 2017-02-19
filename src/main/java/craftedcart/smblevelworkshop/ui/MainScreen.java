@@ -1851,13 +1851,13 @@ public class MainScreen extends FluidUIScreen {
 
                             } else if (key == Keyboard.KEY_J) { //J: Rewind animation
                                 if (Window.isAltDown()) { //Snap when holding alt
-                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePosSeconds();
                                     float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
                                     float newTime = currentTime - snapTo;
                                     float roundMultiplier = 1.0f / snapTo;
                                     float newTimeSnapped = Math.round(newTime * roundMultiplier) / roundMultiplier;
 
-                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(newTimeSnapped);
+                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePosSeconds(newTimeSnapped);
 
                                 } else {
                                     float currentSpeed = ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed();
@@ -1874,13 +1874,13 @@ public class MainScreen extends FluidUIScreen {
                             } else if (key == Keyboard.KEY_L) { //L: Forward animation
 
                                 if (Window.isAltDown()) { //Snap when holding alt
-                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePosSeconds();
                                     float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
                                     float newTime = currentTime + snapTo;
                                     float roundMultiplier = 1.0f / snapTo;
                                     float newTimeSnapped = Math.round(newTime * roundMultiplier) / roundMultiplier;
 
-                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(newTimeSnapped);
+                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePosSeconds(newTimeSnapped);
 
                                 } else {
                                     float currentSpeed = ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed();
@@ -2164,7 +2164,8 @@ public class MainScreen extends FluidUIScreen {
 
                 //Update the timeline
                 timeline.updatePercent(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
-                timeline.updateMaxTime(ProjectManager.getCurrentProject().clientLevelData.getMaxTime());
+                timeline.updateMaxAndLeadInTime(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime(),
+                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime());
 
                 GL11.glFlush();
 
@@ -2833,6 +2834,10 @@ public class MainScreen extends FluidUIScreen {
                                         }
                                     }
                                 }
+
+                                //Set max time
+                                ld.setMaxTime(configData.maxTime);
+                                ld.setLeadInTime(configData.leadInTime);
 
                                 //Add anim data
                                 for (Map.Entry<String, ConfigAnimData> entry : configData.animDataMap.entrySet()) {

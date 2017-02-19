@@ -36,7 +36,7 @@ public class ExportManager {
         for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
             File animFile = new File(configFile.getParentFile(), "anim-" + entry.getKey() + ".txt");
 
-            String animConfigContents = getAnimConfig(entry.getValue());
+            String animConfigContents = getAnimConfig(entry.getValue(), levelData);
 
             BufferedWriter animWriter = new BufferedWriter(new FileWriter(animFile));
             animWriter.write(animConfigContents);
@@ -95,6 +95,11 @@ public class ExportManager {
         }
         sb.append("\r\n");
 
+        sb.append("maxtime [ 0 ] . x . x = ").append(levelData.getMaxTime()).append("\r\n");
+        sb.append("leadintime [ 0 ] . x . x = ").append(levelData.getLeadInTime()).append("\r\n");
+
+        sb.append("\r\n");
+
         for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
             appendAnimPrefix(sb, true); sb.append(". file . x = ").append("anim-").append(entry.getKey()).append(".txt").append("\r\n");
             appendAnimPrefix(sb, false); sb.append(". name . x = ").append(entry.getKey()).append("\r\n");
@@ -108,7 +113,7 @@ public class ExportManager {
         return sb.toString();
     }
 
-    private static String getAnimConfig(AnimData animData) {
+    private static String getAnimConfig(AnimData animData, LevelData levelData) {
         StringBuilder sb = new StringBuilder();
 
         frameCount = -1;
@@ -153,7 +158,7 @@ public class ExportManager {
             appendFramePrefix(sb, false); sb.append(". rot . y = ").append(transform.getRotation().y).append("\r\n");
             appendFramePrefix(sb, false); sb.append(". rot . z = ").append(transform.getRotation().z).append("\r\n");
 
-            appendFramePrefix(sb, false); sb.append(". time . x = ").append(time * 100.0f).append("\r\n");
+            appendFramePrefix(sb, false); sb.append(". time . x = ").append(time * (levelData.getLeadInTime() + levelData.getMaxTime())).append("\r\n");
             sb.append("\r\n");
         }
 
