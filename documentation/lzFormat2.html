@@ -146,7 +146,7 @@
 		<td>176</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Integer - Big Endian - Offset to some sort of <a href="#animation">animation header</a> (Mystery One)<td>
+		<td>Integer - Big Endian - Offset to <a href="#animation">animation header</a><td>
 	</tr>
 	<tr>
 		<td>180</td>
@@ -1023,40 +1023,76 @@
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td>0</td>
+		<td>32</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#animframe">Number of frames for X animation</a></td>
+		<td>Number of frames for X rotation</td>
 	</tr>
 	<tr>
-		<td>4</td>
+		<td>36</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#animframe">Offset to X animation frames</a></td>
+		<td><a href="#animframe">Offset to X rotation frames</a></td>
 	</tr>
 	<tr>
-		<td>8</td>
+		<td>40</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#animframe">Number of frames for Y animation</a></td>
+		<td>Number of frames for Y rotation</td>
 	</tr>
 	<tr>
-		<td>12</td>
+		<td>44</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#animframe">Offset to Y animation frames</a></td>
+		<td><a href="#animframe">Offset to Y rotation frames</a></td>
 	</tr>
 	<tr>
-		<td>16</td>
+		<td>48</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#animframe">Number of frames for Z animation</a></td>
+		<td>Number of frames for Z rotation</td>
 	</tr>
 	<tr>
-		<td>20</td>
+		<td>52</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><a href="#animframe">Offset to Z animation frames</a></td>
+		<td><a href="#animframe">Offset to Z rotation frames</a></td>
+	</tr>
+	<tr>
+		<td>32</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Number of frames for X translation</td>
+	</tr>
+	<tr>
+		<td>36</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Offset to X translation frames</a></td>
+	</tr>
+	<tr>
+		<td>40</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Number of frames for Y translation</td>
+	</tr>
+	<tr>
+		<td>44</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Offset to Y translation frames</a></td>
+	</tr>
+	<tr>
+		<td>48</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Number of frames for Z translation</td>
+	</tr>
+	<tr>
+		<td>52</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><a href="#animframe">Offset to Z translation frames</a></td>
 	</tr>
 </table>
 
@@ -1136,19 +1172,19 @@
 		<td>0</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td><code>0x00000002</code></td>
+		<td>Easing: <code>0x00000001</code> is linear - <code>0x00000002</code> eases</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Time, in percent allotted time? (must start at 0.0 and go all the way to 100.0 or game will complain?), single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Time in seconds</td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td><code>0x04</code></td>
 		<td>4</td>
-		<td>Displacement (rotation or translation), single precision float, big endian</td>
+		<td>Single Precision Float - Big Endian - Displacement (Translation or rotation)</td>
 	</tr>
 	<tr>
 		<td>12</td>
