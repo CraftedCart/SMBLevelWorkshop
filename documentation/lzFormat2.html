@@ -90,9 +90,21 @@
 	</tr>
 	<tr>
 		<td>56</td>
-		<td><code>0x20</code></td>
-		<td>32</td>
-		<td>32x <code>00</code></td>
+		<td><code>0x18</code></td>
+		<td>24</td>
+		<td>24x <code>00</code></td>
+	</tr>
+	<tr>
+		<td>80</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of <a href="javascript:scrollTo('#falloutvolume')">fallout volumes</a></td>
+	</tr>
+	<tr>
+		<td>84</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to <a href="javascript:scrollTo('#falloutvolume')">fallout volumes</a></td>
 	</tr>
 	<tr>
 		<td>88</td>
@@ -617,9 +629,27 @@
 	</tr>
 	<tr>
 		<td>100</td>
-		<td><code>0x30</code></td>
-		<td>48</td>
-		<td>Unknown/Zero<td>
+		<td><code>0x14</code></td>
+		<td>24</td>
+		<td>Unknown / Zero<td>
+	</tr>
+	<tr>
+		<td>124</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of <a href="javascript:scrollTo('#falloutvolume')">fallout volumes</a><br>Contains volumes defined in the file header</td>
+	</tr>
+	<tr>
+		<td>128</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to <a href="javascript:scrollTo('#falloutvolume')">fallout volumes</a><br>Contains volumes defined in the file header</td>
+	</tr>
+	<tr>
+		<td>132</td>
+		<td><code>0x10</code></td>
+		<td>16</td>
+		<td>Unknown / Zero<td>
 	</tr>
 	<tr>
 		<td>148</td>
@@ -1337,6 +1367,77 @@
 		<td><code>0x4</code></td>
 		<td>4</td>
 		<td>Probably a single precision float, big endian</td>
+	</tr>
+</table>
+
+<h2 id="falloutvolume">Fallout Volume</h2><br />
+<h4>This is repeated for each fallout volume</h4>
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Volume center X</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Volume center Y</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Volume center Z</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Volume size X</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Volume size Y</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Volume size Z</td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - X Rotation</td>
+	</tr>
+	<tr>
+		<td>26</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - Y Rotation</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - Z Rotation</td>
+	</tr>
+	<tr>
+		<td>30</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td><code>00 00</code> - Padding zeros</td>
 	</tr>
 </table>
 
