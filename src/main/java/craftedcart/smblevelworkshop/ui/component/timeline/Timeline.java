@@ -477,26 +477,23 @@ public class Timeline extends Panel {
 
                 } else {
                     //<editor-fold desc="Manage cursorPosPanel">
-                    float percent = 0;
+                    float percent = 0.0f;
+                    float seconds = 0.0f;
                     if (linkedComponent.mousePos != null) {
                         percent = (float) MathUtils.clamp(((linkedComponent.mousePos.x - linkedComponent.topLeftPx.x) /
                                         (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                 0, 1);
 
-                        if (Window.isAltDown()) { //Alt to snap - Shift for precision
-                            float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
-                            float roundMultiplier = 1.0f / snapTo;
-                            percent = Math.round(percent * roundMultiplier) / roundMultiplier; //newTimeSnapped
-                        }
-                    }
+                        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                            seconds = ProjectManager.getCurrentProject().clientLevelData.timelinePercentToSeconds(percent);
 
-                    double seconds = 0;
-                    if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                        seconds =
-                                percent *
-                                (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime()
-                                        + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) -
-                                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime();
+                            if (Window.isAltDown()) { //Alt to snap - Shift for precision
+                                float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
+                                float roundMultiplier = 1.0f / snapTo;
+                                seconds = Math.round(seconds * roundMultiplier) / roundMultiplier; //newTimeSnapped
+                                percent = ProjectManager.getCurrentProject().clientLevelData.timelineSecondsToPercent(seconds);
+                            }
+                        }
                     }
 
                     cursorPosPanel.setTopLeftAnchor(percent, 0);

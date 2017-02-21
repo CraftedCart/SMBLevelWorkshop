@@ -285,6 +285,14 @@ public class ClientLevelData {
         return timelinePos * (levelData.getLeadInTime() + levelData.getMaxTime()) - levelData.getLeadInTime();
     }
 
+    public float timelinePercentToSeconds(float percent) {
+        return (percent * (levelData.getMaxTime() + levelData.getLeadInTime())) - levelData.getLeadInTime();
+    }
+
+    public float timelineSecondsToPercent(float seconds) {
+        return (seconds + levelData.getLeadInTime()) / (levelData.getMaxTime() + levelData.getLeadInTime());
+    }
+
     public void setOnTimelinePosChanged(@Nullable UIAction1<Float> onTimelinePosChanged) {
         this.onTimelinePosChanged = onTimelinePosChanged;
     }
