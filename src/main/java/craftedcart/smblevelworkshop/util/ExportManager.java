@@ -26,13 +26,24 @@ public class ExportManager {
     private static int animCount;
     private static int frameCount;
 
-    public static void writeConfig(LevelData levelData, File configFile) throws IOException {
+    /**
+     * @param levelData The level data
+     * @param configFile The output config file to write to
+     * @return An array of files written
+     * @throws IOException IOException
+     */
+    public static File[] writeConfig(LevelData levelData, File configFile) throws IOException {
+        File[] filesWritten = new File[levelData.getObjectAnimDataMap().size() + 1];
+
         String configContents = getConfig(levelData);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
         writer.write(configContents);
         writer.close();
 
+        filesWritten[0] = configFile;
+
+        int i = 1;
         for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
             File animFile = new File(configFile.getParentFile(), "anim-" + entry.getKey() + ".txt");
 
@@ -41,7 +52,13 @@ public class ExportManager {
             BufferedWriter animWriter = new BufferedWriter(new FileWriter(animFile));
             animWriter.write(animConfigContents);
             animWriter.close();
+
+            filesWritten[i] = animFile;
+
+            i++;
         }
+
+        return filesWritten;
     }
 
     public static String getConfig(LevelData levelData) {

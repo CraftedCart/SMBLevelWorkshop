@@ -675,6 +675,7 @@ public class MainScreen extends FluidUIScreen {
                 addUndoCommand(new UndoAddAnimData(ProjectManager.getCurrentProject().clientLevelData, this, selected));
 
                 updatePropertiesObjectsPanel();
+                updateOutlinerObjectsPanel();
             } else {
                 notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
@@ -697,7 +698,9 @@ public class MainScreen extends FluidUIScreen {
 
                 ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframesForObjects(selected);
                 ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeAnimData(selected);
+
                 updatePropertiesObjectsPanel();
+                updateOutlinerObjectsPanel();
             } else {
                 notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
@@ -2639,6 +2642,12 @@ public class MainScreen extends FluidUIScreen {
             } else {
                 return UIColor.matPink();
             }
+        } else if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+            if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
+                return UIColor.matGreen900();
+            } else {
+                return UIColor.matGreen();
+            }
         } else {
             if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
                 return UIColor.matBlue900();
@@ -2828,10 +2837,8 @@ public class MainScreen extends FluidUIScreen {
 
                                 //Mark background objects
                                 for (String name : configData.backgroundList) {
-                                    for (OBJObject object : ld.getModel().scene.getObjectList()) {
-                                        if (Objects.equals(object.name, name)) {
-                                            ld.addBackgroundObject(name);
-                                        }
+                                    if (ld.getModel().hasObject(name)) {
+                                        ld.addBackgroundObject(name);
                                     }
                                 }
 
@@ -2841,7 +2848,9 @@ public class MainScreen extends FluidUIScreen {
 
                                 //Add anim data
                                 for (Map.Entry<String, ConfigAnimData> entry : configData.animDataMap.entrySet()) {
-                                    ld.setAnimData(entry.getValue().getObjectName(), new AnimData(entry.getValue()));
+                                    if (ld.getModel().hasObject(entry.getValue().getObjectName())) {
+                                        ld.setAnimData(entry.getValue().getObjectName(), new AnimData(entry.getValue()));
+                                    }
                                 }
 
                             }

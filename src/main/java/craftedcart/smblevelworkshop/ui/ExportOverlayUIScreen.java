@@ -245,7 +245,6 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             setOverlayUiScreen(progScreen);
 
             //Add tasks to progScreen
-            progScreen.addTask("exportGenConfig", LangManager.getItem("exportGenConfig"));
             progScreen.addTask("exportWriteConfig", LangManager.getItem("exportWriteConfig"));
             progScreen.addTask("exportGenObjData", LangManager.getItem("exportGenObjData"));
             progScreen.addTask("exportGenConfigData", LangManager.getItem("exportGenConfigData"));
@@ -260,22 +259,14 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             }
 
             LogHelper.info(getClass(), "Exporting config file: " + file.getAbsolutePath());
-
-            progScreen.activateTask("exportGenConfig");
-
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
-            String exportContents = ExportManager.getConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData());
-
-            progScreen.completeTask("exportGenConfig");
             progScreen.activateTask("exportWriteConfig");
 
             File tempConfigFile;
+            File[] writtenConfigFiles;
 
             try {
                 tempConfigFile = File.createTempFile("SMBLevelWorkshopExportConfig", ".txt");
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tempConfigFile));
-                writer.write(exportContents);
-                writer.close();
+                writtenConfigFiles = ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), tempConfigFile);
                 progScreen.completeTask("exportWriteConfig");
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
@@ -343,8 +334,10 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
                 return;
             }
 
-            if (!tempConfigFile.delete()) {
-                LogHelper.warn(getClass(), "Failed to delete temporary file: " + tempConfigFile.getAbsolutePath());
+            for (File tempFile : writtenConfigFiles) {
+                if (!tempFile.delete()) {
+                    LogHelper.warn(getClass(), "Failed to delete temporary file: " + tempConfigFile.getAbsolutePath());
+                }
             }
 
             progScreen.completeTask("exportGenConfigData");
@@ -423,7 +416,6 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             setOverlayUiScreen(progScreen);
 
             //Add tasks to progScreen
-            progScreen.addTask("exportGenConfig", LangManager.getItem("exportGenConfig"));
             progScreen.addTask("exportWriteConfig", LangManager.getItem("exportWriteConfig"));
             progScreen.addTask("exportGenObjData", LangManager.getItem("exportGenObjData"));
             progScreen.addTask("exportGenConfigData", LangManager.getItem("exportGenConfigData"));
@@ -449,21 +441,14 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             LogHelper.info(getClass(), "Exporting config file: " + file.getAbsolutePath());
 
-            progScreen.activateTask("exportGenConfig");
-
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
-            String exportContents = ExportManager.getConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData());
-
-            progScreen.completeTask("exportGenConfig");
             progScreen.activateTask("exportWriteConfig");
 
             File tempConfigFile;
+            File[] writtenConfigFiles;
 
             try {
                 tempConfigFile = File.createTempFile("SMBLevelWorkshopExportConfig", ".txt");
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tempConfigFile));
-                writer.write(exportContents);
-                writer.close();
+                writtenConfigFiles = ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), tempConfigFile);
                 progScreen.completeTask("exportWriteConfig");
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
@@ -531,8 +516,10 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
                 return;
             }
 
-            if (!tempConfigFile.delete()) {
-                LogHelper.warn(getClass(), "Failed to delete temporary file: " + tempConfigFile.getAbsolutePath());
+            for (File tempFile : writtenConfigFiles) {
+                if (!tempFile.delete()) {
+                    LogHelper.warn(getClass(), "Failed to delete temporary file: " + tempConfigFile.getAbsolutePath());
+                }
             }
 
             progScreen.completeTask("exportGenConfigData");
