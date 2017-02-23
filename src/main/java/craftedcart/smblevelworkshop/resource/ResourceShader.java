@@ -45,10 +45,11 @@ public class ResourceShader implements IResource {
         if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) { //If it failed to compile
             LogHelper.error(getClass(), String.format("Failed to compile the shader at \"%s\"", file.getPath()));
 
-            IntBuffer logLength = ByteBuffer.allocateDirect(8).asIntBuffer();
-            GL20.glGetShaderi(shaderID, GL20.GL_INFO_LOG_LENGTH);
+//            IntBuffer logLength = ByteBuffer.allocateDirect(8).asIntBuffer();
+//            GL20.glGetShaderi(shaderID, GL20.GL_INFO_LOG_LENGTH);
+            String shaderLog = GL20.glGetShaderInfoLog(shaderID, 8192);
 
-            throw new GLSLCompileException(GL20.glGetShaderInfoLog(shaderID, logLength.get(0))); //Get the error and throw an exception
+            throw new GLSLCompileException(shaderLog); //Get the error and throw an exception
         }
 
         drawable.releaseContext();

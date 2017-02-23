@@ -7,7 +7,7 @@ package craftedcart.smblevelworkshop.exception;
 public class GLSLCompileException extends Exception {
 
     public GLSLCompileException(String message) {
-        super(message);
+        super("\n" + message);
     }
 
 }
