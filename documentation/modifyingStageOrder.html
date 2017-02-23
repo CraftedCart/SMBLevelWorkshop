@@ -1,0 +1,188 @@
+<h1>Mofifying Stage Order</h1>
+
+<h3>Story Mode</h3>
+
+<p>
+	Stage orders and their difficulties are stored within <code>/mkb2.main_loop.rel</code>.
+	At offset <code>0x0020B448</code>, there is a list of stages and their difficulties.
+</p>
+
+<p>
+	2 bytes are used to store the level ID, then 2 bytes are used to store the difficulty.
+	This 4 byte segment loops 100x for all story mode levels.
+</p>
+
+<table class="table">
+	<tr>
+		<th>Stage ID</th>
+		<th>Stage Difficulty (0 / <code>0x00</code> - 10 / <code>0x0A</code>)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td><code>00 C9</code></td>
+		<td><code>00 01</code></td>
+		<td>World 1 Stage 1</td>
+	</tr>
+	<tr>
+		<td><code>00 CA</code></td>
+		<td><code>00 02</code></td>
+		<td>World 1 Stage 2</td>
+	</tr>
+	<tr>
+		<td>...</td>
+		<td>...</td>
+		<td>...</td>
+	</tr>
+	<tr>
+		<td><code>00 06</code></td>
+		<td><code>00 02</code></td>
+		<td>World 1 Stage 10</td>
+	</tr>
+	<tr>
+		<td><code>00 07</code></td>
+		<td><code>00 02</code></td>
+		<td>World 2 Stage 1</td>
+	</tr>
+	<tr>
+		<td><code>00 08</code></td>
+		<td><code>00 05</code></td>
+		<td>World 2 Stage 2</td>
+	</tr>
+	<tr>
+		<td>...</td>
+		<td>...</td>
+		<td>...</td>
+	</tr>
+	<tr>
+		<td><code>01 5E</code></td>
+		<td><code>00 06</code></td>
+		<td>World 10 Stage 10</td>
+	</tr>
+</table>
+
+<h4>Default orders and difficulties</h4>
+
+<p>
+	Each block of 10 lines is a world.<br />
+	The first 2 bytes in each line store the stage ID.<br />
+	The last 2 bytes in each line store the difficulty.
+</p>
+
+<button data-toggle="collapse" data-target="#story-mode-order-hex" class="btn btn-default">Show / Hide</button>
+
+<pre id="story-mode-order-hex" class="collapse"><code>00 C9 00 01
+00 CA 00 02
+00 CB 00 01
+00 CC 00 02
+00 01 00 06
+00 02 00 03
+00 03 00 02
+00 04 00 08
+00 05 00 06
+00 06 00 02
+
+00 07 00 02
+00 08 00 05
+00 09 00 03
+00 0A 00 06
+00 0B 00 07
+00 0C 00 03
+00 0D 00 07
+00 0E 00 06
+00 0F 00 08
+00 10 00 06
+
+00 E7 00 03
+00 E8 00 08
+00 E9 00 06
+00 EA 00 06
+00 EB 00 04
+00 EC 00 03
+00 ED 00 03
+00 EE 00 08
+00 EF 00 03
+00 11 00 03
+
+00 12 00 02
+00 13 00 08
+00 14 00 05
+00 15 00 01
+00 16 00 06
+00 17 00 09
+00 18 00 06
+00 19 00 08
+00 1A 00 08
+00 1B 00 0A
+
+00 1C 00 03
+00 1D 00 07
+00 1E 00 04
+00 1F 00 08
+00 20 00 03
+00 21 00 05
+00 22 00 02
+00 23 00 06
+00 24 00 0A
+00 25 00 04
+
+00 26 00 08
+00 27 00 08
+00 28 00 05
+00 29 00 05
+00 2A 00 05
+00 2B 00 09
+00 2C 00 09
+00 2D 00 05
+00 2E 00 09
+00 2F 00 02
+
+01 19 00 04
+01 1A 00 05
+01 1B 00 07
+01 1C 00 06
+01 1D 00 04
+01 1E 00 08
+01 1F 00 09
+01 20 00 09
+01 21 00 0A
+00 30 00 05
+
+00 31 00 09
+00 32 00 08
+00 33 00 0A
+00 34 00 09
+00 35 00 08
+00 36 00 09
+00 37 00 0A
+00 38 00 0A
+00 39 00 06
+00 3A 00 07
+
+00 3B 00 0A
+00 3C 00 0A
+00 3D 00 08
+00 3E 00 09
+00 3F 00 0A
+00 40 00 07
+00 41 00 08
+00 42 00 08
+00 43 00 06
+00 44 00 0A
+
+01 55 00 08
+01 56 00 09
+01 57 00 09
+01 58 00 09
+01 59 00 08
+01 5A 00 09
+01 5B 00 07
+01 5C 00 08
+01 5D 00 09
+01 5E 00 06
+</code></pre>
+
+<h3>Challenge Mode</h3>
+
+<p>
+	Challenge mode is currently unknown.
+</p>

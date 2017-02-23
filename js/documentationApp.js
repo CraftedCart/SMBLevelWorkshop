@@ -38,6 +38,9 @@
 		},
 		"removingWorldEffects": {
 			"name": "Removing World Effects"
+		},
+		"modifyingStageOrder": {
+			"name": "Modifying Stage Order"
 		}
 	};
 })();
