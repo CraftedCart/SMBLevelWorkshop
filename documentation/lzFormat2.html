@@ -162,9 +162,15 @@
 	</tr>
 	<tr>
 		<td>180</td>
-		<td><code>0x08</code></td>
-		<td>8</td>
-		<td>Unknown / Zero<td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of <a href="javascript:scrollTo('#wormhole')">wormholes</a></td>
+	</tr>
+	<tr>
+		<td>184</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to <a href="javascript:scrollTo('#wormhole')">wormhole data</a> (Can be 4x <code>00</code> if there are no wormholes)<td>
 	</tr>
 	<tr>
 		<td>188</td>
@@ -474,6 +480,65 @@
 	</tr>
 </table>
 
+<h2 id="wormhole">Wormhole</h2><br />
+<h4>Wormholes require 2 objects in the GMA to be visible: "WORMHOLE", and "WORM_SURFACE"</h4>
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - X position</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Y position</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Z position</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - X rotation</td>
+	</tr>
+	<tr>
+		<td>14</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - Y rotation</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Integer - Big Endian - Z rotation</td>
+	</tr>
+	<tr>
+		<td>18</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Zero</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to destination wormhole</td>
+	</tr>
+</table>
+
 <h2 id="collision">Collision header</h2><br />
 <h4>This is repeated for each collision header</h4>
 <table class="table">
@@ -683,8 +748,26 @@
 	</tr>
 	<tr>
 		<td>188</td>
-		<td><code>0x1C</code></td>
-		<td>28</td>
+		<td><code>0x08</code></td>
+		<td>8</td>
+		<td>Unknown / Zero</td>
+	</tr>
+	<tr>
+		<td>196</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Number of <a href="javascript:scrollTo('#wormhole')">wormholes</a></td>
+	</tr>
+	<tr>
+		<td>200</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Integer - Big Endian - Offset to <a href="javascript:scrollTo('#wormhole')">wormhole data</a> (Can be 4x <code>00</code> if there are no wormholes)<td>
+	</tr>
+	<tr>
+		<td>204</td>
+		<td><code>0x08</code></td>
+		<td>8</td>
 		<td>Unknown / Zero</td>
 	</tr>
 	<tr>
