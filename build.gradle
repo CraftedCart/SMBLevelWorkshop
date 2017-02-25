@@ -57,3 +57,8 @@ jar {
 
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
+
+task mkJavadocs(type: Javadoc) {
+    classpath += configurations.compile
+    source = sourceSets.main.allJava
+}
