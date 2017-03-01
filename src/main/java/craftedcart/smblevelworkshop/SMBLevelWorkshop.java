@@ -35,8 +35,7 @@ public class SMBLevelWorkshop {
         try {
             Window.init();
         } catch (LWJGLException | FontFormatException | IOException e) {
-            LogHelper.error(Window.class, e);
-            e.printStackTrace();
+            LogHelper.error(Window.class, LogHelper.stackTraceToString(e));
         }
     }
 
@@ -78,6 +77,9 @@ public class SMBLevelWorkshop {
 //        AudioUtils.cleanup();
 
         Display.destroy();
+
+        LogHelper.info(SMBLevelWorkshop.class, "Quitting JVM!");
+        System.exit(0);
     }
 
 }
