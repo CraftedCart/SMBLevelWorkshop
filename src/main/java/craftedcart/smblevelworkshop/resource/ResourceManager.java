@@ -243,6 +243,22 @@ public class ResourceManager {
             }
         }
 
+        //Load and register the loading screen background first if it exists
+        File loadBGFile = pngResourcesToLoad.get("_loadBackground.png");
+        if (loadBGFile != null) {
+            currentResource++;
+            LoadingScreen.infoMessage = "_loadBackground.png";
+            LoadingScreen.progress = currentResource / (double) totalResources;
+            try {
+                registerPNG(loadBGFile, "_loadBackground.png");
+            } catch (Exception e) {
+                addErroredResource("_loadBackground.png", e.getMessage());
+                LogHelper.error(ResourceManager.class, CrashHandler.getStackTraceString(e));
+            }
+
+            pngResourcesToLoad.remove("_loadBackground.png");
+        }
+
         for (Map.Entry<String, File> resource : pngResourcesToLoad.entrySet()) { //Register PNG textures
             currentResource++;
             LoadingScreen.infoMessage = resource.getKey();
