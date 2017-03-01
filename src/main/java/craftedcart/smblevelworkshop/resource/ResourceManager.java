@@ -70,6 +70,7 @@ public class ResourceManager {
     public static void queueVanillaResources() {
         try {
             tempDir = File.createTempFile("SMBLevelWorkshop", null);
+            tempDir.deleteOnExit();
             if (!tempDir.delete()) {
                 throw new IOException("Could not delete temp file: " + tempDir.getAbsolutePath());
             }
@@ -101,6 +102,8 @@ public class ResourceManager {
 //                    } else {
 
                     File outFile = new File(tempDir, file.toString());
+                    outFile.deleteOnExit();
+
                     if (!outFile.getParentFile().exists()) {
                         if (!outFile.getParentFile().mkdirs()) {
                             throw new IOException("Error while creating directories for file: " + outFile.getAbsolutePath());
