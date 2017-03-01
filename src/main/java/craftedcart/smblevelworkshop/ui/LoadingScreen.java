@@ -92,7 +92,7 @@ public class LoadingScreen implements IUIScreen {
         }
         //</editor-fold>
 
-        UIColor.matBlueGrey().bindColor();
+        UIColor.matGrey900(0.75).bindColor();
         UIUtils.drawQuad(
                 new PosXY(0, Display.getHeight() - 110),
                 new PosXY(Display.getWidth(), Display.getHeight()));
@@ -100,7 +100,7 @@ public class LoadingScreen implements IUIScreen {
         UIUtils.drawQuadGradientVertical(
                 new PosXY(0, Display.getHeight() - 114),
                 new PosXY(Display.getWidth(), Display.getHeight() - 110),
-                UIColor.matGrey900(0), UIColor.matGrey900());
+                UIColor.matGrey900(0), UIColor.matGrey900(0.5));
 
         if (headerFont != null) {
             UIUtils.drawString(headerFont, 24, Display.getHeight() - 96, headerMessage, UIColor.matWhite());
@@ -116,13 +116,13 @@ public class LoadingScreen implements IUIScreen {
 
         //<editor-fold desc="Draw progress bar">
         if (progress != -1) {
-            UIColor.matBlueGrey700().bindColor();
+            UIColor.matGrey900().bindColor();
             UIUtils.drawQuad(
-                    new PosXY(24, Display.getHeight() - 28),
+                    new PosXY((Display.getWidth() - 48) * progress + 24, Display.getHeight() - 26),
                     new PosXY(Display.getWidth() - 24, Display.getHeight() - 24));
-            UIColor.matBlueGrey300().bindColor();
+            UIColor.pureWhite().bindColor();
             UIUtils.drawQuad(
-                    new PosXY(24, Display.getHeight() - 28),
+                    new PosXY(24, Display.getHeight() - 26),
                     new PosXY((Display.getWidth() - 48) * progress + 24, Display.getHeight() - 24));
         }
         //</editor-fold>
