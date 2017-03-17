@@ -33,6 +33,12 @@
 		"lzFormat2": {
 			"name": "SMB 2 LZ File Format"
 		},
+		"tplFormat12": {
+			"name": "SMB 1 / 2 TPL File Format"
+		},
+		"tplFormatDx": {
+			"name": "SMB Deluxe TPL File Format"
+		},
 		"debugShortcuts": {
 			"name": "Debug Shortcuts"
 		},
