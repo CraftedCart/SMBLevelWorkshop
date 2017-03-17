@@ -7,46 +7,48 @@
 	</tr>
 	<tr>
 		<td>0</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td>The ascii characters "XTPL"</td>
 	</tr>
 	<tr>
 		<td>4</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td>Number of Textures</td>
 	</tr>
 	<tr>
-		<td><b>Repeat rest of header for each texture</b></td>
+		<th>Note: Repeat rest of header for each texture</th>
+		<th></th>
+		<th></th>
 	</tr>
 	<tr>
 		<td>0</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td><a href="#textureIDMapping">Texture ID (ignored)</a></td>
 	</tr>
 	<tr>
 		<td>4</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td><a href="#Texture">Texture offset</a></td>
 	</tr>
 		<tr>
 		<td>8</td>
-		<td>0x02</td>
+		<td><code>0x02</code></td>
 		<td>Width of texture (ignored)</td>
 	</tr>
 		<tr>
 		<td>10</td>
-		<td>0x02</td>
+		<td><code>0x02</code></td>
 		<td>Height of texture (ignored)</td>
 	</tr>
 		<tr>
 		<td>12</td>
-		<td>0x02</td>
+		<td><code>0x02</code></td>
 		<td>Number of mipmaps (ignored)</td>
 	</tr>
 		<tr>
 		<td>14</td>
-		<td>0x02</td>
-		<td>0x1234</td>
+		<td><code>0x02</code></td>
+		<td><code>0x1234</code></td>
 	</tr>
 </table><br />
 
@@ -59,42 +61,42 @@
 	</tr>
 	<tr>
 		<td>0</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td><a href="#textureIDMapping">Texture ID</a></td>
 	</tr>
 	<tr>
 		<td>4</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td>Width</td>
 	</tr>
 	<tr>
 		<td>8</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td>Height</td>
 	</tr>
 	<tr>
 		<td>12</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td>Number of mipmaps</td>
 	</tr>
 	<tr>
 		<td>16</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td>0 if "uncompressed", 1 if "compressed"</td>
 	</tr>
 		<tr>
 		<td>20</td>
-		<td>0x04</td>
+		<td><code>0x04</code></td>
 		<td>Texture data size if uncompressed (can be size of compressed data on occasion?)</td>
 	</tr>
 		<tr>
 		<td>24</td>
-		<td>0x02</td>
+		<td><code>0x02</code></td>
 		<td>A size/length of some kind (0 if uncompressed)</td>
 	</tr>
 	<tr>
 		<td>28</td>
-		<td>0x02</td>
+		<td><code>0x02</code></td>
 		<td>0 (Probably padding to make the header 32 bytes)</td>
 	</tr>
 	<tr>
@@ -112,18 +114,18 @@
 		<th>Image Type</th>
 	</tr>
 	<tr>
-		<td>0x0E</td>
-		<td>0x0C</td>
+		<td><code>0x0E</code></td>
+		<td><code>0x0C</code></td>
 		<td><a href="http://wiki.tockdom.com/wiki/CMPR">CMPR</a></td>
 	</tr>
 	<tr>
-		<td>0x01</td>
-		<td>0x1A</td>
+		<td><code>0x01</code></td>
+		<td><code>0x1A</code></td>
 		<td><a href="http://wiki.tockdom.com/wiki/I8">I8</a></td>
 	</tr>
 	<tr>
-		<td>0x05</td>
-		<td>0x0E</td>
+		<td><code>0x05</code></td>
+		<td><code>0x0E</code></td>
 		<td><a href="http://wiki.tockdom.com/wiki/RGB5A3">RGB5A3</a></td>
 	</tr>
 </table><br />
