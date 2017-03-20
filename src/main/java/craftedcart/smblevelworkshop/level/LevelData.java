@@ -16,8 +16,8 @@ import java.util.*;
  */
 public class LevelData {
 
-    @Nullable private ResourceModel model;
-    @Nullable private File modelObjSource;
+    @NotNull private Set<ResourceModel> models = new HashSet<>();
+    @NotNull private Set<File> modelObjSources = new HashSet<>();
     @NotNull private Map<String, Placeable> placedObjects = new HashMap<>();
     @NotNull private Set<String> backgroundObjects = new HashSet<>();
     @NotNull private Set<String> backgroundExternalObjects = new HashSet<>();
@@ -25,22 +25,34 @@ public class LevelData {
     private float leadInTime = 6.0f;
     private float maxTime = 60.0f;
 
-    public void setModel(@Nullable ResourceModel model) {
-        this.model = model;
+    public void addModel(@Nullable ResourceModel model) {
+        models.add(model);
     }
 
     @Nullable
-    public ResourceModel getModel() {
-        return model;
+    public Set<ResourceModel> getModels() {
+        return models;
     }
 
-    public void setModelObjSource(@Nullable File modelObjSource) {
-        this.modelObjSource = modelObjSource;
+    public void unloadAllModels() {
+        for (ResourceModel model : models) {
+            model.scene.unloadAll();
+        }
+
+        models.clear();
+    }
+
+    public void addModelObjSource(File modelObjSource) {
+        modelObjSources.add(modelObjSource);
+    }
+
+    public void clearModelObjSources() {
+        modelObjSources.clear();
     }
 
     @Nullable
-    public File getModelObjSource() {
-        return modelObjSource;
+    public Set<File> getModelObjSources() {
+        return modelObjSources;
     }
 
     @NotNull

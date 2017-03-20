@@ -18,6 +18,12 @@ public class PosXYZ {
         this.z = z;
     }
 
+    public PosXYZ(craftedcart.smbworkshopexporter.util.Vec3f vec3f) {
+        this.x = vec3f.x;
+        this.y = vec3f.y;
+        this.z = vec3f.z;
+    }
+
     public PosXYZ add(PosXYZ pos) {
         return new PosXYZ(this.x + pos.x, this.y + pos.y, this.z + pos.z);
     }

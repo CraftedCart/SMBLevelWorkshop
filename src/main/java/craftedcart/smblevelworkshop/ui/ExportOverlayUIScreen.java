@@ -282,7 +282,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing OBJ File...");
             ModelData modelData = new ModelData();
             try {
-                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSource());
+                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSources());
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.error(getClass(), "OBJ file not found!");
@@ -309,7 +309,16 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing Config File...");
             ConfigData configData = new ConfigData();
             try {
-                configData.parseConfig(tempConfigFile);
+                SMBCnvConfigParser.parseConfig(configData, tempConfigFile);
+
+                ItemGroup staticItemGroup = configData.getStaticItemGroup();
+
+                //Add non animated objects to the static ItemGroup
+                for (String objectName : modelData.cmnObjNames) {
+                    if (configData.getAnimatedObjects().contains(objectName)) continue; //Exclude animated objects from being added to the static ItemGroup
+                    staticItemGroup.addObject(objectName);
+                }
+
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.fatal(getClass(), "Config file not found!");
@@ -464,7 +473,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing OBJ File...");
             ModelData modelData = new ModelData();
             try {
-                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSource());
+                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSources());
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.error(getClass(), "OBJ file not found!");
@@ -491,7 +500,15 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing Config File...");
             ConfigData configData = new ConfigData();
             try {
-                configData.parseConfig(tempConfigFile);
+                SMBCnvConfigParser.parseConfig(configData, tempConfigFile);
+
+                ItemGroup staticItemGroup = configData.getStaticItemGroup();
+
+                //Add non animated objects to the static ItemGroup
+                for (String objectName : modelData.cmnObjNames) {
+                    if (configData.getAnimatedObjects().contains(objectName)) continue; //Exclude animated objects from being added to the static ItemGroup
+                    staticItemGroup.addObject(objectName);
+                }
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.fatal(getClass(), "Config file not found!");

@@ -23,8 +23,8 @@ import craftedcart.smblevelworkshop.undo.*;
 import craftedcart.smblevelworkshop.util.*;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
-import craftedcart.smbworkshopexporter.ConfigAnimData;
-import craftedcart.smbworkshopexporter.ConfigData;
+import craftedcart.smbworkshopexporter.*;
+import craftedcart.smbworkshopexporter.placeables.*;
 import io.github.craftedcart.fluidui.FluidUIScreen;
 import io.github.craftedcart.fluidui.IUIScreen;
 import io.github.craftedcart.fluidui.component.Button;
@@ -47,12 +47,18 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.glu.GLU;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+
+import static craftedcart.smbworkshopexporter.placeables.Goal.EnumGoalType.BLUE;
+import static craftedcart.smbworkshopexporter.placeables.Goal.EnumGoalType.GREEN;
+import static craftedcart.smbworkshopexporter.placeables.Goal.EnumGoalType.RED;
 
 /**
  * @author CraftedCart
@@ -1363,7 +1369,7 @@ public class MainScreen extends FluidUIScreen {
 
             UIColor.pureWhite().bindColor();
 
-            if (ProjectManager.getCurrentProject().clientLevelData != null && ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel() != null) {
+            if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 //<editor-fold desc="Draw model with wireframes">
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
 
@@ -1378,17 +1384,19 @@ public class MainScreen extends FluidUIScreen {
                 float time = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
 
                 GL20.glUseProgram(currentShaderProgram.getProgramID());
-                for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
-                    GL11.glPushMatrix();
+                for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                    for (OBJObject object : model.scene.getObjectList()){
+                        GL11.glPushMatrix();
 
-                    //Transform at current time
-                    transformObjectAtTime(object.name, time);
+                        //Transform at current time
+                        transformObjectAtTime(object.name, time);
 
-                    if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(currentShaderProgram, useTextures, object.name);
+                        if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
+                            model.drawModelObject(currentShaderProgram, useTextures, object.name);
+                        }
+
+                        GL11.glPopMatrix();
                     }
-
-                    GL11.glPopMatrix();
                 }
                 GL20.glUseProgram(0);
 
@@ -1396,24 +1404,26 @@ public class MainScreen extends FluidUIScreen {
 
                 if (SMBLWSettings.showAllWireframes) {
 
-                    for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
-                        GL11.glPushMatrix();
+                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                        for (OBJObject object : model.scene.getObjectList()) {
+                            GL11.glPushMatrix();
 
-                        transformObjectAtTime(object.name);
+                            transformObjectAtTime(object.name);
 
-                        if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
-                            GL11.glColor4f(0, 0, 0, 1);
-                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, object.name);
+                            if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
+                                GL11.glColor4f(0, 0, 0, 1);
+                                model.drawModelObjectWireframe(null, false, object.name);
 
-                            GL11.glDisable(GL11.GL_DEPTH_TEST);
+                                GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-                            GL11.glColor4f(0, 0, 0, 0.01f);
-                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, object.name);
+                                GL11.glColor4f(0, 0, 0, 0.01f);
+                                model.drawModelObjectWireframe(null, false, object.name);
 
-                            GL11.glEnable(GL11.GL_DEPTH_TEST);
+                                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                            }
+
+                            GL11.glPopMatrix();
                         }
-
-                        GL11.glPopMatrix();
                     }
                 }
                 Window.logOpenGLError("After MainScreen.drawViewport() - Drawing model wireframes");
@@ -1467,7 +1477,11 @@ public class MainScreen extends FluidUIScreen {
                                 transformObjectAtTime(name);
 
                                 if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(name)) {
-                                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObject(null, false, name);
+                                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                                        if (model.hasObject(name)) {
+                                            model.drawModelObject(null, false, name);
+                                        }
+                                    }
                                 }
 
                                 GL11.glPopMatrix();
@@ -1481,7 +1495,11 @@ public class MainScreen extends FluidUIScreen {
                                 transformObjectAtTime(name);
 
                                 if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(name)) {
-                                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().drawModelObjectWireframe(null, false, name);
+                                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                                        if (model.hasObject(name)) {
+                                            model.drawModelObjectWireframe(null, false, name);
+                                        }
+                                    }
                                 }
 
                                 GL11.glPopMatrix();
@@ -2052,7 +2070,7 @@ public class MainScreen extends FluidUIScreen {
         }
     }
 
-    private void newLevelData(File file, boolean replace) throws IOException {
+    private void newLevelData(Set<ExternalModel> externalModels, boolean replace) throws IOException {
         synchronized (renderingLock) {
             try {
                 preventRendering = true;
@@ -2072,9 +2090,9 @@ public class MainScreen extends FluidUIScreen {
                     redoCommandList.clear();
                 }
 
-                if (ProjectManager.getCurrentProject().clientLevelData != null && ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel() != null) {
+                if (ProjectManager.getCurrentProject().clientLevelData != null) {
                     //Unload textures and VBOs
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.unloadAll();
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().unloadAllModels();
                 }
 
                 if (!replace) {
@@ -2085,9 +2103,13 @@ public class MainScreen extends FluidUIScreen {
                     ProjectManager.getCurrentProject().clientLevelData.setOnTimelinePosChanged(this::onTimelinePosChanged);
                 }
 
-                ResourceModel model = OBJLoader.loadModel(file.getPath());
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().setModel(model);
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().setModelObjSource(file);
+                ProjectManager.getCurrentProject().clientLevelData.getLevelData().clearModelObjSources();
+
+                for (ExternalModel extModel : externalModels) {
+                    ResourceModel model = OBJLoader.loadModel(extModel.file.getPath());
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().addModel(model);
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().addModelObjSource(extModel.file);
+                }
 
                 synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
 
@@ -2126,16 +2148,20 @@ public class MainScreen extends FluidUIScreen {
                 if (replace) {
                     //Remove selected objects if they no longer exist in the new OBJ
                     for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(name)) {
-                            ProjectManager.getCurrentProject().clientLevelData.removeSelectedObject(name);
+                        for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                            if (!model.hasObject(name)) {
+                                ProjectManager.getCurrentProject().clientLevelData.removeSelectedObject(name);
+                            }
                         }
                     }
 
                     //Remove background objects if they no longer exist in the new OBJ
                     synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
                         for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
-                            if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(name)) {
-                                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
+                            for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                                if (!model.hasObject(name)) {
+                                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
+                                }
                             }
                         }
                     }
@@ -2153,8 +2179,10 @@ public class MainScreen extends FluidUIScreen {
 
                     ProjectManager.getCurrentProject().clientLevelData.clearHiddenObjects(); //Unhide all objects
 
-                    for (OBJObject object : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().scene.getObjectList()) {
-                        outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
+                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                        for (OBJObject object : model.scene.getObjectList()) {
+                            outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
+                        }
                     }
                 }
 
@@ -2295,9 +2323,9 @@ public class MainScreen extends FluidUIScreen {
                             AskReplaceObjOverlayUIScreen dialog = new AskReplaceObjOverlayUIScreen();
                             setOverlayUiScreen(dialog);
                             boolean shouldRepalce = dialog.waitForShouldReplaceResponse();
-                            newLevelData(file, shouldRepalce);
+                            newLevelData(Collections.singleton(new ExternalModel(file, ModelType.OBJ)), shouldRepalce);
                         } else {
-                            newLevelData(file, false);
+                            newLevelData(Collections.singleton(new ExternalModel(file, ModelType.OBJ)), false);
                         }
 
                         updateOutlinerObjectsPanel();
@@ -2717,162 +2745,191 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void importConfig() {
+        boolean xmlOnly;
+
+        //Only allow XML configs when no OBJ loaded
         if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
-            if (!isLoadingProject) {
-                new Thread(() -> {
-                    isLoadingProject = true;
-                    importObjButton.setEnabled(false);
-                    importConfigButton.setEnabled(false);
-                    exportButton.setEnabled(false);
-                    settingsButton.setEnabled(false);
-                    FileDialog fd = new FileDialog((Frame) null);
-                    fd.setMode(FileDialog.LOAD);
-                    fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".TXT"));
-                    fd.setVisible(true);
+            xmlOnly = false;
+        } else {
+            xmlOnly = true;
+//            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+        }
 
-                    File[] files = fd.getFiles();
-                    if (files != null && files.length > 0) {
-                        File file = files[0];
-                        LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
+        if (!isLoadingProject) {
+            new Thread(() -> {
+                isLoadingProject = true;
+                importObjButton.setEnabled(false);
+                importConfigButton.setEnabled(false);
+                exportButton.setEnabled(false);
+                settingsButton.setEnabled(false);
+                FileDialog fd = new FileDialog((Frame) null);
+                fd.setMode(FileDialog.LOAD);
+                if (xmlOnly) {
+                    fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".XML"));
+                } else {
+                    fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".TXT") || filename.toUpperCase().endsWith(".XML"));
+                }
+                fd.setVisible(true);
 
-                        try {
-                            ConfigData configData = new ConfigData();
-                            configData.parseConfig(file);
+                File[] files = fd.getFiles();
+                if (files != null && files.length > 0) {
+                    File file = files[0];
+                    LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
 
-                            ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
-                            LevelData ld = cld.getLevelData();
+                    try {
+                        ConfigData configData = new ConfigData();
+                        if (file.getName().toUpperCase().endsWith(".XML")) {
+                            //Assume XML config file
+                            XMLConfigParser.parseConfig(configData, file);
 
-                            synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
+                            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                                newLevelData(configData.models, true);
+                            } else {
+                                newLevelData(configData.models, false); //No client level data - Don't replace as there's nothing to replace
+                            }
 
-                                cld.clearSelectedPlaceables();
-                                ld.clearPlacedObjects();
-                                ld.clearBackgroundObjects();
-                                outlinerPlaceablesListBox.clearChildComponents();
 
-                                cld.clearSelectedKeyframes();
-                                ld.clearAnimData();
+                        } else {
+                            //Assume smbcnv config file
+                            SMBCnvConfigParser.parseConfig(configData, file);
+                        }
 
-                                //Add start pos
-                                if (configData.startList.size() > 0) {
-                                    ConfigData.Start start = configData.startList.entrySet().iterator().next().getValue();
-                                    Placeable startPlaceable = new Placeable(new AssetStartPos());
-                                    startPlaceable.setPosition(new PosXYZ(start.posX, start.posY, start.posZ));
-                                    startPlaceable.setRotation(new PosXYZ(start.rotX, start.rotY, start.rotZ));
-                                    String name = ld.addPlaceable(startPlaceable);
-                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
-                                } else {
-                                    //No start found - use default start
-                                    Placeable startPlaceable = new Placeable(new AssetStartPos());
-                                    startPlaceable.setPosition(new PosXYZ(0, 1, 0));
-                                    String name = ld.addPlaceable(startPlaceable);
-                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+                        LevelData ld = cld.getLevelData();
+
+                        synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
+
+                            cld.clearSelectedPlaceables();
+                            ld.clearPlacedObjects();
+                            ld.clearBackgroundObjects();
+                            outlinerPlaceablesListBox.clearChildComponents();
+
+                            cld.clearSelectedKeyframes();
+                            ld.clearAnimData();
+
+                            //Add start pos
+                            if (configData.startList.size() > 0) {
+                                Start start = configData.startList.entrySet().iterator().next().getValue();
+                                Placeable startPlaceable = new Placeable(new AssetStartPos());
+                                startPlaceable.setPosition(new PosXYZ(start.posX, start.posY, start.posZ));
+                                startPlaceable.setRotation(new PosXYZ(start.rotX, start.rotY, start.rotZ));
+                                String name = ld.addPlaceable(startPlaceable);
+                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                            } else {
+                                //No start found - use default start
+                                Placeable startPlaceable = new Placeable(new AssetStartPos());
+                                startPlaceable.setPosition(new PosXYZ(0, 1, 0));
+                                String name = ld.addPlaceable(startPlaceable);
+                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                            }
+
+                            //Add fallout y
+                            Placeable falloutPlaceable = new Placeable(new AssetFalloutY());
+                            falloutPlaceable.setPosition(new PosXYZ(0, configData.falloutPlane, 0));
+                            String falloutName = ld.addPlaceable(falloutPlaceable);
+                            outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutName));
+
+                            //Add goals
+                            for (Map.Entry<String, Goal> entry : configData.getStaticItemGroup().goalList.entrySet()) { //TODO: Forced to use static item group
+                                Goal goal = entry.getValue();
+                                Placeable goalPlaceable = new Placeable(new AssetGoal());
+                                goalPlaceable.setPosition(new PosXYZ(goal.pos));
+                                goalPlaceable.setRotation(new PosXYZ(goal.rot));
+
+                                String type = "blueGoal";
+                                //Type 0 = blueGoal
+                                if (goal.type == GREEN) {
+                                    type = "greenGoal";
+                                } else if (goal.type == RED) {
+                                    type = "redGoal";
                                 }
 
-                                //Add fallout y
-                                Placeable falloutPlaceable = new Placeable(new AssetFalloutY());
-                                falloutPlaceable.setPosition(new PosXYZ(0, configData.falloutPlane, 0));
-                                String falloutName = ld.addPlaceable(falloutPlaceable);
-                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutName));
+                                goalPlaceable.getAsset().setType(type);
+                                String name = ld.addPlaceable(entry.getKey(), goalPlaceable);
+                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                            }
 
-                                //Add goals
-                                for (Map.Entry<String, ConfigData.Goal> entry : configData.goalList.entrySet()) {
-                                    ConfigData.Goal goal = entry.getValue();
-                                    Placeable goalPlaceable = new Placeable(new AssetGoal());
-                                    goalPlaceable.setPosition(new PosXYZ(goal.posX, goal.posY, goal.posZ));
-                                    goalPlaceable.setRotation(new PosXYZ(goal.rotX, goal.rotY, goal.rotZ));
+                            //Add bumpers
+                            for (Map.Entry<String, Bumper> entry : configData.getStaticItemGroup().bumperList.entrySet()) { //TODO: Forced to use static item group
+                                Bumper bumper = entry.getValue();
+                                Placeable bumperPlaceable = new Placeable(new AssetBumper());
+                                bumperPlaceable.setPosition(new PosXYZ(bumper.pos));
+                                bumperPlaceable.setRotation(new PosXYZ(bumper.rot));
+                                bumperPlaceable.setScale(new PosXYZ(bumper.scl));
 
-                                    String type = "blueGoal";
-                                    //Type 0 = blueGoal
-                                    if (goal.type == 1) {
-                                        type = "greenGoal";
-                                    } else if (goal.type == 2) {
-                                        type = "redGoal";
-                                    }
+                                String name = ld.addPlaceable(entry.getKey(), bumperPlaceable);
+                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                            }
 
-                                    goalPlaceable.getAsset().setType(type);
-                                    String name = ld.addPlaceable(goalPlaceable);
-                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                            //Add jamabars
+                            for (Map.Entry<String, Jamabar> entry : configData.getStaticItemGroup().jamabarList.entrySet()) { //TODO: Forced to use static item group
+                                Jamabar jamabar = entry.getValue();
+                                Placeable jamabarPlaceable = new Placeable(new AssetJamabar());
+                                jamabarPlaceable.setPosition(new PosXYZ(jamabar.pos));
+                                jamabarPlaceable.setRotation(new PosXYZ(jamabar.rot));
+                                jamabarPlaceable.setScale(new PosXYZ(jamabar.scl));
+
+                                String name = ld.addPlaceable(entry.getKey(), jamabarPlaceable);
+                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                            }
+
+                            //Add bananas
+                            for (Map.Entry<String, Banana> entry : configData.getStaticItemGroup().bananaList.entrySet()) { //TODO: Forced to use static item group
+                                Banana banana = entry.getValue();
+                                Placeable bananaPlaceable = new Placeable(new AssetBanana());
+                                bananaPlaceable.setPosition(new PosXYZ(banana.pos));
+
+                                String type = "singleBanana";
+                                //Type 0 = singleBanana
+                                if (banana.type == Banana.EnumBananaType.BUNCH) {
+                                    type = "bunchBanana";
                                 }
 
-                                //Add bumpers
-                                for (Map.Entry<String, ConfigData.Bumper> entry : configData.bumperList.entrySet()) {
-                                    ConfigData.Bumper bumper = entry.getValue();
-                                    Placeable bumperPlaceable = new Placeable(new AssetBumper());
-                                    bumperPlaceable.setPosition(new PosXYZ(bumper.posX, bumper.posY, bumper.posZ));
-                                    bumperPlaceable.setRotation(new PosXYZ(bumper.rotX, bumper.rotY, bumper.rotZ));
-                                    bumperPlaceable.setScale(new PosXYZ(bumper.sclX, bumper.sclY, bumper.sclZ));
+                                bananaPlaceable.getAsset().setType(type);
+                                String name = ld.addPlaceable(entry.getKey(), bananaPlaceable);
+                                outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
+                            }
 
-                                    String name = ld.addPlaceable(bumperPlaceable);
-                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
-                                }
-
-                                //Add jamabars
-                                for (Map.Entry<String, ConfigData.Jamabar> entry : configData.jamabarList.entrySet()) {
-                                    ConfigData.Jamabar jamabar = entry.getValue();
-                                    Placeable jamabarPlaceable = new Placeable(new AssetJamabar());
-                                    jamabarPlaceable.setPosition(new PosXYZ(jamabar.posX, jamabar.posY, jamabar.posZ));
-                                    jamabarPlaceable.setRotation(new PosXYZ(jamabar.rotX, jamabar.rotY, jamabar.rotZ));
-                                    jamabarPlaceable.setScale(new PosXYZ(jamabar.sclX, jamabar.sclY, jamabar.sclZ));
-
-                                    String name = ld.addPlaceable(jamabarPlaceable);
-                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
-                                }
-
-                                //Add bananas
-                                for (Map.Entry<String, ConfigData.Banana> entry : configData.bananaList.entrySet()) {
-                                    ConfigData.Banana banana = entry.getValue();
-                                    Placeable bananaPlaceable = new Placeable(new AssetBanana());
-                                    bananaPlaceable.setPosition(new PosXYZ(banana.posX, banana.posY, banana.posZ));
-
-                                    String type = "singleBanana";
-                                    //Type 0 = singleBanana
-                                    if (banana.type == 1) {
-                                        type = "bunchBanana";
-                                    }
-
-                                    bananaPlaceable.getAsset().setType(type);
-                                    String name = ld.addPlaceable(bananaPlaceable);
-                                    outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
-                                }
-
-                                //Mark background objects
-                                for (String name : configData.backgroundList) {
-                                    if (ld.getModel().hasObject(name)) {
+                            //Mark background objects
+                            for (String name : configData.backgroundList) {
+                                for (ResourceModel model : ld.getModels()) {
+                                    if (model.hasObject(name)) {
                                         ld.addBackgroundObject(name);
                                     }
                                 }
-
-                                //Set max time
-                                ld.setMaxTime(configData.maxTime);
-                                ld.setLeadInTime(configData.leadInTime);
-
-                                //Add anim data
-                                for (Map.Entry<String, ConfigAnimData> entry : configData.animDataMap.entrySet()) {
-                                    if (ld.getModel().hasObject(entry.getValue().getObjectName())) {
-                                        ld.setAnimData(entry.getValue().getObjectName(), new AnimData(entry.getValue()));
-                                    }
-                                }
-
                             }
 
-                            updateOutlinerPlaceablesPanel();
-                            updateOutlinerObjectsPanel();
-                        } catch (IOException e) {
-                            LogHelper.error(getClass(), "Failed to open file");
-                            LogHelper.error(getClass(), e);
+                            //Set max time
+                            ld.setMaxTime(configData.maxTime);
+                            ld.setLeadInTime(configData.leadInTime);
+
+                            //Add anim data //TODO: Revamp for item groups
+//                                for (Map.Entry<String, ConfigAnimData> entry : configData.animDataMap.entrySet()) {
+//                                    if (ld.getModel().hasObject(entry.getValue().getObjectName())) {
+//                                        ld.setAnimData(entry.getValue().getObjectName(), new AnimData(entry.getValue()));
+//                                    }
+//                                }
+
                         }
+
+                        updateOutlinerPlaceablesPanel();
+                        updateOutlinerObjectsPanel();
+                    } catch (IOException e) {
+                        LogHelper.error(getClass(), "Failed to open file");
+                        LogHelper.error(getClass(), e);
+                    } catch (SAXException | ParserConfigurationException e) {
+                        LogHelper.error(getClass(), "Failed to parse XML file");
+                        LogHelper.error(getClass(), e);
                     }
-                    settingsButton.setEnabled(true);
-                    exportButton.setEnabled(true);
-                    importConfigButton.setEnabled(true);
-                    importObjButton.setEnabled(true);
-                    isLoadingProject = false;
-                }, "ConfigFileOpenThread").start();
-            } else {
-                LogHelper.warn(getClass(), "Tried importing OBJ when already importing OBJ");
-            }
+                }
+                settingsButton.setEnabled(true);
+                exportButton.setEnabled(true);
+                importConfigButton.setEnabled(true);
+                importObjButton.setEnabled(true);
+                isLoadingProject = false;
+            }, "ConfigFileOpenThread").start();
         } else {
-            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            LogHelper.warn(getClass(), "Tried importing OBJ when already importing OBJ");
         }
     }
 

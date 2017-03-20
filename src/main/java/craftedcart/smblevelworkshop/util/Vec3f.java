@@ -48,4 +48,8 @@ public class Vec3f {
         }
     }
 
+    public Vec3f getCopy() {
+        return new Vec3f(x, y, z);
+    }
+
 }
