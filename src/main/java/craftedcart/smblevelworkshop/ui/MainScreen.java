@@ -2811,8 +2811,8 @@ public class MainScreen extends FluidUIScreen {
                             if (configData.startList.size() > 0) {
                                 Start start = configData.startList.entrySet().iterator().next().getValue();
                                 Placeable startPlaceable = new Placeable(new AssetStartPos());
-                                startPlaceable.setPosition(new PosXYZ(start.posX, start.posY, start.posZ));
-                                startPlaceable.setRotation(new PosXYZ(start.rotX, start.rotY, start.rotZ));
+                                startPlaceable.setPosition(new PosXYZ(start.pos.x, start.pos.y, start.pos.z));
+                                startPlaceable.setRotation(new PosXYZ(start.rot.x, start.rot.y, start.rot.z));
                                 String name = ld.addPlaceable(startPlaceable);
                                 outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
                             } else {
