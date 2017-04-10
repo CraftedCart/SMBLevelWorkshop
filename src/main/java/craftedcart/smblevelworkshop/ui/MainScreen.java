@@ -292,7 +292,7 @@ public class MainScreen extends FluidUIScreen {
         //Defined at class level
         addPlaceablePanel.setOnInitAction(() -> {
             addPlaceablePanel.setTopLeftPos(0, 24);
-            addPlaceablePanel.setBottomRightPos(0, 128);
+            addPlaceablePanel.setBottomRightPos(0, 148);
             addPlaceablePanel.setTopLeftAnchor(0, 0);
             addPlaceablePanel.setBottomRightAnchor(1, 0);
             addPlaceablePanel.setBackgroundColor(UIColor.transparent());
@@ -338,7 +338,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Outliner placeables panel">
         //Defined at class level
         outlinerPlaceablesPanel.setOnInitAction(() -> {
-            outlinerPlaceablesPanel.setTopLeftPos(0, 128);
+            outlinerPlaceablesPanel.setTopLeftPos(0, 148);
             outlinerPlaceablesPanel.setBottomRightPos(0, 0);
             outlinerPlaceablesPanel.setTopLeftAnchor(0, 0);
             outlinerPlaceablesPanel.setBottomRightAnchor(1, 1);

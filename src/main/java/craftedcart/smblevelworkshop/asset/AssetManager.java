@@ -10,7 +10,8 @@ public class AssetManager {
         new AssetBanana(),
         new AssetBumper(),
         new AssetGoal(),
-        new AssetJamabar()
+        new AssetJamabar(),
+        new AssetWormhole()
     };
 
     public static IAsset[] getAvaliableAssets() {

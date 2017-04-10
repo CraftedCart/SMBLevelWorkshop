@@ -79,6 +79,8 @@ public class Window {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
+        GL11.glEnable(GL11.GL_CULL_FACE); //Cull back faces
+
         Display.setVSyncEnabled(true); //Enable VSync
 
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler.UNCAUGHT_EXCEPTION_HANDLER); //Set the uncaught exception handler (Create a crash report)

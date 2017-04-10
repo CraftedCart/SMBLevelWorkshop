@@ -63,6 +63,7 @@
     <entry key="assetBumper" val="Bumper" />
     <entry key="assetJamabar" val="Jamabar" />
     <entry key="assetBanana" val="Banana" />
+    <entry key="assetWormhole" val="Wormhole" />
     <entry key="assetStartPos" val="Start position" />
     <entry key="assetFalloutY" val="Fallout Y" />
 
