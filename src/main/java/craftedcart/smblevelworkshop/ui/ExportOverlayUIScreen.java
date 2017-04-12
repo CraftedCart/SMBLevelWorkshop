@@ -4,6 +4,7 @@ import craftedcart.smblevelworkshop.Window;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.util.ExportManager;
+import craftedcart.smblevelworkshop.util.ExportXMLManager;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smbworkshopexporter.*;
 import io.github.craftedcart.fluidui.FluidUIScreen;
@@ -17,6 +18,9 @@ import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.util.UIColor;
 import org.lwjgl.LWJGLException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -114,8 +118,17 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             exportConfigButton.setBottomRightPos(0, 24);
             exportConfigButton.setText(LangManager.getItem("exportConfig"));
         });
-        exportConfigButton.setOnLMBAction(this::exportConfig);
+        exportConfigButton.setOnLMBAction(() -> exportConfig(false));
         listBox.addChildComponent("exportConfigButton", exportConfigButton);
+
+        final TextButton exportXMLConfigButton = new TextButton();
+        exportXMLConfigButton.setOnInitAction(() -> {
+            exportXMLConfigButton.setTopLeftPos(0, 0);
+            exportXMLConfigButton.setBottomRightPos(0, 24);
+            exportXMLConfigButton.setText(LangManager.getItem("exportXMLConfig"));
+        });
+        exportXMLConfigButton.setOnLMBAction(() -> exportConfig(true));
+        listBox.addChildComponent("exportXMLConfigButton", exportXMLConfigButton);
 
         final TextButton exportLzCompressedSmb1Button = new TextButton();
         exportLzCompressedSmb1Button.setOnInitAction(() -> {
@@ -186,9 +199,17 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
     }
 
-    private void exportConfig() {
+    private void exportConfig(boolean isXML) {
         hideMainPanel();
-        askFileLocation("config.txt", (file) -> {
+
+        String defaultName;
+        if (isXML) {
+            defaultName = "config.xml";
+        } else {
+            defaultName = "config.txt";
+        }
+
+        askFileLocation(defaultName, (file) -> {
             //onSuccessAction
 
             try {
@@ -215,8 +236,12 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             try {
                 assert ProjectManager.getCurrentProject().clientLevelData != null;
-                ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), file);
-            } catch (IOException e) {
+                if (isXML) {
+                    ExportXMLManager.writeXMLConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), file);
+                } else {
+                    ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), file);
+                }
+            } catch (IOException | ParserConfigurationException | TransformerException e) {
                 LogHelper.error(getClass(), "Error while exporting");
                 LogHelper.error(getClass(), e);
                 progScreen.errorTask("exportWriteConfig");

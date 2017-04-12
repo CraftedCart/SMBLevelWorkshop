@@ -11,7 +11,8 @@ public class AssetManager {
         new AssetBumper(),
         new AssetGoal(),
         new AssetJamabar(),
-        new AssetWormhole()
+        new AssetWormhole(),
+        new AssetFalloutVolume()
     };
 
     public static IAsset[] getAvaliableAssets() {

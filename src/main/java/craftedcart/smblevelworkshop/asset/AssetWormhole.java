@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssetWormhole implements IAsset {
 
+    @NotNull private String destinationName = "";
+
     @NotNull
     @Override
     public String getName() {
@@ -27,6 +29,15 @@ public class AssetWormhole implements IAsset {
     @Override
     public boolean canScale() {
         return false;
+    }
+
+    @NotNull
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public void setDestinationName(@NotNull String destinationName) {
+        this.destinationName = destinationName;
     }
 
     @NotNull

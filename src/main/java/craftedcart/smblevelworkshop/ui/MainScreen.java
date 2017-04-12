@@ -56,10 +56,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-import static craftedcart.smbworkshopexporter.placeables.Goal.EnumGoalType.BLUE;
-import static craftedcart.smbworkshopexporter.placeables.Goal.EnumGoalType.GREEN;
-import static craftedcart.smbworkshopexporter.placeables.Goal.EnumGoalType.RED;
-
 /**
  * @author CraftedCart
  * Created on 02/04/2016 (DD/MM/YYYY)
@@ -292,7 +288,7 @@ public class MainScreen extends FluidUIScreen {
         //Defined at class level
         addPlaceablePanel.setOnInitAction(() -> {
             addPlaceablePanel.setTopLeftPos(0, 24);
-            addPlaceablePanel.setBottomRightPos(0, 148);
+            addPlaceablePanel.setBottomRightPos(0, 168);
             addPlaceablePanel.setTopLeftAnchor(0, 0);
             addPlaceablePanel.setBottomRightAnchor(1, 0);
             addPlaceablePanel.setBackgroundColor(UIColor.transparent());
@@ -338,7 +334,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Outliner placeables panel">
         //Defined at class level
         outlinerPlaceablesPanel.setOnInitAction(() -> {
-            outlinerPlaceablesPanel.setTopLeftPos(0, 148);
+            outlinerPlaceablesPanel.setTopLeftPos(0, 168);
             outlinerPlaceablesPanel.setBottomRightPos(0, 0);
             outlinerPlaceablesPanel.setTopLeftAnchor(0, 0);
             outlinerPlaceablesPanel.setBottomRightAnchor(1, 1);
@@ -1323,7 +1319,7 @@ public class MainScreen extends FluidUIScreen {
         Window.logOpenGLError("After MainScreen.draw()");
     }
 
-    private void drawViewport() {
+    private void drawViewport() { //TODO: Draw per item group
         synchronized (renderingLock) {
             Window.logOpenGLError("Before MainScreen.drawViewport()");
 
@@ -1441,7 +1437,8 @@ public class MainScreen extends FluidUIScreen {
                         double distance;
 
                         if (placeable.getAsset() instanceof AssetFalloutY) {
-                            distance = getDistance(cameraPos, new PosXYZ(cameraPos.x, placeable.getPosition().y, cameraPos.z));
+//                            distance = getDistance(cameraPos, new PosXYZ(cameraPos.x, placeable.getPosition().y, cameraPos.z));
+                            distance = 0; //Always render the fallout plane last
                         } else {
                             distance = getDistance(cameraPos, placeable.getPosition());
                         }
@@ -2120,7 +2117,8 @@ public class MainScreen extends FluidUIScreen {
                     if (!replace) {
                         startPosPlaceable = new Placeable(new AssetStartPos());
                         startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-                        startPosPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(startPosPlaceable);
+                        startPosPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(
+                                LangManager.getItem("assetStartPos"), startPosPlaceable, "STAGE_RESERVED");
 
                         if (objectMode == EnumObjectMode.PLACEABLE_EDIT) {
                             ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(startPosPlaceableName);
@@ -2128,7 +2126,8 @@ public class MainScreen extends FluidUIScreen {
 
                         falloutYPlaceable = new Placeable(new AssetFalloutY());
                         falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-                        falloutYPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(falloutYPlaceable);
+                        falloutYPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(
+                                LangManager.getItem("assetFalloutY"), falloutYPlaceable, "STAGE_RESERVED");
 
                     }
 
@@ -2190,6 +2189,45 @@ public class MainScreen extends FluidUIScreen {
                     //Replace all external background objects in the objects outliner that were removed
                     for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundExternalObjects()) {
                         outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(name));
+                    }
+
+                    //Delete all specified level models that no longer exist, and add new level models to the first item group
+                    Set<String> existingModels = new HashSet<>();
+                    for (Map.Entry<String, WSItemGroup> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getItemGroupMap().entrySet()) {
+                        WSItemGroup itemGroup = entry.getValue();
+
+                        Set<String> removedObjects = new HashSet<>();
+                        for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                            for (String name : itemGroup.getObjectNames())
+                            if (!model.hasObject(name)) {
+                                removedObjects.add(name);
+                            }
+                        }
+                        itemGroup.removeObjects(removedObjects);
+
+                        existingModels.addAll(itemGroup.getObjectNames());
+                    }
+                    existingModels.addAll(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects());
+
+                    //Fetch a list of all new models
+                    Set<String> newModels = new HashSet<>();
+                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                        for (OBJObject obj : model.scene.getObjectList()) {
+                            if (!existingModels.contains(obj.name)) {
+                                //It's new
+                                newModels.add(obj.name);
+                            }
+                        }
+                    }
+
+                    //Add the new models to the first item group
+                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getFirstItemGroup().addObjects(newModels);
+                } else {
+                    //Not replacing - Add everything to the first item group
+                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                        for (OBJObject obj : model.scene.getObjectList()) {
+                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getFirstItemGroup().addObject(obj.name);
+                        }
                     }
                 }
 
@@ -2799,6 +2837,8 @@ public class MainScreen extends FluidUIScreen {
 
                         synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
 
+                            //TODO: Replace with clear item groups instead
+
                             cld.clearSelectedPlaceables();
                             ld.clearPlacedObjects();
                             ld.clearBackgroundObjects();
@@ -2813,20 +2853,20 @@ public class MainScreen extends FluidUIScreen {
                                 Placeable startPlaceable = new Placeable(new AssetStartPos());
                                 startPlaceable.setPosition(new PosXYZ(start.pos.x, start.pos.y, start.pos.z));
                                 startPlaceable.setRotation(new PosXYZ(start.rot.x, start.rot.y, start.rot.z));
-                                String name = ld.addPlaceable(startPlaceable);
+                                String name = ld.addPlaceable(LangManager.getItem("assetStartPos"), startPlaceable, "STAGE_RESERVED");
                                 outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
                             } else {
                                 //No start found - use default start
                                 Placeable startPlaceable = new Placeable(new AssetStartPos());
                                 startPlaceable.setPosition(new PosXYZ(0, 1, 0));
-                                String name = ld.addPlaceable(startPlaceable);
+                                String name = ld.addPlaceable(LangManager.getItem("assetStartPos"), startPlaceable, "STAGE_RESERVED");
                                 outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
                             }
 
                             //Add fallout y
                             Placeable falloutPlaceable = new Placeable(new AssetFalloutY());
                             falloutPlaceable.setPosition(new PosXYZ(0, configData.falloutPlane, 0));
-                            String falloutName = ld.addPlaceable(falloutPlaceable);
+                            String falloutName = ld.addPlaceable(LangManager.getItem("assetFalloutY"), falloutPlaceable, "STAGE_RESERVED");
                             outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutName));
 
                             //Add goals
@@ -2838,9 +2878,9 @@ public class MainScreen extends FluidUIScreen {
 
                                 String type = "blueGoal";
                                 //Type 0 = blueGoal
-                                if (goal.type == GREEN) {
+                                if (goal.type == Goal.EnumGoalType.GREEN) {
                                     type = "greenGoal";
-                                } else if (goal.type == RED) {
+                                } else if (goal.type == Goal.EnumGoalType.RED) {
                                     type = "redGoal";
                                 }
 

@@ -3,6 +3,8 @@ package craftedcart.smblevelworkshop.asset;
 import craftedcart.smblevelworkshop.util.ITransformable;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.PosXYZ;
+import craftedcart.smbworkshopexporter.placeables.*;
+import io.github.craftedcart.fluidui.util.UIColor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,6 +21,72 @@ public class Placeable implements Cloneable, ITransformable {
 
     public Placeable(@NotNull IAsset asset) {
         this.asset = asset;
+    }
+
+    public Placeable(@NotNull Goal goal) {
+        asset = new AssetGoal();
+        position = new PosXYZ(goal.pos);
+        rotation = new PosXYZ(goal.rot);
+
+        String type;
+        switch (goal.type) {
+            case BLUE:
+                type = "blueGoal";
+                break;
+            case GREEN:
+                type = "greenGoal";
+                break;
+            case RED:
+                type = "redGoal";
+                break;
+            default:
+                //This shouldn't happen! Default to blue
+                type = "blueGoal";
+        }
+
+        asset.setType(type);
+    }
+
+    public Placeable(@NotNull Bumper bumper) {
+        asset = new AssetBumper();
+        position = new PosXYZ(bumper.pos);
+        rotation = new PosXYZ(bumper.rot);
+        scale = new PosXYZ(bumper.scl);
+    }
+
+    public Placeable(@NotNull Jamabar jamabar) {
+        asset = new AssetJamabar();
+        position = new PosXYZ(jamabar.pos);
+        rotation = new PosXYZ(jamabar.rot);
+        scale = new PosXYZ(jamabar.scl);
+    }
+
+    public Placeable(@NotNull Banana banana) {
+        asset = new AssetBanana();
+        position = new PosXYZ(banana.pos);
+
+        String type;
+        switch (banana.type) {
+            case SINGLE:
+                type = "singleBanana";
+                break;
+            case BUNCH:
+                type = "bunchBanana";
+                break;
+            default:
+                //This shouldn't happen! Default to single
+                type = "singleBanana";
+        }
+
+        asset.setType(type);
+    }
+
+    public Placeable(@NotNull Wormhole wormhole) {
+        AssetWormhole aWormhole = new AssetWormhole();
+        asset = aWormhole;
+        position = new PosXYZ(wormhole.pos);
+        rotation = new PosXYZ(wormhole.rot);
+        aWormhole.setDestinationName(wormhole.destinationName);
     }
 
     public void setAsset(@NotNull IAsset asset) {

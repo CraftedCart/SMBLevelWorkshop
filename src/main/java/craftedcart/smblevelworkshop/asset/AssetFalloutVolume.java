@@ -1,47 +1,33 @@
 package craftedcart.smblevelworkshop.asset;
 
 import craftedcart.smblevelworkshop.resource.ResourceManager;
-import craftedcart.smblevelworkshop.resource.ResourceShaderProgram;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.util.LogHelper;
+import io.github.craftedcart.fluidui.util.UIColor;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author CraftedCart
  *         Created on 10/09/2016 (DD/MM/YYYY)
  */
-public class AssetFalloutY implements IAsset {
+public class AssetFalloutVolume implements IAsset {
 
     @NotNull
     @Override
     public String getName() {
-        return "assetFalloutY";
+        return "assetFalloutVolume";
     }
 
     @NotNull
     @Override
     public ResourceModel getModel() {
-        return ResourceManager.getModel("model/falloutPlane");
+        return ResourceManager.getModel("model/falloutVolume");
     }
 
+    @NotNull
     @Override
-    public boolean canGrabX() {
-        return false;
-    }
-
-    @Override
-    public boolean canGrabZ() {
-        return false;
-    }
-
-    @Override
-    public boolean canRotate() {
-        return false;
-    }
-
-    @Override
-    public boolean canScale() {
-        return false;
+    public UIColor getColor() {
+        return UIColor.matRed();
     }
 
     @Override
@@ -53,12 +39,6 @@ public class AssetFalloutY implements IAsset {
             LogHelper.error(getClass(), e);
             return null;
         }
-    }
-
-    @NotNull
-    @Override
-    public ResourceShaderProgram getShaderProgram() {
-        return ResourceManager.getShaderProgram("texUnlitShaderProgram");
     }
 
 }

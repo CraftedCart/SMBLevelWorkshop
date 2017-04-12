@@ -22,6 +22,7 @@
     <!-- Export -->
     <entry key="export" val="Export" />
     <entry key="exportConfig" val="Export smbcnv config [DEPRECATED!]" />
+    <entry key="exportXMLConfig" val="Export XML config" />
     <entry key="exportLzRawSmb1" val="Export raw LZ (SMB 1)" />
     <entry key="exportLzRawSmb2" val="Export raw LZ (SMB 2)" />
     <entry key="exportLzRawDefaultName" val="output.lz.raw" />
@@ -64,8 +65,12 @@
     <entry key="assetJamabar" val="Jamabar" />
     <entry key="assetBanana" val="Banana" />
     <entry key="assetWormhole" val="Wormhole" />
+    <entry key="assetFalloutVolume" val="Fallout Volume" />
     <entry key="assetStartPos" val="Start position" />
     <entry key="assetFalloutY" val="Fallout Y" />
+
+    <!-- Item groups -->
+    <entry key="newItemGroup" val="New Item Group" />
 
     <!-- Types -->
     <entry key="singleBanana" val="Single (x1)" />
@@ -88,7 +93,6 @@
 
     <!-- Object properties -->
     <entry key="backgroundObject" val="Background Object" />
-
     <entry key="addExternalBackgroundObject" val="Add External Background Object" />
 
     <!-- Errors -->
