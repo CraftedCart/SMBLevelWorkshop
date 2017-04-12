@@ -4,7 +4,6 @@ import craftedcart.smblevelworkshop.util.ITransformable;
 import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.PosXYZ;
 import craftedcart.smbworkshopexporter.placeables.*;
-import io.github.craftedcart.fluidui.util.UIColor;
 import org.jetbrains.annotations.NotNull;
 
 /**

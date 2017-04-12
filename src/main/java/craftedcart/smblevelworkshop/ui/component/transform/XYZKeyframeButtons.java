@@ -2,23 +2,13 @@ package craftedcart.smblevelworkshop.ui.component.transform;
 
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.ui.DefaultUITheme;
-import craftedcart.smblevelworkshop.ui.MainScreen;
 import craftedcart.smblevelworkshop.util.EnumAxis;
-import craftedcart.smblevelworkshop.util.ITransformable;
-import craftedcart.smblevelworkshop.util.PosXYZ;
 import io.github.craftedcart.fluidui.component.Button;
 import io.github.craftedcart.fluidui.component.ListBox;
 import io.github.craftedcart.fluidui.component.Panel;
-import io.github.craftedcart.fluidui.component.TextField;
 import io.github.craftedcart.fluidui.uiaction.UIAction1;
-import io.github.craftedcart.fluidui.util.EnumVAlignment;
 import io.github.craftedcart.fluidui.util.UIColor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author CraftedCart

@@ -1,7 +1,6 @@
 package craftedcart.smblevelworkshop.undo;
 
 import craftedcart.smblevelworkshop.animation.AnimData;
-import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;

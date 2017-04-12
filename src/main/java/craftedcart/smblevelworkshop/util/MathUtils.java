@@ -1,7 +1,5 @@
 package craftedcart.smblevelworkshop.util;
 
-import craftedcart.smblevelworkshop.SMBLWSettings;
-import craftedcart.smblevelworkshop.Window;
 import io.github.craftedcart.fluidui.util.UIColor;
 
 /**

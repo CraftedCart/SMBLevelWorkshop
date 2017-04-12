@@ -7,8 +7,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static craftedcart.smblevelworkshop.Window.drawable;
 

@@ -1,6 +1,5 @@
 package craftedcart.smblevelworkshop.animation;
 
-import craftedcart.smblevelworkshop.util.LogHelper;
 import craftedcart.smblevelworkshop.util.MathUtils;
 import org.jetbrains.annotations.Nullable;
 

@@ -2,7 +2,6 @@ package craftedcart.smblevelworkshop.ui.component;
 
 import craftedcart.smblevelworkshop.resource.LangManager;
 import io.github.craftedcart.fluidui.component.Label;
-import io.github.craftedcart.fluidui.component.ListBox;
 import io.github.craftedcart.fluidui.component.Panel;
 import io.github.craftedcart.fluidui.plugin.AbstractComponentPlugin;
 import io.github.craftedcart.fluidui.util.UIUtils;

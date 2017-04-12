@@ -2,13 +2,14 @@ package craftedcart.smblevelworkshop.undo;
 
 import craftedcart.smblevelworkshop.animation.AnimData;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
-import craftedcart.smblevelworkshop.project.ProjectManager;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.ui.MainScreen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author CraftedCart
