@@ -54,7 +54,7 @@ public class ObjectRotationTextFields extends RotationTextFields {
 
             return newValue;
         } catch (NumberFormatException e) {
-            mainScreen.notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
+            mainScreen.sendNotif(LangManager.getItem("invalidNumber"), UIColor.matRed());
         }
 
         return null; //Failed to parse the number

@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.util;
 
 import craftedcart.smblevelworkshop.asset.Placeable;
+import io.github.craftedcart.fluidui.util.UIColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,10 +13,27 @@ import java.util.*;
  */
 public class WSItemGroup {
 
+    @NotNull private UIColor color = UIColor.matGrey(); //Used in the UI
+
     @NotNull private Set<String> objectNames = new HashSet<>();
     @NotNull private Map<String, Placeable> placeables = new HashMap<>();
     @NotNull private PosXYZ rotationCenter = new PosXYZ();
     @NotNull private PosXYZ initialRotation = new PosXYZ();
+
+    public WSItemGroup() {}
+
+    public WSItemGroup(@NotNull UIColor color) {
+        this.color = color;
+    }
+
+    @NotNull
+    public UIColor getColor() {
+        return color;
+    }
+
+    public void setColor(@NotNull UIColor color) {
+        this.color = color;
+    }
 
     @NotNull
     public Map<String, Placeable> getPlaceables() {

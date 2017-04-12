@@ -178,7 +178,7 @@ public class Timeline extends Panel {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(0.0f);
             } else {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         headingPanel.addChildComponent("toStartButton", toStartButton);
@@ -196,7 +196,7 @@ public class Timeline extends Panel {
             if (cld != null) {
                 cld.setPlaybackSpeed(cld.getPlaybackSpeed() - 2.0f);
             } else {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         headingPanel.addChildComponent("fastRewindButton", fastRewindButton);
@@ -214,7 +214,7 @@ public class Timeline extends Panel {
             if (cld != null) {
                 cld.setPlaybackSpeed(-1.0f);
             } else {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         headingPanel.addChildComponent("rewindButton", rewindButton);
@@ -232,7 +232,7 @@ public class Timeline extends Panel {
             if (cld != null) {
                 cld.setPlaybackSpeed(0.0f);
             } else {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         headingPanel.addChildComponent("pauseButton", pauseButton);
@@ -250,7 +250,7 @@ public class Timeline extends Panel {
             if (cld != null) {
                 cld.setPlaybackSpeed(1.0f);
             } else {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         headingPanel.addChildComponent("playButton", playButton);
@@ -268,7 +268,7 @@ public class Timeline extends Panel {
             if (cld != null) {
                 cld.setPlaybackSpeed(cld.getPlaybackSpeed() + 2.0f);
             } else {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         headingPanel.addChildComponent("fastForwardButton", fastForwardButton);
@@ -285,7 +285,7 @@ public class Timeline extends Panel {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(1.0f);
             } else {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         headingPanel.addChildComponent("toEndButton", toEndButton);
@@ -316,10 +316,10 @@ public class Timeline extends Panel {
                 if (ProjectManager.getCurrentProject().clientLevelData != null) {
                     ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(newValue / 100.0f);
                 } else {
-                    mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                    mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
                 }
             } catch (NumberFormatException e) {
-                mainScreen.notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("invalidNumber"), UIColor.matRed());
             }
 
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
@@ -356,13 +356,13 @@ public class Timeline extends Panel {
                     if (newValue > 0) {
                         ProjectManager.getCurrentProject().clientLevelData.getLevelData().setMaxTime(newValue);
                     } else {
-                        mainScreen.notify(LangManager.getItem("numberMustBeGreaterThanZero"), UIColor.matRed());
+                        mainScreen.sendNotif(LangManager.getItem("numberMustBeGreaterThanZero"), UIColor.matRed());
                     }
                 } else {
-                    mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                    mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
                 }
             } catch (NumberFormatException e) {
-                mainScreen.notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("invalidNumber"), UIColor.matRed());
             }
 
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
@@ -401,17 +401,17 @@ public class Timeline extends Panel {
                         if (newValue <= ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime()) {
                             ProjectManager.getCurrentProject().clientLevelData.setTimelinePosSeconds(newValue);
                         } else {
-                            mainScreen.notify(LangManager.getItem("numberMustBeLessThanMaxTime"), UIColor.matRed());
+                            mainScreen.sendNotif(LangManager.getItem("numberMustBeLessThanMaxTime"), UIColor.matRed());
                         }
                     } else {
-                        mainScreen.notify(String.format(LangManager.getItem("numberMustBeGreaterThanOrEqualTo"),
+                        mainScreen.sendNotif(String.format(LangManager.getItem("numberMustBeGreaterThanOrEqualTo"),
                                 -ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()), UIColor.matRed());
                     }
                 } else {
-                    mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                    mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
                 }
             } catch (NumberFormatException e) {
-                mainScreen.notify(LangManager.getItem("invalidNumber"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("invalidNumber"), UIColor.matRed());
             }
 
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
@@ -518,7 +518,7 @@ public class Timeline extends Panel {
         @Override
         public void onClickChildComponent(int button, PosXY mousePos) {
             if (ProjectManager.getCurrentProject().clientLevelData == null) {
-                mainScreen.notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
 
             if (button == 1) { //RMB: Start selection

@@ -7,6 +7,8 @@ import craftedcart.smblevelworkshop.asset.Placeable;
 import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.util.WSItemGroup;
+import io.github.craftedcart.fluidui.util.UIColor;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,21 +23,21 @@ public class LevelData {
 
     @NotNull private Set<ResourceModel> models = new HashSet<>();
     @NotNull private Set<File> modelObjSources = new HashSet<>();
-    @NotNull private Map<String, WSItemGroup> itemGroupMap = new HashMap<>();
+    @NotNull private ListOrderedMap<String, WSItemGroup> itemGroupMap = new ListOrderedMap<>();
     private float leadInTime = 6.0f;
     private float maxTime = 60.0f;
 
     public LevelData() {
         itemGroupMap.put("STAGE_RESERVED", new WSItemGroup()); //Add item group reserved for stage elements (Start, Fallout Y)
         itemGroupMap.put("BACKGROUND_RESERVED", new WSItemGroup()); //Add item group reserved for background models
-        itemGroupMap.put("Static", new WSItemGroup()); //Add default static item group
+        itemGroupMap.put("Static", new WSItemGroup(UIColor.matTeal())); //Add default static item group
     }
 
     public void addModel(@Nullable ResourceModel model) {
         models.add(model);
     }
 
-    @Nullable
+    @NotNull
     public Set<ResourceModel> getModels() {
         return models;
     }
@@ -356,4 +358,17 @@ public class LevelData {
     public Map<String, WSItemGroup> getItemGroupMap() {
         return itemGroupMap;
     }
+
+    @Nullable
+    public WSItemGroup getPlaceableItemGroup(String name) {
+        for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
+            if (entry.getValue().hasPlaceable(name)) {
+                return entry.getValue();
+            }
+        }
+
+        //Nothing found - Return null
+        return null;
+    }
+
 }

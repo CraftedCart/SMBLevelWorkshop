@@ -3,6 +3,7 @@
     <entry key="importObj" val="Import OBJ" />
     <entry key="importConfig" val="Import Config" />
     <entry key="settings" val="Settings" />
+    <entry key="projectSettings" val="Project Settings" />
     <entry key="ok" val="OK" />
     <entry key="cancel" val="Cancel" />
 
@@ -18,6 +19,11 @@
     <entry key="settingShowOnScreenCameraControls" val="Show on screen camera controls" />
     <entry key="settingShowOnScreenInput" val="Show on screen input (Useful for screencasts)" />
     <entry key="settingShowFPSOverlay" val="Show framerate overlay" />
+
+    <!-- Project Settings -->
+    <entry key="modelSources" val="Model sources" />
+    <entry key="manageItemGroups" val="Manage item groups" />
+    <entry key="itemGroupManager" val="Item Group Manager" />
 
     <!-- Export -->
     <entry key="export" val="Export" />
@@ -70,6 +76,7 @@
     <entry key="assetFalloutY" val="Fallout Y" />
 
     <!-- Item groups -->
+    <entry key="itemGroups" val="Item Groups" />
     <entry key="newItemGroup" val="New Item Group" />
 
     <!-- Types -->

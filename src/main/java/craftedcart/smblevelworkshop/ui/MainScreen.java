@@ -18,6 +18,7 @@ import craftedcart.smblevelworkshop.resource.model.OBJObject;
 import craftedcart.smblevelworkshop.resource.model.ResourceModel;
 import craftedcart.smblevelworkshop.ui.component.FPSOverlay;
 import craftedcart.smblevelworkshop.ui.component.InputOverlay;
+import craftedcart.smblevelworkshop.ui.component.ItemButton;
 import craftedcart.smblevelworkshop.ui.component.OutlinerObject;
 import craftedcart.smblevelworkshop.ui.component.timeline.Timeline;
 import craftedcart.smblevelworkshop.ui.component.transform.*;
@@ -92,6 +93,7 @@ public class MainScreen extends FluidUIScreen {
     private final TextButton importConfigButton = new TextButton();
     private final TextButton exportButton = new TextButton();
     private final TextButton settingsButton = new TextButton();
+    private final TextButton projectSettingsButton = new TextButton();
 
     //UI: Placeable Properties
     private final ListBox propertiesPlaceablesListBox = new ListBox();
@@ -420,16 +422,16 @@ public class MainScreen extends FluidUIScreen {
 //
 //                        outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(addExternalBackgroundObjectTextField.text));
 //                    } else {
-//                        notify(LangManager.getItem("alreadyObject"), UIColor.matRed());
+//                        sendNotif(LangManager.getItem("alreadyObject"), UIColor.matRed());
 //                    }
 //
 //                    addExternalBackgroundObjectTextField.setValue(""); //Clear text field
 //                } else {
 //                    //Text field is blank
-//                    notify(LangManager.getItem("noObjectSpecified"), UIColor.matRed());
+//                    sendNotif(LangManager.getItem("noObjectSpecified"), UIColor.matRed());
 //                }
 //            } else {
-//                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+//                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
 //            }
 //        });
 //        outlinerObjectsPanel.addChildComponent("addExternalBackgroundObjectTextField", addExternalBackgroundObjectTextField);
@@ -448,7 +450,7 @@ public class MainScreen extends FluidUIScreen {
         final ListBox actionsListBox = new ListBox();
         actionsListBox.setOnInitAction(() -> {
             actionsListBox.setTopLeftPos(0, 0);
-            actionsListBox.setBottomRightPos(0, 104);
+            actionsListBox.setBottomRightPos(0, 130);
             actionsListBox.setTopLeftAnchor(0, 0);
             actionsListBox.setBottomRightAnchor(1, 0);
             actionsListBox.setBackgroundColor(UIColor.transparent());
@@ -499,10 +501,21 @@ public class MainScreen extends FluidUIScreen {
         actionsListBox.addChildComponent("settingsButton", settingsButton);
         //</editor-fold>
 
+        //<editor-fold desc="Project Settings TextButton">
+        //Defined at class level
+        projectSettingsButton.setOnInitAction(() -> {
+            projectSettingsButton.setText(LangManager.getItem("projectSettings"));
+            projectSettingsButton.setTopLeftPos(0, 0);
+            projectSettingsButton.setBottomRightPos(0, 24);
+        });
+        projectSettingsButton.setOnLMBAction(this::showProjectSettings);
+        actionsListBox.addChildComponent("projectSettingsButton", projectSettingsButton);
+        //</editor-fold>
+
         //<editor-fold desc="Placeable Properties">
         //Defined at class level
         propertiesPlaceablesListBox.setOnInitAction(() -> {
-            propertiesPlaceablesListBox.setTopLeftPos(0, 104);
+            propertiesPlaceablesListBox.setTopLeftPos(0, 130);
             propertiesPlaceablesListBox.setBottomRightPos(0, 0);
             propertiesPlaceablesListBox.setTopLeftAnchor(0, 0);
             propertiesPlaceablesListBox.setBottomRightAnchor(1, 1);
@@ -596,7 +609,7 @@ public class MainScreen extends FluidUIScreen {
         //<editor-fold desc="Object Properties">
         //Defined at class level
         propertiesObjectsListBox.setOnInitAction(() -> {
-            propertiesObjectsListBox.setTopLeftPos(0, 104);
+            propertiesObjectsListBox.setTopLeftPos(0, 130);
             propertiesObjectsListBox.setBottomRightPos(0, 0);
             propertiesObjectsListBox.setTopLeftAnchor(0, 0);
             propertiesObjectsListBox.setBottomRightAnchor(1, 1);
@@ -656,7 +669,7 @@ public class MainScreen extends FluidUIScreen {
                     updateOutlinerObjectsPanel();
                 }
             } else {
-                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed()); //You really shouldn't be able to toggle the checkbox when no level is loaded, but just in case
+                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed()); //You really shouldn't be able to toggle the checkbox when no level is loaded, but just in case
             }
         });
         backgroundObjectPanel.addChildComponent("backgroundObjectCheckBox", backgroundObjectCheckBox);
@@ -680,7 +693,7 @@ public class MainScreen extends FluidUIScreen {
                 updatePropertiesObjectsPanel();
                 updateOutlinerObjectsPanel();
             } else {
-                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         propertiesObjectsListBox.addChildComponent("addAnimDataButton", addAnimDataButton);
@@ -705,7 +718,7 @@ public class MainScreen extends FluidUIScreen {
                 updatePropertiesObjectsPanel();
                 updateOutlinerObjectsPanel();
             } else {
-                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         });
         propertiesObjectsListBox.addChildComponent("removeAnimDataButton", removeAnimDataButton);
@@ -1782,13 +1795,13 @@ public class MainScreen extends FluidUIScreen {
                                         ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
 
                                         if (keyframesRemoved > 1) {
-                                            notify(String.format(LangManager.getItem("keyframeRemovedPlural"), keyframesRemoved));
+                                            sendNotif(String.format(LangManager.getItem("keyframeRemovedPlural"), keyframesRemoved));
                                         } else {
-                                            notify(LangManager.getItem("keyframeRemoved"));
+                                            sendNotif(LangManager.getItem("keyframeRemoved"));
                                         }
 
                                     } else {
-                                        notify(LangManager.getItem("nothingSelected"));
+                                        sendNotif(LangManager.getItem("nothingSelected"));
                                     }
 
                                 } else {
@@ -1806,13 +1819,13 @@ public class MainScreen extends FluidUIScreen {
                                         removePlaceables(toDelete);
 
                                         if (toDelete.size() > 1) {
-                                            notify(String.format(LangManager.getItem("placeableRemovedPlural"), toDelete.size()));
+                                            sendNotif(String.format(LangManager.getItem("placeableRemovedPlural"), toDelete.size()));
                                         } else {
-                                            notify(LangManager.getItem("placeableRemoved"));
+                                            sendNotif(LangManager.getItem("placeableRemoved"));
                                         }
 
                                     } else {
-                                        notify(LangManager.getItem("nothingSelected"));
+                                        sendNotif(LangManager.getItem("nothingSelected"));
                                     }
                                 }
 
@@ -1974,11 +1987,11 @@ public class MainScreen extends FluidUIScreen {
         deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
     }
 
-    public void notify(String message) {
-        notify(message, UIColor.matGrey900());
+    public void sendNotif(String message) {
+        sendNotif(message, UIColor.matGrey900());
     }
 
-    public void notify(String message, UIColor color) {
+    public void sendNotif(String message, UIColor color) {
         for (Map.Entry<String, Component> entry : notifPanel.childComponents.entrySet()) {
             assert entry.getValue().plugins.get(1) instanceof NotificationPlugin;
             ((NotificationPlugin) entry.getValue().plugins.get(1)).time = 1.5;
@@ -2024,7 +2037,7 @@ public class MainScreen extends FluidUIScreen {
 
             updateOutlinerPlaceablesPanel();
         } else {
-            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
     }
 
@@ -2040,7 +2053,7 @@ public class MainScreen extends FluidUIScreen {
                 outlinerPlaceablesListBox.removeChildComponent(name + "OutlinerPlaceable");
             }
         } else {
-            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
     }
 
@@ -2064,7 +2077,7 @@ public class MainScreen extends FluidUIScreen {
                 }
             }
         } else {
-            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+            sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
     }
 
@@ -2257,7 +2270,7 @@ public class MainScreen extends FluidUIScreen {
         if (undoCommandList.size() > 0) {
             redoCommandList.add(undoCommandList.get(undoCommandList.size() - 1).getRedoCommand());
             undoCommandList.get(undoCommandList.size() - 1).undo();
-            notify(undoCommandList.get(undoCommandList.size() - 1).getUndoMessage());
+            sendNotif(undoCommandList.get(undoCommandList.size() - 1).getUndoMessage());
             undoCommandList.remove(undoCommandList.size() - 1);
 
             updatePropertiesPlaceablesPanel();
@@ -2272,7 +2285,7 @@ public class MainScreen extends FluidUIScreen {
         if (redoCommandList.size() > 0) {
             undoCommandList.add(redoCommandList.get(redoCommandList.size() - 1).getRedoCommand());
             redoCommandList.get(redoCommandList.size() - 1).undo();
-            notify(redoCommandList.get(redoCommandList.size() - 1).getRedoMessage());
+            sendNotif(redoCommandList.get(redoCommandList.size() - 1).getRedoMessage());
             redoCommandList.remove(redoCommandList.size() - 1);
 
             updatePropertiesPlaceablesPanel();
@@ -2283,11 +2296,12 @@ public class MainScreen extends FluidUIScreen {
     }
 
     public Component getOutlinerPlaceableComponent(String name) {
-        final TextButton placeableButton = new TextButton();
+        final ItemButton placeableButton = new ItemButton();
         placeableButton.setOnInitAction(() -> {
             placeableButton.setTopLeftPos(0, 0);
             placeableButton.setBottomRightPos(0, 18);
-            placeableButton.setText(name);
+            placeableButton.setId(name);
+            placeableButton.setItemGroupCol(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceableItemGroup(name).getColor());
         });
         placeableButton.setOnLMBAction(() -> {
             assert ProjectManager.getCurrentProject().clientLevelData != null;
@@ -2347,6 +2361,7 @@ public class MainScreen extends FluidUIScreen {
                 importConfigButton.setEnabled(false);
                 exportButton.setEnabled(false);
                 settingsButton.setEnabled(false);
+                projectSettingsButton.setEnabled(false);
                 FileDialog fd = new FileDialog((Frame) null);
                 fd.setMode(FileDialog.LOAD);
                 fd.setFilenameFilter((dir, filename) -> filename.toUpperCase().endsWith(".OBJ"));
@@ -2373,6 +2388,7 @@ public class MainScreen extends FluidUIScreen {
                         LogHelper.error(getClass(), e);
                     }
                 }
+                projectSettingsButton.setEnabled(true);
                 settingsButton.setEnabled(true);
                 exportButton.setEnabled(true);
                 importConfigButton.setEnabled(true);
@@ -2389,7 +2405,7 @@ public class MainScreen extends FluidUIScreen {
             if (ProjectManager.getCurrentProject().clientLevelData != null) {
                 setOverlayUiScreen(new ExportOverlayUIScreen());
             } else {
-                notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
         }
     }
@@ -2663,14 +2679,14 @@ public class MainScreen extends FluidUIScreen {
             //<editor-fold desc="Darken selected placeables in the outliner">
             synchronized (outlinerPlaceablesListBoxLock) {
                 for (Map.Entry<String, Component> entry : outlinerPlaceablesListBox.childComponents.entrySet()) {
-                    assert entry.getValue() instanceof TextButton;
-                    TextButton button = (TextButton) entry.getValue();
+                    ItemButton button = (ItemButton) entry.getValue();
 
-                    //TODO: Using button.text feels hacky - Extend TextButton and add id field
-                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.text)) {
-                        button.setBackgroundIdleColor(UIColor.matBlue900());
+                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.getId())) {
+//                        button.setBackgroundIdleColor(UIColor.matBlue900());
+                        button.setSelected(true);
                     } else {
-                        button.setBackgroundIdleColor(UIColor.matBlue());
+//                        button.setBackgroundIdleColor(UIColor.matBlue());
+                        button.setSelected(false);
                     }
                 }
             }
@@ -2759,6 +2775,14 @@ public class MainScreen extends FluidUIScreen {
         setOverlayUiScreen(new SettingsOverlayUIScreen());
     }
 
+    private void showProjectSettings() {
+        if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+            setOverlayUiScreen(new ProjectSettingsOverlayUIScreen());
+        } else {
+            sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+        }
+    }
+
     private ResourceShaderProgram getCurrentShader() {
         if (SMBLWSettings.showTextures) {
             if (SMBLWSettings.isUnlit) {
@@ -2791,7 +2815,7 @@ public class MainScreen extends FluidUIScreen {
             xmlOnly = false;
         } else {
             xmlOnly = true;
-//            notify(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
+//            sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
         }
 
         if (!isLoadingProject) {
@@ -2801,6 +2825,7 @@ public class MainScreen extends FluidUIScreen {
                 importConfigButton.setEnabled(false);
                 exportButton.setEnabled(false);
                 settingsButton.setEnabled(false);
+                projectSettingsButton.setEnabled(false);
                 FileDialog fd = new FileDialog((Frame) null);
                 fd.setMode(FileDialog.LOAD);
                 if (xmlOnly) {
@@ -2963,6 +2988,7 @@ public class MainScreen extends FluidUIScreen {
                         LogHelper.error(getClass(), e);
                     }
                 }
+                projectSettingsButton.setEnabled(true);
                 settingsButton.setEnabled(true);
                 exportButton.setEnabled(true);
                 importConfigButton.setEnabled(true);

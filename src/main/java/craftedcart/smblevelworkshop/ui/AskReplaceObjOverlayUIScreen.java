@@ -27,7 +27,7 @@ public class AskReplaceObjOverlayUIScreen extends FluidUIScreen {
     public boolean waitForShouldReplaceResponse() {
         synchronized(syncObject) {
             try {
-                //Calling wait() will block this thread until another thread calls notify() on the object
+                //Calling wait() will block this thread until another thread calls sendNotif() on the object
                 syncObject.wait();
             } catch (InterruptedException e) {
                 //Happens if something interrupts this thread
