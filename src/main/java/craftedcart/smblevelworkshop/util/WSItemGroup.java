@@ -44,8 +44,8 @@ public class WSItemGroup {
         return placeables.containsKey(name);
     }
 
-    public void removePlaceable(String name) {
-        placeables.remove(name);
+    public Placeable removePlaceable(String name) {
+        return placeables.remove(name);
     }
 
     public Placeable replacePlaceable(String name, Placeable placeable) {

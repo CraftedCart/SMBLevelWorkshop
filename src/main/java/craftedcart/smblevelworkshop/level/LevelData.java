@@ -111,13 +111,15 @@ public class LevelData {
         return name;
     }
 
-    public void removePlaceable(String name) {
+    public Placeable removePlaceable(String name) {
         for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
             if (entry.getValue().hasPlaceable(name)) {
-                entry.getValue().removePlaceable(name);
-                break;
+                return entry.getValue().removePlaceable(name);
             }
         }
+
+        //Nothing found - Return null
+        return null;
     }
 
     public Placeable getPlaceable(String name) {
@@ -137,6 +139,11 @@ public class LevelData {
                 break;
             }
         }
+    }
+
+    public void changePlaceableItemGroup(String name, String newItemGroup) {
+        Placeable placeable = removePlaceable(name);
+        addPlaceable(name, placeable, newItemGroup);
     }
 
     @Deprecated
@@ -364,6 +371,18 @@ public class LevelData {
         for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
             if (entry.getValue().hasPlaceable(name)) {
                 return entry.getValue();
+            }
+        }
+
+        //Nothing found - Return null
+        return null;
+    }
+
+    @Nullable
+    public String getPlaceableItemGroupName(String name) {
+        for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
+            if (entry.getValue().hasPlaceable(name)) {
+                return entry.getKey();
             }
         }
 

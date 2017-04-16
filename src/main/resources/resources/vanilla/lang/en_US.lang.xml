@@ -76,6 +76,7 @@
     <entry key="assetFalloutY" val="Fallout Y" />
 
     <!-- Item groups -->
+    <entry key="itemGroup" val="Item Group" />
     <entry key="itemGroups" val="Item Groups" />
     <entry key="newItemGroup" val="New Item Group" />
 

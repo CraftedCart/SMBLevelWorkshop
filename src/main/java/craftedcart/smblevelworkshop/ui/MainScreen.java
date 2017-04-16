@@ -106,6 +106,8 @@ public class MainScreen extends FluidUIScreen {
     private final TextButton typeButton = new TextButton();
     @Nullable private List<String> typeList = null;
 
+    private final TextButton itemGroupButton = new TextButton();
+
     //UI: Object Properties
     private final CheckBox backgroundObjectCheckBox = new CheckBox();
     private final TextButton addAnimDataButton = new TextButton();
@@ -604,6 +606,28 @@ public class MainScreen extends FluidUIScreen {
             setOverlayUiScreen(getTypeSelectorOverlayScreen(mousePos.y));
         });
         propertiesPlaceablesListBox.addChildComponent("typeButton", typeButton);
+
+        final Label itemGroupLabel = new Label();
+        itemGroupLabel.setOnInitAction(() -> {
+            itemGroupLabel.setText(LangManager.getItem("itemGroup"));
+            itemGroupLabel.setVerticalAlign(EnumVAlignment.centre);
+            itemGroupLabel.setTopLeftPos(0, 0);
+            itemGroupLabel.setBottomRightPos(0, 24);
+        });
+        propertiesPlaceablesListBox.addChildComponent("itemGroupLabel", itemGroupLabel);
+
+        //Defined at class level
+        itemGroupButton.setOnInitAction(() -> {
+            itemGroupButton.setText(LangManager.getItem("nothingSelected"));
+            itemGroupButton.setEnabled(false);
+            itemGroupButton.setTopLeftPos(0, 0);
+            itemGroupButton.setBottomRightPos(0, 24);
+        });
+        itemGroupButton.setOnLMBAction(() -> {
+            assert mousePos != null;
+            setOverlayUiScreen(getItemGroupSelectorOverlayScreen(mousePos.x, mousePos.y));
+        });
+        propertiesPlaceablesListBox.addChildComponent("itemGroupButton", itemGroupButton);
         //</editor-fold>
 
         //<editor-fold desc="Object Properties">
@@ -2566,6 +2590,33 @@ public class MainScreen extends FluidUIScreen {
             placeableScaleTextFields.setZValue(1);
         }
 
+        if (selectedCount > 0) {
+            itemGroupButton.setEnabled(true);
+
+            String commonItemGroup = null; //The name of an item group if all selected placeables have belong to the same item group, or null if the don't
+
+            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+                String igName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceableItemGroupName(name);
+                if (commonItemGroup == null) {
+                    commonItemGroup = igName;
+                }
+
+                if (!Objects.equals(commonItemGroup, igName)) {
+                    commonItemGroup = null;
+                    break;
+                }
+            }
+
+            if (commonItemGroup != null) {
+                itemGroupButton.setText(commonItemGroup);
+            } else {
+                itemGroupButton.setText("...");
+            }
+        } else {
+            itemGroupButton.setEnabled(false);
+            itemGroupButton.setText(LangManager.getItem("nothingSelected"));
+        }
+
         if (selectedIAsset != null) {
             String[] types = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getValidTypes();
 
@@ -2681,6 +2732,8 @@ public class MainScreen extends FluidUIScreen {
                 for (Map.Entry<String, Component> entry : outlinerPlaceablesListBox.childComponents.entrySet()) {
                     ItemButton button = (ItemButton) entry.getValue();
 
+                    button.setItemGroupCol(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceableItemGroup(button.getId()).getColor());
+
                     if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.getId())) {
 //                        button.setBackgroundIdleColor(UIColor.matBlue900());
                         button.setSelected(true);
@@ -2746,6 +2799,12 @@ public class MainScreen extends FluidUIScreen {
         return new TypeSelectorOverlayScreen(mousePercentY, typeList);
     }
 
+    private IUIScreen getItemGroupSelectorOverlayScreen(double mouseX, double mouseY) {
+        final double mousePercentY = mouseY / Display.getHeight();
+
+        return new ItemGroupSelectorOverlayScreen(mousePercentY, ProjectManager.getCurrentProject().clientLevelData.getLevelData().getItemGroupMap());
+    }
+
     public void setTypeForSelectedPlaceables(String type) {
         boolean changed = false;
 
@@ -2768,6 +2827,33 @@ public class MainScreen extends FluidUIScreen {
             placeable.getAsset().setType(type);
         }
 
+        updatePropertiesPlaceablesPanel();
+    }
+
+    public void setItemGroupForSelectedPlaceables(String itemGroup) {
+        //TODO: Undo command
+//        boolean changed = false;
+
+        assert ProjectManager.getCurrentProject().clientLevelData != null;
+        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+
+//            if (!Objects.equals(placeable.getAsset().getType(), type)) {
+//                changed = true;
+//            }
+        }
+
+//        if (changed) {
+//            addUndoCommand(new UndoAssetTypeChange(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+//        }
+
+        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+
+            ProjectManager.getCurrentProject().clientLevelData.getLevelData().changePlaceableItemGroup(name, itemGroup);
+        }
+
+        updateOutlinerPlaceablesPanel();
         updatePropertiesPlaceablesPanel();
     }
 
