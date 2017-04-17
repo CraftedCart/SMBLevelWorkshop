@@ -2591,7 +2591,16 @@ public class MainScreen extends FluidUIScreen {
         }
 
         if (selectedCount > 0) {
-            itemGroupButton.setEnabled(true);
+            boolean stageReservedOnly = true;
+            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+                String igName = ProjectManager.getCurrentLevelData().getPlaceableItemGroupName(name);
+                if (!Objects.equals(igName, "STAGE_RESERVED")) {
+                    stageReservedOnly = false;
+                    break;
+                }
+            }
+
+            itemGroupButton.setEnabled(!stageReservedOnly);
 
             String commonItemGroup = null; //The name of an item group if all selected placeables have belong to the same item group, or null if the don't
 
