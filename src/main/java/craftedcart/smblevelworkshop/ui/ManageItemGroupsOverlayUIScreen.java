@@ -9,6 +9,8 @@ import io.github.craftedcart.fluidui.FontCache;
 import io.github.craftedcart.fluidui.component.*;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimateAnchor;
 import io.github.craftedcart.fluidui.plugin.PluginSmoothAnimatePanelBackgroundColor;
+import io.github.craftedcart.fluidui.uiaction.UIAction1;
+import io.github.craftedcart.fluidui.util.PosXY;
 import io.github.craftedcart.fluidui.util.UIColor;
 
 import java.util.Map;
@@ -116,11 +118,11 @@ public class ManageItemGroupsOverlayUIScreen extends FluidUIScreen {
 
         assert ProjectManager.getCurrentClientLevelData() != null;
         for (Map.Entry<String, WSItemGroup> entry : ProjectManager.getCurrentLevelData().getItemGroupMap().entrySet()) {
-            listBox.addChildComponent(entry.getKey() + "ItemGroup", getItemGroup(entry.getKey(), entry.getValue()));
+            listBox.addChildComponent(entry.getKey() + "ItemGroup", getItemGroup(listBox, entry.getKey(), entry.getValue()));
         }
     }
 
-    private Panel getItemGroup(String name, WSItemGroup itemGroup) {
+    private Panel getItemGroup(ListBox listBox, String name, WSItemGroup itemGroup) {
         UIColor col = itemGroup.getColor();
 
         final Panel igPanel = new Panel();
@@ -180,6 +182,7 @@ public class ManageItemGroupsOverlayUIScreen extends FluidUIScreen {
                     colorButton.setBackgroundActiveColor(col.alpha(0.5));
 //                colorButton.setBackgroundHitColor(col.alpha(0.25));
                 });
+                colorButton.setOnLMBAction(() -> showColorPicker(listBox, mousePos, itemGroup));
                 igPanel.addChildComponent("colorButton", colorButton);
 
                 final Button renameButton = new Button();
@@ -199,6 +202,13 @@ public class ManageItemGroupsOverlayUIScreen extends FluidUIScreen {
         });
 
         return igPanel;
+    }
+
+    private void showColorPicker(ListBox listBox, PosXY mousePos, WSItemGroup itemGroup) {
+        setOverlayUiScreen(new ColorPickerOverlayUIScreen(mousePos, itemGroup.getColor(), color -> {
+            itemGroup.setColor(color);
+            populateListBox(listBox);
+        }));
     }
 
 }
