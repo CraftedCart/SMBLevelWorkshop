@@ -1,12 +1,14 @@
 package craftedcart.smblevelworkshop.ui;
 
-import craftedcart.smblevelworkshop.resource.LangManager;
+import craftedcart.smblevelworkshop.project.ProjectManager;
+import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.util.WSItemGroup;
 import io.github.craftedcart.fluidui.FluidUIScreen;
-import io.github.craftedcart.fluidui.component.ListBox;
-import io.github.craftedcart.fluidui.component.TextButton;
+import io.github.craftedcart.fluidui.component.*;
+import io.github.craftedcart.fluidui.util.UIColor;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author CraftedCart
@@ -19,7 +21,7 @@ public class ItemGroupSelectorOverlayScreen extends FluidUIScreen {
     }
 
     private void init(double mousePercentY, Map<String, WSItemGroup> itemGroupMap) {
-        setTheme(new DefaultUITheme());
+        setTheme(new DialogUITheme());
 
         final ListBox listBox = new ListBox();
         listBox.setOnInitAction(() -> {
@@ -31,13 +33,18 @@ public class ItemGroupSelectorOverlayScreen extends FluidUIScreen {
         addChildComponent("listBox", listBox);
 
         for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
-            final TextButton button = new TextButton();
-            button.setOnInitAction(() -> {
-                button.setText(LangManager.getItem(entry.getKey()));
-                button.setTopLeftPos(0, 0);
-                button.setBottomRightPos(0, 24);
-            });
+//            final TextButton button = new TextButton();
+//            button.setOnInitAction(() -> {
+//                button.setText(LangManager.getItem(entry.getKey()));
+//                button.setTopLeftPos(0, 0);
+//                button.setBottomRightPos(0, 24);
+//            });
+            final Button button = getItemGroup(entry.getKey(), entry.getValue());
             button.setOnLMBAction(() -> selectItemGroup(entry));
+            if (Objects.equals(entry.getKey(), "STAGE_RESERVED") ||
+                    (Objects.equals(entry.getKey(), "BACKGROUND_RESERVED") && ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size() == 0)) {
+                button.setEnabled(false);
+            }
             listBox.addChildComponent(entry.getKey() + "TypeButton", button);
         }
 
@@ -50,6 +57,42 @@ public class ItemGroupSelectorOverlayScreen extends FluidUIScreen {
         mainScreen.setItemGroupForSelectedPlaceables(entry.getKey());
 
         mainScreen.setOverlayUiScreen(null);
+    }
+
+    private Button getItemGroup(String name, WSItemGroup itemGroup) {
+        UIColor col = itemGroup.getColor();
+
+        final Button igButton = new Button();
+        igButton.setOnInitAction(() -> {
+            igButton.setTopLeftPos(0, 0);
+            igButton.setBottomRightPos(0, 24);
+            igButton.setBackgroundIdleColor(col.alpha(0.25));
+
+            final Button colorButton = new Button();
+            colorButton.setOnInitAction(() -> {
+                colorButton.setTopLeftPos(0, 0);
+                colorButton.setBottomRightPos(24, 0);
+                colorButton.setTopLeftAnchor(0, 0);
+                colorButton.setBottomRightAnchor(0, 1);
+                colorButton.setTexture(ResourceManager.getTexture("image/circle").getTexture());
+                colorButton.setBackgroundIdleColor(col);
+                colorButton.setBackgroundActiveColor(col.alpha(0.5));
+//                colorButton.setBackgroundHitColor(col.alpha(0.25));
+            });
+            igButton.addChildComponent("colorButton", colorButton);
+
+            final Label igLabel = new Label();
+            igLabel.setOnInitAction(() -> {
+                igLabel.setTopLeftPos(28, 0);
+                igLabel.setBottomRightPos(0, 0);
+                igLabel.setTopLeftAnchor(0, 0);
+                igLabel.setBottomRightAnchor(1, 1);
+                igLabel.setText(name);
+            });
+            igButton.addChildComponent("igLabel", igLabel);
+        });
+
+        return igButton;
     }
 
 }

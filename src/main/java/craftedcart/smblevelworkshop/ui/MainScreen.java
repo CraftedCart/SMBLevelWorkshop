@@ -2850,6 +2850,8 @@ public class MainScreen extends FluidUIScreen {
         for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
             Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
 
+            if (placeable.getAsset() instanceof AssetStartPos || placeable.getAsset() instanceof AssetFalloutY) continue; //Start pos and fallout Y cannot change item groups
+
             ProjectManager.getCurrentProject().clientLevelData.getLevelData().changePlaceableItemGroup(name, itemGroup);
         }
 
