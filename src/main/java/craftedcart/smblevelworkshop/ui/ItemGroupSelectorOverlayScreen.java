@@ -1,6 +1,7 @@
 package craftedcart.smblevelworkshop.ui;
 
 import craftedcart.smblevelworkshop.project.ProjectManager;
+import craftedcart.smblevelworkshop.resource.LangManager;
 import craftedcart.smblevelworkshop.resource.ResourceManager;
 import craftedcart.smblevelworkshop.util.WSItemGroup;
 import io.github.craftedcart.fluidui.FluidUIScreen;
@@ -31,6 +32,20 @@ public class ItemGroupSelectorOverlayScreen extends FluidUIScreen {
             listBox.setBottomRightAnchor(1, 1);
         });
         addChildComponent("listBox", listBox);
+
+        //Add item group manager button
+        final TextButton igmButton = new TextButton();
+        igmButton.setOnInitAction(() -> {
+            igmButton.setText(LangManager.getItem("itemGroupManager"));
+            igmButton.setTopLeftPos(0, 0);
+            igmButton.setBottomRightPos(0, 24);
+        });
+        igmButton.setOnLMBAction(() -> {
+            assert parentComponent instanceof FluidUIScreen;
+            FluidUIScreen uiScreen = (FluidUIScreen) parentComponent;
+            uiScreen.setOverlayUiScreen(new ManageItemGroupsOverlayUIScreen()); //Replace ItemGroupSelectorOverlayScreen with item group manager
+        });
+        listBox.addChildComponent("itemGroupManagerButton", igmButton);
 
         for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
 //            final TextButton button = new TextButton();
