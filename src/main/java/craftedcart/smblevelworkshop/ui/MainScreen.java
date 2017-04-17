@@ -253,8 +253,8 @@ public class MainScreen extends FluidUIScreen {
             propertiesPlaceablesListBox.setVisible(true);
             propertiesObjectsListBox.setVisible(false);
 
-            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
+                ProjectManager.getCurrentClientLevelData().clearSelectedObjects();
             }
 
             objectMode = EnumObjectMode.PLACEABLE_EDIT;
@@ -281,8 +281,8 @@ public class MainScreen extends FluidUIScreen {
             propertiesPlaceablesListBox.setVisible(false);
             propertiesObjectsListBox.setVisible(true);
 
-            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
+                ProjectManager.getCurrentClientLevelData().clearSelectedPlaceables();
             }
 
             objectMode = EnumObjectMode.OBJECT_EDIT;
@@ -416,11 +416,11 @@ public class MainScreen extends FluidUIScreen {
 //            addExternalBackgroundObjectTextField.setBackgroundColor(UIColor.transparent());
 //        });
 //        addExternalBackgroundObjectTextField.setOnReturnAction(() -> {
-//            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+//            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
 //                if (!Objects.equals(addExternalBackgroundObjectTextField.value, "")) {
-//                    if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackgroundExternal(addExternalBackgroundObjectTextField.text) &&
-//                            !ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModel().hasObject(addExternalBackgroundObjectTextField.text)) {
-//                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().addBackgroundExternalObject(addExternalBackgroundObjectTextField.text);
+//                    if (!ProjectManager.getCurrentLevelData().isObjectBackgroundExternal(addExternalBackgroundObjectTextField.text) &&
+//                            !ProjectManager.getCurrentLevelData().getModel().hasObject(addExternalBackgroundObjectTextField.text)) {
+//                        ProjectManager.getCurrentLevelData().addBackgroundExternalObject(addExternalBackgroundObjectTextField.text);
 //
 //                        outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(addExternalBackgroundObjectTextField.text));
 //                    } else {
@@ -682,12 +682,12 @@ public class MainScreen extends FluidUIScreen {
             backgroundObjectCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
         });
         backgroundObjectCheckBox.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
-                for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
+                for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
                     if (backgroundObjectCheckBox.getValue()) {
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().addBackgroundObject(name);
+                        ProjectManager.getCurrentLevelData().addBackgroundObject(name);
                     } else {
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
+                        ProjectManager.getCurrentLevelData().removeBackgroundObject(name);
                     }
 
                     updateOutlinerObjectsPanel();
@@ -706,13 +706,13 @@ public class MainScreen extends FluidUIScreen {
             addAnimDataButton.setVisible(false);
         });
         addAnimDataButton.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                Set<String> selected = ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects();
+            if (ProjectManager.getCurrentClientLevelData() != null) {
+                Set<String> selected = ProjectManager.getCurrentClientLevelData().getSelectedObjects();
 
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().addAnimData(selected);
+                ProjectManager.getCurrentLevelData().addAnimData(selected);
 
                 //Add undo command
-                addUndoCommand(new UndoAddAnimData(ProjectManager.getCurrentProject().clientLevelData, this, selected));
+                addUndoCommand(new UndoAddAnimData(ProjectManager.getCurrentClientLevelData(), this, selected));
 
                 updatePropertiesObjectsPanel();
                 updateOutlinerObjectsPanel();
@@ -730,14 +730,14 @@ public class MainScreen extends FluidUIScreen {
             removeAnimDataButton.setVisible(false);
         });
         removeAnimDataButton.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                Set<String> selected = ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects();
+            if (ProjectManager.getCurrentClientLevelData() != null) {
+                Set<String> selected = ProjectManager.getCurrentClientLevelData().getSelectedObjects();
 
                 //Add undo command
-                addUndoCommand(new UndoRemoveAnimData(ProjectManager.getCurrentProject().clientLevelData, this, selected));
+                addUndoCommand(new UndoRemoveAnimData(ProjectManager.getCurrentClientLevelData(), this, selected));
 
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframesForObjects(selected);
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeAnimData(selected);
+                ProjectManager.getCurrentClientLevelData().clearSelectedKeyframesForObjects(selected);
+                ProjectManager.getCurrentLevelData().removeAnimData(selected);
 
                 updatePropertiesObjectsPanel();
                 updateOutlinerObjectsPanel();
@@ -820,7 +820,7 @@ public class MainScreen extends FluidUIScreen {
             objectPositionKeyframeButtons.setTopLeftAnchor(1, 0);
             objectPositionKeyframeButtons.setBottomRightAnchor(1, 0);
         });
-        objectPositionKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onPosKeyframeActivated(axis, ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()));
+        objectPositionKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onPosKeyframeActivated(axis, ProjectManager.getCurrentClientLevelData().getSelectedObjects()));
         objectPositionPropertiesPanel.addChildComponent("objectPositionKeyframeButtons", objectPositionKeyframeButtons);
 
         final Label objectRotationLabel = new Label();
@@ -863,7 +863,7 @@ public class MainScreen extends FluidUIScreen {
             objectRotationKeyframeButtons.setTopLeftAnchor(1, 0);
             objectRotationKeyframeButtons.setBottomRightAnchor(1, 0);
         });
-        objectRotationKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onRotKeyframeActivated(axis, ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()));
+        objectRotationKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onRotKeyframeActivated(axis, ProjectManager.getCurrentClientLevelData().getSelectedObjects()));
         objectRotationPropertiesPanel.addChildComponent("objectRotationKeyframeButtons", objectRotationKeyframeButtons);
         //</editor-fold>
 
@@ -1077,8 +1077,8 @@ public class MainScreen extends FluidUIScreen {
         //Show FPS if setting enabled
         fpsOverlay.setVisible(SMBLWSettings.showFPSOverlay);
 
-        if (ProjectManager.getCurrentProject().clientLevelData != null) {
-            ProjectManager.getCurrentProject().clientLevelData.update((float) UIUtils.getDelta());
+        if (ProjectManager.getCurrentClientLevelData() != null) {
+            ProjectManager.getCurrentClientLevelData().update((float) UIUtils.getDelta());
         }
 
         if (Mouse.isButtonDown(2)) { //If MMB down
@@ -1128,12 +1128,12 @@ public class MainScreen extends FluidUIScreen {
                 cameraPos = cameraPos.subtract(rightVector.multiply(UIUtils.getDelta()).multiply(speed));
             }
             //</editor-fold>
-        } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
+        } else if (ProjectManager.getCurrentClientLevelData() != null) {
             if (ProjectManager.getCurrentProject().mode == EnumActionMode.GRAB_PLACEABLE) {
                 //<editor-fold desc="Grab">
 
-                for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
+                for (String key : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(key);
 
                     if ((ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(1, 0, 0)) && placeable.getAsset().canGrabX()) ||
                             (ProjectManager.getCurrentProject().modeDirection.equals(new PosXYZ(0, 1, 0)) && placeable.getAsset().canGrabY()) ||
@@ -1166,8 +1166,8 @@ public class MainScreen extends FluidUIScreen {
                 //</editor-fold>
             } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.ROTATE_PLACEABLE) {
                 //<editor-fold desc="Rotate">
-                for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
+                for (String key : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(key);
 
                     if (placeable.getAsset().canRotate()) { //If can rotate
                         if (Window.isAltDown()) { //Snap with Alt
@@ -1201,8 +1201,8 @@ public class MainScreen extends FluidUIScreen {
                 //</editor-fold>
             } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.SCALE_PLACEABLE) {
                 //<editor-fold desc="Scale">
-                for (String key : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                    Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(key);
+                for (String key : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+                    Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(key);
 
                     if (placeable.getAsset().canScale()) { //If can scale
                         if (Window.isAltDown()) { //Snap with Alt
@@ -1232,7 +1232,7 @@ public class MainScreen extends FluidUIScreen {
                 //</editor-fold>
             } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.GRAB_KEYFRAME) {
                 //<editor-fold desc="Grab">
-                for (Map.Entry<String, BufferedAnimData> entry : ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap().entrySet()) {
+                for (Map.Entry<String, BufferedAnimData> entry : ProjectManager.getCurrentClientLevelData().getAnimDataBufferMap().entrySet()) {
                     BufferedAnimData bad = entry.getValue();
 
                     if (Window.isAltDown()) { //Snap with Alt
@@ -1403,7 +1403,7 @@ public class MainScreen extends FluidUIScreen {
 
             UIColor.pureWhite().bindColor();
 
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+            if (ProjectManager.getCurrentClientLevelData() != null) {
                 //<editor-fold desc="Draw model with wireframes">
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
 
@@ -1415,17 +1415,17 @@ public class MainScreen extends FluidUIScreen {
                 }
 
 
-                float time = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+                float time = ProjectManager.getCurrentClientLevelData().getTimelinePos();
 
                 GL20.glUseProgram(currentShaderProgram.getProgramID());
-                for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                     for (OBJObject object : model.scene.getObjectList()){
                         GL11.glPushMatrix();
 
                         //Transform at current time
                         transformObjectAtTime(object.name, time);
 
-                        if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
+                        if (!ProjectManager.getCurrentClientLevelData().isObjectHidden(object.name)) {
                             model.drawModelObject(currentShaderProgram, useTextures, object.name);
                         }
 
@@ -1438,13 +1438,13 @@ public class MainScreen extends FluidUIScreen {
 
                 if (SMBLWSettings.showAllWireframes) {
 
-                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                    for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                         for (OBJObject object : model.scene.getObjectList()) {
                             GL11.glPushMatrix();
 
                             transformObjectAtTime(object.name);
 
-                            if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(object.name)) {
+                            if (!ProjectManager.getCurrentClientLevelData().isObjectHidden(object.name)) {
                                 GL11.glColor4f(0, 0, 0, 1);
                                 model.drawModelObjectWireframe(null, false, object.name);
 
@@ -1467,9 +1467,9 @@ public class MainScreen extends FluidUIScreen {
                 //<editor-fold desc="Draw placeables">
                 List<DepthSortedPlaceable> depthSortedMap = new ArrayList<>();
 
-                synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
+                synchronized (ProjectManager.getCurrentLevelData().getPlacedObjects()) {
 
-                    for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects().entrySet()) {
+                    for (Map.Entry<String, Placeable> placeableEntry : ProjectManager.getCurrentLevelData().getPlacedObjects().entrySet()) {
                         Placeable placeable = placeableEntry.getValue();
 
                         double distance;
@@ -1491,7 +1491,7 @@ public class MainScreen extends FluidUIScreen {
                 for (DepthSortedPlaceable placeableEntry : depthSortedMap) {
                     String name = placeableEntry.entry.getKey();
                     Placeable placeable = placeableEntry.entry.getValue();
-                    boolean isSelected = ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(name);
+                    boolean isSelected = ProjectManager.getCurrentClientLevelData().isPlaceableSelected(name);
 
                     drawPlaceable(placeable, isSelected);
 
@@ -1499,20 +1499,20 @@ public class MainScreen extends FluidUIScreen {
                 //</editor-fold>
 
                 //<editor-fold desc="Draw selected stuff">
-                drawSelectedPlaceables(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables(),
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData());
+                drawSelectedPlaceables(ProjectManager.getCurrentClientLevelData().getSelectedPlaceables(),
+                        ProjectManager.getCurrentLevelData());
 
                 //<editor-fold desc="Draw selected objects">
                 UIColor.matBlue().bindColor();
                 UIUtils.drawWithStencilOutside(
                         () -> {
-                            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
                                 GL11.glPushMatrix();
 
                                 transformObjectAtTime(name);
 
-                                if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(name)) {
-                                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                                if (!ProjectManager.getCurrentClientLevelData().isObjectHidden(name)) {
+                                    for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                                         if (model.hasObject(name)) {
                                             model.drawModelObject(null, false, name);
                                         }
@@ -1524,13 +1524,13 @@ public class MainScreen extends FluidUIScreen {
                         },
                         () -> {
                             GL11.glDisable(GL11.GL_DEPTH_TEST);
-                            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+                            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
                                 GL11.glPushMatrix();
 
                                 transformObjectAtTime(name);
 
-                                if (!ProjectManager.getCurrentProject().clientLevelData.isObjectHidden(name)) {
-                                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                                if (!ProjectManager.getCurrentClientLevelData().isObjectHidden(name)) {
+                                    for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                                         if (model.hasObject(name)) {
                                             model.drawModelObjectWireframe(null, false, name);
                                         }
@@ -1723,31 +1723,31 @@ public class MainScreen extends FluidUIScreen {
                     if (key == Keyboard.KEY_F1) { //F1 to hide / show the ui
                         mainUI.setVisible(!mainUI.isVisible());
 
-                    } else if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                    } else if (ProjectManager.getCurrentClientLevelData() != null) {
                         if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
                             if (key == Keyboard.KEY_G) { //G: Grab
                                 if (timeline.mouseOver) { //Grab keyframes when the cursor is over the timeline
-                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+                                            ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
                                     moveSelectedKeyframesToBuffer(false);
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
                                 } else {
-                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_PLACEABLE;
                                 }
                             } else if (key == Keyboard.KEY_R) { //R: Rotate
                                 if (!timeline.mouseOver) { //Do nothing if the cursor is over the timeline
-                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.ROTATE_PLACEABLE;
                                 }
                             } else if (key == Keyboard.KEY_S) { //S: Scale
                                 if (timeline.mouseOver) { //Scale keyframes when the cursor is over the timeline
-                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+                                            ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
                                     moveSelectedKeyframesToBuffer(false);
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_KEYFRAME;
                                 } else {
-                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                    addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_PLACEABLE;
                                 }
 
@@ -1770,53 +1770,53 @@ public class MainScreen extends FluidUIScreen {
                                 if (timeline.mouseOver) {
                                     if (
                                             //Pos
-                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentClientLevelData().getSelectedPosXKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentClientLevelData().getSelectedPosYKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentClientLevelData().getSelectedPosZKeyframes().size() > 0 ||
                                             //Rot
-                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedRotXKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedRotYKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentProject().clientLevelData.getSelectedRotZKeyframes().size() > 0
+                                            ProjectManager.getCurrentClientLevelData().getSelectedRotXKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentClientLevelData().getSelectedRotYKeyframes().size() > 0 ||
+                                            ProjectManager.getCurrentClientLevelData().getSelectedRotZKeyframes().size() > 0
                                             ) {
 
-                                        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
-                                                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+                                        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+                                                ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
 
                                         int keyframesRemoved = 0;
 
                                         //Pos
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosXKeyframes()) {
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosXFrame(entry.getTime());
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosXKeyframes()) {
+                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosXFrame(entry.getTime());
                                             keyframesRemoved++;
                                         }
 
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosYKeyframes()) {
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosYFrame(entry.getTime());
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosYKeyframes()) {
+                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosYFrame(entry.getTime());
                                             keyframesRemoved++;
                                         }
 
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedPosZKeyframes()) {
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removePosZFrame(entry.getTime());
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosZKeyframes()) {
+                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosZFrame(entry.getTime());
                                             keyframesRemoved++;
                                         }
 
                                         //Rot
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedRotXKeyframes()) {
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removeRotXFrame(entry.getTime());
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotXKeyframes()) {
+                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotXFrame(entry.getTime());
                                             keyframesRemoved++;
                                         }
 
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedRotYKeyframes()) {
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removeRotYFrame(entry.getTime());
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotYKeyframes()) {
+                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotYFrame(entry.getTime());
                                             keyframesRemoved++;
                                         }
 
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentProject().clientLevelData.getSelectedRotZKeyframes()) {
-                                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(entry.getObjectName()).removeRotZFrame(entry.getTime());
+                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotZKeyframes()) {
+                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotZFrame(entry.getTime());
                                             keyframesRemoved++;
                                         }
 
-                                        ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
+                                        ProjectManager.getCurrentClientLevelData().clearSelectedKeyframes();
 
                                         if (keyframesRemoved > 1) {
                                             sendNotif(String.format(LangManager.getItem("keyframeRemovedPlural"), keyframesRemoved));
@@ -1829,13 +1829,13 @@ public class MainScreen extends FluidUIScreen {
                                     }
 
                                 } else {
-                                    if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
+                                    if (ProjectManager.getCurrentClientLevelData().getSelectedPlaceables().size() > 0) {
 
                                         List<String> toDelete = new ArrayList<>();
 
-                                        for (String name : new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables())) {
-                                            if (!(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
-                                                    !(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
+                                        for (String name : new HashSet<>(ProjectManager.getCurrentClientLevelData().getSelectedPlaceables())) {
+                                            if (!(ProjectManager.getCurrentLevelData().getPlaceable(name).getAsset() instanceof AssetStartPos) && //Don't delete the start pos
+                                                    !(ProjectManager.getCurrentLevelData().getPlaceable(name).getAsset() instanceof AssetFalloutY)) { //Don't delete the fallout Y
                                                 toDelete.add(name);
                                             }
                                         }
@@ -1861,22 +1861,22 @@ public class MainScreen extends FluidUIScreen {
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
 
                                 } else {
-                                    Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables());
-                                    ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
+                                    Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentClientLevelData().getSelectedPlaceables());
+                                    ProjectManager.getCurrentClientLevelData().clearSelectedPlaceables();
 
                                     Map<String, Placeable> newPlaceables = new HashMap<>();
 
                                     int duplicated = 0;
 
                                     for (String name : selectedPlaceables) {
-                                        Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+                                        Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
                                         if (!(placeable.getAsset() instanceof AssetStartPos) &&
                                                 !(placeable.getAsset() instanceof AssetFalloutY)) { //If the placeable isn't the start pos or fallout Y
 
                                             duplicated++;
 
                                             Placeable newPlaceable = placeable.getCopy();
-                                            String newPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(newPlaceable);
+                                            String newPlaceableName = ProjectManager.getCurrentLevelData().addPlaceable(newPlaceable);
                                             newPlaceables.put(newPlaceableName, newPlaceable);
 
                                             synchronized (outlinerPlaceablesListBoxLock) {
@@ -1885,66 +1885,66 @@ public class MainScreen extends FluidUIScreen {
 
                                             updateOutlinerPlaceablesPanel();
 
-                                            ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
+                                            ProjectManager.getCurrentClientLevelData().addSelectedPlaceable(newPlaceableName); //Select duplicated placeables
                                         }
                                     }
 
                                     if (duplicated > 0) {
-                                        addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
+                                        addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentClientLevelData(), this, new ArrayList<>(newPlaceables.keySet()), new ArrayList<>(newPlaceables.values())));
 
                                         //Grab after duplicating
-                                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+                                        addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
                                         ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_PLACEABLE;
                                     }
                                 }
 
                             } else if (key == Keyboard.KEY_SPACE) { //Spacebar: Play / pause animation
-                                if (ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed() != 0) {
-                                    ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+                                if (ProjectManager.getCurrentClientLevelData().getPlaybackSpeed() != 0) {
+                                    ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(0.0f);
                                 } else {
-                                    ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(1.0f);
+                                    ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(1.0f);
                                 }
 
                             } else if (key == Keyboard.KEY_J) { //J: Rewind animation
                                 if (Window.isAltDown()) { //Snap when holding alt
-                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePosSeconds();
+                                    float currentTime = ProjectManager.getCurrentClientLevelData().getTimelinePosSeconds();
                                     float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
                                     float newTime = currentTime - snapTo;
                                     float roundMultiplier = 1.0f / snapTo;
                                     float newTimeSnapped = Math.round(newTime * roundMultiplier) / roundMultiplier;
 
-                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePosSeconds(newTimeSnapped);
+                                    ProjectManager.getCurrentClientLevelData().setTimelinePosSeconds(newTimeSnapped);
 
                                 } else {
-                                    float currentSpeed = ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed();
+                                    float currentSpeed = ProjectManager.getCurrentClientLevelData().getPlaybackSpeed();
 
-                                    if (currentSpeed > 1) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 0.5f);
-                                    else if (currentSpeed < 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 2.0f);
-                                    else if (currentSpeed == 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(-1.0f);
-                                    else if (currentSpeed > 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+                                    if (currentSpeed > 1) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(currentSpeed * 0.5f);
+                                    else if (currentSpeed < 0) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(currentSpeed * 2.0f);
+                                    else if (currentSpeed == 0) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(-1.0f);
+                                    else if (currentSpeed > 0) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(0.0f);
                                 }
 
                             } else if (key == Keyboard.KEY_K) { //K: Stop animation
-                                ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+                                ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(0.0f);
 
                             } else if (key == Keyboard.KEY_L) { //L: Forward animation
 
                                 if (Window.isAltDown()) { //Snap when holding alt
-                                    float currentTime = ProjectManager.getCurrentProject().clientLevelData.getTimelinePosSeconds();
+                                    float currentTime = ProjectManager.getCurrentClientLevelData().getTimelinePosSeconds();
                                     float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
                                     float newTime = currentTime + snapTo;
                                     float roundMultiplier = 1.0f / snapTo;
                                     float newTimeSnapped = Math.round(newTime * roundMultiplier) / roundMultiplier;
 
-                                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePosSeconds(newTimeSnapped);
+                                    ProjectManager.getCurrentClientLevelData().setTimelinePosSeconds(newTimeSnapped);
 
                                 } else {
-                                    float currentSpeed = ProjectManager.getCurrentProject().clientLevelData.getPlaybackSpeed();
+                                    float currentSpeed = ProjectManager.getCurrentClientLevelData().getPlaybackSpeed();
 
-                                    if (currentSpeed < -1) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 0.5f);
-                                    else if (currentSpeed > 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(currentSpeed * 2.0f);
-                                    else if (currentSpeed == 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(1.0f);
-                                    else if (currentSpeed < 0) ProjectManager.getCurrentProject().clientLevelData.setPlaybackSpeed(0.0f);
+                                    if (currentSpeed < -1) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(currentSpeed * 0.5f);
+                                    else if (currentSpeed > 0) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(currentSpeed * 2.0f);
+                                    else if (currentSpeed == 0) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(1.0f);
+                                    else if (currentSpeed < 0) ProjectManager.getCurrentClientLevelData().setPlaybackSpeed(0.0f);
                                 }
 
                             } else {
@@ -1998,7 +1998,7 @@ public class MainScreen extends FluidUIScreen {
 
     private void confirmModeAction() {
         ProjectManager.getCurrentProject().mode = EnumActionMode.NONE;
-        assert ProjectManager.getCurrentProject().clientLevelData != null;
+        assert ProjectManager.getCurrentClientLevelData() != null;
         commitBufferedKeyframes();
         updatePropertiesPlaceablesPanel();
         deltaX = 0; //Reset deltaX when no ProjectManager.getCurrentProject().mode is active
@@ -2048,12 +2048,12 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void addPlaceable(Placeable placeable) {
-        if (ProjectManager.getCurrentProject().clientLevelData != null) {
-            String name = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(placeable);
-            ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
-            ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(name);
+        if (ProjectManager.getCurrentClientLevelData() != null) {
+            String name = ProjectManager.getCurrentLevelData().addPlaceable(placeable);
+            ProjectManager.getCurrentClientLevelData().clearSelectedPlaceables();
+            ProjectManager.getCurrentClientLevelData().addSelectedPlaceable(name);
 
-            addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentProject().clientLevelData, this, Collections.singletonList(name), Collections.singletonList(placeable)));
+            addUndoCommand(new UndoAddPlaceable(ProjectManager.getCurrentClientLevelData(), this, Collections.singletonList(name), Collections.singletonList(placeable)));
 
             synchronized (outlinerPlaceablesListBoxLock) {
                 outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
@@ -2066,12 +2066,12 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void removePlaceable(String name) {
-        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+        if (ProjectManager.getCurrentClientLevelData() != null) {
 
-            addUndoCommand(new UndoRemovePlaceable(ProjectManager.getCurrentProject().clientLevelData, this, Collections.singletonList(name), Collections.singletonList(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name))));
+            addUndoCommand(new UndoRemovePlaceable(ProjectManager.getCurrentClientLevelData(), this, Collections.singletonList(name), Collections.singletonList(ProjectManager.getCurrentLevelData().getPlaceable(name))));
 
-            ProjectManager.getCurrentProject().clientLevelData.removeSelectedPlaceable(name);
-            ProjectManager.getCurrentProject().clientLevelData.getLevelData().removePlaceable(name);
+            ProjectManager.getCurrentClientLevelData().removeSelectedPlaceable(name);
+            ProjectManager.getCurrentLevelData().removePlaceable(name);
 
             synchronized (outlinerPlaceablesListBoxLock) {
                 outlinerPlaceablesListBox.removeChildComponent(name + "OutlinerPlaceable");
@@ -2082,19 +2082,19 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void removePlaceables(List<String> names) {
-        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+        if (ProjectManager.getCurrentClientLevelData() != null) {
 
             List<Placeable> placeables = new ArrayList<>();
             for (String name : names) {
-                placeables.add(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name));
+                placeables.add(ProjectManager.getCurrentLevelData().getPlaceable(name));
             }
 
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
-            addUndoCommand(new UndoRemovePlaceable(ProjectManager.getCurrentProject().clientLevelData, this, names, placeables));
+            assert ProjectManager.getCurrentClientLevelData() != null;
+            addUndoCommand(new UndoRemovePlaceable(ProjectManager.getCurrentClientLevelData(), this, names, placeables));
 
             for (String name : names) {
-                ProjectManager.getCurrentProject().clientLevelData.removeSelectedPlaceable(name);
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().removePlaceable(name);
+                ProjectManager.getCurrentClientLevelData().removeSelectedPlaceable(name);
+                ProjectManager.getCurrentLevelData().removePlaceable(name);
 
                 synchronized (outlinerPlaceablesListBoxLock) {
                     outlinerPlaceablesListBox.removeChildComponent(name + "OutlinerPlaceable");
@@ -2125,28 +2125,28 @@ public class MainScreen extends FluidUIScreen {
                     redoCommandList.clear();
                 }
 
-                if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                if (ProjectManager.getCurrentClientLevelData() != null) {
                     //Unload textures and VBOs
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().unloadAllModels();
+                    ProjectManager.getCurrentLevelData().unloadAllModels();
                 }
 
                 if (!replace) {
                     ProjectManager.getCurrentProject().clientLevelData = new ClientLevelData();
-                    ProjectManager.getCurrentProject().clientLevelData.setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
-                    ProjectManager.getCurrentProject().clientLevelData.setOnSelectedObjectsChanged(this::onSelectedObjectsChanged);
-                    ProjectManager.getCurrentProject().clientLevelData.setOnSelectedExternalBackgroundObjectsChanged(this::onSelectedExternalBackgroundObjectsChanged);
-                    ProjectManager.getCurrentProject().clientLevelData.setOnTimelinePosChanged(this::onTimelinePosChanged);
+                    ProjectManager.getCurrentClientLevelData().setOnSelectedPlaceablesChanged(this::onSelectedPlaceablesChanged);
+                    ProjectManager.getCurrentClientLevelData().setOnSelectedObjectsChanged(this::onSelectedObjectsChanged);
+                    ProjectManager.getCurrentClientLevelData().setOnSelectedExternalBackgroundObjectsChanged(this::onSelectedExternalBackgroundObjectsChanged);
+                    ProjectManager.getCurrentClientLevelData().setOnTimelinePosChanged(this::onTimelinePosChanged);
                 }
 
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().clearModelObjSources();
+                ProjectManager.getCurrentLevelData().clearModelObjSources();
 
                 for (ExternalModel extModel : externalModels) {
                     ResourceModel model = OBJLoader.loadModel(extModel.file.getPath());
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().addModel(model);
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().addModelObjSource(extModel.file);
+                    ProjectManager.getCurrentLevelData().addModel(model);
+                    ProjectManager.getCurrentLevelData().addModelObjSource(extModel.file);
                 }
 
-                synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
+                synchronized (ProjectManager.getCurrentLevelData().getPlacedObjects()) {
 
                     Placeable startPosPlaceable;
                     String startPosPlaceableName = null;
@@ -2155,16 +2155,16 @@ public class MainScreen extends FluidUIScreen {
                     if (!replace) {
                         startPosPlaceable = new Placeable(new AssetStartPos());
                         startPosPlaceable.setPosition(new PosXYZ(0, 1, 0));
-                        startPosPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(
+                        startPosPlaceableName = ProjectManager.getCurrentLevelData().addPlaceable(
                                 LangManager.getItem("assetStartPos"), startPosPlaceable, "STAGE_RESERVED");
 
                         if (objectMode == EnumObjectMode.PLACEABLE_EDIT) {
-                            ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(startPosPlaceableName);
+                            ProjectManager.getCurrentClientLevelData().addSelectedPlaceable(startPosPlaceableName);
                         }
 
                         falloutYPlaceable = new Placeable(new AssetFalloutY());
                         falloutYPlaceable.setPosition(new PosXYZ(0, -10, 0));
-                        falloutYPlaceableName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().addPlaceable(
+                        falloutYPlaceableName = ProjectManager.getCurrentLevelData().addPlaceable(
                                 LangManager.getItem("assetFalloutY"), falloutYPlaceable, "STAGE_RESERVED");
 
                     }
@@ -2184,27 +2184,27 @@ public class MainScreen extends FluidUIScreen {
 
                 if (replace) {
                     //Remove selected objects if they no longer exist in the new OBJ
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                    for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                        for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                             if (!model.hasObject(name)) {
-                                ProjectManager.getCurrentProject().clientLevelData.removeSelectedObject(name);
+                                ProjectManager.getCurrentClientLevelData().removeSelectedObject(name);
                             }
                         }
                     }
 
                     //Remove background objects if they no longer exist in the new OBJ
-                    synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
-                        for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects()) {
-                            for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                    synchronized (ProjectManager.getCurrentLevelData().getBackgroundObjects()) {
+                        for (String name : ProjectManager.getCurrentLevelData().getBackgroundObjects()) {
+                            for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                                 if (!model.hasObject(name)) {
-                                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().removeBackgroundObject(name);
+                                    ProjectManager.getCurrentLevelData().removeBackgroundObject(name);
                                 }
                             }
                         }
                     }
                 } else {
-                    ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
-                    timeline.setObjectAnimDataMap(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap());
+                    ProjectManager.getCurrentClientLevelData().clearSelectedObjects();
+                    timeline.setObjectAnimDataMap(ProjectManager.getCurrentLevelData().getObjectAnimDataMap());
                 }
 
                 if (!OBJLoader.isLastObjTriangulated) {
@@ -2214,9 +2214,9 @@ public class MainScreen extends FluidUIScreen {
                 synchronized (outlinerObjectsListBoxLock) {
                     outlinerObjectsListBox.clearChildComponents();
 
-                    ProjectManager.getCurrentProject().clientLevelData.clearHiddenObjects(); //Unhide all objects
+                    ProjectManager.getCurrentClientLevelData().clearHiddenObjects(); //Unhide all objects
 
-                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                    for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                         for (OBJObject object : model.scene.getObjectList()) {
                             outlinerObjectsListBox.addChildComponent(getOutlinerObjectComponent(object.name));
                         }
@@ -2225,17 +2225,17 @@ public class MainScreen extends FluidUIScreen {
 
                 if (replace) {
                     //Replace all external background objects in the objects outliner that were removed
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundExternalObjects()) {
+                    for (String name : ProjectManager.getCurrentLevelData().getBackgroundExternalObjects()) {
                         outlinerObjectsListBox.addChildComponent(getOutlinerExternalBackgroundObjectComponent(name));
                     }
 
                     //Delete all specified level models that no longer exist, and add new level models to the first item group
                     Set<String> existingModels = new HashSet<>();
-                    for (Map.Entry<String, WSItemGroup> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getItemGroupMap().entrySet()) {
+                    for (Map.Entry<String, WSItemGroup> entry : ProjectManager.getCurrentLevelData().getItemGroupMap().entrySet()) {
                         WSItemGroup itemGroup = entry.getValue();
 
                         Set<String> removedObjects = new HashSet<>();
-                        for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                        for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                             for (String name : itemGroup.getObjectNames())
                             if (!model.hasObject(name)) {
                                 removedObjects.add(name);
@@ -2245,11 +2245,11 @@ public class MainScreen extends FluidUIScreen {
 
                         existingModels.addAll(itemGroup.getObjectNames());
                     }
-                    existingModels.addAll(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getBackgroundObjects());
+                    existingModels.addAll(ProjectManager.getCurrentLevelData().getBackgroundObjects());
 
                     //Fetch a list of all new models
                     Set<String> newModels = new HashSet<>();
-                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                    for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                         for (OBJObject obj : model.scene.getObjectList()) {
                             if (!existingModels.contains(obj.name)) {
                                 //It's new
@@ -2259,20 +2259,20 @@ public class MainScreen extends FluidUIScreen {
                     }
 
                     //Add the new models to the first item group
-                    ProjectManager.getCurrentProject().clientLevelData.getLevelData().getFirstItemGroup().addObjects(newModels);
+                    ProjectManager.getCurrentLevelData().getFirstItemGroup().addObjects(newModels);
                 } else {
                     //Not replacing - Add everything to the first item group
-                    for (ResourceModel model : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModels()) {
+                    for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
                         for (OBJObject obj : model.scene.getObjectList()) {
-                            ProjectManager.getCurrentProject().clientLevelData.getLevelData().getFirstItemGroup().addObject(obj.name);
+                            ProjectManager.getCurrentLevelData().getFirstItemGroup().addObject(obj.name);
                         }
                     }
                 }
 
                 //Update the timeline
-                timeline.updatePercent(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
-                timeline.updateMaxAndLeadInTime(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime(),
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime());
+                timeline.updatePercent(ProjectManager.getCurrentClientLevelData().getTimelinePos());
+                timeline.updateMaxAndLeadInTime(ProjectManager.getCurrentLevelData().getMaxTime(),
+                        ProjectManager.getCurrentLevelData().getLeadInTime());
 
                 GL11.glFlush();
 
@@ -2325,17 +2325,17 @@ public class MainScreen extends FluidUIScreen {
             placeableButton.setTopLeftPos(0, 0);
             placeableButton.setBottomRightPos(0, 18);
             placeableButton.setId(name);
-            placeableButton.setItemGroupCol(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceableItemGroup(name).getColor());
+            placeableButton.setItemGroupCol(ProjectManager.getCurrentLevelData().getPlaceableItemGroup(name).getColor());
         });
         placeableButton.setOnLMBAction(() -> {
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            assert ProjectManager.getCurrentClientLevelData() != null;
 
             if (Window.isShiftDown()) { //Toggle selection on shift
-                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedPlaceable(name);
+                ProjectManager.getCurrentClientLevelData().toggleSelectedPlaceable(name);
             } else {
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedExternalBackgroundObjects();
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedPlaceables();
-                ProjectManager.getCurrentProject().clientLevelData.addSelectedPlaceable(name);
+                ProjectManager.getCurrentClientLevelData().clearSelectedExternalBackgroundObjects();
+                ProjectManager.getCurrentClientLevelData().clearSelectedPlaceables();
+                ProjectManager.getCurrentClientLevelData().addSelectedPlaceable(name);
             }
         });
         placeableButton.setName(name + "OutlinerPlaceable");
@@ -2362,14 +2362,14 @@ public class MainScreen extends FluidUIScreen {
             objectButton.setBackgroundIdleColor(UIColor.matPink());
         });
         objectButton.setOnLMBAction(() -> {
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            assert ProjectManager.getCurrentClientLevelData() != null;
 
             if (Window.isShiftDown()) { //Toggle selection on shift
-                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedExternalBackgroundObject(name);
+                ProjectManager.getCurrentClientLevelData().toggleSelectedExternalBackgroundObject(name);
             } else {
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedExternalBackgroundObjects();
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
-                ProjectManager.getCurrentProject().clientLevelData.addSelectedExternalBackgroundObject(name);
+                ProjectManager.getCurrentClientLevelData().clearSelectedExternalBackgroundObjects();
+                ProjectManager.getCurrentClientLevelData().clearSelectedObjects();
+                ProjectManager.getCurrentClientLevelData().addSelectedExternalBackgroundObject(name);
             }
         });
         objectButton.setName(name + "OutlinerObject");
@@ -2397,7 +2397,7 @@ public class MainScreen extends FluidUIScreen {
                     LogHelper.info(getClass(), "Opening file: " + file.getAbsolutePath());
 
                     try {
-                        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                        if (ProjectManager.getCurrentClientLevelData() != null) {
                             AskReplaceObjOverlayUIScreen dialog = new AskReplaceObjOverlayUIScreen();
                             setOverlayUiScreen(dialog);
                             boolean shouldRepalce = dialog.waitForShouldReplaceResponse();
@@ -2426,7 +2426,7 @@ public class MainScreen extends FluidUIScreen {
 
     private void export() {
         if (!isLoadingProject) {
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+            if (ProjectManager.getCurrentClientLevelData() != null) {
                 setOverlayUiScreen(new ExportOverlayUIScreen());
             } else {
                 sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
@@ -2457,17 +2457,17 @@ public class MainScreen extends FluidUIScreen {
         double sclAvgZ = 0;
         boolean canScale = false;
 
-        assert ProjectManager.getCurrentProject().clientLevelData != null;
+        assert ProjectManager.getCurrentClientLevelData() != null;
 
         Class<?> selectedIAsset;
-        if (ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size() > 0) {
-            selectedIAsset = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getClass();
+        if (ProjectManager.getCurrentClientLevelData().getSelectedPlaceables().size() > 0) {
+            selectedIAsset = ProjectManager.getCurrentLevelData().getPlaceable(ProjectManager.getCurrentClientLevelData().getSelectedPlaceables().iterator().next()).getAsset().getClass();
         } else {
             selectedIAsset = null;
         }
 
-        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+        for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
 
             if (placeable.getAsset().canGrabX()) {
                 canGrabX = true;
@@ -2507,7 +2507,7 @@ public class MainScreen extends FluidUIScreen {
             }
         }
 
-        int selectedCount = ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().size();
+        int selectedCount = ProjectManager.getCurrentClientLevelData().getSelectedPlaceables().size();
 
         if (selectedCount != 0) {
             posAvgX = posAvgX / (double) selectedCount;
@@ -2595,8 +2595,8 @@ public class MainScreen extends FluidUIScreen {
 
             String commonItemGroup = null; //The name of an item group if all selected placeables have belong to the same item group, or null if the don't
 
-            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                String igName = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceableItemGroupName(name);
+            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+                String igName = ProjectManager.getCurrentLevelData().getPlaceableItemGroupName(name);
                 if (commonItemGroup == null) {
                     commonItemGroup = igName;
                 }
@@ -2618,11 +2618,11 @@ public class MainScreen extends FluidUIScreen {
         }
 
         if (selectedIAsset != null) {
-            String[] types = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getValidTypes();
+            String[] types = ProjectManager.getCurrentLevelData().getPlaceable(ProjectManager.getCurrentClientLevelData().getSelectedPlaceables().iterator().next()).getAsset().getValidTypes();
 
             if (types != null) {
                 typeList = Arrays.asList(types);
-                typeButton.setText(LangManager.getItem(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables().iterator().next()).getAsset().getType()));
+                typeButton.setText(LangManager.getItem(ProjectManager.getCurrentLevelData().getPlaceable(ProjectManager.getCurrentClientLevelData().getSelectedPlaceables().iterator().next()).getAsset().getType()));
                 typeButton.setEnabled(true);
             } else {
                 typeList = null;
@@ -2640,12 +2640,12 @@ public class MainScreen extends FluidUIScreen {
     private void onSelectedObjectsChanged() {
         updatePropertiesObjectsPanel();
         updateOutlinerObjectsPanel();
-        timeline.setSelectedObjects(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
-        ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframesForDeselectedObjects(ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects());
+        timeline.setSelectedObjects(ProjectManager.getCurrentClientLevelData().getSelectedObjects());
+        ProjectManager.getCurrentClientLevelData().clearSelectedKeyframesForDeselectedObjects(ProjectManager.getCurrentClientLevelData().getSelectedObjects());
     }
 
     public void updatePropertiesObjectsPanel() {
-        if (ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size() > 0) {
+        if (ProjectManager.getCurrentClientLevelData().getSelectedObjects().size() > 0) {
 
             //Enable UI components
             backgroundObjectCheckBox.setEnabled(true);
@@ -2653,13 +2653,13 @@ public class MainScreen extends FluidUIScreen {
             boolean areBackgroundObjects = true;
             boolean allHaveAnimData = true;
 
-            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackground(name)) {
+            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                if (!ProjectManager.getCurrentLevelData().isObjectBackground(name)) {
                     //At least one selected object isn't marked as in the background
                     areBackgroundObjects = false;
                 }
 
-                if (!ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                if (!ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
                     //At least one selected object doesn't have anim data
                     allHaveAnimData = false;
                 }
@@ -2680,14 +2680,14 @@ public class MainScreen extends FluidUIScreen {
             double rotAvgY = 0;
             double rotAvgZ = 0;
 
-            float time = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+            float time = ProjectManager.getCurrentClientLevelData().getTimelinePos();
 
-            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
                 NamedTransform transform = new NamedTransform(name);
-                if (ProjectManager.getCurrentProject().clientLevelData.doesCurrentFrameObjectHaveAnimData(name)) {
-                    transform = ProjectManager.getCurrentProject().clientLevelData.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name);
-                } else if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
-                    transform = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(name).getNamedTransformAtTime(time, name);
+                if (ProjectManager.getCurrentClientLevelData().doesCurrentFrameObjectHaveAnimData(name)) {
+                    transform = ProjectManager.getCurrentClientLevelData().getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name);
+                } else if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
+                    transform = ProjectManager.getCurrentLevelData().getObjectAnimData(name).getNamedTransformAtTime(time, name);
                 }
 
                 posAvgX += transform.getPosition().x;
@@ -2699,7 +2699,7 @@ public class MainScreen extends FluidUIScreen {
                 rotAvgZ += transform.getRotation().z;
             }
 
-            int selectedCount = ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size();
+            int selectedCount = ProjectManager.getCurrentClientLevelData().getSelectedObjects().size();
 
             posAvgX = posAvgX / (double) selectedCount;
             posAvgY = posAvgY / (double) selectedCount;
@@ -2726,15 +2726,15 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void updateOutlinerPlaceablesPanel() {
-        if (ProjectManager.getCurrentProject().clientLevelData != null) {
+        if (ProjectManager.getCurrentClientLevelData() != null) {
             //<editor-fold desc="Darken selected placeables in the outliner">
             synchronized (outlinerPlaceablesListBoxLock) {
                 for (Map.Entry<String, Component> entry : outlinerPlaceablesListBox.childComponents.entrySet()) {
                     ItemButton button = (ItemButton) entry.getValue();
 
-                    button.setItemGroupCol(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceableItemGroup(button.getId()).getColor());
+                    button.setItemGroupCol(ProjectManager.getCurrentLevelData().getPlaceableItemGroup(button.getId()).getColor());
 
-                    if (ProjectManager.getCurrentProject().clientLevelData.isPlaceableSelected(button.getId())) {
+                    if (ProjectManager.getCurrentClientLevelData().isPlaceableSelected(button.getId())) {
 //                        button.setBackgroundIdleColor(UIColor.matBlue900());
                         button.setSelected(true);
                     } else {
@@ -2766,26 +2766,26 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private UIColor getOutlinerObjectColor(String name) {
-        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackground(name)) {
-            if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
+        if (ProjectManager.getCurrentLevelData().isObjectBackground(name)) {
+            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
                 return UIColor.matPurple900();
             } else {
                 return UIColor.matPurple();
             }
-        } else if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().isObjectBackgroundExternal(name)) {
-            if (ProjectManager.getCurrentProject().clientLevelData.isExternalBackgroundObjectSelected(name)) {
+        } else if (ProjectManager.getCurrentLevelData().isObjectBackgroundExternal(name)) {
+            if (ProjectManager.getCurrentClientLevelData().isExternalBackgroundObjectSelected(name)) {
                 return UIColor.matPink900();
             } else {
                 return UIColor.matPink();
             }
-        } else if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
-            if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
+        } else if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
+            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
                 return UIColor.matGreen900();
             } else {
                 return UIColor.matGreen();
             }
         } else {
-            if (ProjectManager.getCurrentProject().clientLevelData.isObjectSelected(name)) {
+            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
                 return UIColor.matBlue900();
             } else {
                 return UIColor.matBlue();
@@ -2802,15 +2802,15 @@ public class MainScreen extends FluidUIScreen {
     private IUIScreen getItemGroupSelectorOverlayScreen(double mouseX, double mouseY) {
         final double mousePercentY = mouseY / Display.getHeight();
 
-        return new ItemGroupSelectorOverlayScreen(mousePercentY, ProjectManager.getCurrentProject().clientLevelData.getLevelData().getItemGroupMap());
+        return new ItemGroupSelectorOverlayScreen(mousePercentY, ProjectManager.getCurrentLevelData().getItemGroupMap());
     }
 
     public void setTypeForSelectedPlaceables(String type) {
         boolean changed = false;
 
-        assert ProjectManager.getCurrentProject().clientLevelData != null;
-        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+        assert ProjectManager.getCurrentClientLevelData() != null;
+        for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
 
             if (!Objects.equals(placeable.getAsset().getType(), type)) {
                 changed = true;
@@ -2818,11 +2818,11 @@ public class MainScreen extends FluidUIScreen {
         }
 
         if (changed) {
-            addUndoCommand(new UndoAssetTypeChange(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+            addUndoCommand(new UndoAssetTypeChange(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
         }
 
-        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+        for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
 
             placeable.getAsset().setType(type);
         }
@@ -2834,9 +2834,9 @@ public class MainScreen extends FluidUIScreen {
         //TODO: Undo command
 //        boolean changed = false;
 
-        assert ProjectManager.getCurrentProject().clientLevelData != null;
-        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+        assert ProjectManager.getCurrentClientLevelData() != null;
+        for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
 
 //            if (!Objects.equals(placeable.getAsset().getType(), type)) {
 //                changed = true;
@@ -2844,15 +2844,15 @@ public class MainScreen extends FluidUIScreen {
         }
 
 //        if (changed) {
-//            addUndoCommand(new UndoAssetTypeChange(ProjectManager.getCurrentProject().clientLevelData, ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+//            addUndoCommand(new UndoAssetTypeChange(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
 //        }
 
-        for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-            Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+        for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+            Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
 
             if (placeable.getAsset() instanceof AssetStartPos || placeable.getAsset() instanceof AssetFalloutY) continue; //Start pos and fallout Y cannot change item groups
 
-            ProjectManager.getCurrentProject().clientLevelData.getLevelData().changePlaceableItemGroup(name, itemGroup);
+            ProjectManager.getCurrentLevelData().changePlaceableItemGroup(name, itemGroup);
         }
 
         updateOutlinerPlaceablesPanel();
@@ -2864,7 +2864,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void showProjectSettings() {
-        if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+        if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
             setOverlayUiScreen(new ProjectSettingsOverlayUIScreen());
         } else {
             sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
@@ -2899,7 +2899,7 @@ public class MainScreen extends FluidUIScreen {
         boolean xmlOnly;
 
         //Only allow XML configs when no OBJ loaded
-        if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
+        if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
             xmlOnly = false;
         } else {
             xmlOnly = true;
@@ -2934,7 +2934,7 @@ public class MainScreen extends FluidUIScreen {
                             //Assume XML config file
                             XMLConfigParser.parseConfig(configData, file);
 
-                            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                            if (ProjectManager.getCurrentClientLevelData() != null) {
                                 newLevelData(configData.models, true);
                             } else {
                                 newLevelData(configData.models, false); //No client level data - Don't replace as there's nothing to replace
@@ -2946,10 +2946,10 @@ public class MainScreen extends FluidUIScreen {
                             SMBCnvConfigParser.parseConfig(configData, file);
                         }
 
-                        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+                        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
                         LevelData ld = cld.getLevelData();
 
-                        synchronized (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlacedObjects()) {
+                        synchronized (ProjectManager.getCurrentLevelData().getPlacedObjects()) {
 
                             //TODO: Replace with clear item groups instead
 
@@ -3091,14 +3091,14 @@ public class MainScreen extends FluidUIScreen {
     private void onTimelinePosChanged(Float percent) {
         timeline.updatePercent(percent);
         if (SMBLWSettings.autoUpdateProperties) {
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
-            if (ProjectManager.getCurrentProject().clientLevelData.getTimelinePos() != percent) {
-                ProjectManager.getCurrentProject().clientLevelData.clearCurrentFrameObjectAnimData();
+            assert ProjectManager.getCurrentClientLevelData() != null;
+            if (ProjectManager.getCurrentClientLevelData().getTimelinePos() != percent) {
+                ProjectManager.getCurrentClientLevelData().clearCurrentFrameObjectAnimData();
             }
 
             updatePropertiesObjectsPanel();
         } else {
-            for (Map.Entry<String, AnimData> entry : ProjectManager.getCurrentProject().clientLevelData.getCurrentFrameObjectAnimDataMap().entrySet()) {
+            for (Map.Entry<String, AnimData> entry : ProjectManager.getCurrentClientLevelData().getCurrentFrameObjectAnimDataMap().entrySet()) {
                 entry.getValue().moveFirstFrame(percent);
             }
         }
@@ -3121,10 +3121,10 @@ public class MainScreen extends FluidUIScreen {
 
     private void onPosKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
         //Add undo command
-        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+                ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
 
-        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
         LevelData ld = cld.getLevelData();
         float time = cld.getTimelinePos();
 
@@ -3157,10 +3157,10 @@ public class MainScreen extends FluidUIScreen {
 
     private void onRotKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
         //Add undo command
-        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentProject().clientLevelData, this,
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimDataMap()));
+        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+                ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
 
-        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
         LevelData ld = cld.getLevelData();
         float time = cld.getTimelinePos();
 
@@ -3192,7 +3192,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void transformObjectAtTime(String name, float time) {
-        ITransformable transform = ProjectManager.getCurrentProject().clientLevelData.getObjectNamedTransform(name, time);
+        ITransformable transform = ProjectManager.getCurrentClientLevelData().getObjectNamedTransform(name, time);
         PosXYZ translate = transform.getPosition();
         PosXYZ rotate = transform.getRotation();
         GL11.glTranslated(translate.x, translate.y, translate.z);
@@ -3202,7 +3202,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void transformObjectAtTime(String name) {
-        transformObjectAtTime(name, ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
+        transformObjectAtTime(name, ProjectManager.getCurrentClientLevelData().getTimelinePos());
     }
 
     private void addNextFrameAction(UIAction action) {
@@ -3210,7 +3210,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void moveSelectedKeyframesToBuffer(boolean makeCopy) {
-        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
         LevelData ld = cld.getLevelData();
 
         //<editor-fold desc="Pos X">
@@ -3365,7 +3365,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void commitBufferedKeyframes() {
-        ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
         LevelData ld = cld.getLevelData();
 
         for (Map.Entry<String, BufferedAnimData> entry : cld.getAnimDataBufferMap().entrySet()) { //Loop through buffered anim data objects
@@ -3378,7 +3378,7 @@ public class MainScreen extends FluidUIScreen {
     }
 
     private void discardBufferedKeyframes() {
-        ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap().clear();
+        ProjectManager.getCurrentClientLevelData().getAnimDataBufferMap().clear();
     }
 
 }

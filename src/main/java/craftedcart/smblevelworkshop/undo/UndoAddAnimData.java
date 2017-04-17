@@ -44,8 +44,8 @@ public class UndoAddAnimData extends UndoCommand {
         for (Map.Entry<String, AnimData> entry : animDataMap.entrySet()) {
             clientLevelData.getLevelData().removeAnimData(Collections.singleton(entry.getKey()));
 
-            if (ProjectManager.getCurrentProject().clientLevelData.doesCurrentFrameObjectHaveAnimData(entry.getKey())) {
-                ProjectManager.getCurrentProject().clientLevelData.removeCurrentFrameObjectAnimData(entry.getKey());
+            if (ProjectManager.getCurrentClientLevelData().doesCurrentFrameObjectHaveAnimData(entry.getKey())) {
+                ProjectManager.getCurrentClientLevelData().removeCurrentFrameObjectAnimData(entry.getKey());
             }
         }
     }

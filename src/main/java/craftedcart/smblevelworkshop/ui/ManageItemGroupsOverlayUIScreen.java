@@ -107,15 +107,15 @@ public class ManageItemGroupsOverlayUIScreen extends FluidUIScreen {
     }
 
     private void newItemGroup(ListBox listbox) {
-        ProjectManager.getCurrentProject().clientLevelData.getLevelData().addItemGroup();
+        ProjectManager.getCurrentLevelData().addItemGroup();
         populateListBox(listbox);
     }
 
     private void populateListBox(ListBox listBox) {
         listBox.clearChildComponents();
 
-        assert ProjectManager.getCurrentProject().clientLevelData != null;
-        for (Map.Entry<String, WSItemGroup> entry : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getItemGroupMap().entrySet()) {
+        assert ProjectManager.getCurrentClientLevelData() != null;
+        for (Map.Entry<String, WSItemGroup> entry : ProjectManager.getCurrentLevelData().getItemGroupMap().entrySet()) {
             listBox.addChildComponent(entry.getKey() + "ItemGroup", getItemGroup(entry.getKey(), entry.getValue()));
         }
     }

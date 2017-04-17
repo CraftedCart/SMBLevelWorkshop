@@ -52,14 +52,14 @@ public class OutlinerObject extends Panel {
             objectButton.setText(objectName);
         });
         objectButton.setOnLMBAction(() -> {
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            assert ProjectManager.getCurrentClientLevelData() != null;
 
             if (Window.isShiftDown()) { //Toggle selection on shift
-                ProjectManager.getCurrentProject().clientLevelData.toggleSelectedObject(objectName);
+                ProjectManager.getCurrentClientLevelData().toggleSelectedObject(objectName);
             } else {
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedExternalBackgroundObjects();
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedObjects();
-                ProjectManager.getCurrentProject().clientLevelData.addSelectedObject(objectName);
+                ProjectManager.getCurrentClientLevelData().clearSelectedExternalBackgroundObjects();
+                ProjectManager.getCurrentClientLevelData().clearSelectedObjects();
+                ProjectManager.getCurrentClientLevelData().addSelectedObject(objectName);
             }
         });
         addChildComponent("objectButton", objectButton);
@@ -72,9 +72,9 @@ public class OutlinerObject extends Panel {
             visibilityButton.setTexture(visibiltyTex.getTexture());
         });
         visibilityButton.setOnLMBAction(() -> {
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            assert ProjectManager.getCurrentClientLevelData() != null;
 
-            ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+            ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
             assert cld != null;
             cld.toggleHiddenObject(objectName);
 

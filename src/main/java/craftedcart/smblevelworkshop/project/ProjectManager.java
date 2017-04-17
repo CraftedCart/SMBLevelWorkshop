@@ -1,6 +1,8 @@
 package craftedcart.smblevelworkshop.project;
 
 import craftedcart.smblevelworkshop.Project;
+import craftedcart.smblevelworkshop.level.ClientLevelData;
+import craftedcart.smblevelworkshop.level.LevelData;
 
 /**
  * @author CraftedCart
@@ -16,6 +18,14 @@ public class ProjectManager {
 
     public static Project getCurrentProject() {
         return currentProject;
+    }
+
+    public static LevelData getCurrentLevelData() {
+        return getCurrentProject().clientLevelData.getLevelData();
+    }
+
+    public static ClientLevelData getCurrentClientLevelData() {
+        return getCurrentProject().clientLevelData;
     }
 
 }

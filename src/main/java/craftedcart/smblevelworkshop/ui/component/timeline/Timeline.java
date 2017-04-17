@@ -175,8 +175,8 @@ public class Timeline extends Panel {
             toStartButton.setTexture(ResourceManager.getTexture("image/toStart").getTexture());
         });
         toStartButton.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(0.0f);
+            if (ProjectManager.getCurrentClientLevelData() != null) {
+                ProjectManager.getCurrentClientLevelData().setTimelinePos(0.0f);
             } else {
                 mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
@@ -192,7 +192,7 @@ public class Timeline extends Panel {
             fastRewindButton.setTexture(ResourceManager.getTexture("image/fastRewind").getTexture());
         });
         fastRewindButton.setOnLMBAction(() -> {
-                ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+                ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
             if (cld != null) {
                 cld.setPlaybackSpeed(cld.getPlaybackSpeed() - 2.0f);
             } else {
@@ -210,7 +210,7 @@ public class Timeline extends Panel {
             rewindButton.setTexture(ResourceManager.getTexture("image/rewind").getTexture());
         });
         rewindButton.setOnLMBAction(() -> {
-            ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+            ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
             if (cld != null) {
                 cld.setPlaybackSpeed(-1.0f);
             } else {
@@ -228,7 +228,7 @@ public class Timeline extends Panel {
             pauseButton.setTexture(ResourceManager.getTexture("image/pause").getTexture());
         });
         pauseButton.setOnLMBAction(() -> {
-            ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+            ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
             if (cld != null) {
                 cld.setPlaybackSpeed(0.0f);
             } else {
@@ -246,7 +246,7 @@ public class Timeline extends Panel {
             playButton.setTexture(ResourceManager.getTexture("image/play").getTexture());
         });
         playButton.setOnLMBAction(() -> {
-            ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+            ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
             if (cld != null) {
                 cld.setPlaybackSpeed(1.0f);
             } else {
@@ -264,7 +264,7 @@ public class Timeline extends Panel {
             fastForwardButton.setTexture(ResourceManager.getTexture("image/fastForward").getTexture());
         });
         fastForwardButton.setOnLMBAction(() -> {
-            ClientLevelData cld = ProjectManager.getCurrentProject().clientLevelData;
+            ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
             if (cld != null) {
                 cld.setPlaybackSpeed(cld.getPlaybackSpeed() + 2.0f);
             } else {
@@ -282,8 +282,8 @@ public class Timeline extends Panel {
             toEndButton.setTexture(ResourceManager.getTexture("image/toEnd").getTexture());
         });
         toEndButton.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(1.0f);
+            if (ProjectManager.getCurrentClientLevelData() != null) {
+                ProjectManager.getCurrentClientLevelData().setTimelinePos(1.0f);
             } else {
                 mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
@@ -313,8 +313,8 @@ public class Timeline extends Panel {
         percentTextField.setOnValueConfirmedAction(() -> {
             try {
                 float newValue = Float.parseFloat(percentTextField.value);
-                if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                    ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(newValue / 100.0f);
+                if (ProjectManager.getCurrentClientLevelData() != null) {
+                    ProjectManager.getCurrentClientLevelData().setTimelinePos(newValue / 100.0f);
                 } else {
                     mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
                 }
@@ -322,8 +322,8 @@ public class Timeline extends Panel {
                 mainScreen.sendNotif(LangManager.getItem("invalidNumber"), UIColor.matRed());
             }
 
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                updatePercent(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
+            if (ProjectManager.getCurrentClientLevelData() != null) {
+                updatePercent(ProjectManager.getCurrentClientLevelData().getTimelinePos());
             }
         });
         mainScreen.addTextField(percentTextField);
@@ -352,9 +352,9 @@ public class Timeline extends Panel {
         maxTimeTextField.setOnValueConfirmedAction(() -> {
             try {
                 float newValue = Float.parseFloat(maxTimeTextField.value);
-                if (ProjectManager.getCurrentProject().clientLevelData != null) {
+                if (ProjectManager.getCurrentClientLevelData() != null) {
                     if (newValue > 0) {
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().setMaxTime(newValue);
+                        ProjectManager.getCurrentLevelData().setMaxTime(newValue);
                     } else {
                         mainScreen.sendNotif(LangManager.getItem("numberMustBeGreaterThanZero"), UIColor.matRed());
                     }
@@ -365,9 +365,9 @@ public class Timeline extends Panel {
                 mainScreen.sendNotif(LangManager.getItem("invalidNumber"), UIColor.matRed());
             }
 
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                updateMaxAndLeadInTime(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime(),
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime());
+            if (ProjectManager.getCurrentClientLevelData() != null) {
+                updateMaxAndLeadInTime(ProjectManager.getCurrentLevelData().getMaxTime(),
+                        ProjectManager.getCurrentLevelData().getLeadInTime());
             }
         });
         mainScreen.addTextField(maxTimeTextField);
@@ -396,16 +396,16 @@ public class Timeline extends Panel {
         timeTextField.setOnValueConfirmedAction(() -> {
             try {
                 float newValue = Float.parseFloat(timeTextField.value);
-                if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                    if (newValue >= -ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) {
-                        if (newValue <= ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime()) {
-                            ProjectManager.getCurrentProject().clientLevelData.setTimelinePosSeconds(newValue);
+                if (ProjectManager.getCurrentClientLevelData() != null) {
+                    if (newValue >= -ProjectManager.getCurrentLevelData().getLeadInTime()) {
+                        if (newValue <= ProjectManager.getCurrentLevelData().getMaxTime()) {
+                            ProjectManager.getCurrentClientLevelData().setTimelinePosSeconds(newValue);
                         } else {
                             mainScreen.sendNotif(LangManager.getItem("numberMustBeLessThanMaxTime"), UIColor.matRed());
                         }
                     } else {
                         mainScreen.sendNotif(String.format(LangManager.getItem("numberMustBeGreaterThanOrEqualTo"),
-                                -ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()), UIColor.matRed());
+                                -ProjectManager.getCurrentLevelData().getLeadInTime()), UIColor.matRed());
                     }
                 } else {
                     mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
@@ -414,8 +414,8 @@ public class Timeline extends Panel {
                 mainScreen.sendNotif(LangManager.getItem("invalidNumber"), UIColor.matRed());
             }
 
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                updatePercent(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos());
+            if (ProjectManager.getCurrentClientLevelData() != null) {
+                updatePercent(ProjectManager.getCurrentClientLevelData().getTimelinePos());
             }
         });
         mainScreen.addTextField(timeTextField);
@@ -426,8 +426,8 @@ public class Timeline extends Panel {
     public void updatePercent(Float percent) {
         float seconds =
                 percent *
-                        (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime() + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) -
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime();
+                        (ProjectManager.getCurrentLevelData().getMaxTime() + ProjectManager.getCurrentLevelData().getLeadInTime()) -
+                        ProjectManager.getCurrentLevelData().getLeadInTime();
 
         posPanel.setTopLeftAnchor(percent, 0);
         posPanel.setBottomRightAnchor(percent, 1);
@@ -437,14 +437,14 @@ public class Timeline extends Panel {
         percentTextField.setValue(df.format(percent * 100));
         timeTextField.setValue(df.format(
                 percent *
-                (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime() + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()) -
-                ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime()
+                (ProjectManager.getCurrentLevelData().getMaxTime() + ProjectManager.getCurrentLevelData().getLeadInTime()) -
+                ProjectManager.getCurrentLevelData().getLeadInTime()
         ));
     }
 
     public void updateMaxAndLeadInTime(float maxTime, float leadInTime) {
         maxTimeTextField.setValue(df.format(maxTime));
-        posPanel.setLeftText(df.format(ProjectManager.getCurrentProject().clientLevelData.getTimelinePos() * (maxTime + leadInTime) - leadInTime) + secondsSuffix);
+        posPanel.setLeftText(df.format(ProjectManager.getCurrentClientLevelData().getTimelinePos() * (maxTime + leadInTime) - leadInTime) + secondsSuffix);
     }
 
     private class TimelinePlugin extends AbstractComponentPlugin {
@@ -484,14 +484,14 @@ public class Timeline extends Panel {
                                         (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                 0, 1);
 
-                        if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                            seconds = ProjectManager.getCurrentProject().clientLevelData.timelinePercentToSeconds(percent);
+                        if (ProjectManager.getCurrentClientLevelData() != null) {
+                            seconds = ProjectManager.getCurrentClientLevelData().timelinePercentToSeconds(percent);
 
                             if (Window.isAltDown()) { //Alt to snap - Shift for precision
                                 float snapTo = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap;
                                 float roundMultiplier = 1.0f / snapTo;
                                 seconds = Math.round(seconds * roundMultiplier) / roundMultiplier; //newTimeSnapped
-                                percent = ProjectManager.getCurrentProject().clientLevelData.timelineSecondsToPercent(seconds);
+                                percent = ProjectManager.getCurrentClientLevelData().timelineSecondsToPercent(seconds);
                             }
                         }
                     }
@@ -503,8 +503,8 @@ public class Timeline extends Panel {
                     cursorPosPanel.setVisible(true);
 
                     if (Mouse.isButtonDown(0)) { //If LMB down
-                        if (ProjectManager.getCurrentProject().clientLevelData != null) {
-                            ProjectManager.getCurrentProject().clientLevelData.setTimelinePos(percent);
+                        if (ProjectManager.getCurrentClientLevelData() != null) {
+                            ProjectManager.getCurrentClientLevelData().setTimelinePos(percent);
                         }
                     }
                     //</editor-fold>
@@ -517,7 +517,7 @@ public class Timeline extends Panel {
 
         @Override
         public void onClickChildComponent(int button, PosXY mousePos) {
-            if (ProjectManager.getCurrentProject().clientLevelData == null) {
+            if (ProjectManager.getCurrentClientLevelData() == null) {
                 mainScreen.sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
             }
 
@@ -549,13 +549,13 @@ public class Timeline extends Panel {
 
         private void startSelection(PosXY mousePos) {
             selectionStartPos = mousePos;
-            if (!Window.isShiftDown() && ProjectManager.getCurrentProject().clientLevelData != null) { //Deselect all keyframes if shift not down
-                ProjectManager.getCurrentProject().clientLevelData.clearSelectedKeyframes();
+            if (!Window.isShiftDown() && ProjectManager.getCurrentClientLevelData() != null) { //Deselect all keyframes if shift not down
+                ProjectManager.getCurrentClientLevelData().clearSelectedKeyframes();
             }
         }
 
         private void endSelection(PosXY mousePos) {
-            if (ProjectManager.getCurrentProject().clientLevelData != null) {
+            if (ProjectManager.getCurrentClientLevelData() != null) {
                 PosXY topLeftPos = new PosXY(
                         Math.min(selectionStartPos.x, mousePos.x),
                         Math.min(selectionStartPos.y, mousePos.y));
@@ -565,8 +565,8 @@ public class Timeline extends Panel {
 
                 //<editor-fold desc="Pos X">
                 if (MathUtils.isInRange(linkedComponent.topLeftPx.y + POS_X_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are X pos keyframes in selection Y range
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                    for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                        if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
 
                             float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
@@ -576,7 +576,7 @@ public class Timeline extends Panel {
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                     0, 1);
 
-                            ProjectManager.getCurrentProject().clientLevelData.selectPosXKeyframesInRange(name, minPercent, maxPercent);
+                            ProjectManager.getCurrentClientLevelData().selectPosXKeyframesInRange(name, minPercent, maxPercent);
                         }
                     }
                 }
@@ -584,8 +584,8 @@ public class Timeline extends Panel {
 
                 //<editor-fold desc="Pos Y">
                 if (MathUtils.isInRange(linkedComponent.topLeftPx.y + POS_Y_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y pos keyframes in selection Y range
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                    for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                        if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
 
                             float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
@@ -595,7 +595,7 @@ public class Timeline extends Panel {
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                     0, 1);
 
-                            ProjectManager.getCurrentProject().clientLevelData.selectPosYKeyframesInRange(name, minPercent, maxPercent);
+                            ProjectManager.getCurrentClientLevelData().selectPosYKeyframesInRange(name, minPercent, maxPercent);
                         }
                     }
                 }
@@ -603,8 +603,8 @@ public class Timeline extends Panel {
 
                 //<editor-fold desc="Pos Z">
                 if (MathUtils.isInRange(linkedComponent.topLeftPx.y + POS_Z_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y pos keyframes in selection Y range
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                    for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                        if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
 
                             float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
@@ -614,7 +614,7 @@ public class Timeline extends Panel {
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                     0, 1);
 
-                            ProjectManager.getCurrentProject().clientLevelData.selectPosZKeyframesInRange(name, minPercent, maxPercent);
+                            ProjectManager.getCurrentClientLevelData().selectPosZKeyframesInRange(name, minPercent, maxPercent);
                         }
                     }
                 }
@@ -622,8 +622,8 @@ public class Timeline extends Panel {
 
                 //<editor-fold desc="Rot X">
                 if (MathUtils.isInRange(linkedComponent.topLeftPx.y + ROT_X_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are X rot keyframes in selection Y range
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                    for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                        if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
 
                             float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
@@ -633,7 +633,7 @@ public class Timeline extends Panel {
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                     0, 1);
 
-                            ProjectManager.getCurrentProject().clientLevelData.selectRotXKeyframesInRange(name, minPercent, maxPercent);
+                            ProjectManager.getCurrentClientLevelData().selectRotXKeyframesInRange(name, minPercent, maxPercent);
                         }
                     }
                 }
@@ -641,8 +641,8 @@ public class Timeline extends Panel {
 
                 //<editor-fold desc="Rot Y">
                 if (MathUtils.isInRange(linkedComponent.topLeftPx.y + ROT_Y_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y rot keyframes in selection Y range
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                    for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                        if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
 
                             float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
@@ -652,7 +652,7 @@ public class Timeline extends Panel {
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                     0, 1);
 
-                            ProjectManager.getCurrentProject().clientLevelData.selectRotYKeyframesInRange(name, minPercent, maxPercent);
+                            ProjectManager.getCurrentClientLevelData().selectRotYKeyframesInRange(name, minPercent, maxPercent);
                         }
                     }
                 }
@@ -660,8 +660,8 @@ public class Timeline extends Panel {
 
                 //<editor-fold desc="Rot Z">
                 if (MathUtils.isInRange(linkedComponent.topLeftPx.y + ROT_Z_KEYFRAME_Y_POS + 10, topLeftPos.y, bottomRightPos.y)) { //Are Y rot keyframes in selection Y range
-                    for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
-                        if (ProjectManager.getCurrentProject().clientLevelData.getLevelData().doesObjectHaveAnimData(name)) {
+                    for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+                        if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
 
                             float minPercent = (float) MathUtils.clamp(((topLeftPos.x - linkedComponent.topLeftPx.x) /
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
@@ -671,7 +671,7 @@ public class Timeline extends Panel {
                                             (linkedComponent.width - (TIMELINE_PADDING * 2))) - TIMELINE_PADDING / linkedComponent.width,
                                     0, 1);
 
-                            ProjectManager.getCurrentProject().clientLevelData.selectRotZKeyframesInRange(name, minPercent, maxPercent);
+                            ProjectManager.getCurrentClientLevelData().selectRotZKeyframesInRange(name, minPercent, maxPercent);
                         }
                     }
                 }
@@ -708,7 +708,7 @@ public class Timeline extends Panel {
             for (Map.Entry<String, AnimData> entry : objectAnimDataMap.entrySet()) {
                 String name = entry.getKey();
                 AnimData ad = entry.getValue();
-                Map<String, BufferedAnimData> animDataBufferMap = ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap();
+                Map<String, BufferedAnimData> animDataBufferMap = ProjectManager.getCurrentClientLevelData().getAnimDataBufferMap();
                 if (animDataBufferMap.containsKey(entry.getKey())) {
                     ad = ad.mergeWithCopy(animDataBufferMap.get(entry.getKey()).getTransformedAnimData());
                 }
@@ -817,7 +817,7 @@ public class Timeline extends Panel {
                 String name = entry.getKey();
                 AnimData ad = entry.getValue();
 
-                Map<String, BufferedAnimData> animDataBufferMap = ProjectManager.getCurrentProject().clientLevelData.getAnimDataBufferMap();
+                Map<String, BufferedAnimData> animDataBufferMap = ProjectManager.getCurrentClientLevelData().getAnimDataBufferMap();
                 if (animDataBufferMap.containsKey(entry.getKey())) {
                     ad = ad.mergeWithCopy(animDataBufferMap.get(entry.getKey()).getTransformedAnimData());
                 }
@@ -832,7 +832,7 @@ public class Timeline extends Panel {
                         UIColor.matRed().bindColor();
                         UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
 
-                        if (ProjectManager.getCurrentProject().clientLevelData.isPosXKeyframeSelected(time)) { //Draw selection tex if selected
+                        if (ProjectManager.getCurrentClientLevelData().isPosXKeyframeSelected(time)) { //Draw selection tex if selected
                             UIColor.matYellow().bindColor();
                             UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeSelectionTex);
                         }
@@ -853,7 +853,7 @@ public class Timeline extends Panel {
                         UIColor.matGreen().bindColor();
                         UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
 
-                        if (ProjectManager.getCurrentProject().clientLevelData.isPosYKeyframeSelected(time)) { //Draw selection tex if selected
+                        if (ProjectManager.getCurrentClientLevelData().isPosYKeyframeSelected(time)) { //Draw selection tex if selected
                             UIColor.matYellow().bindColor();
                             UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeSelectionTex);
                         }
@@ -872,7 +872,7 @@ public class Timeline extends Panel {
                         UIColor.matBlue().bindColor();
                         UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeTex);
 
-                        if (ProjectManager.getCurrentProject().clientLevelData.isPosZKeyframeSelected(time)) { //Draw selection tex if selected
+                        if (ProjectManager.getCurrentClientLevelData().isPosZKeyframeSelected(time)) { //Draw selection tex if selected
                             UIColor.matYellow().bindColor();
                             UIUtils.drawTexturedQuad(pos.add(-10, 0), pos.add(10, 20), keyframeSelectionTex);
                         }
@@ -893,7 +893,7 @@ public class Timeline extends Panel {
                         UIColor.matRed().bindColor();
                         UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
 
-                        if (ProjectManager.getCurrentProject().clientLevelData.isRotXKeyframeSelected(time)) { //Draw selection tex if selected
+                        if (ProjectManager.getCurrentClientLevelData().isRotXKeyframeSelected(time)) { //Draw selection tex if selected
                             UIColor.matYellow().bindColor();
                             UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeSelectionTex);
                         }
@@ -914,7 +914,7 @@ public class Timeline extends Panel {
                         UIColor.matGreen().bindColor();
                         UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
 
-                        if (ProjectManager.getCurrentProject().clientLevelData.isRotYKeyframeSelected(time)) { //Draw selection tex if selected
+                        if (ProjectManager.getCurrentClientLevelData().isRotYKeyframeSelected(time)) { //Draw selection tex if selected
                             UIColor.matYellow().bindColor();
                             UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeSelectionTex);
                         }
@@ -933,7 +933,7 @@ public class Timeline extends Panel {
                         UIColor.matBlue().bindColor();
                         UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeTex);
 
-                        if (ProjectManager.getCurrentProject().clientLevelData.isRotZKeyframeSelected(time)) { //Draw selection tex if selected
+                        if (ProjectManager.getCurrentClientLevelData().isRotZKeyframeSelected(time)) { //Draw selection tex if selected
                             UIColor.matYellow().bindColor();
                             UIUtils.drawTexturedQuad(rot.add(-10, 0), rot.add(10, 20), keyframeSelectionTex);
                         }
@@ -956,9 +956,9 @@ public class Timeline extends Panel {
 
             //Time 0 separator
             float timeZeroPercent = 6.0f / 66.0f;
-            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentProject().clientLevelData != null) {
-                timeZeroPercent = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime() /
-                        (ProjectManager.getCurrentProject().clientLevelData.getLevelData().getLeadInTime() + ProjectManager.getCurrentProject().clientLevelData.getLevelData().getMaxTime());
+            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
+                timeZeroPercent = ProjectManager.getCurrentLevelData().getLeadInTime() /
+                        (ProjectManager.getCurrentLevelData().getLeadInTime() + ProjectManager.getCurrentLevelData().getMaxTime());
             }
             double timeZeroPx = linkedComponent.topLeftPx.x + (linkedComponent.width * timeZeroPercent);
 

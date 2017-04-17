@@ -42,7 +42,7 @@ public class ItemGroupSelectorOverlayScreen extends FluidUIScreen {
             final Button button = getItemGroup(entry.getKey(), entry.getValue());
             button.setOnLMBAction(() -> selectItemGroup(entry));
             if (Objects.equals(entry.getKey(), "STAGE_RESERVED") ||
-                    (Objects.equals(entry.getKey(), "BACKGROUND_RESERVED") && ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects().size() == 0)) {
+                    (Objects.equals(entry.getKey(), "BACKGROUND_RESERVED") && ProjectManager.getCurrentClientLevelData().getSelectedObjects().size() == 0)) {
                 button.setEnabled(false);
             }
             listBox.addChildComponent(entry.getKey() + "TypeButton", button);

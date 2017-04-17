@@ -97,7 +97,7 @@ public class ProjectSettingsOverlayUIScreen extends FluidUIScreen {
     private void populateListBox(ListBox listBox) {
         //Model sources
         listBox.addChildComponent("modelSourcesLabel", getLabel(LangManager.getItem("modelSources")));
-        for (File file : ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSources()) {
+        for (File file : ProjectManager.getCurrentLevelData().getModelObjSources()) {
             String filepath = file.getAbsolutePath();
             listBox.addChildComponent(filepath + "ModelSourceLabel", getLabel(filepath));
         }

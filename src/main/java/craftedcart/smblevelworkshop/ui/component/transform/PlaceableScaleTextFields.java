@@ -31,13 +31,13 @@ public class PlaceableScaleTextFields extends ScaleTextFields {
         try {
             newValue = Double.parseDouble(value);
 
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            assert ProjectManager.getCurrentClientLevelData() != null;
 
-            mainScreen.addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentProject().clientLevelData,
-                    ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()));
+            mainScreen.addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentClientLevelData(),
+                    ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
 
-            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedPlaceables()) {
-                Placeable placeable = ProjectManager.getCurrentProject().clientLevelData.getLevelData().getPlaceable(name);
+            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
+                Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
                 transformablesToPopulate.add(placeable);
             }
 

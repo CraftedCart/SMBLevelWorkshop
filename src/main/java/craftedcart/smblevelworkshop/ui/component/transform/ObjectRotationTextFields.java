@@ -36,17 +36,17 @@ public class ObjectRotationTextFields extends RotationTextFields {
         try {
             newValue = Double.parseDouble(value);
 
-            assert ProjectManager.getCurrentProject().clientLevelData != null;
+            assert ProjectManager.getCurrentClientLevelData() != null;
 
-            for (String name : ProjectManager.getCurrentProject().clientLevelData.getSelectedObjects()) {
+            for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
 
-                if (!ProjectManager.getCurrentProject().clientLevelData.doesCurrentFrameObjectHaveAnimData(name)) {
-                    ProjectManager.getCurrentProject().clientLevelData.addCurrentFrameAnimData(Collections.singleton(name));
+                if (!ProjectManager.getCurrentClientLevelData().doesCurrentFrameObjectHaveAnimData(name)) {
+                    ProjectManager.getCurrentClientLevelData().addCurrentFrameAnimData(Collections.singleton(name));
                 }
 
                 transformablesToPopulate.add(
-                        ProjectManager.getCurrentProject().clientLevelData.getLevelData().getObjectAnimData(name).getNamedTransformAtTime(
-                                ProjectManager.getCurrentProject().clientLevelData.getTimelinePos(),
+                        ProjectManager.getCurrentLevelData().getObjectAnimData(name).getNamedTransformAtTime(
+                                ProjectManager.getCurrentClientLevelData().getTimelinePos(),
                                 name
                         )
                 );
@@ -64,16 +64,16 @@ public class ObjectRotationTextFields extends RotationTextFields {
     public void valueChanged(PosXYZ newValue, EnumAxis axis, List<ITransformable> transformables) {
         super.valueChanged(newValue, axis, transformables);
 
-        float time = ProjectManager.getCurrentProject().clientLevelData.getTimelinePos();
+        float time = ProjectManager.getCurrentClientLevelData().getTimelinePos();
 
         for (ITransformable transformable : transformables) {
             assert transformable instanceof NamedTransform;
             String name = ((NamedTransform) transformable).getName();
-            if (!ProjectManager.getCurrentProject().clientLevelData.doesCurrentFrameObjectHaveAnimData(name)) {
-                ProjectManager.getCurrentProject().clientLevelData.addCurrentFrameAnimData(Collections.singleton(name));
+            if (!ProjectManager.getCurrentClientLevelData().doesCurrentFrameObjectHaveAnimData(name)) {
+                ProjectManager.getCurrentClientLevelData().addCurrentFrameAnimData(Collections.singleton(name));
             }
 
-            AnimData animData = ProjectManager.getCurrentProject().clientLevelData.getCurrentFrameObjectAnimData(name);
+            AnimData animData = ProjectManager.getCurrentClientLevelData().getCurrentFrameObjectAnimData(name);
 
             if (axis == EnumAxis.X) {
                 animData.setRotXFrame(time, (float) newValue.x);

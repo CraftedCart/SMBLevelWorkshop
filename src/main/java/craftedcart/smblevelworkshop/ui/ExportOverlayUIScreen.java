@@ -237,11 +237,11 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             progScreen.activateTask("exportWriteConfig");
 
             try {
-                assert ProjectManager.getCurrentProject().clientLevelData != null;
+                assert ProjectManager.getCurrentClientLevelData() != null;
                 if (isXML) {
-                    ExportXMLManager.writeXMLConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), file);
+                    ExportXMLManager.writeXMLConfig(ProjectManager.getCurrentLevelData(), file);
                 } else {
-                    ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), file);
+                    ExportManager.writeConfig(ProjectManager.getCurrentLevelData(), file);
                 }
             } catch (IOException | ParserConfigurationException | TransformerException e) {
                 LogHelper.error(getClass(), "Error while exporting");
@@ -293,7 +293,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             try {
                 tempConfigFile = File.createTempFile("SMBLevelWorkshopExportConfig", ".txt");
-                writtenConfigFiles = ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), tempConfigFile);
+                writtenConfigFiles = ExportManager.writeConfig(ProjectManager.getCurrentLevelData(), tempConfigFile);
                 progScreen.completeTask("exportWriteConfig");
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
@@ -309,7 +309,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing OBJ File...");
             ModelData modelData = new ModelData();
             try {
-                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSources());
+                modelData.parseObj(ProjectManager.getCurrentLevelData().getModelObjSources());
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.error(getClass(), "OBJ file not found!");
@@ -484,7 +484,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
 
             try {
                 tempConfigFile = File.createTempFile("SMBLevelWorkshopExportConfig", ".txt");
-                writtenConfigFiles = ExportManager.writeConfig(ProjectManager.getCurrentProject().clientLevelData.getLevelData(), tempConfigFile);
+                writtenConfigFiles = ExportManager.writeConfig(ProjectManager.getCurrentLevelData(), tempConfigFile);
                 progScreen.completeTask("exportWriteConfig");
             } catch (IOException e) {
                 LogHelper.error(getClass(), "Error while exporting");
@@ -500,7 +500,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             LogHelper.info(getClass(), "Parsing OBJ File...");
             ModelData modelData = new ModelData();
             try {
-                modelData.parseObj(ProjectManager.getCurrentProject().clientLevelData.getLevelData().getModelObjSources());
+                modelData.parseObj(ProjectManager.getCurrentLevelData().getModelObjSources());
             } catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
                     LogHelper.error(getClass(), "OBJ file not found!");
