@@ -38,10 +38,10 @@ public class TimelinePlayhead extends Panel {
         );
 
         UIUtils.drawQuad(
-                topLeftPx,
-                new PosXY(topLeftPx.x, topLeftPx.y + 16),
-                new PosXY(topLeftPx.x - 38, topLeftPx.y + 16),
                 new PosXY(topLeftPx.x - 62, topLeftPx.y),
+                new PosXY(topLeftPx.x - 38, topLeftPx.y + 16),
+                new PosXY(topLeftPx.x, topLeftPx.y + 16),
+                topLeftPx,
                 backgroundColor
         );
 
