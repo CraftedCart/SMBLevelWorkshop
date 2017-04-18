@@ -81,6 +81,14 @@ public class LevelData {
     }
 
     /**
+     * @param name The unique name of the object
+     * @param itemGroup The name of the item group to add it to
+     */
+    public void addObject(String name, String itemGroup) {
+        itemGroupMap.get(itemGroup).addObject(name);
+    }
+
+    /**
      * Will be added to item group 1
      *
      * @param name The unique name for the placeable
@@ -89,6 +97,15 @@ public class LevelData {
      */
     public String addPlaceable(String name, Placeable placeable) {
         return getFirstItemGroup().addPlaceable(name, placeable);
+    }
+
+    /**
+     * Will be added to item group 1
+     *
+     * @param name The unique name of the object
+     */
+    public void addObject(String name) {
+        getFirstItemGroup().addObject(name);
     }
 
     /**
@@ -122,6 +139,15 @@ public class LevelData {
         return null;
     }
 
+    public void removeObject(String name) {
+        for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
+            if (entry.getValue().hasObject(name)) {
+                entry.getValue().removeObject(name);
+                return;
+            }
+        }
+    }
+
     public Placeable getPlaceable(String name) {
         for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
             Placeable placeable =  entry.getValue().getPlaceable(name);
@@ -146,35 +172,15 @@ public class LevelData {
         addPlaceable(name, placeable, newItemGroup);
     }
 
+    public void changeObjectItemGroup(String name, String newItemGroup) {
+        removeObject(name);
+        addObject(name, newItemGroup);
+
+    }
+
     @Deprecated
     public void clearPlacedObjects() {
         for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) entry.getValue().clearPlaceables();
-    }
-
-    @Deprecated
-    public void addBackgroundObject(String name) {
-//        backgroundObjects.add(name);
-    }
-
-    @Deprecated
-    public void removeBackgroundObject(String name) {
-//        if (backgroundObjects.contains(name)) {
-//            backgroundObjects.remove(name);
-//        }
-    }
-
-    @Deprecated
-    public boolean isObjectBackground(String name) {
-//        return backgroundObjects.contains(name);
-        return false;
-    }
-
-    public void toggleBackgroundObject(String name) {
-//        if (isObjectBackground(name)) {
-//            removeBackgroundObject(name);
-//        } else {
-//            addBackgroundObject(name);
-//        }
     }
 
     @Deprecated
@@ -189,89 +195,11 @@ public class LevelData {
         return new HashSet<>();
     }
 
-    @Deprecated
-    public void addBackgroundExternalObject(String name) {
-//        backgroundExternalObjects.add(name);
-    }
-
-    @Deprecated
-    public void removeBackgroundExternalObject(String name) {
-//        if (backgroundExternalObjects.contains(name)) {
-//            backgroundExternalObjects.remove(name);
-//        }
-    }
-
-    @Deprecated
-    public boolean isObjectBackgroundExternal(String name) {
-//        return backgroundExternalObjects.contains(name);
-        return false;
-    }
-
-    public void toggleBackgroundExternalObject(String name) {
-//        if (isObjectBackgroundExternal(name)) {
-//            removeBackgroundExternalObject(name);
-//        } else {
-//            addBackgroundExternalObject(name);
-//        }
-    }
-
-    @Deprecated
-    public void clearBackgroundExternalObjects() {
-//        backgroundExternalObjects.clear();
-    }
-
     @NotNull
     @Deprecated
     public Set<String> getBackgroundExternalObjects() {
 //        return backgroundExternalObjects;
         return new HashSet<>();
-    }
-
-    @Deprecated
-    public boolean doesObjectHaveAnimData(String name) {
-        return false;
-    }
-
-    @Deprecated
-    public void addAnimData(Set<String> selectedObjects) {
-    }
-
-    @Deprecated
-    public void setAnimData(String name, AnimData animData) {
-    }
-
-    @Deprecated
-    public AnimData getObjectAnimData(String name) {
-        return null;
-    }
-
-    @NotNull
-    @Deprecated
-    public TreeMap<String, AnimData> getObjectAnimDataMap() {
-        return new TreeMap<>();
-    }
-
-    @Deprecated
-    public void removeAnimData(Set<String> selectedObjects) {
-    }
-
-    @Deprecated
-    public void replaceObjectAnimDataMap(TreeMap<String, AnimData> newMap) {
-    }
-
-    /**
-     * Thread safe
-     *
-     * @return A deeper clone
-     */
-    @Deprecated
-    public TreeMap<String, AnimData> getObjectAnimDataMapCopy() {
-        TreeMap<String, AnimData> deeperCloneMap = new TreeMap<>();
-        return deeperCloneMap;
-    }
-
-    @Deprecated
-    public void clearAnimData() {
     }
 
     public float getLeadInTime() {
@@ -382,6 +310,17 @@ public class LevelData {
     public String getPlaceableItemGroupName(String name) {
         for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
             if (entry.getValue().hasPlaceable(name)) {
+                return entry.getKey();
+            }
+        }
+
+        //Nothing found - Return null
+        return null;
+    }
+
+    public String getObjectItemGroupName(String name) {
+        for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
+            if (entry.getValue().hasObject(name)) {
                 return entry.getKey();
             }
         }

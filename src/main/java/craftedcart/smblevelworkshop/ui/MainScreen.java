@@ -106,19 +106,10 @@ public class MainScreen extends FluidUIScreen {
     private final TextButton typeButton = new TextButton();
     @Nullable private List<String> typeList = null;
 
-    private final TextButton itemGroupButton = new TextButton();
+    private final TextButton placeableItemGroupButton = new TextButton();
 
     //UI: Object Properties
-    private final CheckBox backgroundObjectCheckBox = new CheckBox();
-    private final TextButton addAnimDataButton = new TextButton();
-
-    private final List<Component> objectAnimationComponents = new ArrayList<>();
-
-    private final ObjectRotationTextFields objectRotationTextFields = new ObjectRotationTextFields(this, null);
-    private final XYZKeyframeButtons objectRotationKeyframeButtons = new XYZKeyframeButtons();
-
-    private final ObjectPositionTextFields objectPositionTextFields = new ObjectPositionTextFields(this, objectRotationTextFields.getFirstTextField());
-    private final XYZKeyframeButtons objectPositionKeyframeButtons = new XYZKeyframeButtons();
+    private final TextButton objectItemGroupButton = new TextButton();
 
     //UI: Text Fields
     private Set<TextField> textFields;
@@ -607,27 +598,27 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesPlaceablesListBox.addChildComponent("typeButton", typeButton);
 
-        final Label itemGroupLabel = new Label();
-        itemGroupLabel.setOnInitAction(() -> {
-            itemGroupLabel.setText(LangManager.getItem("itemGroup"));
-            itemGroupLabel.setVerticalAlign(EnumVAlignment.centre);
-            itemGroupLabel.setTopLeftPos(0, 0);
-            itemGroupLabel.setBottomRightPos(0, 24);
+        final Label placeableItemGroupLabel = new Label();
+        placeableItemGroupLabel.setOnInitAction(() -> {
+            placeableItemGroupLabel.setText(LangManager.getItem("itemGroup"));
+            placeableItemGroupLabel.setVerticalAlign(EnumVAlignment.centre);
+            placeableItemGroupLabel.setTopLeftPos(0, 0);
+            placeableItemGroupLabel.setBottomRightPos(0, 24);
         });
-        propertiesPlaceablesListBox.addChildComponent("itemGroupLabel", itemGroupLabel);
+        propertiesPlaceablesListBox.addChildComponent("itemGroupLabel", placeableItemGroupLabel);
 
         //Defined at class level
-        itemGroupButton.setOnInitAction(() -> {
-            itemGroupButton.setText(LangManager.getItem("nothingSelected"));
-            itemGroupButton.setEnabled(false);
-            itemGroupButton.setTopLeftPos(0, 0);
-            itemGroupButton.setBottomRightPos(0, 24);
+        placeableItemGroupButton.setOnInitAction(() -> {
+            placeableItemGroupButton.setText(LangManager.getItem("nothingSelected"));
+            placeableItemGroupButton.setEnabled(false);
+            placeableItemGroupButton.setTopLeftPos(0, 0);
+            placeableItemGroupButton.setBottomRightPos(0, 24);
         });
-        itemGroupButton.setOnLMBAction(() -> {
+        placeableItemGroupButton.setOnLMBAction(() -> {
             assert mousePos != null;
             setOverlayUiScreen(getItemGroupSelectorOverlayScreen(mousePos.x, mousePos.y));
         });
-        propertiesPlaceablesListBox.addChildComponent("itemGroupButton", itemGroupButton);
+        propertiesPlaceablesListBox.addChildComponent("placeableItemGroupButton", placeableItemGroupButton);
         //</editor-fold>
 
         //<editor-fold desc="Object Properties">
@@ -654,217 +645,27 @@ public class MainScreen extends FluidUIScreen {
         });
         propertiesObjectsListBox.addChildComponent("objectsPropertiesLabel", objectsPropertiesLabel);
 
-        final Panel backgroundObjectPanel = new Panel();
-        backgroundObjectPanel.setOnInitAction(() -> {
-            backgroundObjectPanel.setTopLeftPos(0, 0);
-            backgroundObjectPanel.setBottomRightPos(0, 24);
-            backgroundObjectPanel.setBackgroundColor(UIColor.transparent());
+        final Label objectItemGroupLabel = new Label();
+        objectItemGroupLabel.setOnInitAction(() -> {
+            objectItemGroupLabel.setText(LangManager.getItem("itemGroup"));
+            objectItemGroupLabel.setVerticalAlign(EnumVAlignment.centre);
+            objectItemGroupLabel.setTopLeftPos(0, 0);
+            objectItemGroupLabel.setBottomRightPos(0, 24);
         });
-        propertiesObjectsListBox.addChildComponent("backgroundObjectPanel", backgroundObjectPanel);
-
-        final Label backgroundObjectLabel = new Label();
-        backgroundObjectLabel.setOnInitAction(() -> {
-            backgroundObjectLabel.setTopLeftPos(4, 0);
-            backgroundObjectLabel.setBottomRightPos(-24, 0);
-            backgroundObjectLabel.setTopLeftAnchor(0, 0);
-            backgroundObjectLabel.setBottomRightAnchor(1, 1);
-            backgroundObjectLabel.setText(LangManager.getItem("backgroundObject"));
-        });
-        backgroundObjectPanel.addChildComponent("backgroundObjectLabel", backgroundObjectLabel);
+        propertiesObjectsListBox.addChildComponent("objectItemGroupLabel", objectItemGroupLabel);
 
         //Defined at class level
-        backgroundObjectCheckBox.setOnInitAction(() -> {
-            backgroundObjectCheckBox.setTopLeftPos(-24, 0);
-            backgroundObjectCheckBox.setBottomRightPos(0, 0);
-            backgroundObjectCheckBox.setTopLeftAnchor(1, 0);
-            backgroundObjectCheckBox.setBottomRightAnchor(1, 1);
-            backgroundObjectCheckBox.setEnabled(false);
-            backgroundObjectCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
+        objectItemGroupButton.setOnInitAction(() -> {
+            objectItemGroupButton.setText(LangManager.getItem("nothingSelected"));
+            objectItemGroupButton.setEnabled(false);
+            objectItemGroupButton.setTopLeftPos(0, 0);
+            objectItemGroupButton.setBottomRightPos(0, 24);
         });
-        backgroundObjectCheckBox.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentProject() != null && ProjectManager.getCurrentClientLevelData() != null) {
-                for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
-                    if (backgroundObjectCheckBox.getValue()) {
-                        ProjectManager.getCurrentLevelData().addBackgroundObject(name);
-                    } else {
-                        ProjectManager.getCurrentLevelData().removeBackgroundObject(name);
-                    }
-
-                    updateOutlinerObjectsPanel();
-                }
-            } else {
-                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed()); //You really shouldn't be able to toggle the checkbox when no level is loaded, but just in case
-            }
+        objectItemGroupButton.setOnLMBAction(() -> {
+            assert mousePos != null;
+            setOverlayUiScreen(getItemGroupSelectorOverlayScreen(mousePos.x, mousePos.y));
         });
-        backgroundObjectPanel.addChildComponent("backgroundObjectCheckBox", backgroundObjectCheckBox);
-
-        //Defined at class level
-        addAnimDataButton.setOnInitAction(() -> {
-            addAnimDataButton.setTopLeftPos(0, 0);
-            addAnimDataButton.setBottomRightPos(0, 24);
-            addAnimDataButton.setText(LangManager.getItem("addAnimData"));
-            addAnimDataButton.setVisible(false);
-        });
-        addAnimDataButton.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentClientLevelData() != null) {
-                Set<String> selected = ProjectManager.getCurrentClientLevelData().getSelectedObjects();
-
-                ProjectManager.getCurrentLevelData().addAnimData(selected);
-
-                //Add undo command
-                addUndoCommand(new UndoAddAnimData(ProjectManager.getCurrentClientLevelData(), this, selected));
-
-                updatePropertiesObjectsPanel();
-                updateOutlinerObjectsPanel();
-            } else {
-                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
-            }
-        });
-        propertiesObjectsListBox.addChildComponent("addAnimDataButton", addAnimDataButton);
-
-        TextButton removeAnimDataButton = new TextButton();
-        removeAnimDataButton.setOnInitAction(() -> {
-            removeAnimDataButton.setTopLeftPos(0, 0);
-            removeAnimDataButton.setBottomRightPos(0, 24);
-            removeAnimDataButton.setText(LangManager.getItem("removeAnimData"));
-            removeAnimDataButton.setVisible(false);
-        });
-        removeAnimDataButton.setOnLMBAction(() -> {
-            if (ProjectManager.getCurrentClientLevelData() != null) {
-                Set<String> selected = ProjectManager.getCurrentClientLevelData().getSelectedObjects();
-
-                //Add undo command
-                addUndoCommand(new UndoRemoveAnimData(ProjectManager.getCurrentClientLevelData(), this, selected));
-
-                ProjectManager.getCurrentClientLevelData().clearSelectedKeyframesForObjects(selected);
-                ProjectManager.getCurrentLevelData().removeAnimData(selected);
-
-                updatePropertiesObjectsPanel();
-                updateOutlinerObjectsPanel();
-            } else {
-                sendNotif(LangManager.getItem("noLevelLoaded"), UIColor.matRed());
-            }
-        });
-        propertiesObjectsListBox.addChildComponent("removeAnimDataButton", removeAnimDataButton);
-        objectAnimationComponents.add(removeAnimDataButton);
-
-        final Panel autoUpdatePropertiesPanel = new Panel();
-        autoUpdatePropertiesPanel.setOnInitAction(() -> {
-            autoUpdatePropertiesPanel.setTopLeftPos(0, 0);
-            autoUpdatePropertiesPanel.setBottomRightPos(0, 24);
-            autoUpdatePropertiesPanel.setBackgroundColor(UIColor.transparent());
-            autoUpdatePropertiesPanel.setVisible(false);
-        });
-        propertiesObjectsListBox.addChildComponent("autoUpdatePropertiesPanel", autoUpdatePropertiesPanel);
-        objectAnimationComponents.add(autoUpdatePropertiesPanel);
-
-        final Label autoUpdatePropertiesLabel = new Label();
-        autoUpdatePropertiesLabel.setOnInitAction(() -> {
-            autoUpdatePropertiesLabel.setTopLeftPos(4, 0);
-            autoUpdatePropertiesLabel.setBottomRightPos(-24, 0);
-            autoUpdatePropertiesLabel.setTopLeftAnchor(0, 0);
-            autoUpdatePropertiesLabel.setBottomRightAnchor(1, 1);
-            autoUpdatePropertiesLabel.setText(LangManager.getItem("autoUpdateProperties"));
-        });
-        autoUpdatePropertiesPanel.addChildComponent("autoUpdatePropertiesLabel", autoUpdatePropertiesLabel);
-
-        final CheckBox autoUpdatePropertiesCheckBox = new CheckBox();
-        autoUpdatePropertiesCheckBox.setOnInitAction(() -> {
-            autoUpdatePropertiesCheckBox.setTopLeftPos(-24, 0);
-            autoUpdatePropertiesCheckBox.setBottomRightPos(0, 0);
-            autoUpdatePropertiesCheckBox.setTopLeftAnchor(1, 0);
-            autoUpdatePropertiesCheckBox.setBottomRightAnchor(1, 1);
-            autoUpdatePropertiesCheckBox.setValue(SMBLWSettings.autoUpdateProperties);
-            autoUpdatePropertiesCheckBox.setTexture(ResourceManager.getTexture("image/checkBoxTick").getTexture());
-        });
-        autoUpdatePropertiesCheckBox.setOnLMBAction(() -> SMBLWSettings.autoUpdateProperties = autoUpdatePropertiesCheckBox.getValue());
-        autoUpdatePropertiesPanel.addChildComponent("autoUpdatePropertiesCheckBox", autoUpdatePropertiesCheckBox);
-
-        final Label objectPositionLabel = new Label();
-        objectPositionLabel.setOnInitAction(() -> {
-            objectPositionLabel.setText(LangManager.getItem("position"));
-            objectPositionLabel.setVerticalAlign(EnumVAlignment.centre);
-            objectPositionLabel.setTopLeftPos(0, 0);
-            objectPositionLabel.setBottomRightPos(0, 24);
-            objectPositionLabel.setVisible(false);
-        });
-        objectAnimationComponents.add(objectPositionLabel);
-        propertiesObjectsListBox.addChildComponent("objectPositionLabel", objectPositionLabel);
-
-        final Panel objectPositionPropertiesPanel = new Panel();
-        objectPositionPropertiesPanel.setOnInitAction(() -> {
-            objectPositionPropertiesPanel.setTopLeftPos(0, 0);
-            objectPositionPropertiesPanel.setBottomRightPos(0, 76);
-            objectPositionPropertiesPanel.setBackgroundColor(UIColor.transparent());
-            objectPositionPropertiesPanel.setVisible(false);
-        });
-        objectAnimationComponents.add(objectPositionPropertiesPanel);
-        propertiesObjectsListBox.addChildComponent("objectPositionPropertiesPanel", objectPositionPropertiesPanel);
-
-        //Defined at class level
-        objectPositionTextFields.setOnInitAction(() -> {
-            objectPositionTextFields.setTopLeftPos(0, 0);
-            objectPositionTextFields.setBottomRightPos(-24, 76);
-            objectPositionTextFields.setTopLeftAnchor(0, 0);
-            objectPositionTextFields.setBottomRightAnchor(1, 0);
-            objectPositionTextFields.setXEnabled(true);
-            objectPositionTextFields.setYEnabled(true);
-            objectPositionTextFields.setZEnabled(true);
-        });
-        objectPositionPropertiesPanel.addChildComponent("objectPositionTextFields", objectPositionTextFields);
-
-        //Defined at class level
-        objectPositionKeyframeButtons.setOnInitAction(() -> {
-            objectPositionKeyframeButtons.setTopLeftPos(-24, 0);
-            objectPositionKeyframeButtons.setBottomRightPos(0, 76);
-            objectPositionKeyframeButtons.setTopLeftAnchor(1, 0);
-            objectPositionKeyframeButtons.setBottomRightAnchor(1, 0);
-        });
-        objectPositionKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onPosKeyframeActivated(axis, ProjectManager.getCurrentClientLevelData().getSelectedObjects()));
-        objectPositionPropertiesPanel.addChildComponent("objectPositionKeyframeButtons", objectPositionKeyframeButtons);
-
-        final Label objectRotationLabel = new Label();
-        objectRotationLabel.setOnInitAction(() -> {
-            objectRotationLabel.setText(LangManager.getItem("rotation"));
-            objectRotationLabel.setVerticalAlign(EnumVAlignment.centre);
-            objectRotationLabel.setTopLeftPos(0, 0);
-            objectRotationLabel.setBottomRightPos(0, 24);
-            objectRotationLabel.setVisible(false);
-        });
-        objectAnimationComponents.add(objectRotationLabel);
-        propertiesObjectsListBox.addChildComponent("objectRotationLabel", objectRotationLabel);
-
-        final Panel objectRotationPropertiesPanel = new Panel();
-        objectRotationPropertiesPanel.setOnInitAction(() -> {
-            objectRotationPropertiesPanel.setTopLeftPos(0, 0);
-            objectRotationPropertiesPanel.setBottomRightPos(0, 76);
-            objectRotationPropertiesPanel.setBackgroundColor(UIColor.transparent());
-            objectRotationPropertiesPanel.setVisible(false);
-        });
-        objectAnimationComponents.add(objectRotationPropertiesPanel);
-        propertiesObjectsListBox.addChildComponent("objectRotationPropertiesPanel", objectRotationPropertiesPanel);
-
-        //Defined at class level
-        objectRotationTextFields.setOnInitAction(() -> {
-            objectRotationTextFields.setTopLeftPos(0, 0);
-            objectRotationTextFields.setBottomRightPos(-24, 76);
-            objectRotationTextFields.setTopLeftAnchor(0, 0);
-            objectRotationTextFields.setBottomRightAnchor(1, 0);
-            objectRotationTextFields.setXEnabled(true);
-            objectRotationTextFields.setYEnabled(true);
-            objectRotationTextFields.setZEnabled(true);
-        });
-        objectRotationPropertiesPanel.addChildComponent("objectRotationTextFields", objectRotationTextFields);
-
-        //Defined at class level
-        objectRotationKeyframeButtons.setOnInitAction(() -> {
-            objectRotationKeyframeButtons.setTopLeftPos(-24, 0);
-            objectRotationKeyframeButtons.setBottomRightPos(0, 76);
-            objectRotationKeyframeButtons.setTopLeftAnchor(1, 0);
-            objectRotationKeyframeButtons.setBottomRightAnchor(1, 0);
-        });
-        objectRotationKeyframeButtons.setOnKeyframeActivatedAction((axis) -> onRotKeyframeActivated(axis, ProjectManager.getCurrentClientLevelData().getSelectedObjects()));
-        objectRotationPropertiesPanel.addChildComponent("objectRotationKeyframeButtons", objectRotationKeyframeButtons);
+        propertiesObjectsListBox.addChildComponent("objectItemGroupButton", objectItemGroupButton);
         //</editor-fold>
 
         //Defined at class level
@@ -1231,28 +1032,31 @@ public class MainScreen extends FluidUIScreen {
                 }
                 //</editor-fold>
             } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.GRAB_KEYFRAME) {
-                //<editor-fold desc="Grab">
-                for (Map.Entry<String, BufferedAnimData> entry : ProjectManager.getCurrentClientLevelData().getAnimDataBufferMap().entrySet()) {
-                    BufferedAnimData bad = entry.getValue();
-
-                    if (Window.isAltDown()) { //Snap with Alt
-                        float snapToTranslation = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap; //Precise movement with shift
-                        bad.setSnapToTranslation(snapToTranslation);
-                    } else {
-                        bad.setSnapToTranslation(null);
-                    }
-
-                    if (Window.isShiftDown()) { //Precise movement with Shift
-                        float newTranslation = (float) (bad.getKeyframeBufferTranslation() + UIUtils.getMouseDelta().x * SMBLWSettings.modeKeyframeMouseShiftSensitivity +
-                                UIUtils.getMouseDWheel() * SMBLWSettings.modeKeyframeMouseWheelShiftSensitivity);
-                        bad.setKeyframeBufferTranslation(newTranslation);
-                    } else {
-                        float newTranslation = (float) (bad.getKeyframeBufferTranslation() + UIUtils.getMouseDelta().x * SMBLWSettings.modeKeyframeMouseSensitivity +
-                                UIUtils.getMouseDWheel() * SMBLWSettings.modeKeyframeMouseWheelSensitivity);
-                        bad.setKeyframeBufferTranslation(newTranslation);
-                    }
-                }
-                //</editor-fold>
+                //TODO: Grab keyframes
+//                //<editor-fold desc="Grab">
+//                for (Map.Entry<String, BufferedAnimData> entry : ProjectManager.getCurrentClientLevelData().getAnimDataBufferMap().entrySet()) {
+//                    BufferedAnimData bad = entry.getValue();
+//
+//                    if (Window.isAltDown()) { //Snap with Alt
+//                        float snapToTranslation = Window.isShiftDown() ? SMBLWSettings.animSnapShift : SMBLWSettings.animSnap; //Precise movement with shift
+//                        bad.setSnapToTranslation(snapToTranslation);
+//                    } else {
+//                        bad.setSnapToTranslation(null);
+//                    }
+//
+//                    if (Window.isShiftDown()) { //Precise movement with Shift
+//                        float newTranslation = (float) (bad.getKeyframeBufferTranslation() + UIUtils.getMouseDelta().x * SMBLWSettings.modeKeyframeMouseShiftSensitivity +
+//                                UIUtils.getMouseDWheel() * SMBLWSettings.modeKeyframeMouseWheelShiftSensitivity);
+//                        bad.setKeyframeBufferTranslation(newTranslation);
+//                    } else {
+//                        float newTranslation = (float) (bad.getKeyframeBufferTranslation() + UIUtils.getMouseDelta().x * SMBLWSettings.modeKeyframeMouseSensitivity +
+//                                UIUtils.getMouseDWheel() * SMBLWSettings.modeKeyframeMouseWheelSensitivity);
+//                        bad.setKeyframeBufferTranslation(newTranslation);
+//                    }
+//                }
+//                //</editor-fold>
+            } else if (ProjectManager.getCurrentProject().mode == EnumActionMode.SCALE_KEYFRAME) {
+                //TODO: Scale keyframes
             }
 
             if (ProjectManager.getCurrentProject().mode != EnumActionMode.NONE) {
@@ -1726,11 +1530,12 @@ public class MainScreen extends FluidUIScreen {
                     } else if (ProjectManager.getCurrentClientLevelData() != null) {
                         if (ProjectManager.getCurrentProject().mode == EnumActionMode.NONE) {
                             if (key == Keyboard.KEY_G) { //G: Grab
+                                //TODO: Timeline keyframes
                                 if (timeline.mouseOver) { //Grab keyframes when the cursor is over the timeline
-                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
-                                            ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
-                                    moveSelectedKeyframesToBuffer(false);
-                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
+//                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
+//                                    moveSelectedKeyframesToBuffer(false);
+//                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
                                 } else {
                                     addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_PLACEABLE;
@@ -1742,10 +1547,10 @@ public class MainScreen extends FluidUIScreen {
                                 }
                             } else if (key == Keyboard.KEY_S) { //S: Scale
                                 if (timeline.mouseOver) { //Scale keyframes when the cursor is over the timeline
-                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
-                                            ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
-                                    moveSelectedKeyframesToBuffer(false);
-                                    ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_KEYFRAME;
+//                                    addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
+//                                    moveSelectedKeyframesToBuffer(false);
+//                                    ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_KEYFRAME;
                                 } else {
                                     addUndoCommand(new UndoAssetTransform(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
                                     ProjectManager.getCurrentProject().mode = EnumActionMode.SCALE_PLACEABLE;
@@ -1768,65 +1573,66 @@ public class MainScreen extends FluidUIScreen {
 
                             } else if (key == Keyboard.KEY_DELETE) { //Delete: Remove placeables / Remove keyframes if mouse over timeline
                                 if (timeline.mouseOver) {
-                                    if (
-                                            //Pos
-                                            ProjectManager.getCurrentClientLevelData().getSelectedPosXKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentClientLevelData().getSelectedPosYKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentClientLevelData().getSelectedPosZKeyframes().size() > 0 ||
-                                            //Rot
-                                            ProjectManager.getCurrentClientLevelData().getSelectedRotXKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentClientLevelData().getSelectedRotYKeyframes().size() > 0 ||
-                                            ProjectManager.getCurrentClientLevelData().getSelectedRotZKeyframes().size() > 0
-                                            ) {
-
-                                        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
-                                                ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
-
-                                        int keyframesRemoved = 0;
-
-                                        //Pos
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosXKeyframes()) {
-                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosXFrame(entry.getTime());
-                                            keyframesRemoved++;
-                                        }
-
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosYKeyframes()) {
-                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosYFrame(entry.getTime());
-                                            keyframesRemoved++;
-                                        }
-
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosZKeyframes()) {
-                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosZFrame(entry.getTime());
-                                            keyframesRemoved++;
-                                        }
-
-                                        //Rot
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotXKeyframes()) {
-                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotXFrame(entry.getTime());
-                                            keyframesRemoved++;
-                                        }
-
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotYKeyframes()) {
-                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotYFrame(entry.getTime());
-                                            keyframesRemoved++;
-                                        }
-
-                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotZKeyframes()) {
-                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotZFrame(entry.getTime());
-                                            keyframesRemoved++;
-                                        }
-
-                                        ProjectManager.getCurrentClientLevelData().clearSelectedKeyframes();
-
-                                        if (keyframesRemoved > 1) {
-                                            sendNotif(String.format(LangManager.getItem("keyframeRemovedPlural"), keyframesRemoved));
-                                        } else {
-                                            sendNotif(LangManager.getItem("keyframeRemoved"));
-                                        }
-
-                                    } else {
-                                        sendNotif(LangManager.getItem("nothingSelected"));
-                                    }
+                                    //TODO: Keyframe deletion
+//                                    if (
+//                                            //Pos
+//                                            ProjectManager.getCurrentClientLevelData().getSelectedPosXKeyframes().size() > 0 ||
+//                                            ProjectManager.getCurrentClientLevelData().getSelectedPosYKeyframes().size() > 0 ||
+//                                            ProjectManager.getCurrentClientLevelData().getSelectedPosZKeyframes().size() > 0 ||
+//                                            //Rot
+//                                            ProjectManager.getCurrentClientLevelData().getSelectedRotXKeyframes().size() > 0 ||
+//                                            ProjectManager.getCurrentClientLevelData().getSelectedRotYKeyframes().size() > 0 ||
+//                                            ProjectManager.getCurrentClientLevelData().getSelectedRotZKeyframes().size() > 0
+//                                            ) {
+//
+//                                        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
+//                                                ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
+//
+//                                        int keyframesRemoved = 0;
+//
+//                                        //Pos
+//                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosXKeyframes()) {
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosXFrame(entry.getTime());
+//                                            keyframesRemoved++;
+//                                        }
+//
+//                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosYKeyframes()) {
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosYFrame(entry.getTime());
+//                                            keyframesRemoved++;
+//                                        }
+//
+//                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedPosZKeyframes()) {
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removePosZFrame(entry.getTime());
+//                                            keyframesRemoved++;
+//                                        }
+//
+//                                        //Rot
+//                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotXKeyframes()) {
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotXFrame(entry.getTime());
+//                                            keyframesRemoved++;
+//                                        }
+//
+//                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotYKeyframes()) {
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotYFrame(entry.getTime());
+//                                            keyframesRemoved++;
+//                                        }
+//
+//                                        for (KeyframeEntry entry : ProjectManager.getCurrentClientLevelData().getSelectedRotZKeyframes()) {
+//                                            ProjectManager.getCurrentLevelData().getObjectAnimData(entry.getObjectName()).removeRotZFrame(entry.getTime());
+//                                            keyframesRemoved++;
+//                                        }
+//
+//                                        ProjectManager.getCurrentClientLevelData().clearSelectedKeyframes();
+//
+//                                        if (keyframesRemoved > 1) {
+//                                            sendNotif(String.format(LangManager.getItem("keyframeRemovedPlural"), keyframesRemoved));
+//                                        } else {
+//                                            sendNotif(LangManager.getItem("keyframeRemoved"));
+//                                        }
+//
+//                                    } else {
+//                                        sendNotif(LangManager.getItem("nothingSelected"));
+//                                    }
 
                                 } else {
                                     if (ProjectManager.getCurrentClientLevelData().getSelectedPlaceables().size() > 0) {
@@ -1856,9 +1662,10 @@ public class MainScreen extends FluidUIScreen {
                             } else if (key == Keyboard.KEY_D && Window.isCtrlOrCmdDown()) { //Ctrl / Cmd D: Duplicate
 
                                 if (timeline.mouseOver) { //Duplicate keyframes when the cursor is over the timeline
+                                    //TODO: Duplicate keyframes
                                     //TODO: Undo command
-                                    moveSelectedKeyframesToBuffer(true);
-                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
+//                                    moveSelectedKeyframesToBuffer(true);
+//                                    ProjectManager.getCurrentProject().mode = EnumActionMode.GRAB_KEYFRAME;
 
                                 } else {
                                     Set<String> selectedPlaceables = new HashSet<>(ProjectManager.getCurrentClientLevelData().getSelectedPlaceables());
@@ -2192,19 +1999,23 @@ public class MainScreen extends FluidUIScreen {
                         }
                     }
 
-                    //Remove background objects if they no longer exist in the new OBJ
-                    synchronized (ProjectManager.getCurrentLevelData().getBackgroundObjects()) {
-                        for (String name : ProjectManager.getCurrentLevelData().getBackgroundObjects()) {
-                            for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
-                                if (!model.hasObject(name)) {
-                                    ProjectManager.getCurrentLevelData().removeBackgroundObject(name);
-                                }
+                    //Remove objects if they no longer exist in the new OBJ
+                    Set<String> allObjectNames = new HashSet<>();
+                    for (Map.Entry<String, WSItemGroup> entry : ProjectManager.getCurrentLevelData().getItemGroupMap().entrySet()) {
+                        allObjectNames.addAll(entry.getValue().getObjectNames());
+                    }
+                    for (ResourceModel model : ProjectManager.getCurrentLevelData().getModels()) {
+                        for (OBJObject object : model.scene.getObjectList()) {
+                            if (!allObjectNames.contains(object.name)) {
+                                ProjectManager.getCurrentLevelData().removeObject(name);
                             }
                         }
                     }
+
                 } else {
                     ProjectManager.getCurrentClientLevelData().clearSelectedObjects();
-                    timeline.setObjectAnimDataMap(ProjectManager.getCurrentLevelData().getObjectAnimDataMap());
+                    //TODO: Update timeline
+//                    timeline.setObjectAnimDataMap(ProjectManager.getCurrentLevelData().getObjectAnimDataMap());
                 }
 
                 if (!OBJLoader.isLastObjTriangulated) {
@@ -2600,7 +2411,7 @@ public class MainScreen extends FluidUIScreen {
                 }
             }
 
-            itemGroupButton.setEnabled(!stageReservedOnly);
+            placeableItemGroupButton.setEnabled(!stageReservedOnly);
 
             String commonItemGroup = null; //The name of an item group if all selected placeables have belong to the same item group, or null if the don't
 
@@ -2617,13 +2428,13 @@ public class MainScreen extends FluidUIScreen {
             }
 
             if (commonItemGroup != null) {
-                itemGroupButton.setText(commonItemGroup);
+                placeableItemGroupButton.setText(commonItemGroup);
             } else {
-                itemGroupButton.setText("...");
+                placeableItemGroupButton.setText("...");
             }
         } else {
-            itemGroupButton.setEnabled(false);
-            itemGroupButton.setText(LangManager.getItem("nothingSelected"));
+            placeableItemGroupButton.setEnabled(false);
+            placeableItemGroupButton.setText(LangManager.getItem("nothingSelected"));
         }
 
         if (selectedIAsset != null) {
@@ -2650,87 +2461,44 @@ public class MainScreen extends FluidUIScreen {
         updatePropertiesObjectsPanel();
         updateOutlinerObjectsPanel();
         timeline.setSelectedObjects(ProjectManager.getCurrentClientLevelData().getSelectedObjects());
-        ProjectManager.getCurrentClientLevelData().clearSelectedKeyframesForDeselectedObjects(ProjectManager.getCurrentClientLevelData().getSelectedObjects());
     }
 
     public void updatePropertiesObjectsPanel() {
-        if (ProjectManager.getCurrentClientLevelData().getSelectedObjects().size() > 0) {
-
-            //Enable UI components
-            backgroundObjectCheckBox.setEnabled(true);
-
-            boolean areBackgroundObjects = true;
-            boolean allHaveAnimData = true;
-
+        int selectedCount = ProjectManager.getCurrentClientLevelData().getSelectedObjects().size();
+        if (selectedCount > 0) {
+            boolean stageReservedOnly = true;
             for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
-                if (!ProjectManager.getCurrentLevelData().isObjectBackground(name)) {
-                    //At least one selected object isn't marked as in the background
-                    areBackgroundObjects = false;
-                }
-
-                if (!ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
-                    //At least one selected object doesn't have anim data
-                    allHaveAnimData = false;
+                String igName = ProjectManager.getCurrentLevelData().getObjectItemGroupName(name);
+                if (!Objects.equals(igName, "STAGE_RESERVED")) {
+                    stageReservedOnly = false;
+                    break;
                 }
             }
 
-            backgroundObjectCheckBox.setValue(areBackgroundObjects);
-            addAnimDataButton.setVisible(!allHaveAnimData);
+            objectItemGroupButton.setEnabled(!stageReservedOnly);
 
-            final boolean finalAllHaveAnimData = allHaveAnimData;
-            addNextFrameAction(() -> setObjectAnimationComponentsVisible(finalAllHaveAnimData)); //If all selected objects have anim data, show anim components
-
-            //<editor-fold desc="Average out positions and rotations">
-            double posAvgX = 0;
-            double posAvgY = 0;
-            double posAvgZ = 0;
-
-            double rotAvgX = 0;
-            double rotAvgY = 0;
-            double rotAvgZ = 0;
-
-            float time = ProjectManager.getCurrentClientLevelData().getTimelinePos();
+            String commonItemGroup = null; //The name of an item group if all selected objects have belong to the same item group, or null if the don't
 
             for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
-                NamedTransform transform = new NamedTransform(name);
-                if (ProjectManager.getCurrentClientLevelData().doesCurrentFrameObjectHaveAnimData(name)) {
-                    transform = ProjectManager.getCurrentClientLevelData().getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name);
-                } else if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
-                    transform = ProjectManager.getCurrentLevelData().getObjectAnimData(name).getNamedTransformAtTime(time, name);
+                String igName = ProjectManager.getCurrentLevelData().getObjectItemGroupName(name);
+                if (commonItemGroup == null) {
+                    commonItemGroup = igName;
                 }
 
-                posAvgX += transform.getPosition().x;
-                posAvgY += transform.getPosition().y;
-                posAvgZ += transform.getPosition().z;
-
-                rotAvgX += transform.getRotation().x;
-                rotAvgY += transform.getRotation().y;
-                rotAvgZ += transform.getRotation().z;
+                if (!Objects.equals(commonItemGroup, igName)) {
+                    commonItemGroup = null;
+                    break;
+                }
             }
 
-            int selectedCount = ProjectManager.getCurrentClientLevelData().getSelectedObjects().size();
-
-            posAvgX = posAvgX / (double) selectedCount;
-            posAvgY = posAvgY / (double) selectedCount;
-            posAvgZ = posAvgZ / (double) selectedCount;
-
-            rotAvgX = rotAvgX / (double) selectedCount;
-            rotAvgY = rotAvgY / (double) selectedCount;
-            rotAvgZ = rotAvgZ / (double) selectedCount;
-
-            objectPositionTextFields.setXValue(posAvgX);
-            objectPositionTextFields.setYValue(posAvgY);
-            objectPositionTextFields.setZValue(posAvgZ);
-
-            objectRotationTextFields.setXValue(rotAvgX);
-            objectRotationTextFields.setYValue(rotAvgY);
-            objectRotationTextFields.setZValue(rotAvgZ);
-            //</editor-fold>
-
+            if (commonItemGroup != null) {
+                objectItemGroupButton.setText(commonItemGroup);
+            } else {
+                objectItemGroupButton.setText("...");
+            }
         } else {
-            backgroundObjectCheckBox.setEnabled(false);
-            addAnimDataButton.setVisible(false);
-            setObjectAnimationComponentsVisible(false);
+            objectItemGroupButton.setEnabled(false);
+            objectItemGroupButton.setText(LangManager.getItem("nothingSelected"));
         }
     }
 
@@ -2774,32 +2542,38 @@ public class MainScreen extends FluidUIScreen {
         updateOutlinerObjectsPanel();
     }
 
+    @Deprecated
     private UIColor getOutlinerObjectColor(String name) {
-        if (ProjectManager.getCurrentLevelData().isObjectBackground(name)) {
-            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
-                return UIColor.matPurple900();
-            } else {
-                return UIColor.matPurple();
-            }
-        } else if (ProjectManager.getCurrentLevelData().isObjectBackgroundExternal(name)) {
-            if (ProjectManager.getCurrentClientLevelData().isExternalBackgroundObjectSelected(name)) {
-                return UIColor.matPink900();
-            } else {
-                return UIColor.matPink();
-            }
-        } else if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
-            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
-                return UIColor.matGreen900();
-            } else {
-                return UIColor.matGreen();
-            }
+        if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
+            return UIColor.matBlue900();
         } else {
-            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
-                return UIColor.matBlue900();
-            } else {
-                return UIColor.matBlue();
-            }
+            return UIColor.matBlue();
         }
+//        if (ProjectManager.getCurrentLevelData().isObjectBackground(name)) {
+//            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
+//                return UIColor.matPurple900();
+//            } else {
+//                return UIColor.matPurple();
+//            }
+//        } else if (ProjectManager.getCurrentLevelData().isObjectBackgroundExternal(name)) {
+//            if (ProjectManager.getCurrentClientLevelData().isExternalBackgroundObjectSelected(name)) {
+//                return UIColor.matPink900();
+//            } else {
+//                return UIColor.matPink();
+//            }
+//        } else if (ProjectManager.getCurrentLevelData().doesObjectHaveAnimData(name)) {
+//            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
+//                return UIColor.matGreen900();
+//            } else {
+//                return UIColor.matGreen();
+//            }
+//        } else {
+//            if (ProjectManager.getCurrentClientLevelData().isObjectSelected(name)) {
+//                return UIColor.matBlue900();
+//            } else {
+//                return UIColor.matBlue();
+//            }
+//
     }
 
     private IUIScreen getTypeSelectorOverlayScreen(double mouseY) {
@@ -2863,6 +2637,28 @@ public class MainScreen extends FluidUIScreen {
 
         updateOutlinerPlaceablesPanel();
         updatePropertiesPlaceablesPanel();
+    }
+
+    public void setItemGroupForSelectedObjects(String itemGroup) {
+        boolean changed = false;
+
+        assert ProjectManager.getCurrentClientLevelData() != null;
+        for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+            if (!Objects.equals(ProjectManager.getCurrentLevelData().getObjectItemGroupName(name), itemGroup)) {
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            addUndoCommand(new UndoObjectItemGroupChange(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedObjects()));
+        }
+
+        for (String name : ProjectManager.getCurrentClientLevelData().getSelectedObjects()) {
+            ProjectManager.getCurrentLevelData().changeObjectItemGroup(name, itemGroup);
+        }
+
+        updateOutlinerObjectsPanel();
+        updatePropertiesObjectsPanel();
     }
 
     private void showSettings() {
@@ -2965,7 +2761,7 @@ public class MainScreen extends FluidUIScreen {
                             outlinerPlaceablesListBox.clearChildComponents();
 
                             cld.clearSelectedKeyframes();
-                            ld.clearAnimData();
+//                            ld.clearAnimData();
 
                             //Add start pos
                             if (configData.startList.size() > 0) {
@@ -3054,7 +2850,7 @@ public class MainScreen extends FluidUIScreen {
                             for (String name : configData.backgroundList) {
                                 for (ResourceModel model : ld.getModels()) {
                                     if (model.hasObject(name)) {
-                                        ld.addBackgroundObject(name);
+                                        ld.changeObjectItemGroup(name, "BACKGROUND_RESERVED");
                                     }
                                 }
                             }
@@ -3096,18 +2892,18 @@ public class MainScreen extends FluidUIScreen {
 
     private void onTimelinePosChanged(Float percent) {
         timeline.updatePercent(percent);
-        if (SMBLWSettings.autoUpdateProperties) {
-            assert ProjectManager.getCurrentClientLevelData() != null;
-            if (ProjectManager.getCurrentClientLevelData().getTimelinePos() != percent) {
-                ProjectManager.getCurrentClientLevelData().clearCurrentFrameObjectAnimData();
-            }
-
-            updatePropertiesObjectsPanel();
-        } else {
-            for (Map.Entry<String, AnimData> entry : ProjectManager.getCurrentClientLevelData().getCurrentFrameObjectAnimDataMap().entrySet()) {
-                entry.getValue().moveFirstFrame(percent);
-            }
-        }
+//        if (SMBLWSettings.autoUpdateProperties) {
+//            assert ProjectManager.getCurrentClientLevelData() != null;
+//            if (ProjectManager.getCurrentClientLevelData().getTimelinePos() != percent) {
+//                ProjectManager.getCurrentClientLevelData().clearCurrentFrameObjectAnimData();
+//            }
+//
+//            updatePropertiesObjectsPanel();
+//        } else {
+//            for (Map.Entry<String, AnimData> entry : ProjectManager.getCurrentClientLevelData().getCurrentFrameObjectAnimDataMap().entrySet()) {
+//                entry.getValue().moveFirstFrame(percent);
+//            }
+//        }
     }
 
     public void addTextField(TextField textField) {
@@ -3118,93 +2914,15 @@ public class MainScreen extends FluidUIScreen {
         textFields.add(textField);
     }
 
-    private void setObjectAnimationComponentsVisible(boolean isVisible) {
-        for (Component component : objectAnimationComponents) {
-            component.setVisible(isVisible);
-        }
-        propertiesObjectsListBox.reorganizeChildComponents();
-    }
-
-    private void onPosKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
-        //Add undo command
-        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
-                ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
-
-        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
-        LevelData ld = cld.getLevelData();
-        float time = cld.getTimelinePos();
-
-        if (axis == EnumAxis.X) {
-            for (String name : selectedObjects) {
-                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
-                    ld.getObjectAnimData(name).setPosXFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().x);
-                } else {
-                    ld.getObjectAnimData(name).setPosXFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().x);
-                }
-            }
-        } else if (axis == EnumAxis.Y) {
-            for (String name : selectedObjects) {
-                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
-                    ld.getObjectAnimData(name).setPosYFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().y);
-                } else {
-                    ld.getObjectAnimData(name).setPosYFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().y);
-                }
-            }
-        } else if (axis == EnumAxis.Z) {
-            for (String name : selectedObjects) {
-                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
-                    ld.getObjectAnimData(name).setPosZFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().z);
-                } else {
-                    ld.getObjectAnimData(name).setPosZFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getPosition().z);
-                }
-            }
-        }
-    }
-
-    private void onRotKeyframeActivated(EnumAxis axis, Collection<String> selectedObjects) {
-        //Add undo command
-        addUndoCommand(new UndoModifyKeyframes(ProjectManager.getCurrentClientLevelData(), this,
-                ProjectManager.getCurrentLevelData().getObjectAnimDataMap()));
-
-        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
-        LevelData ld = cld.getLevelData();
-        float time = cld.getTimelinePos();
-
-        if (axis == EnumAxis.X) {
-            for (String name : selectedObjects) {
-                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
-                    ld.getObjectAnimData(name).setRotXFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().x);
-                } else {
-                    ld.getObjectAnimData(name).setRotXFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().x);
-                }
-            }
-        } else if (axis == EnumAxis.Y) {
-            for (String name : selectedObjects) {
-                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
-                    ld.getObjectAnimData(name).setRotYFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().y);
-                } else {
-                    ld.getObjectAnimData(name).setRotYFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().y);
-                }
-            }
-        } else if (axis == EnumAxis.Z) {
-            for (String name : selectedObjects) {
-                if (cld.doesCurrentFrameObjectHaveAnimData(name)) {
-                    ld.getObjectAnimData(name).setRotZFrame(time, (float) cld.getCurrentFrameObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().z);
-                } else {
-                    ld.getObjectAnimData(name).setRotZFrame(time, (float) ld.getObjectAnimData(name).getNamedTransformAtTime(time, name).getRotation().z);
-                }
-            }
-        }
-    }
-
     private void transformObjectAtTime(String name, float time) {
-        ITransformable transform = ProjectManager.getCurrentClientLevelData().getObjectNamedTransform(name, time);
-        PosXYZ translate = transform.getPosition();
-        PosXYZ rotate = transform.getRotation();
-        GL11.glTranslated(translate.x, translate.y, translate.z);
-        GL11.glRotated(rotate.z, 0, 0, 1);
-        GL11.glRotated(rotate.y, 0, 1, 0);
-        GL11.glRotated(rotate.x, 1, 0, 0);
+        //TODO
+//        ITransformable transform = ProjectManager.getCurrentClientLevelData().getObjectNamedTransform(name, time);
+//        PosXYZ translate = transform.getPosition();
+//        PosXYZ rotate = transform.getRotation();
+//        GL11.glTranslated(translate.x, translate.y, translate.z);
+//        GL11.glRotated(rotate.z, 0, 0, 1);
+//        GL11.glRotated(rotate.y, 0, 1, 0);
+//        GL11.glRotated(rotate.x, 1, 0, 0);
     }
 
     private void transformObjectAtTime(String name) {
@@ -3215,176 +2933,17 @@ public class MainScreen extends FluidUIScreen {
         nextFrameActions.add(action);
     }
 
+    @Deprecated
     private void moveSelectedKeyframesToBuffer(boolean makeCopy) {
-        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
-        LevelData ld = cld.getLevelData();
-
-        //<editor-fold desc="Pos X">
-        Iterator<KeyframeEntry> iterPosX = cld.getSelectedPosXKeyframes().iterator();
-        while (iterPosX.hasNext()) {
-            KeyframeEntry entry = iterPosX.next();
-            BufferedAnimData bad;
-            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
-
-            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
-                bad = new BufferedAnimData();
-                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
-                bad.setRotationCenter(ld.getObjectAnimData(entry.getObjectName()).getRotationCenter()); //Copy the rotation center
-            } else {
-                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
-            }
-
-            bad.setPosXFrame(entry.getTime(), ad.getPosXFrames().get(entry.getTime()));
-
-            if (!makeCopy) {
-                ad.removePosXFrame(entry.getTime());
-            }
-
-            iterPosX.remove(); //Deselect the keyframe
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Pos Y">
-        Iterator<KeyframeEntry> iterPosY = cld.getSelectedPosYKeyframes().iterator();
-        while (iterPosY.hasNext()) {
-            KeyframeEntry entry = iterPosY.next();
-            BufferedAnimData bad;
-            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
-
-            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
-                bad = new BufferedAnimData();
-                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
-                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
-            } else {
-                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
-            }
-
-            bad.setPosYFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getPosYFrames().get(entry.getTime()));
-
-            if (!makeCopy) {
-                ad.removePosYFrame(entry.getTime());
-            }
-
-            iterPosY.remove(); //Deselect the keyframe
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Pos Z">
-        Iterator<KeyframeEntry> iterPosZ = cld.getSelectedPosZKeyframes().iterator();
-        while (iterPosZ.hasNext()) {
-            KeyframeEntry entry = iterPosZ.next();
-            BufferedAnimData bad;
-            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
-
-            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
-                bad = new BufferedAnimData();
-                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
-                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
-            } else {
-                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
-            }
-
-            bad.setPosZFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getPosZFrames().get(entry.getTime()));
-
-            if (!makeCopy) {
-                ad.removePosZFrame(entry.getTime());
-            }
-
-            iterPosZ.remove(); //Deselect the keyframe
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Rot X">
-        Iterator<KeyframeEntry> iterRotX = cld.getSelectedRotXKeyframes().iterator();
-        while (iterRotX.hasNext()) {
-            KeyframeEntry entry = iterRotX.next();
-            BufferedAnimData bad;
-            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
-
-            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
-                bad = new BufferedAnimData();
-                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
-                bad.setRotationCenter(ld.getObjectAnimData(entry.getObjectName()).getRotationCenter()); //Copy the rotation center
-            } else {
-                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
-            }
-
-            bad.setRotXFrame(entry.getTime(), ad.getRotXFrames().get(entry.getTime()));
-
-            if (!makeCopy) {
-                ad.removeRotXFrame(entry.getTime());
-            }
-
-            iterRotX.remove(); //Deselect the keyframe
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Rot Y">
-        Iterator<KeyframeEntry> iterRotY = cld.getSelectedRotYKeyframes().iterator();
-        while (iterRotY.hasNext()) {
-            KeyframeEntry entry = iterRotY.next();
-            BufferedAnimData bad;
-            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
-
-            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
-                bad = new BufferedAnimData();
-                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
-                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
-            } else {
-                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
-            }
-
-            bad.setRotYFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getRotYFrames().get(entry.getTime()));
-
-            if (!makeCopy) {
-                ad.removeRotYFrame(entry.getTime());
-            }
-
-            iterRotY.remove(); //Deselect the keyframe
-        }
-        //</editor-fold>
-
-        //<editor-fold desc="Rot Z">
-        Iterator<KeyframeEntry> iterRotZ = cld.getSelectedRotZKeyframes().iterator();
-        while (iterRotZ.hasNext()) {
-            KeyframeEntry entry = iterRotZ.next();
-            BufferedAnimData bad;
-            AnimData ad = ld.getObjectAnimData(entry.getObjectName());
-
-            if (!cld.getAnimDataBufferMap().containsKey(entry.getObjectName())) { //Create the BufferedAnimData if the buffer map doesn't have it for the object
-                bad = new BufferedAnimData();
-                cld.getAnimDataBufferMap().put(entry.getObjectName(), bad); //Put the BufferedAnimData into the buffer map
-                bad.setRotationCenter(ad.getRotationCenter()); //Copy the rotation center
-            } else {
-                bad = cld.getAnimDataBufferMap().get(entry.getObjectName()); //Get the already existing BufferedAnimData
-            }
-
-            bad.setRotZFrame(entry.getTime(), ld.getObjectAnimData(entry.getObjectName()).getRotZFrames().get(entry.getTime()));
-
-            if (!makeCopy) {
-                ad.removeRotZFrame(entry.getTime());
-            }
-
-            iterRotZ.remove(); //Deselect the keyframe
-        }
-        //</editor-fold>
     }
 
+    @Deprecated
     private void commitBufferedKeyframes() {
-        ClientLevelData cld = ProjectManager.getCurrentClientLevelData();
-        LevelData ld = cld.getLevelData();
-
-        for (Map.Entry<String, BufferedAnimData> entry : cld.getAnimDataBufferMap().entrySet()) { //Loop through buffered anim data objects
-            AnimData ad = ld.getObjectAnimData(entry.getKey());
-            ad.mergeWith(entry.getValue().getTransformedAnimData());
-            ad.clampKeyframeTimes();
-        }
-
-        cld.getAnimDataBufferMap().clear();
     }
 
+    @Deprecated
     private void discardBufferedKeyframes() {
-        ProjectManager.getCurrentClientLevelData().getAnimDataBufferMap().clear();
+
     }
 
 }

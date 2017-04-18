@@ -126,12 +126,6 @@
     <entry key="redoRemovePlaceable" val="Redo: Add placeable" />
     <entry key="undoTypeChange" val="Undo: Modify type" />
     <entry key="redoTypeChange" val="Redo: Modify type" />
-    <entry key="undoAddAnimData" val="Undo: Add animation data" />
-    <entry key="redoAddAnimData" val="Redo: Remove animation data" />
-    <entry key="undoRemoveAnimData" val="Undo: Remove animation data" />
-    <entry key="redoRemoveAnimData" val="Redo: Add animation data" />
-    <entry key="undoModifyKeyframes" val="Undo: Modify keyframes" />
-    <entry key="redoModifyKeyframes" val="Redo: Modify keyframes" />
     <entry key="undoItemGroupChange" val="Undo: Modify item group" />
     <entry key="redoItemGroupChange" val="Redo: Modify item group" />
 
@@ -142,9 +136,6 @@
     <entry key="keyframeRemovedPlural" val="Removed %d keyframes" />
 
     <!-- Animation -->
-    <entry key="addAnimData" val="Add animation data" />
-    <entry key="removeAnimData" val="Remove animation data" />
-    <entry key="autoUpdateProperties" val="Auto update properties" />
     <entry key="timeline" val="Timeline" />
     <entry key="secondsAbbr" val="s" />
     <entry key="secondsOutOfAbbr" val="s /" />

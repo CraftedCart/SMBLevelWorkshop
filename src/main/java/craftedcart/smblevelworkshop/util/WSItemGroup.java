@@ -117,4 +117,7 @@ public class WSItemGroup {
         return objectNames;
     }
 
+    public boolean hasObject(String name) {
+        return objectNames.contains(name);
+    }
 }

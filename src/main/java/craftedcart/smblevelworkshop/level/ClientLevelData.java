@@ -1,10 +1,6 @@
 package craftedcart.smblevelworkshop.level;
 
-import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.animation.AnimData;
-import craftedcart.smblevelworkshop.animation.BufferedAnimData;
-import craftedcart.smblevelworkshop.animation.KeyframeEntry;
-import craftedcart.smblevelworkshop.animation.NamedTransform;
 import io.github.craftedcart.fluidui.uiaction.UIAction;
 import io.github.craftedcart.fluidui.uiaction.UIAction1;
 import org.jetbrains.annotations.NotNull;
@@ -31,24 +27,12 @@ public class ClientLevelData {
     private Set<String> selectedExternalBackgroundObjects = new HashSet<>();
     @Nullable private UIAction onSelectedExternalBackgroundObjectsChanged;
 
-    private Set<KeyframeEntry> selectedPosXKeyframes = new HashSet<>();
-    private Set<KeyframeEntry> selectedPosYKeyframes = new HashSet<>();
-    private Set<KeyframeEntry> selectedPosZKeyframes = new HashSet<>();
-
-    private Set<KeyframeEntry> selectedRotXKeyframes = new HashSet<>();
-    private Set<KeyframeEntry> selectedRotYKeyframes = new HashSet<>();
-    private Set<KeyframeEntry> selectedRotZKeyframes = new HashSet<>();
-
-    private Map<String, BufferedAnimData> animDataBufferMap = new HashMap<>();
-
     /**
      * Timeline position as a percentage
      */
     private float timelinePos = 0.0f;
     @Nullable private UIAction1<Float> onTimelinePosChanged;
     private float playbackSpeed = 0.0f;
-
-    @NotNull private Map<String, AnimData> currentFrameObjectAnimDataMap = new HashMap<>();
 
     public void setLevelData(@NotNull LevelData levelData) {
         this.levelData = levelData;
@@ -265,10 +249,6 @@ public class ClientLevelData {
             if (onTimelinePosChanged != null) {
                 onTimelinePosChanged.execute(timelinePos);
             }
-
-            if (SMBLWSettings.autoUpdateProperties) {
-                currentFrameObjectAnimDataMap.clear(); //Clear non-keyframed changes
-            }
         }
     }
 
@@ -319,230 +299,8 @@ public class ClientLevelData {
         }
     }
 
-    public boolean doesCurrentFrameObjectHaveAnimData(String name) {
-        return currentFrameObjectAnimDataMap.containsKey(name);
-    }
-
-    public void addCurrentFrameAnimData(Set<String> selectedObjects) {
-        for (String name : selectedObjects) {
-            if (!currentFrameObjectAnimDataMap.containsKey(name)) { //If the object doesn't already have animation data
-                currentFrameObjectAnimDataMap.put(name, new AnimData());
-            }
-        }
-    }
-
-    public AnimData getCurrentFrameObjectAnimData(String name) {
-        return currentFrameObjectAnimDataMap.get(name);
-    }
-
-    @NotNull
-    public Map<String, AnimData> getCurrentFrameObjectAnimDataMap() {
-        return currentFrameObjectAnimDataMap;
-    }
-
-    public void removeCurrentFrameObjectAnimData(String name) {
-        currentFrameObjectAnimDataMap.remove(name);
-    }
-
-    public void clearCurrentFrameObjectAnimData() {
-        currentFrameObjectAnimDataMap.clear();
-    }
-
-    public NamedTransform getObjectNamedTransform(String name, float time) {
-        AnimData animData = new AnimData();
-
-        if (getLevelData().doesObjectHaveAnimData(name)) {
-            animData.mergeWith(getLevelData().getObjectAnimData(name));
-        }
-
-        if (doesCurrentFrameObjectHaveAnimData(name)) {
-            animData.mergeWith(getCurrentFrameObjectAnimData(name));
-        }
-
-        return animData.getNamedTransformAtTime(time, name);
-    }
-
     public void clearSelectedKeyframes() {
-        selectedPosXKeyframes.clear();
-        selectedPosYKeyframes.clear();
-        selectedPosZKeyframes.clear();
-
-        selectedRotXKeyframes.clear();
-        selectedRotYKeyframes.clear();
-        selectedRotZKeyframes.clear();
-    }
-
-    public void addSelectedPosXKeyframe(KeyframeEntry entry) {
-        selectedPosXKeyframes.add(entry);
-    }
-
-    public void addSelectedPosYKeyframe(KeyframeEntry entry) {
-        selectedPosYKeyframes.add(entry);
-    }
-
-    public void addSelectedPosZKeyframe(KeyframeEntry entry) {
-        selectedPosZKeyframes.add(entry);
-    }
-
-    public boolean isPosXKeyframeSelected(float time) {
-        for (KeyframeEntry entry : selectedPosXKeyframes) {
-            if (entry.getTime() == time) return true;
-        }
-
-        return false;
-    }
-
-    public boolean isPosYKeyframeSelected(float time) {
-        for (KeyframeEntry entry : selectedPosYKeyframes) {
-            if (entry.getTime() == time) return true;
-        }
-
-        return false;
-    }
-
-    public boolean isPosZKeyframeSelected(float time) {
-        for (KeyframeEntry entry : selectedPosZKeyframes) {
-            if (entry.getTime() == time) return true;
-        }
-
-        return false;
-    }
-
-    public void addSelectedRotXKeyframe(KeyframeEntry entry) {
-        selectedRotXKeyframes.add(entry);
-    }
-
-    public void addSelectedRotYKeyframe(KeyframeEntry entry) {
-        selectedRotYKeyframes.add(entry);
-    }
-
-    public void addSelectedRotZKeyframe(KeyframeEntry entry) {
-        selectedRotZKeyframes.add(entry);
-    }
-
-    public boolean isRotXKeyframeSelected(float time) {
-        for (KeyframeEntry entry : selectedRotXKeyframes) {
-            if (entry.getTime() == time) return true;
-        }
-
-        return false;
-    }
-
-    public boolean isRotYKeyframeSelected(float time) {
-        for (KeyframeEntry entry : selectedRotYKeyframes) {
-            if (entry.getTime() == time) return true;
-        }
-
-        return false;
-    }
-
-    public boolean isRotZKeyframeSelected(float time) {
-        for (KeyframeEntry entry : selectedRotZKeyframes) {
-            if (entry.getTime() == time) return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * If the object isn't selected, remove the selected keyframes
-     *
-     * @param selectedObjects A collection of selected object names
-     */
-    public void clearSelectedKeyframesForDeselectedObjects(Collection<String> selectedObjects) {
-        selectedPosXKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
-        selectedPosYKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
-        selectedPosZKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
-
-        selectedRotXKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
-        selectedRotYKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
-        selectedRotZKeyframes.removeIf(keyframeEntry -> !selectedObjects.contains(keyframeEntry.getObjectName()));
-    }
-
-    public void clearSelectedKeyframesForObjects(Collection<String> objects) {
-        selectedPosXKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
-        selectedPosYKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
-        selectedPosZKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
-
-        selectedRotXKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
-        selectedRotYKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
-        selectedRotZKeyframes.removeIf(keyframeEntry -> objects.contains(keyframeEntry.getObjectName()));
-    }
-
-    public void selectPosXKeyframesInRange(String name, float minPercent, float maxPercent) {
-        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getPosXFrames().subMap(minPercent, true, maxPercent, true);
-
-        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
-            addSelectedPosXKeyframe(new KeyframeEntry(name, entry.getKey()));
-        }
-    }
-
-    public void selectPosYKeyframesInRange(String name, float minPercent, float maxPercent) {
-        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getPosYFrames().subMap(minPercent, true, maxPercent, true);
-
-        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
-            addSelectedPosYKeyframe(new KeyframeEntry(name, entry.getKey()));
-        }
-    }
-
-    public void selectPosZKeyframesInRange(String name, float minPercent, float maxPercent) {
-        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getPosZFrames().subMap(minPercent, true, maxPercent, true);
-
-        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
-            addSelectedPosZKeyframe(new KeyframeEntry(name, entry.getKey()));
-        }
-    }
-
-    public void selectRotXKeyframesInRange(String name, float minPercent, float maxPercent) {
-        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getRotXFrames().subMap(minPercent, true, maxPercent, true);
-
-        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
-            addSelectedRotXKeyframe(new KeyframeEntry(name, entry.getKey()));
-        }
-    }
-
-    public void selectRotYKeyframesInRange(String name, float minPercent, float maxPercent) {
-        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getRotYFrames().subMap(minPercent, true, maxPercent, true);
-
-        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
-            addSelectedRotYKeyframe(new KeyframeEntry(name, entry.getKey()));
-        }
-    }
-
-    public void selectRotZKeyframesInRange(String name, float minPercent, float maxPercent) {
-        Map<Float, Float> subMap = levelData.getObjectAnimData(name).getRotZFrames().subMap(minPercent, true, maxPercent, true);
-
-        for (Map.Entry<Float, Float> entry : subMap.entrySet()) {
-            addSelectedRotZKeyframe(new KeyframeEntry(name, entry.getKey()));
-        }
-    }
-
-    public Set<KeyframeEntry> getSelectedPosXKeyframes() {
-        return selectedPosXKeyframes;
-    }
-
-    public Set<KeyframeEntry> getSelectedPosYKeyframes() {
-        return selectedPosYKeyframes;
-    }
-
-    public Set<KeyframeEntry> getSelectedPosZKeyframes() {
-        return selectedPosZKeyframes;
-    }
-
-    public Set<KeyframeEntry> getSelectedRotXKeyframes() {
-        return selectedRotXKeyframes;
-    }
-
-    public Set<KeyframeEntry> getSelectedRotYKeyframes() {
-        return selectedRotYKeyframes;
-    }
-
-    public Set<KeyframeEntry> getSelectedRotZKeyframes() {
-        return selectedRotZKeyframes;
-    }
-
-    public Map<String, BufferedAnimData> getAnimDataBufferMap() {
-        return animDataBufferMap;
+        //TODO
     }
 
 }

@@ -70,6 +70,7 @@ public class ItemGroupSelectorOverlayScreen extends FluidUIScreen {
 
         MainScreen mainScreen = (MainScreen) parentComponent;
         mainScreen.setItemGroupForSelectedPlaceables(entry.getKey());
+        mainScreen.setItemGroupForSelectedObjects(entry.getKey());
 
         mainScreen.setOverlayUiScreen(null);
     }

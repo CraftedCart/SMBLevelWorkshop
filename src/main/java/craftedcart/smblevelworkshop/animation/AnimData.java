@@ -15,6 +15,7 @@ import java.util.TreeMap;
  * @author CraftedCart
  *         Created on 30/10/2016 (DD/MM/YYYY)
  */
+@Deprecated
 public class AnimData {
 
     @NotNull protected PosXYZ rotationCenter = new PosXYZ();

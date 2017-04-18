@@ -37,7 +37,4 @@ public class SMBLWSettings {
     public static boolean showOnScreenInput = false;
     public static boolean showFPSOverlay = false;
 
-    //Properties
-    public static boolean autoUpdateProperties = true;
-
 }

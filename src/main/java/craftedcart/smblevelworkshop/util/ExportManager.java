@@ -1,7 +1,5 @@
 package craftedcart.smblevelworkshop.util;
 
-import craftedcart.smblevelworkshop.animation.AnimData;
-import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.LevelData;
 
@@ -10,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-import java.util.TreeSet;
 
 /**
  * @author CraftedCart
@@ -33,7 +30,9 @@ public class ExportManager {
      * @throws IOException IOException
      */
     public static File[] writeConfig(LevelData levelData, File configFile) throws IOException {
-        File[] filesWritten = new File[levelData.getObjectAnimDataMap().size() + 1];
+        //TODO: Export animation
+//        File[] filesWritten = new File[levelData.getObjectAnimDataMap().size() + 1];
+        File[] filesWritten = new File[1];
 
         String configContents = getConfig(levelData);
 
@@ -44,19 +43,19 @@ public class ExportManager {
         filesWritten[0] = configFile;
 
         int i = 1;
-        for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
-            File animFile = new File(configFile.getParentFile(), "anim-" + entry.getKey() + ".txt");
-
-            String animConfigContents = getAnimConfig(entry.getValue(), levelData);
-
-            BufferedWriter animWriter = new BufferedWriter(new FileWriter(animFile));
-            animWriter.write(animConfigContents);
-            animWriter.close();
-
-            filesWritten[i] = animFile;
-
-            i++;
-        }
+//        for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
+//            File animFile = new File(configFile.getParentFile(), "anim-" + entry.getKey() + ".txt");
+//
+//            String animConfigContents = getAnimConfig(entry.getValue(), levelData);
+//
+//            BufferedWriter animWriter = new BufferedWriter(new FileWriter(animFile));
+//            animWriter.write(animConfigContents);
+//            animWriter.close();
+//
+//            filesWritten[i] = animFile;
+//
+//            i++;
+//        }
 
         return filesWritten;
     }
@@ -117,70 +116,70 @@ public class ExportManager {
 
         sb.append("\r\n");
 
-        for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
-            appendAnimPrefix(sb, true); sb.append(". file . x = ").append("anim-").append(entry.getKey()).append(".txt").append("\r\n");
-            appendAnimPrefix(sb, false); sb.append(". name . x = ").append(entry.getKey()).append("\r\n");
-            appendAnimPrefix(sb, false); sb.append(". center . x = ").append(entry.getValue().getRotationCenter().x).append("\r\n");
-            appendAnimPrefix(sb, false); sb.append(". center . y = ").append(entry.getValue().getRotationCenter().y).append("\r\n");
-            appendAnimPrefix(sb, false); sb.append(". center . z = ").append(entry.getValue().getRotationCenter().z).append("\r\n");
-            sb.append("\r\n");
-        }
-        sb.append("\r\n");
+//        for (Map.Entry<String, AnimData> entry : levelData.getObjectAnimDataMap().entrySet()) {
+//            appendAnimPrefix(sb, true); sb.append(". file . x = ").append("anim-").append(entry.getKey()).append(".txt").append("\r\n");
+//            appendAnimPrefix(sb, false); sb.append(". name . x = ").append(entry.getKey()).append("\r\n");
+//            appendAnimPrefix(sb, false); sb.append(". center . x = ").append(entry.getValue().getRotationCenter().x).append("\r\n");
+//            appendAnimPrefix(sb, false); sb.append(". center . y = ").append(entry.getValue().getRotationCenter().y).append("\r\n");
+//            appendAnimPrefix(sb, false); sb.append(". center . z = ").append(entry.getValue().getRotationCenter().z).append("\r\n");
+//            sb.append("\r\n");
+//        }
+//        sb.append("\r\n");
 
         return sb.toString();
     }
 
-    private static String getAnimConfig(AnimData animData, LevelData levelData) {
-        StringBuilder sb = new StringBuilder();
-
-        frameCount = -1;
-
-        TreeSet<Float> frames = new TreeSet<>();
-
-        frames.add(0.0f);
-        frames.add(1.0f);
-
-        for (Float time : animData.getPosXFrames().keySet()) {
-            frames.add(time);
-        }
-
-        for (Float time : animData.getPosYFrames().keySet()) {
-            frames.add(time);
-        }
-
-        for (Float time : animData.getPosZFrames().keySet()) {
-            frames.add(time);
-        }
-
-        for (Float time : animData.getRotXFrames().keySet()) {
-            frames.add(time);
-        }
-
-        for (Float time : animData.getRotYFrames().keySet()) {
-            frames.add(time);
-        }
-
-        for (Float time : animData.getRotZFrames().keySet()) {
-            frames.add(time);
-        }
-
-        for (float time : frames) {
-            NamedTransform transform = animData.getNamedTransformAtTime(time, null);
-
-            appendFramePrefix(sb, true); sb.append(". pos . x = ").append(transform.getPosition().x).append("\r\n");
-            appendFramePrefix(sb, false); sb.append(". pos . y = ").append(transform.getPosition().y).append("\r\n");
-            appendFramePrefix(sb, false); sb.append(". pos . z = ").append(transform.getPosition().z).append("\r\n");
-
-            appendFramePrefix(sb, false); sb.append(". rot . x = ").append(transform.getRotation().x).append("\r\n");
-            appendFramePrefix(sb, false); sb.append(". rot . y = ").append(transform.getRotation().y).append("\r\n");
-            appendFramePrefix(sb, false); sb.append(". rot . z = ").append(transform.getRotation().z).append("\r\n");
-
-            appendFramePrefix(sb, false); sb.append(". time . x = ").append(time * (levelData.getLeadInTime() + levelData.getMaxTime())).append("\r\n");
-            sb.append("\r\n");
-        }
-
-        return sb.toString();
-    }
+//    private static String getAnimConfig(AnimData animData, LevelData levelData) {
+//        StringBuilder sb = new StringBuilder();
+//
+//        frameCount = -1;
+//
+//        TreeSet<Float> frames = new TreeSet<>();
+//
+//        frames.add(0.0f);
+//        frames.add(1.0f);
+//
+//        for (Float time : animData.getPosXFrames().keySet()) {
+//            frames.add(time);
+//        }
+//
+//        for (Float time : animData.getPosYFrames().keySet()) {
+//            frames.add(time);
+//        }
+//
+//        for (Float time : animData.getPosZFrames().keySet()) {
+//            frames.add(time);
+//        }
+//
+//        for (Float time : animData.getRotXFrames().keySet()) {
+//            frames.add(time);
+//        }
+//
+//        for (Float time : animData.getRotYFrames().keySet()) {
+//            frames.add(time);
+//        }
+//
+//        for (Float time : animData.getRotZFrames().keySet()) {
+//            frames.add(time);
+//        }
+//
+//        for (float time : frames) {
+//            NamedTransform transform = animData.getNamedTransformAtTime(time, null);
+//
+//            appendFramePrefix(sb, true); sb.append(". pos . x = ").append(transform.getPosition().x).append("\r\n");
+//            appendFramePrefix(sb, false); sb.append(". pos . y = ").append(transform.getPosition().y).append("\r\n");
+//            appendFramePrefix(sb, false); sb.append(". pos . z = ").append(transform.getPosition().z).append("\r\n");
+//
+//            appendFramePrefix(sb, false); sb.append(". rot . x = ").append(transform.getRotation().x).append("\r\n");
+//            appendFramePrefix(sb, false); sb.append(". rot . y = ").append(transform.getRotation().y).append("\r\n");
+//            appendFramePrefix(sb, false); sb.append(". rot . z = ").append(transform.getRotation().z).append("\r\n");
+//
+//            appendFramePrefix(sb, false); sb.append(". time . x = ").append(time * (levelData.getLeadInTime() + levelData.getMaxTime())).append("\r\n");
+//            sb.append("\r\n");
+//        }
+//
+//        return sb.toString();
+//    }
 
     private static void appendAssetPrefix(IAsset asset, StringBuilder sb, boolean incrementCounter) {
         if (asset instanceof AssetBanana) {
