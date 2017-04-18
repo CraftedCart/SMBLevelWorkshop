@@ -83,18 +83,16 @@ public class ItemGroupSelectorOverlayScreen extends FluidUIScreen {
             igButton.setBottomRightPos(0, 24);
             igButton.setBackgroundIdleColor(col.alpha(0.25));
 
-            final Button colorButton = new Button();
-            colorButton.setOnInitAction(() -> {
-                colorButton.setTopLeftPos(0, 0);
-                colorButton.setBottomRightPos(24, 0);
-                colorButton.setTopLeftAnchor(0, 0);
-                colorButton.setBottomRightAnchor(0, 1);
-                colorButton.setTexture(ResourceManager.getTexture("image/circle").getTexture());
-                colorButton.setBackgroundIdleColor(col);
-                colorButton.setBackgroundActiveColor(col.alpha(0.5));
-//                colorButton.setBackgroundHitColor(col.alpha(0.25));
+            final Image colorImage = new Image();
+            colorImage.setOnInitAction(() -> {
+                colorImage.setTopLeftPos(0, 0);
+                colorImage.setBottomRightPos(24, 0);
+                colorImage.setTopLeftAnchor(0, 0);
+                colorImage.setBottomRightAnchor(0, 1);
+                colorImage.setTexture(ResourceManager.getTexture("image/circle").getTexture());
+                colorImage.setColor(col);
             });
-            igButton.addChildComponent("colorButton", colorButton);
+            igButton.addChildComponent("colorImage", colorImage);
 
             final Label igLabel = new Label();
             igLabel.setOnInitAction(() -> {
