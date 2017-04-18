@@ -2840,21 +2840,18 @@ public class MainScreen extends FluidUIScreen {
     }
 
     public void setItemGroupForSelectedPlaceables(String itemGroup) {
-        //TODO: Undo command
-//        boolean changed = false;
+        boolean changed = false;
 
         assert ProjectManager.getCurrentClientLevelData() != null;
         for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
-            Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);
-
-//            if (!Objects.equals(placeable.getAsset().getType(), type)) {
-//                changed = true;
-//            }
+            if (!Objects.equals(ProjectManager.getCurrentLevelData().getPlaceableItemGroupName(name), itemGroup)) {
+                changed = true;
+            }
         }
 
-//        if (changed) {
-//            addUndoCommand(new UndoAssetTypeChange(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
-//        }
+        if (changed) {
+            addUndoCommand(new UndoPlaceableItemGroupChange(ProjectManager.getCurrentClientLevelData(), ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()));
+        }
 
         for (String name : ProjectManager.getCurrentClientLevelData().getSelectedPlaceables()) {
             Placeable placeable = ProjectManager.getCurrentLevelData().getPlaceable(name);

@@ -132,6 +132,8 @@
     <entry key="redoRemoveAnimData" val="Redo: Add animation data" />
     <entry key="undoModifyKeyframes" val="Undo: Modify keyframes" />
     <entry key="redoModifyKeyframes" val="Redo: Modify keyframes" />
+    <entry key="undoItemGroupChange" val="Undo: Modify item group" />
+    <entry key="redoItemGroupChange" val="Redo: Modify item group" />
 
     <!-- Removed -->
     <entry key="placeableRemoved" val="Removed placeable" />
