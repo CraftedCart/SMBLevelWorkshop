@@ -124,8 +124,8 @@
     <entry key="undoRemovePlaceable" val="Undo: Remove placeable" />
     <entry key="undoRemovePlaceablePlural" val="Undo: Remove %d placeables" />
     <entry key="redoRemovePlaceable" val="Redo: Add placeable" />
-    <entry key="undoTypeChange" val="Undo: Type change" />
-    <entry key="redoTypeChange" val="Redo: Type change" />
+    <entry key="undoTypeChange" val="Undo: Modify type" />
+    <entry key="redoTypeChange" val="Redo: Modify type" />
     <entry key="undoAddAnimData" val="Undo: Add animation data" />
     <entry key="redoAddAnimData" val="Redo: Remove animation data" />
     <entry key="undoRemoveAnimData" val="Undo: Remove animation data" />
