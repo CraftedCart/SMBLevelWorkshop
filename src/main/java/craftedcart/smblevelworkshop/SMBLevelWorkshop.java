@@ -22,6 +22,8 @@ import java.io.IOException;
  */
 public class SMBLevelWorkshop {
 
+    public static boolean shouldQuitJVM = true;
+
     public static void main(String[] args) {
         if (System.getProperty("os.name").toUpperCase().contains("LINUX")) {
             LogHelper.info(SMBLevelWorkshop.class, "Running on Linux - Calling XInitThreads()");
@@ -30,7 +32,7 @@ public class SMBLevelWorkshop {
 
         LogHelper.info(SMBLevelWorkshop.class, "SMB Level Workshop launched");
 
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.UNCAUGHT_EXCEPTION_HANDLER_NO_GUI); //Set the uncaught exception handler (Create a crash report)
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.UNCAUGHT_EXCEPTION_HANDLER); //Set the uncaught exception handler (Create a crash report)
 
         try {
             Window.init();
@@ -76,10 +78,12 @@ public class SMBLevelWorkshop {
     public static void onQuit() {
 //        AudioUtils.cleanup();
 
-        Display.destroy();
+        if (Window.drawable != null) Display.destroy();
 
-        LogHelper.info(SMBLevelWorkshop.class, "Quitting JVM!");
-        System.exit(0);
+        if (shouldQuitJVM) {
+            LogHelper.info(SMBLevelWorkshop.class, "Quitting JVM!");
+            System.exit(0);
+        }
     }
 
 }

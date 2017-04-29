@@ -1,9 +1,17 @@
 package craftedcart.smblevelworkshop.util;
 
+import craftedcart.smblevelworkshop.SMBLevelWorkshop;
 import craftedcart.smblevelworkshop.Window;
-import craftedcart.smblevelworkshop.ui.CrashedScreen;
+import craftedcart.smblevelworkshop.project.ProjectManager;
 import org.lwjgl.Sys;
 
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
@@ -19,22 +27,108 @@ import java.util.List;
  */
 public class CrashHandler {
 
-    public static final Thread.UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER = (t, e) -> CrashHandler.handleCrash(t, e, true);
-    public static final Thread.UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER_NO_GUI = (t, e) -> CrashHandler.handleCrash(t, e, false);
+    public static final Thread.UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER = CrashHandler::handleCrash;
 
-    public static void handleCrash(Thread t, Throwable e, boolean showGui) {
+    private static JFrame cleanupFrame;
+    private static JTextArea cleanupTextArea;
+
+    public static void handleCrash(Thread t, Throwable e) {
+        Thread.setDefaultUncaughtExceptionHandler(null); //In case something bad happens, don't enter an infinite loop
+
         LogHelper.fatal(CrashHandler.class, generateCrashLog(t, e));
 
-//        LogHelper.info(CrashHandler.class, "Cleaning up after crash...");
+        LogHelper.info(CrashHandler.class, "Uncaught exception - Now handling crash!");
 
-        if (showGui) {
-            try {
-                Window.drawable.makeCurrent();
-                Window.uiScreen = new CrashedScreen(getStackTraceString(e));
-            } catch (Exception e1) {
-                LogHelper.error(CrashHandler.class, "Error in CrashHandler\n" + getStackTraceString(e1));
+        SMBLevelWorkshop.shouldQuitJVM = false; //Don't auto quit JVM because the Display was destroyed
+
+        createCrashCleanupUI();
+
+        new Thread(() -> {
+            if (Window.drawable != null) {
+                LogHelper.info(CrashHandler.class, "Attempting to stop update loop");
+                updateCrashCleanupUI("Attempting to stop update loop");
+                Window.running = false;
             }
+
+            if (ProjectManager.getCurrentLevelData() != null) {
+                LogHelper.info(CrashHandler.class, "Attempting to save current project to home directory");
+                updateCrashCleanupUI("Attempting to save current project to home directory");
+
+                String dateTimeStr = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ssZ").format(new Date());
+                File crashProject = new File(System.getProperty("user.home"), "SMBLevelWorkshop-CrashProject-" + dateTimeStr + ".xml");
+
+                try {
+                    ExportXMLManager.writeXMLConfig(ProjectManager.getCurrentLevelData(), crashProject);
+                    LogHelper.info(CrashHandler.class, "Saved crash project to " + crashProject.getPath());
+                    updateCrashCleanupUI("Saved crash project to " + crashProject.getPath());
+                } catch (ParserConfigurationException | TransformerException e1) {
+                    LogHelper.error(CrashHandler.class, "Error saving current project\n" + getStackTraceString(e1));
+                    updateCrashCleanupUI("Error saving current project\n" + getStackTraceString(e1));
+                }
+            }
+
+            destroyCrashCleanupUI();
+            showCrashUI();
+        }, "CrashHandlerThread").start();
+
+    }
+
+    private static void createCrashCleanupUI() {
+        cleanupFrame = new JFrame("SMB Level Workshop Crash Handler");
+        cleanupFrame.setSize(800, 300);
+        cleanupFrame.setLayout(new BorderLayout());
+
+        cleanupTextArea = new JTextArea();
+        cleanupTextArea.setEditable(false);
+
+        cleanupTextArea.setFont(new Font("monospaced", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(cleanupTextArea);
+        cleanupFrame.add(scrollPane);
+
+        cleanupFrame.setVisible(true);
+    }
+
+    private static void updateCrashCleanupUI(String text) {
+        SwingUtilities.invokeLater(() -> cleanupTextArea.append(text + "\n"));
+    }
+
+    private static void destroyCrashCleanupUI() {
+        cleanupFrame.setVisible(false);
+        cleanupFrame = null;
+        cleanupTextArea = null;
+    }
+
+    private static void showCrashUI() {
+        JFrame frame = new JFrame("SMB Level Workshop Crash Handler");
+        frame.setSize(800, 600);
+        frame.setLayout(new BorderLayout());
+
+        JTextArea logTextArea = new JTextArea();
+        logTextArea.setEditable(false);
+
+        StringBuilder logSB = new StringBuilder();
+        for (LogHelper.LogEntry entry : LogHelper.log) {
+            logSB.append(entry.logLevel.name()).append(" - ").append(entry.clazz.getCanonicalName()).append(" - ").append(entry.object).append("\r\n");
         }
+
+        logTextArea.setText(logSB.toString());
+        logTextArea.setFont(new Font("monospaced", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(logTextArea);
+        frame.add(scrollPane);
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                SMBLevelWorkshop.shouldQuitJVM = true;
+                SMBLevelWorkshop.onQuit();
+            }
+        });
+
+        frame.setVisible(true);
+
+        //Scroll to bottom
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+        vertical.setValue(vertical.getMaximum());
     }
 
     public static String getStackTraceString(Throwable e) {
@@ -89,7 +183,7 @@ public class CrashHandler {
                 String.format("LWJGL Version: %s\n", lwjglVersion) +
                 String.format("OpenGL Version: %s\n", Window.openGLVersion) +
                 String.format("Available Processors: %d\n", processors) +
-                String.format("Heap Size: %d b (%.2f MiB)\n", heapSize, heapSize / 1048576d) +
+                String.format("Heap Size: %d B (%.2f MiB)\n", heapSize, heapSize / 1048576d) +
                 "\n" +
                 "Crash Details\n" +
                 "=============\n" +

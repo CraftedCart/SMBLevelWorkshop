@@ -69,7 +69,7 @@ public class Window {
             try {
                 SMBLevelWorkshop.init();
             } catch (LWJGLException | SlickException | FontFormatException | IOException e) {
-                CrashHandler.handleCrash(Thread.currentThread(), e, false);
+                CrashHandler.handleCrash(Thread.currentThread(), e);
                 System.exit(1);
             }
         }, "initThread").start();
@@ -85,11 +85,11 @@ public class Window {
 
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler.UNCAUGHT_EXCEPTION_HANDLER); //Set the uncaught exception handler (Create a crash report)
 
-        while (!Display.isCloseRequested() && running) { //Render loop
+        while (running && !Display.isCloseRequested()) { //Render loop
             try {
                 renderLoop();
             } catch (Exception e) {
-                CrashHandler.handleCrash(Thread.currentThread(), e, true); //Send it to the crash handler
+                CrashHandler.handleCrash(Thread.currentThread(), e); //Send it to the crash handler
             }
         }
 
