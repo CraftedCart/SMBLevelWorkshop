@@ -20,19 +20,21 @@ public class AnimData {
 
     @NotNull protected PosXYZ rotationCenter = new PosXYZ();
 
-    protected TreeMap<Float, Float> posXFrames = new TreeMap<>();
-    protected TreeMap<Float, Float> posYFrames = new TreeMap<>();
-    protected TreeMap<Float, Float> posZFrames = new TreeMap<>();
+    @Deprecated protected TreeMap<Float, Float> posXFrames = new TreeMap<>();
+    @Deprecated protected TreeMap<Float, Float> posYFrames = new TreeMap<>();
+    @Deprecated protected TreeMap<Float, Float> posZFrames = new TreeMap<>();
 
-    protected TreeMap<Float, Float> rotXFrames = new TreeMap<>();
-    protected TreeMap<Float, Float> rotYFrames = new TreeMap<>();
-    protected TreeMap<Float, Float> rotZFrames = new TreeMap<>();
+    @Deprecated protected TreeMap<Float, Float> rotXFrames = new TreeMap<>();
+    @Deprecated protected TreeMap<Float, Float> rotYFrames = new TreeMap<>();
+    @Deprecated protected TreeMap<Float, Float> rotZFrames = new TreeMap<>();
 
+    @Deprecated
     public AnimData() {}
 
     /**
      * @param cad ConfigAnimData (NOT A COPY CONSTRUCTOR! WILL NOT COPY THE CONFIG ANIM DATA!)
      */
+    @Deprecated
     public AnimData(ConfigAnimData cad) {
         rotationCenter = new PosXYZ(cad.getRotationCenter().x, cad.getRotationCenter().y, cad.getRotationCenter().z);
 
@@ -45,15 +47,18 @@ public class AnimData {
         rotZFrames = cad.getRotZFrames();
     }
 
+    @Deprecated
     public void setRotationCenter(@NotNull PosXYZ rotationCenter) {
         this.rotationCenter = rotationCenter;
     }
 
     @NotNull
+    @Deprecated
     public PosXYZ getRotationCenter() {
         return rotationCenter;
     }
 
+    @Deprecated
     public NamedTransform getNamedTransformAtTime(float time, @Nullable String name) {
         NamedTransform transform = new NamedTransform(name);
 
@@ -125,79 +130,98 @@ public class AnimData {
     }
 
     //Pos
+    @Deprecated
     public void setPosXFrame(float time, float pos) {
         posXFrames.put(time, pos);
     }
 
+    @Deprecated
     public void setPosYFrame(float time, float pos) {
         posYFrames.put(time, pos);
     }
 
+    @Deprecated
     public void setPosZFrame(float time, float pos) {
         posZFrames.put(time, pos);
     }
 
+    @Deprecated
     public void removePosXFrame(float time) {
         posXFrames.remove(time);
     }
 
+    @Deprecated
     public void removePosYFrame(float time) {
         posYFrames.remove(time);
     }
 
+    @Deprecated
     public void removePosZFrame(float time) {
         posZFrames.remove(time);
     }
 
+    @Deprecated
     public TreeMap<Float, Float> getPosXFrames() {
         return posXFrames;
     }
 
+    @Deprecated
     public TreeMap<Float, Float> getPosYFrames() {
         return posYFrames;
     }
 
+    @Deprecated
     public TreeMap<Float, Float> getPosZFrames() {
         return posZFrames;
     }
     
     //Rot
+    @Deprecated
     public void setRotXFrame(float time, float rot) {
         rotXFrames.put(time, rot);
     }
 
+    @Deprecated
     public void setRotYFrame(float time, float rot) {
         rotYFrames.put(time, rot);
     }
 
+    @Deprecated
     public void setRotZFrame(float time, float rot) {
         rotZFrames.put(time, rot);
     }
 
+    @Deprecated
     public void removeRotXFrame(float time) {
         rotXFrames.remove(time);
     }
 
+    @Deprecated
     public void removeRotYFrame(float time) {
         rotYFrames.remove(time);
     }
 
+    @Deprecated
     public void removeRotZFrame(float time) {
         rotZFrames.remove(time);
     }
 
+    @Deprecated
     public TreeMap<Float, Float> getRotXFrames() {
         return rotXFrames;
     }
 
+    @Deprecated
     public TreeMap<Float, Float> getRotYFrames() {
         return rotYFrames;
     }
 
+    @Deprecated
     public TreeMap<Float, Float> getRotZFrames() {
         return rotZFrames;
     }
 
+    @Deprecated
     public void mergeWith(AnimData other) {
         posXFrames.putAll(other.posXFrames);
         posYFrames.putAll(other.posYFrames);
@@ -208,6 +232,7 @@ public class AnimData {
         rotZFrames.putAll(other.rotZFrames);
     }
 
+    @Deprecated
     public AnimData mergeWithCopy(AnimData other) {
         AnimData ad = getCopy();
 
@@ -228,6 +253,7 @@ public class AnimData {
         return ad;
     }
 
+    @Deprecated
     public void moveFirstFrame(float percent) {
         //Pos
         Map.Entry<Float, Float> firstPosX = posXFrames.firstEntry();
@@ -268,6 +294,7 @@ public class AnimData {
         }
     }
 
+    @Deprecated
     public AnimData getCopy() {
         PosXYZ rotationCenterClone = rotationCenter.getCopy();
 
@@ -294,6 +321,7 @@ public class AnimData {
         return animDataClone;
     }
 
+    @Deprecated
     public void clampKeyframeTimes() {
         NamedTransform time0 = getNamedTransformAtTime(0.0f, null);
         NamedTransform time1 = getNamedTransformAtTime(1.0f, null);

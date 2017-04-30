@@ -338,7 +338,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             try {
                 SMBCnvConfigParser.parseConfig(configData, tempConfigFile);
 
-                ItemGroup staticItemGroup = configData.getStaticItemGroup();
+                ItemGroup staticItemGroup = configData.getFirstItemGroup();
 
                 //Add non animated objects to the static ItemGroup
                 for (String objectName : modelData.cmnObjNames) {
@@ -529,7 +529,7 @@ public class ExportOverlayUIScreen extends FluidUIScreen {
             try {
                 SMBCnvConfigParser.parseConfig(configData, tempConfigFile);
 
-                ItemGroup staticItemGroup = configData.getStaticItemGroup();
+                ItemGroup staticItemGroup = configData.getFirstItemGroup();
 
                 //Add non animated objects to the static ItemGroup
                 for (String objectName : modelData.cmnObjNames) {

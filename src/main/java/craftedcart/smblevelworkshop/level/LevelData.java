@@ -223,9 +223,9 @@ public class LevelData {
             //Use static item group if it exists
             return itemGroupMap.get("Static");
         } else {
-            //If static doesn't exist, find the first non STAGE_RESERVED item group
+            //If static doesn't exist, find the first non STAGE_RESERVED / BACKGROUND_RESERVED item group
             for (Map.Entry<String, WSItemGroup> entry : itemGroupMap.entrySet()) {
-               if (!entry.getKey().equals("STAGE_RESERVED")) return entry.getValue();
+               if (!entry.getKey().equals("STAGE_RESERVED") || !entry.getKey().equals("BACKGROUND_RESERVED")) return entry.getValue();
             }
 
             //If no item groups exist, create one

@@ -2,10 +2,6 @@ package craftedcart.smblevelworkshop.ui;
 
 import craftedcart.smblevelworkshop.SMBLWSettings;
 import craftedcart.smblevelworkshop.Window;
-import craftedcart.smblevelworkshop.animation.AnimData;
-import craftedcart.smblevelworkshop.animation.BufferedAnimData;
-import craftedcart.smblevelworkshop.animation.KeyframeEntry;
-import craftedcart.smblevelworkshop.animation.NamedTransform;
 import craftedcart.smblevelworkshop.asset.*;
 import craftedcart.smblevelworkshop.level.ClientLevelData;
 import craftedcart.smblevelworkshop.level.LevelData;
@@ -2761,7 +2757,6 @@ public class MainScreen extends FluidUIScreen {
                             outlinerPlaceablesListBox.clearChildComponents();
 
                             cld.clearSelectedKeyframes();
-//                            ld.clearAnimData();
 
                             //Add start pos
                             if (configData.startList.size() > 0) {
@@ -2786,7 +2781,7 @@ public class MainScreen extends FluidUIScreen {
                             outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(falloutName));
 
                             //Add goals
-                            for (Map.Entry<String, Goal> entry : configData.getStaticItemGroup().goalList.entrySet()) { //TODO: Forced to use static item group
+                            for (Map.Entry<String, Goal> entry : configData.getFirstItemGroup().goalList.entrySet()) { //TODO: Forced to use static item group
                                 Goal goal = entry.getValue();
                                 Placeable goalPlaceable = new Placeable(new AssetGoal());
                                 goalPlaceable.setPosition(new PosXYZ(goal.pos));
@@ -2806,7 +2801,7 @@ public class MainScreen extends FluidUIScreen {
                             }
 
                             //Add bumpers
-                            for (Map.Entry<String, Bumper> entry : configData.getStaticItemGroup().bumperList.entrySet()) { //TODO: Forced to use static item group
+                            for (Map.Entry<String, Bumper> entry : configData.getFirstItemGroup().bumperList.entrySet()) { //TODO: Forced to use static item group
                                 Bumper bumper = entry.getValue();
                                 Placeable bumperPlaceable = new Placeable(new AssetBumper());
                                 bumperPlaceable.setPosition(new PosXYZ(bumper.pos));
@@ -2818,7 +2813,7 @@ public class MainScreen extends FluidUIScreen {
                             }
 
                             //Add jamabars
-                            for (Map.Entry<String, Jamabar> entry : configData.getStaticItemGroup().jamabarList.entrySet()) { //TODO: Forced to use static item group
+                            for (Map.Entry<String, Jamabar> entry : configData.getFirstItemGroup().jamabarList.entrySet()) { //TODO: Forced to use static item group
                                 Jamabar jamabar = entry.getValue();
                                 Placeable jamabarPlaceable = new Placeable(new AssetJamabar());
                                 jamabarPlaceable.setPosition(new PosXYZ(jamabar.pos));
@@ -2830,7 +2825,7 @@ public class MainScreen extends FluidUIScreen {
                             }
 
                             //Add bananas
-                            for (Map.Entry<String, Banana> entry : configData.getStaticItemGroup().bananaList.entrySet()) { //TODO: Forced to use static item group
+                            for (Map.Entry<String, Banana> entry : configData.getFirstItemGroup().bananaList.entrySet()) { //TODO: Forced to use static item group
                                 Banana banana = entry.getValue();
                                 Placeable bananaPlaceable = new Placeable(new AssetBanana());
                                 bananaPlaceable.setPosition(new PosXYZ(banana.pos));
@@ -2845,6 +2840,8 @@ public class MainScreen extends FluidUIScreen {
                                 String name = ld.addPlaceable(entry.getKey(), bananaPlaceable);
                                 outlinerPlaceablesListBox.addChildComponent(getOutlinerPlaceableComponent(name));
                             }
+
+                            //TODO: Add wormholes and fallout volumes
 
                             //Mark background objects
                             for (String name : configData.backgroundList) {
