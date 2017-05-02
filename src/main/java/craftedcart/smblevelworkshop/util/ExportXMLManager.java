@@ -69,6 +69,7 @@ public class ExportXMLManager {
             bgE.appendChild(getNameElement(doc, name));
             bgE.appendChild(getPosElement(doc, new PosXYZ(0, 0, 0))); //TODO: Changeable positions
             bgE.appendChild(getRotElement(doc, new PosXYZ(0, 0, 0))); //TODO: Changeable rotations
+            bgE.appendChild(getSclElement(doc, new PosXYZ(0, 0, 0))); //TODO: Changeable scales
 
             rootE.appendChild(bgE);
         }
@@ -78,6 +79,8 @@ public class ExportXMLManager {
         for (Map.Entry<String, WSItemGroup> entry : levelData.getItemGroupMap().entrySet()) {
             //Skip the STAGE_RESERVED and BACKGROUND_RESERVED item groups - It's not really an item group, but just used for SMBLW
             if (entry.getKey().equals("STAGE_RESERVED") || entry.getKey().equals("BACKGROUND_RESERVED")) continue;
+
+            //TODO: Item group naming
 
             WSItemGroup itemGroup = entry.getValue();
 
@@ -90,7 +93,7 @@ public class ExportXMLManager {
 
             //Initial rotation
             Element initialRotE = doc.createElement("initialRotation");
-            initialRotE.appendChild(getPosElement(doc, itemGroup.getInitialRotation()));
+            initialRotE.appendChild(getRotElement(doc, itemGroup.getInitialRotation()));
             igE.appendChild(initialRotE);
 
             //Collision grid
