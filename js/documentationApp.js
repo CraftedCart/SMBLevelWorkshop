@@ -42,6 +42,9 @@
 		"debugShortcuts": {
 			"name": "Debug Shortcuts"
 		},
+		"rmacGlitch": {
+			"name": "The Rmac Glitch (Instant Goal)"
+		},
 		"removingWorldEffects": {
 			"name": "Removing World Effects"
 		},

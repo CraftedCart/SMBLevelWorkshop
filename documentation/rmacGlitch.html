@@ -1,0 +1,22 @@
+<h1>The Rmac Glitch</h1>
+
+<p>
+	The Rmac glitch is where on certain custom levels, the stage is beaten immediately. This is thought to be caused by there being triangles with zero area within the LZ collision.
+</p>
+
+<h3>Fixes</h3>
+
+<ul>
+	<li>Wings 3D: Select all objects, right check, and select "Cleanup".</li>
+	<li>Blender: Select all objects, press W, and select "Remove doubles".</li>
+</ul>
+
+<p>
+	This should remove zero-area faces
+</p>
+
+<h3>Prevention</h3>
+<p>
+	An issue considered to commonly cause it it using "connect" to triangulate (Pressing C in Wings 3D) instead of the Tessellate > triangulate method. Consider using the latter way for triangulation.
+</p>
+
