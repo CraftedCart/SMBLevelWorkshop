@@ -1,0 +1,283 @@
+<h1>SMB Sound Effects File Formats</h1>
+
+<h2>SDIR</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<th>Note: Repeat for each sound</th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Sample ID</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Reserved?</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Sample offset in <a href="javascript:scrollTo('#samp')">samp</a></td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Reserved?</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x01</code></td>
+		<td>1</td>
+		<td>Base note (always 0x3C?)</td>
+	</tr>
+	<tr>
+		<td>13</td>
+		<td><code>0x01</code></td>
+		<td>1</td>
+		<td>Reserved?</td>
+	</tr>
+	<tr>
+		<td>14</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Sample rate<td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Number of samples</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Loop start address (in samples, 0 if no loop)<td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Loop length (in samples, 0 if no loop)</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Offset to decoder values (coefficients, ect)<td>
+	</tr>
+	<tr>
+		<th>End of individual Sample Header</th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<td>32 * numberOfHeaders</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>0xFFFFFFFF to mark that there are no more headers<td>
+	</tr>
+	<tr>
+		<th>Decoder values</th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Unknown (always 0x0008?)</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td><code>0x01</code></td>
+		<td>1</td>
+		<td>Predictor/Scale</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td><code>0x01</code></td>
+		<td>1</td>
+		<td>Loop predictor/scale</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Loop sample history n-2</td>
+	</tr>
+	<tr>
+		<td>6</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Loop sample history n-1</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x20</code></td>
+		<td>32</td>
+		<td>Coefficients<td>
+	</tr>
+</table>
+
+<h2 id="samp">SAMP</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>Note: repeat for each sound</td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td>Varies</td>
+		<td>Varies</td>
+		<td>Sample data padded to the next 8-byte alignment</td>
+	</tr>
+</table>
+
+<h2 id="dsp">DSP</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>No. Bytes (decimal)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Number of samples</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Number of nibbles</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Sample rate</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Loop flag (0 is no loop, 1 is loop)</td>
+	</tr>
+	<tr>
+		<td>14</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Format (always 0 - ADPCM)</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Loop start address (in nibbles, 2 if not looping)</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Loop end address (in nibbles, 0 if not looping)</td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Initial offset value (in nibbles, always 2)</td>
+	</tr>
+	<tr>
+		<td>28</td>
+		<td><code>0x20</code></td>
+		<td>32</td>
+		<td>Coefficients</td>
+	</tr>
+	<tr>
+		<td>60</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Gain (always 0 for ADPCM)</td>
+	</tr>
+		<tr>
+		<td>62</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Predictor/Scale</td>
+	</tr>
+	<tr>
+		<td>64</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Sample history (0, not specified?)</td>
+	</tr>
+		<tr>
+		<td>66</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Sample history (0, not specified?)</td>
+	</tr>
+	<tr>
+		<td>68</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Predictor/Scale for loop context</td>
+	</tr>
+		<tr>
+		<td>70</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Sample history (n-1) for loop context</td>
+	</tr>
+	<tr>
+		<td>72</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Sample history (n-2) for loop context</td>
+	</tr>
+		<tr>
+		<td>74</td>
+		<td><code>0x16</code></td>
+		<td>22</td>
+		<td>Padding/Reserved</td>
+	</tr>
+	<tr>
+		<td>60</td>
+		<td><code>0x02</code></td>
+		<td>2</td>
+		<td>Gain (always 0 for ADPCM)</td>
+	</tr>
+		<tr>
+		<td>92</td>
+		<td>Varies</td>
+		<td>Varies</td>
+		<td>Sample data padded to the next 8-byte alignment</td>
+	</tr>
+</table>

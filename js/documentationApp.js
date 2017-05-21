@@ -39,6 +39,9 @@
 		"tplFormatDx": {
 			"name": "SMB Deluxe TPL File Format"
 		},
+		"sfxFormat": {
+			"name": "Sound Effects File Formats"
+		},
 		"debugShortcuts": {
 			"name": "Debug Shortcuts"
 		},
