@@ -176,7 +176,7 @@
 		<td>188</td>
 		<td><code>0x4</code></td>
 		<td>4</td>
-		<td>Integer - Big Endian - Offset to <a href="javascript:scrollTo('#mysterytwo')">Mystery Two</a></td>
+		<td>Integer - Big Endian - Offset to <a href="javascript:scrollTo('#fog')">fog data</a></td>
 	</tr>
 	<tr>
 		<td>192</td>
@@ -1358,7 +1358,7 @@
 	</tr>
 </table>
 
-<h2 id="mysterytwo">Mystery Two</h2><br />
+<h2 id="fog">Fog Data</h2><br />
 <table class="table">
 	<tr>
 		<th>Relative Offset (decimal)</th>
@@ -1368,9 +1368,45 @@
 	</tr>
 	<tr>
 		<td>0</td>
-		<td><code>0x20</code></td>
-		<td>32</td>
-		<td>Unknown (Non-zero - Not floats or shorts - Big / little endian doesn't change the values)</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td><code>0x04000000</code></td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Fog start</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Fog end</td>
+	</tr>
+	<tr>
+		<td>12</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Amount of red (Value from 0 to 1)</td>
+	</tr>
+	<tr>
+		<td>16</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Amount of green (Value from 0 to 1)</td>
+	</tr>
+	<tr>
+		<td>20</td>
+		<td><code>0x04</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Amount of blue (Value from 0 to 1)</td>
+	</tr>
+	<tr>
+		<td>24</td>
+		<td><code>0x0C</code></td>
+		<td>12</td>
+		<td>Unknown/Zero</td>
 	</tr>
 </table>
 
