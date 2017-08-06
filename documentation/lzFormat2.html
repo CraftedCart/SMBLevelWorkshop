@@ -558,37 +558,37 @@
 		<td>0</td>
 		<td><code>0x4</code></td>
 		<td>4</td>
-		<td>Center X position for animation, single precision float, big endian (0 if no animation)</td>
+		<td>Center of rotation X position, single precision float, big endian (0 if no animation)</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td><code>0x4</code></td>
 		<td>4</td>
-		<td>Center Y position for animation, single precision float, big endian (0 if no animation)</td>
+		<td>Center of rotation Y position, single precision float, big endian (0 if no animation)</td>
 	</tr>
 	<tr>
 		<td>8</td>
 		<td><code>0x4</code></td>
 		<td>4</td>
-		<td>Center Z position for animation, single precision float, big endian (0 if no animation)</td>
+		<td>Center of rotation Z position, single precision float, big endian (0 if no animation)</td>
 	</tr>
 	<tr>
 		<td>12</td>
 		<td><code>0x2</code></td>
 		<td>2</td>
-		<td>Initial X rotation for animation, integer, big endian (0 if no animation)</td>
+		<td>Initial X rotation, integer, big endian (0 if no animation)</td>
 	</tr>
 	<tr>
 		<td>14</td>
 		<td><code>0x2</code></td>
 		<td>2</td>
-		<td>Initial Y rotation for animation, integer, big endian (0 if no animation)</td>
+		<td>Initial Y rotation, integer, big endian (0 if no animation)</td>
 	</tr>
 	<tr>
 		<td>16</td>
 		<td><code>0x2</code></td>
 		<td>2</td>
-		<td>Initial Z rotation for animation, integer, big endian (0 if no animation)</td>
+		<td>Initial Z rotation, integer, big endian (0 if no animation)</td>
 	</tr>
 	<tr>
 		<td>18</td>
@@ -1666,6 +1666,7 @@
 	<li>All offsets written to file are relative to the beginning of the file</li>
 	<li>Try to keep things 4 byte aligned if possible (based on the specs, it seems to be built like this)</li>
 	<li>Objects names need to be put somewhere in the file</li>
+    <li>Rotation is given in 2 bytes, ranging from <code>00 00</code> being 0 deg, and <code>FF FF</code> being 359.995 (rounded to 3 d.p.) deg</li>
 	<li>The Collision Grid is used for optimization
 		<ul>
 			<li>Collisions are divided into a matrix based on triangle position</li>
