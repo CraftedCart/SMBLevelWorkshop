@@ -594,7 +594,7 @@
 		<td>18</td>
 		<td><code>0x2</code></td>
 		<td>2</td>
-		<td>Zero/Padding</td>
+		<td>Whether this collision header should act as a seesaw or not (<code>00 00</code> means it's not a seesaw, <code>00 02</code> means it is - Seesaws rotate around the X axis is not rotated)</td>
 	</tr>
 	<tr>
 		<td>20</td>
@@ -750,17 +750,23 @@
 		<td>184</td>
 		<td><code>0x4</code></td>
 		<td>4</td>
-		<td>Integer - Big Endian - Offset to <a href="javascript:scrollTo('#mysteryfive')">Mystery 5</a></td>
+		<td>Single Precision Float - Big Endian - Seesaw sensitivity (Higher is more sensitive, negative makes the seesaw reversed)</td>
 	</tr>
 	<tr>
 		<td>188</td>
-		<td><code>0x08</code></td>
-		<td>8</td>
-		<td>Unknown / Zero</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Seesaw reset stiffness (Lower is looser)</td>
+	</tr>
+	<tr>
+		<td>192</td>
+		<td><code>0x4</code></td>
+		<td>4</td>
+		<td>Single Precision Float - Big Endian - Seesaw bounds of rotation (Higher is less)</td>
 	</tr>
 	<tr>
 		<td>196</td>
-		<td><code>0x04</code></td>
+		<td><code>0x4</code></td>
 		<td>4</td>
 		<td>Integer - Big Endian - Number of <a href="javascript:scrollTo('#wormhole')">wormholes</a></td>
 	</tr>
@@ -1500,40 +1506,6 @@
 	</tr>
 	<tr>
 		<td>4</td>
-		<td><code>0x4</code></td>
-		<td>4</td>
-		<td>Probably a single precision float, big endian</td>
-	</tr>
-</table>
-
-<h2 id="mysteryfive">Mystery Five</h2><br />
-<table class="table">
-	<tr>
-		<th>Relative Offset (decimal)</th>
-		<th>No. Bytes (hex)</th>
-		<th>No. Bytes (decimal)</th>
-		<th>Description</th>
-	</tr>
-	<tr>
-		<td>0</td>
-		<td><code>0x4</code></td>
-		<td>4</td>
-		<td>Unknown / Zero</td>
-	</tr>
-	<tr>
-		<td>4</td>
-		<td><code>0x4</code></td>
-		<td>4</td>
-		<td>Probably a single precision float, big endian</td>
-	</tr>
-	<tr>
-		<td>8</td>
-		<td><code>0x4</code></td>
-		<td>4</td>
-		<td>Probably a single precision float, big endian</td>
-	</tr>
-	<tr>
-		<td>12</td>
 		<td><code>0x4</code></td>
 		<td>4</td>
 		<td>Probably a single precision float, big endian</td>
