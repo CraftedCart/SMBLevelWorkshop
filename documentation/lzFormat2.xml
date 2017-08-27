@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Command for SMBLevelWorkshop docs: specformatter <dash><dash>table-class table lzFormat2.xml lzFormat2.html -->
+<!-- But of course, replace <dash><dash> with two dashes - XML has a compatibility rule preventing <dash><dash> from being in comments -->
+<specSheet>
+    <spec id="lzFormat2" name="SMB 2 LZ Format" linkImage="Link.png">
+        <note>All values are in big endian for SMB 2, or little endian for SMB 1</note>
+        <note>The LZ file is compressed using a variation of LZSS</note>
+        <note>All strings are null terminated ASCII strings</note>
+        <note>Try to keep things 4 byte aligned if possible (based on the specs, it seems to be built like this)</note>
+        <note>Object names need to be put somewhere in the file</note>
+        <note>Rotation is given in 2 bytes, ranging from 0x0000 being 0 deg, and 0xFFFF being 359.995 (rounded to 3 d.p.) deg</note>
+        <note>Rotation is Z then Y then X</note>
+        <note>The collision is split into a grid and is used for optimization</note>
+        <note>Which triangles are tested against for collision depends on which grid tile the player is in</note>
+        <note>By dividing the triangles into spatial sections, it allows the game to not test every triangle every frame</note>
+        <note>The grid spans from startX, startZ to startX + stepX * stepXCount, startZ + stepZ * stepZCount</note>
+        <note>startX/Z: -256, stepX/Z: 32, stepX/ZCount: 16 is known to work</note>
+        <note>The collision grid pointers should point to different triangle lists, even if they have the same contents</note>
+        <note>If not optimizing, all triangle lists can list all triangles</note>
+        <flag id="n" info="Ok to be left as null" image="NullOk.png" />
+        <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
+        <flag id="i" info="4 byte integer" image="Int32.png" />
+        <flag id="f" info="4 byte float" image="Float32.png" />
+        <flag id="s" info="2 byte short" image="Short16.png" />
+        <flag id="o" info="4 byte file offset" image="Offset32.png" />
+        <flag id="u" info="Unknown" image="Unknown.png" />
+
+        <section id="fileHeader" name="File Header">
+            <entry length="8" flags="" info="0x00000000447A0000" />
+            <entry length="4" flags="in" info="Number of collision headers" link="#spec-lzFormat2-section-collisionHeader" />
+            <entry length="4" flags="oN" info="Offset to the collision header list" link="#spec-lzFormat2-section-collisionHeader" />
+            <entry length="4" flags="o" info="Offset to start position data" link="#spec-lzFormat2-section-startPosition" />
+            <entry length="4" flags="o" info="Offset to fallout position data" link="#spec-lzFormat2-section-falloutPosition" />
+            <entry length="4" flags="in" info="Number of goals" link="#spec-lzFormat2-section-goal" />
+            <entry length="4" flags="oN" info="Offset to the goal list" link="#spec-lzFormat2-section-goal" />
+            <entry length="4" flags="in" info="Number of bumpers" link="#spec-lzFormat2-section-bumper" />
+            <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-lzFormat2-section-bumper" />
+            <entry length="4" flags="in" info="Number of jamabars" link="#spec-lzFormat2-section-jamabar" />
+            <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-lzFormat2-section-jamabar" />
+            <entry length="4" flags="in" info="Number of bananas" link="#spec-lzFormat2-section-banana" />
+            <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-lzFormat2-section-banana" />
+            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
+            <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
+            <entry length="4" flags="in" info="Number of background models" link="#spec-lzFormat2-section-backgroundModel" />
+            <entry length="4" flags="oN" info="Offset to the background model list" link="#spec-lzFormat2-section-backgroundModel" />
+            <entry length="12" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="" info="0x00000001" />
+            <entry length="28" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+            <entry length="4" flags="oN" info="Offset to the level model pointer type A list" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+            <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
+            <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
+            <entry length="20" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="un" info="Unknown/Null (Offset to something?)" />
+            <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
+            <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
+            <entry length="4" flags="on" info="Offset to fog" link="#spec-lzFormat2-section-fog" />
+            <entry length="20" flags="n" info="Unknown/Null" />
+            <entry length="4" flags="on" info="Offset to mystery 3" link="#spec-lzFormat2-section-mystery3" />
+            <entry length="1988" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="startPosition" name="Start Position">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+        </section>
+
+        <section id="falloutPosition" name="Fallout Position">
+            <entry length="4" flags="f" info="Y position" />
+        </section>
+
+        <section id="goal" name="Goal">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="s" info="Type of goal (Blue: 0x0001, Green: 0x0101, Red: 0x0201)" />
+        </section>
+
+        <section id="bumper" name="Bumper">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X Scale" />
+            <entry length="4" flags="f" info="Y Scale" />
+            <entry length="4" flags="f" info="Z Scale" />
+        </section>
+
+        <section id="jamabar" name="Jamabar">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X Scale" />
+            <entry length="4" flags="f" info="Y Scale" />
+            <entry length="4" flags="f" info="Z Scale" />
+        </section>
+
+        <section id="banana" name="Banana">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="4" flags="i" info="Type of banana (Single: 0x00000000, Bunch: 0x00000001)" />
+        </section>
+
+        <section id="wormhole" name="Wormhole">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="o" info="Offset to destination wormhole" link="#spec-lzFormat2-section-wormhole" />
+        </section>
+
+        <section id="falloutVolume" name="Fallout Volume">
+            <entry length="4" flags="f" info="Center X position" />
+            <entry length="4" flags="f" info="Center Y position" />
+            <entry length="4" flags="f" info="Center Z position" />
+            <entry length="4" flags="f" info="X size" />
+            <entry length="4" flags="f" info="Y size" />
+            <entry length="4" flags="f" info="Z size" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+        </section>
+
+        <section id="collisionHeader" name="Collision Header">
+            <entry length="4" flags="fn" info="Center of rotation X position" />
+            <entry length="4" flags="fn" info="Center of rotation Y position" />
+            <entry length="4" flags="fn" info="Center of rotation Z position" />
+            <entry length="2" flags="sn" info="Initial X rotation" />
+            <entry length="2" flags="sn" info="Initial Y rotation" />
+            <entry length="2" flags="sn" info="Initial Z rotation" />
+            <entry length="2" flags="sn" info="Whether this collision header should act as a seesaw or not (0x0000 means it's not a seesaw, 0x0002 means it is - Seesaws rotate around the X axis if not rotated)" />
+            <entry length="4" flags="on" info="Offset to animation header" link="#spec-lzFormat2-section-animationHeader" />
+            <entry length="12" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="o" info="Offset to the collision triangle list" link="#spec-lzFormat2-section-collisionTriangle" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list pointer" link="#spec-lzFormat2-section-collisionGridTriangleListPointer" />
+            <entry length="4" flags="f" info="Collision grid start X" />
+            <entry length="4" flags="f" info="Collision grid start Z" />
+            <entry length="4" flags="f" info="Collision grid step X" />
+            <entry length="4" flags="f" info="Collision grid step Z" />
+            <entry length="4" flags="i" info="Collision grid step X count" />
+            <entry length="4" flags="i" info="Collision grid step Z count" />
+            <entry length="4" flags="in" info="Number of goals" link="#spec-lzFormat2-section-goal" />
+            <entry length="4" flags="oN" info="Offset to the goal list" link="#spec-lzFormat2-section-goal" />
+            <entry length="4" flags="in" info="Number of bumpers" link="#spec-lzFormat2-section-bumper" />
+            <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-lzFormat2-section-bumper" />
+            <entry length="4" flags="in" info="Number of jamabars" link="#spec-lzFormat2-section-jamabar" />
+            <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-lzFormat2-section-jamabar" />
+            <entry length="4" flags="in" info="Number of bananas" link="#spec-lzFormat2-section-banana" />
+            <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-lzFormat2-section-banana" />
+            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
+            <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
+            <entry length="16" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-falloutVolume" />
+            <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
+            <entry length="28" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="fN" info="Seesaw sensitivity (Higher is more sensitive, negative makes the seesaw reversed)" />
+            <entry length="4" flags="fN" info="Seesaw reset stiffness (Lower is looser)" />
+            <entry length="4" flags="fN" info="Seesaw bounds of rotation (Higher is less)" />
+            <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
+            <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
+            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
+            <entry length="964" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="levelModelPointerTypeA" name="Level Model Pointer Type A">
+            <entry length="8" flags="" info="0x00000000 0x00000001" />
+            <entry length="4" flags="o" info="Offset to level model Type A" link="#spec-lzFormat2-section-levelModelTypeA" />
+        </section>
+
+        <section id="levelModelTypeA" name="Level Model Type A">
+            <entry length="4" flags="n" info="Null" />
+            <entry length="4" flags="o" info="Offset to the model name to use" />
+            <entry length="8" flags="n" info="Null" />
+        </section>
+
+        <section id="levelModelPointerTypeB" name="Level Model Pointer Type B">
+            <entry length="4" flags="o" info="Offset to level model pointer Type A" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+        </section>
+
+        <section id="backgroundModel" name="Background Model">
+            <entry length="4" flags="" info="0x0000001F" />
+            <entry length="4" flags="o" info="Offset to the model name to use" />
+            <entry length="4" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X Scale" />
+            <entry length="4" flags="f" info="Y Scale" />
+            <entry length="4" flags="f" info="Z Scale" />
+            <entry length="4" flags="o" info="Offset to the background animation header" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
+            <entry length="4" flags="o" info="Offset to the background animation header (Different from the previous one)" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
+            <entry length="4" flags="o" info="Offset to mystery 4" link="#spec-lzFormat2-section-mystery4" />
+        </section>
+
+        <section id="collisionTriangle" name="Collision Triangle">
+            <entry length="4" flags="f" info="X1 position" />
+            <entry length="4" flags="f" info="Y1 position" />
+            <entry length="4" flags="f" info="Z1 position" />
+            <entry length="4" flags="f" info="X normal" />
+            <entry length="4" flags="f" info="Y normal" />
+            <entry length="4" flags="f" info="Z normal" />
+            <entry length="2" flags="s" info="X rotation from XY plane" />
+            <entry length="2" flags="s" info="Y rotation from XY plane" />
+            <entry length="2" flags="s" info="Z rotation from XY plane" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X tangent" />
+            <entry length="4" flags="f" info="Y tangent" />
+            <entry length="4" flags="f" info="X bitangent" />
+            <entry length="4" flags="f" info="Y bitangent" />
+        </section>
+
+        <section id="collisionGridTriangleList" name="Collision Grid Triangle List">
+            <entry length="2" flags="s" info="Triangle index" link="#spec-lzFormat2-section-collisionTriangle" />
+            <entry length="0" flags="s" info="... (Triangle index is repeated)" />
+            <entry length="2" flags="s" info="0xFFFF to terminate a list" />
+        </section>
+
+        <section id="collisionGridTriangleListPointer" name="Collision Grid Triangle List Pointer">
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+        </section>
+
+        <section id="animationHeader" name="Animation Header">
+            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="16" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="animationKeyframe" name="Animation Keyframe">
+            <entry length="4" flags="i" info="Easing (Linear: 0x00000001, Ease: 0x00000002)" />
+            <entry length="4" flags="f" info="Time (Seconds)" />
+            <entry length="4" flags="f" info="Value (Translation or rotation, depending on where the keyframe is referenced from)" />
+            <entry length="8" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="fog" name="Fog">
+            <entry length="4" flags="" info="0x04000000" />
+            <entry length="4" flags="f" info="Fog start" />
+            <entry length="4" flags="f" info="Fog end" />
+            <entry length="4" flags="f" info="Amount of red (From 0 - 1)" />
+            <entry length="4" flags="f" info="Amount of green (From 0 - 1)" />
+            <entry length="4" flags="f" info="Amount of blue (From 0 - 1)" />
+            <entry length="12" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="mystery3" name="Mystery 3">
+            <entry length="4" flags="f" info="Probably a float" />
+            <entry length="4" flags="f" info="Probably a float" />
+            <entry length="4" flags="f" info="Probably a float" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="2" flags="" info="Some marker (Endianess doesn't affect this)" />
+            <entry length="20" flags="n" info="Null" />
+        </section>
+
+        <section id="mystery4" name="Mystery 4">
+            <entry length="16" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="o" info="Offset to mystery 4-a" link="#spec-lzFormat2-section-mystery4a" />
+            <entry length="28" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="mystery4a" name="Mystery 4-a">
+            <entry length="4" flags="f" info="Probably a float" />
+            <entry length="4" flags="f" info="Probably a float" />
+        </section>
+    </spec>
+</specSheet>
+
