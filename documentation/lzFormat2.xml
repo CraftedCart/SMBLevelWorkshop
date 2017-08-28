@@ -17,6 +17,7 @@
         <note>startX/Z: -256, stepX/Z: 32, stepX/ZCount: 16 is known to work</note>
         <note>The collision grid pointers should point to different triangle lists, even if they have the same contents</note>
         <note>If not optimizing, all triangle lists can list all triangles</note>
+        <note>Animations can be grouped with the animation group ID value in the collision header - This allows a single switch to trigger multiple animations</note>
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
         <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
         <flag id="i" info="4 byte integer" image="Int32.png" />
@@ -46,12 +47,17 @@
             <entry length="4" flags="oN" info="Offset to the background model list" link="#spec-lzFormat2-section-backgroundModel" />
             <entry length="12" flags="un" info="Unknown/Null" />
             <entry length="4" flags="" info="0x00000001" />
-            <entry length="28" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
+            <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
+            <entry length="20" flags="un" info="Unknown/Null" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
             <entry length="4" flags="oN" info="Offset to the level model pointer type A list" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
             <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
-            <entry length="20" flags="un" info="Unknown/Null" />
+            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of switches" link="#spec-lzFormat2-section-switch" />
+            <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-lzFormat2-section-switch" />
+            <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="un" info="Unknown/Null (Offset to something?)" />
             <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
             <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
@@ -118,17 +124,6 @@
             <entry length="4" flags="i" info="Type of banana (Single: 0x00000000, Bunch: 0x00000001)" />
         </section>
 
-        <section id="wormhole" name="Wormhole">
-            <entry length="4" flags="f" info="X position" />
-            <entry length="4" flags="f" info="Y position" />
-            <entry length="4" flags="f" info="Z position" />
-            <entry length="2" flags="s" info="X rotation" />
-            <entry length="2" flags="s" info="Y rotation" />
-            <entry length="2" flags="s" info="Z rotation" />
-            <entry length="2" flags="n" info="Null" />
-            <entry length="4" flags="o" info="Offset to destination wormhole" link="#spec-lzFormat2-section-wormhole" />
-        </section>
-
         <section id="falloutVolume" name="Fallout Volume">
             <entry length="4" flags="f" info="Center X position" />
             <entry length="4" flags="f" info="Center Y position" />
@@ -142,6 +137,29 @@
             <entry length="2" flags="n" info="Null" />
         </section>
 
+        <section id="switch" name="Switch">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="s" info="Switch type (Play: 0x0000, Pause: 0x0001, Play backwards: 0x0002, Fast forward: 0x0003, Rewind: 0x0004)" />
+            <entry length="2" flags="s" info="Animation group IDs affected" link="#spec-lzFormat2-section-collisionHeader" />
+            <entry length="2" flags="n" info="Null" />
+        </section>
+
+        <section id="wormhole" name="Wormhole">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="o" info="Offset to destination wormhole" link="#spec-lzFormat2-section-wormhole" />
+        </section>
+
         <section id="collisionHeader" name="Collision Header">
             <entry length="4" flags="fn" info="Center of rotation X position" />
             <entry length="4" flags="fn" info="Center of rotation Y position" />
@@ -149,7 +167,7 @@
             <entry length="2" flags="sn" info="Initial X rotation" />
             <entry length="2" flags="sn" info="Initial Y rotation" />
             <entry length="2" flags="sn" info="Initial Z rotation" />
-            <entry length="2" flags="sn" info="Whether this collision header should act as a seesaw or not (0x0000 means it's not a seesaw, 0x0002 means it is - Seesaws rotate around the X axis if not rotated)" />
+            <entry length="2" flags="s" info="Animation loop type/seesaw (Looping animation: 0x0000, Play once animation: 0x0001, Seesaw: 0x0002 - Seesaws rotate around the X axis if not rotated)" />
             <entry length="4" flags="on" info="Offset to animation header" link="#spec-lzFormat2-section-animationHeader" />
             <entry length="12" flags="un" info="Unknown/Null" />
             <entry length="4" flags="o" info="Offset to the collision triangle list" link="#spec-lzFormat2-section-collisionTriangle" />
@@ -171,26 +189,34 @@
             <entry length="24" flags="un" info="Unknown/Null" />
             <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
-            <entry length="16" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
+            <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
+            <entry length="8" flags="un" info="Unknown/Null" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
-            <entry length="28" flags="un" info="Unknown/Null" />
+            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="2" flags="sn" info="Animation group ID (For use with switches - Must be non-zero if you want to assign a group ID)" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="in" info="Number of switches" link="#spec-lzFormat2-section-switch" />
+            <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-lzFormat2-section-switch" />
+            <entry length="8" flags="un" info="Unknown/Null" />
             <entry length="4" flags="fN" info="Seesaw sensitivity (Higher is more sensitive, negative makes the seesaw reversed)" />
             <entry length="4" flags="fN" info="Seesaw reset stiffness (Lower is looser)" />
             <entry length="4" flags="fN" info="Seesaw bounds of rotation (Higher is less)" />
             <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
             <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
-            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Initial animation state (Playing: 0x00000000, Paused: 0x00000001, Playing backwards: 0x00000002, Fast forward: 0x00000003, Rewind: 0x00000004 - Same as switch types - A play once animation should not be initially playing)" />
+            <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
             <entry length="964" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="levelModelPointerTypeA" name="Level Model Pointer Type A">
             <entry length="8" flags="" info="0x00000000 0x00000001" />
-            <entry length="4" flags="o" info="Offset to level model Type A" link="#spec-lzFormat2-section-levelModelTypeA" />
+            <entry length="4" flags="o" info="Offset to level model Type A" link="#spec-lzFormat2-section-levelModel" />
         </section>
 
-        <section id="levelModelTypeA" name="Level Model Type A">
+        <section id="levelModel" name="Level Model">
             <entry length="4" flags="n" info="Null" />
             <entry length="4" flags="o" info="Offset to the model name to use" />
             <entry length="8" flags="n" info="Null" />
@@ -198,6 +224,11 @@
 
         <section id="levelModelPointerTypeB" name="Level Model Pointer Type B">
             <entry length="4" flags="o" info="Offset to level model pointer Type A" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+        </section>
+
+        <section id="reflectiveLevelModel" name="Reflective Level Model">
+            <entry length="4" flags="o" info="Offset to the model name to use" />
+            <entry length="8" flags="n" info="Null" />
         </section>
 
         <section id="backgroundModel" name="Background Model">
@@ -214,9 +245,9 @@
             <entry length="4" flags="f" info="X Scale" />
             <entry length="4" flags="f" info="Y Scale" />
             <entry length="4" flags="f" info="Z Scale" />
-            <entry length="4" flags="o" info="Offset to the background animation header" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
-            <entry length="4" flags="o" info="Offset to the background animation header (Different from the previous one)" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
-            <entry length="4" flags="o" info="Offset to mystery 4" link="#spec-lzFormat2-section-mystery4" />
+            <entry length="4" flags="on" info="Offset to the background animation header" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
+            <entry length="4" flags="on" info="Offset to the background animation header (Different from the previous one)" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
+            <entry length="4" flags="on" info="Offset to mystery 4" link="#spec-lzFormat2-section-mystery4" />
         </section>
 
         <section id="collisionTriangle" name="Collision Triangle">
