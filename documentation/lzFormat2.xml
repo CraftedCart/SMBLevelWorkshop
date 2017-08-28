@@ -212,7 +212,7 @@
         </section>
 
         <section id="levelModelPointerTypeA" name="Level Model Pointer Type A">
-            <entry length="8" flags="" info="0x00000000 0x00000001" />
+            <entry length="8" flags="" info="0x0000000000000001" />
             <entry length="4" flags="o" info="Offset to level model Type A" link="#spec-lzFormat2-section-levelModel" />
         </section>
 
