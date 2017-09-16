@@ -247,7 +247,7 @@
             <entry length="4" flags="f" info="Z Scale" />
             <entry length="4" flags="on" info="Offset to the background animation header" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
             <entry length="4" flags="on" info="Offset to the background animation header (Different from the previous one)" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
-            <entry length="4" flags="on" info="Offset to mystery 4" link="#spec-lzFormat2-section-mystery4" />
+            <entry length="4" flags="on" info="Offset to the effect header" link="#spec-lzFormat2-section-effectHeader" />
         </section>
 
         <section id="collisionTriangle" name="Collision Triangle">
@@ -310,6 +310,38 @@
             <entry length="12" flags="un" info="Unknown/Null" />
         </section>
 
+        <section id="effectHeader" name="Effect header">
+            <entry length="4" flags="in" info="Number of effect 1 keyframes" link="#spec-lzFormat2-section-effect1" />
+            <entry length="4" flags="oN" info="Offset to the effect 1 list" link="#spec-lzFormat2-section-effect1" />
+            <entry length="4" flags="in" info="Number of effect 2 keyframes" link="#spec-lzFormat2-section-effect2" />
+            <entry length="4" flags="oN" info="Offset to the effect 2 list" link="#spec-lzFormat2-section-effect2" />
+            <entry length="4" flags="on" info="Offset to the texture scroll header" link="#spec-lzFormat2-section-textureScrollHeader" />
+            <entry length="28" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="effect1" name="Effect 1 (Likely used for animated textures, such as the silhouettes in Night)">
+            <entry length="4" flags="iu" info="Unknown" />
+            <entry length="4" flags="iu" info="Unknown" />
+            <entry length="4" flags="iu" info="Unknown" />
+            <entry length="2" flags="su" info="Unknown" />
+            <entry length="2" flags="su" info="Unknown" />
+            <entry length="2" flags="su" info="Unknown" />
+            <entry length="2" flags="u" info="Unknown" />
+        </section>
+
+        <section id="effect2" name="Effect 2 (May be used for the flames in Storm?)">
+            <entry length="4" flags="fu" info="Unknown" />
+            <entry length="4" flags="fu" info="Unknown" />
+            <entry length="4" flags="fu" info="Unknown" />
+            <entry length="1" flags="u" info="Unknown" />
+            <entry length="3" flags="n" info="Null" />
+        </section>
+
+        <section id="textureScrollHeader" name="Texture Scroll Header">
+            <entry length="4" flags="f" info="X speed" />
+            <entry length="4" flags="f" info="Y speed" />
+        </section>
+
         <section id="mystery3" name="Mystery 3">
             <entry length="4" flags="f" info="Probably a float" />
             <entry length="4" flags="f" info="Probably a float" />
@@ -317,17 +349,6 @@
             <entry length="2" flags="n" info="Null" />
             <entry length="2" flags="" info="Some marker (Endianess doesn't affect this)" />
             <entry length="20" flags="n" info="Null" />
-        </section>
-
-        <section id="mystery4" name="Mystery 4">
-            <entry length="16" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="o" info="Offset to mystery 4-a" link="#spec-lzFormat2-section-mystery4a" />
-            <entry length="28" flags="un" info="Unknown/Null" />
-        </section>
-
-        <section id="mystery4a" name="Mystery 4-a">
-            <entry length="4" flags="f" info="Probably a float" />
-            <entry length="4" flags="f" info="Probably a float" />
         </section>
     </spec>
 </specSheet>
