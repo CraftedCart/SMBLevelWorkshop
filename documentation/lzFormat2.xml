@@ -58,7 +58,7 @@
             <entry length="4" flags="in" info="Number of switches" link="#spec-lzFormat2-section-switch" />
             <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-lzFormat2-section-switch" />
             <entry length="4" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="un" info="Unknown/Null (Offset to something?)" />
+            <entry length="4" flags="on" info="Offset to the fog animation data" link="#spec-lzFormat2-section-fogAnimationHeader" />
             <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
             <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
             <entry length="4" flags="on" info="Offset to fog" link="#spec-lzFormat2-section-fog" />
@@ -293,17 +293,31 @@
             <entry length="16" flags="un" info="Unknown/Null" />
         </section>
 
+        <section id="fogAnimationHeader" name="Fog Animation Header">
+            <entry length="4" flags="in" info="Number of start distance keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the start distance keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of end distance keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the end distance keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of red color value keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the red color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of green color value keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the green color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of blue color value keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the blue color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="24" flags="un" info="Unknown/Null" />
+        </section>
+
         <section id="animationKeyframe" name="Animation Keyframe">
             <entry length="4" flags="i" info="Easing (Linear: 0x00000001, Ease: 0x00000002)" />
             <entry length="4" flags="f" info="Time (Seconds)" />
-            <entry length="4" flags="f" info="Value (Translation or rotation, depending on where the keyframe is referenced from)" />
+            <entry length="4" flags="f" info="Value (Translation, rotation, or R/G/B amount, depending on where the keyframe is referenced from)" />
             <entry length="8" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="fog" name="Fog">
             <entry length="4" flags="" info="0x04000000" />
-            <entry length="4" flags="f" info="Fog start" />
-            <entry length="4" flags="f" info="Fog end" />
+            <entry length="4" flags="f" info="Fog start distance" />
+            <entry length="4" flags="f" info="Fog end distance" />
             <entry length="4" flags="f" info="Amount of red (From 0 - 1)" />
             <entry length="4" flags="f" info="Amount of green (From 0 - 1)" />
             <entry length="4" flags="f" info="Amount of blue (From 0 - 1)" />
