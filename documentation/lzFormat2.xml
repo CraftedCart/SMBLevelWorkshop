@@ -3,7 +3,7 @@
 <!-- But of course, replace <dash><dash> with two dashes - XML has a compatibility rule preventing <dash><dash> from being in comments -->
 <specSheet>
     <spec id="lzFormat2" name="SMB 2 LZ Format" linkImage="Link.png">
-        <note>All values are in big endian for SMB 2, or little endian for SMB 1</note>
+        <note>All values are in big endian for SMB 2, or little endian for SMB Deluxe</note>
         <note>The LZ file is compressed using a variation of LZSS</note>
         <note>All strings are null terminated ASCII strings</note>
         <note>Try to keep things 4 byte aligned if possible (based on the specs, it seems to be built like this)</note>
