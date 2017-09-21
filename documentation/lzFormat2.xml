@@ -343,7 +343,7 @@
             <entry length="12" flags="un" info="Unknown/Null" />
         </section>
 
-        <section id="effectHeader" name="Effect header">
+        <section id="effectHeader" name="Effect Header">
             <entry length="4" flags="in" info="Number of effect 1 keyframes" link="#spec-lzFormat2-section-effect1" />
             <entry length="4" flags="oN" info="Offset to the effect 1 list" link="#spec-lzFormat2-section-effect1" />
             <entry length="4" flags="in" info="Number of effect 2 keyframes" link="#spec-lzFormat2-section-effect2" />
