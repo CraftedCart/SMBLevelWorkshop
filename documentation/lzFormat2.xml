@@ -293,6 +293,25 @@
             <entry length="16" flags="un" info="Unknown/Null" />
         </section>
 
+        <section id="backgroundAnimationHeader" name="Background Animation Header">
+            <entry length="4" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
+            <entry length="12" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="16" flags="un" info="Unknown/Null" />
+        </section>
+
         <section id="fogAnimationHeader" name="Fog Animation Header">
             <entry length="4" flags="in" info="Number of start distance keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
             <entry length="4" flags="oN" info="Offset to the start distance keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
