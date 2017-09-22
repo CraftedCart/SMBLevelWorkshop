@@ -179,7 +179,7 @@
             <entry length="4" flags="i" info="Collision grid step X count" />
             <entry length="4" flags="i" info="Collision grid step Z count" />
             <entry length="4" flags="in" info="Number of goals" link="#spec-lzFormat2-section-goal" />
-            <entry length="4" flags="oN" info="Offset to the goal list" link="#spec-lzFormat2-section-goal" />
+            <entry length="4" flags="oN" info="Offset to the goal list (Null is not ok if this is the first collision header - if the first collision header contains no goals, it still must point to a goal list, else the points glitch will occur and finishing will crash a console)" link="#spec-lzFormat2-section-goal" />
             <entry length="4" flags="in" info="Number of bumpers" link="#spec-lzFormat2-section-bumper" />
             <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-lzFormat2-section-bumper" />
             <entry length="4" flags="in" info="Number of jamabars" link="#spec-lzFormat2-section-jamabar" />
