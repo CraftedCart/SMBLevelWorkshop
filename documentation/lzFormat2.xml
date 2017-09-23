@@ -262,6 +262,10 @@
             <entry length="2" flags="s" info="Y rotation from XY plane" />
             <entry length="2" flags="s" info="Z rotation from XY plane" />
             <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="DX2X1 (Delta X position for the 2nd triangle point from the 1st point, taking rotation into account)" />
+            <entry length="4" flags="f" info="DY2Y1" />
+            <entry length="4" flags="f" info="DX3X1" />
+            <entry length="4" flags="f" info="DY3Y1" />
             <entry length="4" flags="f" info="X tangent" />
             <entry length="4" flags="f" info="Y tangent" />
             <entry length="4" flags="f" info="X bitangent" />
