@@ -199,7 +199,8 @@
             <entry length="2" flags="n" info="Null" />
             <entry length="4" flags="in" info="Number of switches" link="#spec-lzFormat2-section-switch" />
             <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-lzFormat2-section-switch" />
-            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="un" info="Unknown/Null" />
+            <entry length="8" flags="on" info="Offset to mystery 5" link="#spec-lzFormat2-section-mystery5" />
             <entry length="4" flags="fN" info="Seesaw sensitivity (Higher is more sensitive, negative makes the seesaw reversed)" />
             <entry length="4" flags="fN" info="Seesaw reset stiffness (Lower is looser)" />
             <entry length="4" flags="fN" info="Seesaw bounds of rotation (Higher is less)" />
@@ -296,7 +297,7 @@
         <section id="backgroundAnimationHeader" name="Background Animation Header">
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
-            <entry length="12" flags="un" info="Unknown/Null" />
+            <entry length="8" flags="un" info="Unknown/Null" />
             <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
             <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
             <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
@@ -376,12 +377,20 @@
         </section>
 
         <section id="mystery3" name="Mystery 3">
-            <entry length="4" flags="f" info="Probably a float" />
-            <entry length="4" flags="f" info="Probably a float" />
-            <entry length="4" flags="f" info="Probably a float" />
+            <entry length="4" flags="fu" info="Probably a float" />
+            <entry length="4" flags="fu" info="Probably a float" />
+            <entry length="4" flags="fu" info="Probably a float" />
             <entry length="2" flags="n" info="Null" />
-            <entry length="2" flags="" info="Some marker (Endianess doesn't affect this)" />
+            <entry length="2" flags="u" info="Some marker (Endianess doesn't affect this)" />
             <entry length="20" flags="n" info="Null" />
+        </section>
+
+        <section id="mystery5" name="Mystery 5">
+            <entry length="4" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="fu" info="Unknown Float" />
+            <entry length="4" flags="fu" info="Unknown Float" />
+            <entry length="4" flags="fu" info="Unknown Float" />
+            <entry length="4" flags="fu" info="Unknown Float" />
         </section>
     </spec>
 </specSheet>
