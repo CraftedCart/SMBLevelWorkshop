@@ -248,7 +248,7 @@
             <entry length="4" flags="f" info="Y Scale" />
             <entry length="4" flags="f" info="Z Scale" />
             <entry length="4" flags="on" info="Offset to the background animation header" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
-            <entry length="4" flags="on" info="Offset to the background animation header (Different from the previous one)" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
+            <entry length="4" flags="on" info="Offset to the background animation header 2" link="#spec-lzFormat2-section-backgroundAnimationHeader2" />
             <entry length="4" flags="on" info="Offset to the effect header" link="#spec-lzFormat2-section-effectHeader" />
         </section>
 
@@ -316,6 +316,33 @@
             <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
             <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
             <entry length="16" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="backgroundAnimationHeader2" name="Background Animation Header 2">
+            <entry length="4" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 1] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 1] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 2] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 2] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 9] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 9] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 10] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 10] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 11] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 11] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
         </section>
 
         <section id="fogAnimationHeader" name="Fog Animation Header">
