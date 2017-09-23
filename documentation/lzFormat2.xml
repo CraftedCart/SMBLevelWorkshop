@@ -209,7 +209,7 @@
             <entry length="4" flags="in" info="Initial animation state (Playing: 0x00000000, Paused: 0x00000001, Playing backwards: 0x00000002, Fast forward: 0x00000003, Rewind: 0x00000004 - Same as switch types - A play once animation should not be initially playing)" />
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
-            <entry length="964" flags="un" info="Unknown/Null" />
+            <entry length="960" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="levelModelPointerTypeA" name="Level Model Pointer Type A">
