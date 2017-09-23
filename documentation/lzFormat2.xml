@@ -324,7 +324,7 @@
             <entry length="4" flags="oN" info="Offset to the green color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
             <entry length="4" flags="in" info="Number of blue color value keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
             <entry length="4" flags="oN" info="Offset to the blue color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="8" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="animationKeyframe" name="Animation Keyframe">
