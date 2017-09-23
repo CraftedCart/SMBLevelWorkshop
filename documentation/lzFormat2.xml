@@ -40,7 +40,9 @@
             <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-lzFormat2-section-jamabar" />
             <entry length="4" flags="in" info="Number of bananas" link="#spec-lzFormat2-section-banana" />
             <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-lzFormat2-section-banana" />
-            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="16" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of mystery 7s" link="#spec-lzFormat2-section-mystery7" />
+            <entry length="4" flags="oN" info="Offset to the mystery 7 list" link="#spec-lzFormat2-section-mystery7" />
             <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="in" info="Number of background models" link="#spec-lzFormat2-section-backgroundModel" />
@@ -425,6 +427,10 @@
             <entry length="4" flags="fu" info="Unknown Float" />
             <entry length="4" flags="fu" info="Unknown Float" />
             <entry length="4" flags="fu" info="Unknown Float" />
+        </section>
+
+        <section id="mystery7" name="Mystery 7">
+            <entry length="28" flags="u" info="Unknown (Length is probably 28, but it's uncertain)" />
         </section>
     </spec>
 </specSheet>
