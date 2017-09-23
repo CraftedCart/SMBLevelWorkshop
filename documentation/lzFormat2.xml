@@ -386,7 +386,7 @@
             <entry length="4" flags="fu" info="Probably a float" />
             <entry length="4" flags="fu" info="Probably a float" />
             <entry length="2" flags="n" info="Null" />
-            <entry length="2" flags="u" info="Some marker (Endianess doesn't affect this)" />
+            <entry length="2" flags="u" info="Some marker" />
             <entry length="20" flags="n" info="Null" />
         </section>
 
