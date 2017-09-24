@@ -224,7 +224,8 @@
             <entry length="4" flags="in" info="Initial animation state (Playing: 0x00000000, Paused: 0x00000001, Playing backwards: 0x00000002, Fast forward: 0x00000003, Rewind: 0x00000004 - Same as switch types - A play once animation should not be initially playing)" />
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
-            <entry length="964" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="on" info="Offset to mystery 11" link="#spec-lzFormat2-section-mystery11" />
+            <entry length="960" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="levelModelPointerTypeA" name="Level Model Pointer Type A">
@@ -482,6 +483,11 @@
             <entry length="4" flags="fu" info="Unknown float" />
             <entry length="4" flags="fu" info="Unknown float" />
             <entry length="4" flags="fu" info="Unknown float" />
+        </section>
+
+        <section id="mystery11" name="Mystery 11">
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="un" info="Unknown/Null" />
         </section>
     </spec>
 </specSheet>
