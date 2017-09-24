@@ -55,7 +55,9 @@
             <entry length="4" flags="" info="0x00000001" />
             <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
             <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
-            <entry length="20" flags="un" info="Unknown/Null" />
+            <entry length="12" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of mystery 10s" link="#spec-lzFormat2-section-mystery10" />
+            <entry length="4" flags="oN" info="Offset to the mystery 10 list" link="#spec-lzFormat2-section-mystery10" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
             <entry length="4" flags="oN" info="Offset to the level model pointer type A list" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
@@ -203,7 +205,8 @@
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
             <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
-            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of mystery 10s" link="#spec-lzFormat2-section-mystery10" />
+            <entry length="4" flags="oN" info="Offset to the mystery 10 list" link="#spec-lzFormat2-section-mystery10" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
             <entry length="8" flags="un" info="Unknown/Null" />
@@ -465,6 +468,20 @@
             <entry length="4" flags="fu" info="Unknown float (Probably)" />
             <entry length="4" flags="fu" info="Unknown float (Probably)" />
             <entry length="16" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="mystery10" name="Mystery 10">
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="2" flags="su" info="Unknown short (Probably)" />
+            <entry length="2" flags="su" info="Unknown short (Probably)" />
+            <entry length="2" flags="su" info="Unknown short (Probably)" />
+            <entry length="2" flags="su" info="Unknown short (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float" />
+            <entry length="4" flags="fu" info="Unknown float" />
+            <entry length="4" flags="fu" info="Unknown float" />
         </section>
     </spec>
 </specSheet>
