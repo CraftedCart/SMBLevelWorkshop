@@ -43,8 +43,8 @@
             <entry length="8" flags="un" info="Unknown/Null" />
             <entry length="4" flags="in" info="Number of mystery 9s" link="#spec-lzFormat2-section-mystery9" />
             <entry length="4" flags="oN" info="Offset to the mystery 9 list" link="#spec-lzFormat2-section-mystery9" />
-            <entry length="4" flags="in" info="Number of mystery 7s" link="#spec-lzFormat2-section-mystery7" />
-            <entry length="4" flags="oN" info="Offset to the mystery 7 list" link="#spec-lzFormat2-section-mystery7" />
+            <entry length="4" flags="in" info="Number of cylinder collision objects" link="#spec-lzFormat2-section-cylinderCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the cylinder collision object list" link="#spec-lzFormat2-section-cylinderCollisionObject" />
             <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="in" info="Number of background models" link="#spec-lzFormat2-section-backgroundModel" />
@@ -192,7 +192,9 @@
             <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-lzFormat2-section-jamabar" />
             <entry length="4" flags="in" info="Number of bananas" link="#spec-lzFormat2-section-banana" />
             <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-lzFormat2-section-banana" />
-            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="16" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of cylinder collision objects" link="#spec-lzFormat2-section-cylinderCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the cylinder collision object list" link="#spec-lzFormat2-section-cylinderCollisionObject" />
             <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
@@ -286,6 +288,18 @@
 
         <section id="collisionGridTriangleListPointer" name="Collision Grid Triangle List Pointer">
             <entry length="4" flags="o" info="Offset to the collision grid triangle list" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+        </section>
+
+        <section id="cylinderCollisionObject" name="Cylinder Collision Object">
+            <entry length="4" flags="f" info="X position (Center of cylinder)" />
+            <entry length="4" flags="f" info="Y position (Center of cylinder)" />
+            <entry length="4" flags="f" info="Z position (Center of cylinder)" />
+            <entry length="4" flags="f" info="Cylinder radius" />
+            <entry length="4" flags="f" info="Cylinder height" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
         </section>
 
         <section id="animationHeader" name="Animation Header">
@@ -430,10 +444,6 @@
             <entry length="4" flags="fu" info="Unknown float" />
             <entry length="4" flags="fu" info="Unknown float" />
             <entry length="4" flags="fu" info="Unknown float" />
-        </section>
-
-        <section id="mystery7" name="Mystery 7">
-            <entry length="28" flags="u" info="Unknown (Length is probably 28, but it's uncertain)" />
         </section>
 
         <section id="mystery8" name="Mystery 8">
