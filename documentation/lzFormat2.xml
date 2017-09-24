@@ -175,7 +175,9 @@
             <entry length="2" flags="sn" info="Initial Z rotation" />
             <entry length="2" flags="s" info="Animation loop type/seesaw (Looping animation: 0x0000, Play once animation: 0x0001, Seesaw: 0x0002 - Seesaws rotate around the X axis if not rotated)" />
             <entry length="4" flags="on" info="Offset to animation header" link="#spec-lzFormat2-section-animationHeader" />
-            <entry length="12" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="fn" info="Conveyor X speed" />
+            <entry length="4" flags="fn" info="Conveyor Y speed" />
+            <entry length="4" flags="fn" info="Conveyor Z speed" />
             <entry length="4" flags="o" info="Offset to the collision triangle list" link="#spec-lzFormat2-section-collisionTriangle" />
             <entry length="4" flags="o" info="Offset to the collision grid triangle list pointer" link="#spec-lzFormat2-section-collisionGridTriangleListPointer" />
             <entry length="4" flags="f" info="Collision grid start X" />
