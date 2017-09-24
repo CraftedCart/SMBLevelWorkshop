@@ -18,6 +18,7 @@
         <note>The collision grid pointers should point to different triangle lists, even if they have the same contents</note>
         <note>If not optimizing, all triangle lists can list all triangles</note>
         <note>Animations can be grouped with the animation group ID value in the collision header - This allows a single switch to trigger multiple animations</note>
+        <note>Level model instances are typically not used unless duplication of a specific model is needed - for example, in Entangled Path, the LEECH_A_LOD model is duplicated, rather than having multiple of the same model in the GMA/TPL</note>
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
         <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
         <flag id="i" info="4 byte integer" image="Int32.png" />
@@ -56,8 +57,8 @@
             <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
             <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
             <entry length="12" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="in" info="Number of mystery 10s" link="#spec-lzFormat2-section-mystery10" />
-            <entry length="4" flags="oN" info="Offset to the mystery 10 list" link="#spec-lzFormat2-section-mystery10" />
+            <entry length="4" flags="in" info="Number of level model instances (For use with duplicated level models)" link="#spec-lzFormat2-section-levelModelInstance" />
+            <entry length="4" flags="oN" info="Offset to the level model instance list" link="#spec-lzFormat2-section-levelModelInstance" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
             <entry length="4" flags="oN" info="Offset to the level model pointer type A list" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
@@ -205,8 +206,8 @@
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
             <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
-            <entry length="4" flags="in" info="Number of mystery 10s" link="#spec-lzFormat2-section-mystery10" />
-            <entry length="4" flags="oN" info="Offset to the mystery 10 list" link="#spec-lzFormat2-section-mystery10" />
+            <entry length="4" flags="in" info="Number of level model instances (For use with duplicated level models)" link="#spec-lzFormat2-section-levelModelInstance" />
+            <entry length="4" flags="oN" info="Offset to the level model instance list" link="#spec-lzFormat2-section-levelModelInstance" />
             <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
             <entry length="8" flags="un" info="Unknown/Null" />
@@ -241,6 +242,20 @@
 
         <section id="levelModelPointerTypeB" name="Level Model Pointer Type B">
             <entry length="4" flags="o" info="Offset to level model pointer Type A" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+        </section>
+
+        <section id="levelModelInstance" name="Level Model Instance">
+            <entry length="4" flags="oN" info="Offset to the level model pointer type A" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X Scale" />
+            <entry length="4" flags="f" info="Y Scale" />
+            <entry length="4" flags="f" info="Z Scale" />
         </section>
 
         <section id="reflectiveLevelModel" name="Reflective Level Model">
@@ -469,20 +484,6 @@
             <entry length="4" flags="fu" info="Unknown float (Probably)" />
             <entry length="4" flags="fu" info="Unknown float (Probably)" />
             <entry length="16" flags="un" info="Unknown/Null" />
-        </section>
-
-        <section id="mystery10" name="Mystery 10">
-            <entry length="4" flags="fu" info="Unknown float (Probably)" />
-            <entry length="4" flags="fu" info="Unknown float (Probably)" />
-            <entry length="4" flags="fu" info="Unknown float (Probably)" />
-            <entry length="4" flags="fu" info="Unknown float (Probably)" />
-            <entry length="2" flags="su" info="Unknown short (Probably)" />
-            <entry length="2" flags="su" info="Unknown short (Probably)" />
-            <entry length="2" flags="su" info="Unknown short (Probably)" />
-            <entry length="2" flags="su" info="Unknown short (Probably)" />
-            <entry length="4" flags="fu" info="Unknown float" />
-            <entry length="4" flags="fu" info="Unknown float" />
-            <entry length="4" flags="fu" info="Unknown float" />
         </section>
 
         <section id="mystery11" name="Mystery 11">
