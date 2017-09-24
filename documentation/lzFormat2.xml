@@ -333,6 +333,7 @@
             <entry length="4" flags="f" info="Y position (Center of sphere)" />
             <entry length="4" flags="f" info="Z position (Center of sphere)" />
             <entry length="4" flags="f" info="Sphere radius" />
+            <entry length="4" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="cylinderCollisionObject" name="Cylinder Collision Object">
