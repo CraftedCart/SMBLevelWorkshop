@@ -63,7 +63,7 @@
             <entry length="12" flags="un" info="Unknown/Null" />
             <entry length="4" flags="in" info="Number of switches" link="#spec-lzFormat2-section-switch" />
             <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-lzFormat2-section-switch" />
-            <entry length="4" flags="on" info="Offset to the fog animation data" link="#spec-lzFormat2-section-fogAnimationHeader" />
+            <entry length="4" flags="on" info="Offset to the fog animation header" link="#spec-lzFormat2-section-fogAnimationHeader" />
             <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
             <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
             <entry length="4" flags="on" info="Offset to fog" link="#spec-lzFormat2-section-fog" />
