@@ -90,3 +90,7 @@ footer {
 ul {
     list-style-type: none;
 }
+
+td {
+    min-width: 128px;
+}
