@@ -47,7 +47,9 @@
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
             <entry length="4" flags="in" info="Number of background models" link="#spec-lzFormat2-section-backgroundModel" />
             <entry length="4" flags="oN" info="Offset to the background model list" link="#spec-lzFormat2-section-backgroundModel" />
-            <entry length="12" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of mystery 8s" link="#spec-lzFormat2-section-mystery8" />
+            <entry length="4" flags="oN" info="Offset to the mystery 8 list" link="#spec-lzFormat2-section-mystery8" />
+            <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="" info="0x00000001" />
             <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
             <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
@@ -412,9 +414,9 @@
         </section>
 
         <section id="mystery3" name="Mystery 3">
-            <entry length="4" flags="fu" info="Probably a float" />
-            <entry length="4" flags="fu" info="Probably a float" />
-            <entry length="4" flags="fu" info="Probably a float" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
             <entry length="2" flags="n" info="Null" />
             <entry length="2" flags="u" info="Some marker" />
             <entry length="20" flags="n" info="Null" />
@@ -422,14 +424,24 @@
 
         <section id="mystery5" name="Mystery 5">
             <entry length="4" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="fu" info="Unknown Float" />
-            <entry length="4" flags="fu" info="Unknown Float" />
-            <entry length="4" flags="fu" info="Unknown Float" />
-            <entry length="4" flags="fu" info="Unknown Float" />
+            <entry length="4" flags="fu" info="Unknown float" />
+            <entry length="4" flags="fu" info="Unknown float" />
+            <entry length="4" flags="fu" info="Unknown float" />
+            <entry length="4" flags="fu" info="Unknown float" />
         </section>
 
         <section id="mystery7" name="Mystery 7">
             <entry length="28" flags="u" info="Unknown (Length is probably 28, but it's uncertain)" />
+        </section>
+
+        <section id="mystery8" name="Mystery 8">
+            <entry length="4" flags="" info="0x0000001F" />
+            <entry length="4" flags="o" info="Offset to the model name to use" />
+            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="4" flags="fu" info="Unknown float (Probably)" />
+            <entry length="16" flags="un" info="Unknown/Null" />
         </section>
     </spec>
 </specSheet>
