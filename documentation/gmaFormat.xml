@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
 <specSheet>
-  <spec id="lzFormat2" name="SMB 2 LZ Format" linkImage="Link.png">
+  <spec id="lzFormat2" name="GMA Format" linkImage="Link.png">
     <note>
       There can be empty entries without data or a name.
     </note>
