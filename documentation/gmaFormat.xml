@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<specSheet>
+  <spec id="lzFormat2" name="SMB 2 LZ Format" linkImage="Link.png">
+    <note>
+      There can be empty entries without data or a name.
+    </note>
+    <note>
+      Model names are null ('\0') terminated without any alignment.
+    </note>
+    <note>
+      The model name base position is right after the model/name offset list.
+    </note>
+    <note>
+      The transformation matrix is a 3 x 4 (row major) matrix of 12 floats
+    </note>
+    <note>
+      The model header size is aligned to 0x20 bytes
+    </note>
+    <note>
+      The Model occurs directly after the Model Header
+    </note>
+    <note>
+      Note mesh headers are determined to be in layer 1 or layer 2 based on when they appear. I there are 4 layer 1 meshes, then the first 4 mesh header will be for layer 1.
+    </note>
+    <note>
+      Note The Model Type 1 is aligned to 0x20 bytes after the Unknown 8 Type 2s.
+    </note>
+    <note>
+      Note The number of non-indexed strips isn't written anywhere. You know you're finished once you reach its size and is aligned to 0x20 bytes after.
+    </note>
+    <flag id="n" info="Ok to be left as null" image="NullOk.png"/>
+    <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png"/>
+    <flag id="i" info="4 byte integer" image="Int32.png"/>
+    <flag id="f" info="4 byte float" image="Float32.png"/>
+    <flag id="s" info="2 byte short" image="Short16.png"/>
+    <flag id="b" info="1 byte" image="Byte8.png"/>
+    <flag id="o" info="4 byte file offset" image="Offset32.png"/>
+    <flag id="c" info="4 byte RGBA Color" image="ColorRGBA4.png"/>
+    <flag id="u" info="Unknown" image="Unknown.png"/>
+    <section id="fileHeader" name="File Header">
+      <entry length="4" flags="i" info="Number of objects"/>
+      <entry length="4" flags="o" info="Model Base position"/>
+      <entry length="8" flags="" info="List Model Entries (one for each model)"/>
+    </section>
+    <section id="modelHeader" name="Model Header">
+      <entry length="4" flags="i" info="The ascii GCMF"/>
+      <entry length="4" flags="i" info="Section flags (16Bit: 0x01; Stitching Model: 0x04; Skin Model: 0x08; Effective Model: 0x10)"/>
+      <entry length="4" flags="f" info="X center for bounding sphere"/>
+      <entry length="4" flags="f" info="Y center for bounding sphere"/>
+      <entry length="4" flags="f" info="Z center for bounding sphere"/>
+      <entry length="2" flags="s" info="Number of materials"/>
+      <entry length="2" flags="s" info="Number of layer 1 meshes"/>
+      <entry length="2" flags="s" info="Number of layer 2 meshes"/>
+      <entry length="1" flags="b" info="Transformation matrix count"/>
+      <entry length="1" flags="b" info="Zero (check byte)"/>
+      <entry length="4" flags="i" info="Header size"/>
+      <entry length="4" flags="i" info="Zero (check byte)"/>
+      <entry length="8" flags="l" info="Transformation matrix defaults indexes (8 separate bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="32" flags="" info="List Materials (One for each material)"/>
+      <entry length="48" flags="" info="List Transformation Matrices (One for each Transformation Matrix)"/>
+      <entry length="-1" flags="" info="Model (Type 1 or Type 2)"/>
+    </section>
+    <section id="modelTypeOne" name="Model Type 1 (Skin Model or Effective Model only)">
+      <entry length="4" flags="i" info="Number of vertices"/>
+      <entry length="4" flags="i" info="Offet Part Type 8 Unknown 1"/>
+      <entry length="4" flags="i" info="Offet Part Vertex Pool (Relative offset from start of model to after The Mesh Headers ie: where the Vertex Pool starts)"/>
+      <entry length="4" flags="i" info="Offet Part Mesh Data (Relative offset from the start of the model to after the Unknown 8 Types ie: where the Mesh Data starts)"/>
+      <entry length="4" flags="i" info="Offet Part Type 8 Unknown 2"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="-1" flags="" info="List Mesh Headers (One for each mesh header)"/>
+      <entry length="-1" flags="" info="List Vertex Pool (One for each vertex)"/>
+      <entry length="-1" flags="" info="List Type 8 Unknown 1s (Only for Skin Model, number is (offsetPartType8Unknown2 - offsetPartType8Unknown1)/0x20)"/>
+      <entry length="-1" flags="" info="List Type 8 Unknown 2s (Only for Skin Model, number is the max Unknown 18 value in the Type 8 Unknown 1s)"/>
+      <entry length="-1" flags="" info="List Mesh Data (One for each mesh (layer 1 + layer 2))"/>
+    </section>
+    <section id="modelTypeTwo" name="Model Type 2 (16Bit or Stitching Model only)">
+      <entry length="4" flags="i" info="List non-indexed Mesh Data ("/>
+
+      
+    </section>
+  
+    <section id="modelEntry" name="Model Entry">
+      <entry length="4" flags="o" info="Model Offset (relative to model base position)"/>
+      <entry length="4" flags="o" info="Model Name Offset (relative to name base position)"/>
+    </section>
+  
+    <section id="material" name="Material">
+      <entry length="4" flags="i" info="Flags"/>
+      <entry length="2" flags="s" info="Texture Index"/>
+      <entry length="1" flags="b" info="Unknown 6"/>
+      <entry length="1" flags="b" info="Anisotropy"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="2" flags="s" info="Unknown C"/>
+      <entry length="2" flags="s" info="Material index check (must match actual material index, 0 based)"/>
+      <entry length="4" flags="i" info="Unknown 10"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+    </section>
+  
+    <section id="transformationMatrix" name="Transformation Matrix">
+      <entry length="48" flags="f" info="A 3 x 4 (row major) matrix of 12 floats"/>
+    </section>
+  
+     <section id="meshHeader" name="Mesh Header">
+      <entry length="4" flags="i" info="Render Flags(Unk01: 0x01; Two Sided: 0x02; Unk04: 0x04; Unk08: 0x08; Unk10: 0x10; Unk20: 0x20; Unk40; 0x40; Unk200: 0x200)"/>
+      <entry length="4" flags="i" info="Unknown 4"/>
+      <entry length="4" flags="i" info="Unknown 8"/>
+      <entry length="4" flags="i" info="Unknown C"/>
+      <entry length="4" flags="i" info="Unknown 10"/>
+      <entry length="1" flags="b" info="Used Material Count"/>
+      <entry length="1" flags="b" info="Section Flags (Transformation Matrix Ref: 0x1; Coordinates: 0x200; Normals: 0x400; Color: 0x800; Primary Texture Coordinates: 0x2000; Secondary Texture Coordinates: 0x4000; Tertiary Texture Coordinates: 0x8000; Unknown 5: 0x2000000)"/>
+      <entry length="2" flags="s" info="Unknown 14"/>
+      <entry length="2" flags="2" info="Primary Material Index"/>
+      <entry length="2" flags="2" info="Secondary Material Index"/>
+      <entry length="2" flags="2" info="Tertiary Material Index"/>
+      <entry length="4" flags="i" info="Vertex Flags"/>
+      <entry length="8" flags="l" info="Transformation Matrix Specific Indexes Object 1 (8 separate bytes)"/>
+      <entry length="4" flags="i" info="Chunck 1 Size"/>
+      <entry length="4" flags="i" info="Chunck 2 Size"/>
+      <entry length="4" flags="f" info="X Center for Bounding Sphere"/>
+      <entry length="4" flags="f" info="X Center for Bounding Sphere"/>
+      <entry length="4" flags="f" info="X Center for Bounding Sphere"/>
+      <entry length="4" flags="f" info="Unknown 3C"/>
+      <entry length="4" flags="i" info="Unknown 40"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+      <entry length="4" flags="i" info="Zero (check bytes)"/>
+    </section>
+  
+    <section id="vertexPool" name="Vertex Pool (Indexed Data)">
+      <entry length="4" flags="f" info="X Position"/>
+      <entry length="4" flags="f" info="Y Position"/>
+      <entry length="4" flags="f" info="Z Position"/>
+      <entry length="4" flags="f" info="X Normal (Not always unit vector)"/>
+      <entry length="4" flags="f" info="Y Normal (Not always unit vector)"/>
+      <entry length="4" flags="f" info="Z Normal (Not always unit vector)"/>
+      <entry length="4" flags="f" info="X Primary Texture Coordinate"/>
+      <entry length="4" flags="f" info="Y Primary Texture Coordinate"/>
+      <entry length="4" flags="f" info="X Secondary Texture Coordinate"/>
+      <entry length="4" flags="f" info="Y Secondary Texture Coordinate"/>
+      <entry length="4" flags="f" info="X Tertiary Texture Coordinate"/>
+      <entry length="4" flags="f" info="Y Tertiary Texture Coordinate"/>
+      <entry length="4" flags="c" info="Color Indexed Raw (Optionally checked for use)"/>
+      <entry length="4" flags="i" info="Unknown 7_1"/>
+      <entry length="4" flags="i" info="Unknown 7_2 (Only present when type is 8)"/>
+      <entry length="4" flags="i" info="Unknown 7_3 (Only present when type is 8"/>
+    </section>
+  
+    <section id="type8Unknown1" name="Type 8 Unknown 1 (Not in SMB?)">
+      <entry length="4" flags="f" info="Unknown 0"/>
+      <entry length="4" flags="f" info="Unknown 4"/>
+      <entry length="4" flags="f" info="Unknown 8"/>
+      <entry length="4" flags="f" info="Unknown C"/>
+      <entry length="4" flags="f" info="Unknown 10"/>
+      <entry length="4" flags="f" info="Unknown 14"/>
+      <entry length="2" flags="s" info="Unknown 18"/>
+      <entry length="2" flags="s" info="Zero (check bytes)"/>
+      <entry length="4" flags="f" info="Unknown 1C"/>
+    </section>
+  
+    <section id="type8Unknown2" name="Type 8 Unknown 2 (Not in SMB?)">
+      <entry length="2" flags="s" info="Type 8 Unknown 2"/>
+    </section>
+  
+    <section id="meshData" name="Mesh Data (Indexed Data)">
+      <entry length="-1" flags="" info="List Chunk 1 Strip Header (Number of ints is Chunk 1 Size, only if mesh header has the 0x01 section flag set)"/>
+      <entry length="-1" flags="" info="List Chunk 2 Strip Header (Number of ints is Chunk 2 Size, only if mesh header has the 0x02 section flag set)"/>
+    </section>
+  
+    <section id="stripHeader" name="Strip Header (Indexed Data)">
+      <entry length="4" flags="i" info="Strip Length"/>
+      <entry length="-1" flags="" info="List Strip Data (Number of bytes is strip length)"/>
+    </section>
+  
+     <section id="stripData" name="Strip Data (Indexed Data)">
+      <entry length="4" flags="i" info="Vertex Offset (Must be a multiple of 0x40 and less than the vertex pool size)"/>
+    </section>
+  
+    <section id="meshDataNonindexed" name="Non-indexedMesh Data (Non-indexed Data)">
+      <entry length="-1" flags="" info="List Chunk 1 Strip Header (Non-indexed, Object 1 strips) (Number of ints is Chunk 1 Size, only if mesh header has the 0x01 section flag set)"/>
+      <entry length="-1" flags="" info="List Chunk 2 Strip Header (Non-indexed, Object 1 strips) (Number of ints is Chunk 2 Size, only if mesh header has the 0x02 section flag set)"/>
+      <entry length="4" flags="i" info="Chunk 3 Size (only if mesh header has the 0xFF section flag set)"/>
+      <entry length="4" flags="i" info="Chunk 4 Size (only if mesh header has the 0xFF section flag set)"/>
+      <entry length="4" flags="i" info="Zero (check bytes, only if mesh header has the 0xFF section flag set)"/>
+      <entry length="4" flags="i" info="Zero (check bytes, only if mesh header has the 0xFF section flag set)"/>
+      <entry length="4" flags="i" info="Zero (check bytes, only if mesh header has the 0xFF section flag set)"/>
+      <entry length="4" flags="i" info="Zero (check bytes, only if mesh header has the 0xFF section flag set)"/>
+      <entry length="-1" flags="" info="List Chunk 3 Strip Header (Non-indexed, Object 2 strips) (Number of ints is Chunk 3 Size, only if mesh header has the 0xFF section flag set)"/>
+      <entry length="-1" flags="" info="List Chunk 4 Strip Header (Non-indexed, Object 2 strips) (Number of ints is Chunk 4 Size, only if mesh header has the 0xFF section flag set)"/>
+    </section>
+  
+    <section id="stripHeaderNonindexed" name="Strip Header (Non-indexed Data)">
+      <entry length="1" flags="b" info="Non-indexed Type Value (Must match Model Section flag type. 16Bit: 0x99; Float: 0x98)"/>
+      <entry length="2" flags="s" info="Number of vertices"/>
+      <entry length="-1" flags="" info="List Strip Data (Non-indexed) (Number vertices)"/>
+    </section>
+  
+    <section id="stripDataNonindexed" name="Strip Data (Non-indexed Data)">
+      <entry length="4" flags="i" info="Vertex Offset (Must be a multiple of 0x40 and less than the vertex pool size)"/>
+      <entry length="1" flags="b" info="Transformation Matrix Ref (only if flagged)"/>
+      <entry length="?" flags="" info="X Position (only if Coordinate enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="Y Position (only if Coordinate enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="Z Position (only if Coordinate enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="X Normal (only if Normal enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="Y Normal (only if Normal enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="Z Normal (only if Normal enabled, can be float or 16Bit)"/>
+      <entry length="4" flags="c" info="RGBA Color (only if Color enabled)"/>
+      <entry length="?" flags="" info="X Primary Texture Coordinate (only if primary texture enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="Y Primary Texture Coordinate (only if primary texture enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="X Secondary Texture Coordinate (only if secondary texture enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="Y Secondary Texture Coordinate (only if secondary texture enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="X Tertiary Texture Coordinate (only if tertiary texture enabled, can be float or 16Bit)"/>
+      <entry length="?" flags="" info="Y Tertiary Texture Coordinate (only if tertiary texture enabled, can be float or 16Bit)"/>
+      <entry length="4" flags="i" info="Unknown 5_1 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_2 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_3 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_4 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_5 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_6 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_7 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_8 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>
+      <entry length="4" flags="i" info="Unknown 5_9 (only if Unknown 5 enabled, not sure if it has a type toggle)"/>      
+    </section>
+  </spec>
+</specSheet>

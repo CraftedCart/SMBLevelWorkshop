@@ -33,6 +33,9 @@
 		"lzFormat2": {
 			"name": "SMB 2 LZ File Format"
 		},
+		"gmaFormat": {
+			"name": "GMA File Format"
+		},
 		"tplFormat12": {
 			"name": "SMB 1 / 2 TPL File Format"
 		},
