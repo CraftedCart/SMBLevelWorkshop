@@ -48,6 +48,7 @@
       <entry length="4" flags="f" info="X center for bounding sphere"/>
       <entry length="4" flags="f" info="Y center for bounding sphere"/>
       <entry length="4" flags="f" info="Z center for bounding sphere"/>
+      <entry length="4" flags="f" info="Bounding sphere radius"/>
       <entry length="2" flags="s" info="Number of materials"/>
       <entry length="2" flags="s" info="Number of layer 1 meshes"/>
       <entry length="2" flags="s" info="Number of layer 2 meshes"/>
