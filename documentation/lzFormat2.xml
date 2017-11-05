@@ -312,7 +312,14 @@
         </section>
 
         <section id="collisionGridTriangleListPointer" name="Collision Grid Triangle List Pointer">
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 0, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 1, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 2, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="0" flags="o" info="..." link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 15, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 0, 1)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 1, 1)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="0" flags="o" info="... Repeat this for however many collision grid tiles there are (The above is an example of grid with 16 tiles along the X axis)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
         </section>
 
         <section id="coneCollisionObject" name="Cone Collision Object">
