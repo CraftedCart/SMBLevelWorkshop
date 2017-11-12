@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specSheet>
+    <spec id="replayFormat" name="SMB 2 Replay Format" linkImage="Link.png">
+        <note>
+            The initial gamecube header is being skipped for now. See http://www.surugi.com/projects/gcifaq.html for the format. Replay data begins at 0x20A0
+        </note>
+        <flag id="n" info="Ok to be left as null" image="NullOk.png"/>
+        <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png"/>
+        <flag id="i" info="4 byte integer" image="Int32.png"/>
+        <flag id="f" info="4 byte float" image="Float32.png"/>
+        <flag id="s" info="2 byte short" image="Short16.png"/>
+        <flag id="b" info="1 byte" image="Byte8.png"/>
+        <flag id="o" info="4 byte file offset" image="Offset32.png"/>
+        <flag id="u" info="Unknown" image="Unknown.png"/>
+
+        <section id="mainData" name="Data Section (Offset 0x20A0)">
+            <entry length="8352" flags="" info="Ignore this (used to fix other offsets)"/>
+            <entry length="4" flags="uf" info="Float?"/>
+            <entry length="2" flags="s" info="Difficulty"/>
+            <entry length="2" flags="s" info="Stage ID (ex: 201 in hex)"/>
+            <entry length="1" flags="b" info="Monkey"/>
+            <entry length="1" flags="ub" info="Unknown"/>
+            <entry length="1" flags="b" info="Difficulty"/>
+            <entry length="1" flags="b" info="Stage"/>
+            <entry length="2" flags="s" info="Score"/>
+            <entry length="13" flags="u" info="Unknown"/>
+            <entry length="2" flags="s" info="Difficulty (Repeated?)"/>
+            <entry length="2" flags="s" info="Stage ID (ex: 201 in hex), (Repeated?)"/>
+            <entry length="1" flags="b" info="Monkey (Repeated?)"/>
+        </section>
+    </spec>
+</specSheet>

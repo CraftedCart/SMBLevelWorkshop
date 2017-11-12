@@ -45,6 +45,9 @@
 		"sfxFormat": {
 			"name": "Sound Effects File Formats"
 		},
+		"replayFormat2": {
+			"name": "SMB 2 Replay File Format"
+		},
 		"debugShortcuts": {
 			"name": "Debug Shortcuts"
 		},
