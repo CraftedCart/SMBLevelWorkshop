@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <specSheet>
     <spec id="replayFormat" name="SMB 1 (Uncompressed) Replay Format" linkImage="Link.png">
+		<note>
+            Thanks to PistonMiner for figuring out he uncompressed format: https://github.com/PistonMiner/smb-tools
+        </note>
         <note>
             The initial gamecube header is being ignored here. Compressed replay data begins at 0x2090 in a .gci
         </note>
@@ -41,22 +44,22 @@
         </section>
 		
 		<section id="frameData" name="Frame Data (Each byte is in a serpate block of length 0xF00. One byte in each block is used per frame)">
-            <entry length="1" flags="b" info="Delta X from last frame (lower byte)"/>
-			<entry length="1" flags="b" info="Delta X from last frame (upper byte)"/>
-			<entry length="1" flags="b" info="Delta Y from last frame (lower byte)"/>
-			<entry length="1" flags="b" info="Delta Y from last frame (upper byte)"/>
-			<entry length="1" flags="b" info="Delta Z from last frame (lower byte)"/>
-			<entry length="1" flags="b" info="Delta Z from last frame (upper byte)"/>
+            <entry length="1" flags="b" info="Delta X from last frame (lower byte) (Divide combined value by 16,383 to get the true float value)"/>
+			<entry length="1" flags="b" info="Delta X from last frame (upper byte) (Divide combined value by 16,383 to get the true float value)"/>
+			<entry length="1" flags="b" info="Delta Y from last frame (lower byte) (Divide combined value by 16,383 to get the true float value)"/>
+			<entry length="1" flags="b" info="Delta Y from last frame (upper byte) (Divide combined value by 16,383 to get the true float value)"/>
+			<entry length="1" flags="b" info="Delta Z from last frame (lower byte) (Divide combined value by 16,383 to get the true float value)"/>
+			<entry length="1" flags="b" info="Delta Z from last frame (upper byte) (Divide combined value by 16,383 to get the true float value)"/>
 			<entry length="1" flags="b" info="Ball rotation X (lower byte)"/>
 			<entry length="1" flags="b" info="Ball rotation X (upper byte)"/>
 			<entry length="1" flags="b" info="Ball rotation Y (lower byte)"/>
 			<entry length="1" flags="b" info="Ball rotation Y (upper byte)"/>
 			<entry length="1" flags="b" info="Ball rotation Z (lower byte)"/>
 			<entry length="1" flags="b" info="Ball rotation Z (upper byte)"/>
-			<entry length="1" flags="b" info="Data 5"/>
-			<entry length="1" flags="b" info="Data 6"/>
-			<entry length="1" flags="b" info="Data 7"/>
-			<entry length="1" flags="b" info="Data 8 (Spark location)"/>
+			<entry length="1" flags="b" info="Spark X direction (Divide by 256 to get the true float value)"/>
+			<entry length="1" flags="b" info="Spark Y direction (Divide by 256 to get the true float value)"/>
+			<entry length="1" flags="b" info="Spark Z direction (Divide by 256 to get the true float value)"/>
+			<entry length="1" flags="b" info="spark intensity (Divide by 127 to get the true float value)"/>
 			<entry length="1" flags="b" info="Flags (lower byte)"/>
 			<entry length="1" flags="b" info="Flags (lower-middle byte)"/>
 			<entry length="1" flags="b" info="Flags (upper-middle byte)"/>
