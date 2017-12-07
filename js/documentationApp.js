@@ -45,6 +45,9 @@
 		"sfxFormat": {
 			"name": "Sound Effects File Formats"
 		},
+		"replayFormat1": {
+			"name": "SMB 1 Replay File Format"
+		},
 		"replayFormat2": {
 			"name": "SMB 2 Replay File Format"
 		},

@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specSheet>
+    <spec id="replayFormat" name="SMB 1 (Uncompressed) Replay Format" linkImage="Link.png">
+        <note>
+            The initial gamecube header is being ignored here. Compressed replay data begins at 0x2090 in a .gci
+        </note>
+		<note>
+           Data after the header is separated into 24 blocks of size 0xF00. One byte from each block is used per frame.
+        </note>
+		<flag id="f" info="4 byte float" image="Float32.png"/>
+        <flag id="b" info="1 byte" image="Byte8.png"/>
+		<flag id="i" info="4 byte integer" image="Int32.png"/>
+        <flag id="s" info="2 byte short" image="Short16.png"/>
+        <flag id="b" info="1 byte" image="Byte8.png"/>
+        <flag id="u" info="Unknown" image="Unknown.png"/>
+
+        <section id="header" name="Header Section (Offset 0x0)">
+            <entry length="2" flags="s" info="Flags"/>
+            <entry length="1" flags="b" info="Level Id"/>
+            <entry length="1" flags="b" info="Level Difficulty"/>
+            <entry length="1" flags="b" info="Level Floor"/>
+            <entry length="1" flags="b" info="unk_05"/>
+            <entry length="2" flags="s" info="unk_06"/>
+            <entry length="4" flags="i" info="unk_08"/>
+            <entry length="4" flags="i" info="unk_0c"/>
+            <entry length="4" flags="i" info="Score Points"/>
+            <entry length="4" flags="i" info="unk_14"/>
+            <entry length="2" flags="s" info="Level Max Time (ex: 60 seconds in frames)"/>
+			<entry length="2" flags="s" info="Replay Total Time"/>
+			<entry length="2" flags="s" info="Score Time Remaining"/>
+			<entry length="2" flags="s" info="unk_1E"/>
+			<entry length="4" flags="i" info="Time With Score"/>
+			<entry length="4" flags="f" info="unk_24"/>
+			<entry length="4" flags="f" info="unk_28"/>
+			<entry length="4" flags="f" info="unk_2C"/>
+			<entry length="4" flags="i" info="unk_30"/>
+			<entry length="4" flags="i" info="unk_34"/>
+			<entry length="4" flags="f" info="Start Position X"/>
+			<entry length="4" flags="f" info="Start Position Y"/>
+			<entry length="4" flags="f" info="Start Position Z"/>
+        </section>
+		
+		<section id="frameData" name="Frame Data (Each byte is in a serpate block of length 0xF00. One byte in each block is used per frame)">
+            <entry length="1" flags="b" info="Delta X from last frame (lower byte)"/>
+			<entry length="1" flags="b" info="Delta X from last frame (upper byte)"/>
+			<entry length="1" flags="b" info="Delta Y from last frame (lower byte)"/>
+			<entry length="1" flags="b" info="Delta Y from last frame (upper byte)"/>
+			<entry length="1" flags="b" info="Delta Z from last frame (lower byte)"/>
+			<entry length="1" flags="b" info="Delta Z from last frame (upper byte)"/>
+			<entry length="1" flags="b" info="Ball rotation X (lower byte)"/>
+			<entry length="1" flags="b" info="Ball rotation X (upper byte)"/>
+			<entry length="1" flags="b" info="Ball rotation Y (lower byte)"/>
+			<entry length="1" flags="b" info="Ball rotation Y (upper byte)"/>
+			<entry length="1" flags="b" info="Ball rotation Z (lower byte)"/>
+			<entry length="1" flags="b" info="Ball rotation Z (upper byte)"/>
+			<entry length="1" flags="b" info="Data 5"/>
+			<entry length="1" flags="b" info="Data 6"/>
+			<entry length="1" flags="b" info="Data 7"/>
+			<entry length="1" flags="b" info="Data 8 (Spark location)"/>
+			<entry length="1" flags="b" info="Flags (lower byte)"/>
+			<entry length="1" flags="b" info="Flags (lower-middle byte)"/>
+			<entry length="1" flags="b" info="Flags (upper-middle byte)"/>
+			<entry length="1" flags="b" info="Flags (upper byte)"/>
+			<entry length="1" flags="b" info="Stage tilt X (lower byte)"/>
+			<entry length="1" flags="b" info="Stage tilt X (upper byte)"/>
+			<entry length="1" flags="b" info="Stage tilt Y (lower byte)"/>
+			<entry length="1" flags="b" info="Stage tilt Y (upper byte)"/>
+        </section>
+    </spec>
+</specSheet>
