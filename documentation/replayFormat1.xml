@@ -56,9 +56,9 @@
 			<entry length="1" flags="b" info="Ball rotation Y (upper byte)"/>
 			<entry length="1" flags="b" info="Ball rotation Z (lower byte)"/>
 			<entry length="1" flags="b" info="Ball rotation Z (upper byte)"/>
-			<entry length="1" flags="b" info="Spark X direction (Divide by 256 to get the true float value)"/>
-			<entry length="1" flags="b" info="Spark Y direction (Divide by 256 to get the true float value)"/>
-			<entry length="1" flags="b" info="Spark Z direction (Divide by 256 to get the true float value)"/>
+			<entry length="1" flags="b" info="Spark X direction (Multiply by 256 to get the true float value)"/>
+			<entry length="1" flags="b" info="Spark Y direction (Multiply by 256 to get the true float value)"/>
+			<entry length="1" flags="b" info="Spark Z direction (Multiply by 256 to get the true float value)"/>
 			<entry length="1" flags="b" info="spark intensity (Divide by 127 to get the true float value)"/>
 			<entry length="1" flags="b" info="Flags (lower byte)"/>
 			<entry length="1" flags="b" info="Flags (lower-middle byte)"/>
