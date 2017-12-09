@@ -45,7 +45,6 @@
     <note>• bit 30: Deeper bounce thing? (plays new instance every single frame this bit is set)</note>
     <note>• bit 31: Like a rock hitting a door (plays new instance every single frame this bit is set)</note>
 		<flag id="f" info="4 byte float" image="Float32.png"/>
-        <flag id="b" info="1 byte" image="Byte8.png"/>
 		<flag id="i" info="4 byte integer" image="Int32.png"/>
         <flag id="s" info="2 byte short" image="Short16.png"/>
         <flag id="b" info="1 byte" image="Byte8.png"/>
@@ -63,7 +62,7 @@
             <entry length="4" flags="i" info="Score Points"/>
             <entry length="4" flags="i" info="unk_14"/>
             <entry length="2" flags="s" info="Level Max Time (ex: 60 seconds in frames)"/>
-			<entry length="2" flags="s" info="Replay Total Time (frame til tape breaks?)"/>
+			<entry length="2" flags="s" info="Replay Total Time (frames til tape breaks?)"/>
 			<entry length="2" flags="s" info="Score Time Remaining (frames until loop?)"/>
 			<entry length="2" flags="s" info="unk_1E (Blue Goal: 0x0; Not Blue Goal: 0x1)"/>
 			<entry length="4" flags="i" info="Time With Score"/>
