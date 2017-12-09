@@ -19,6 +19,7 @@
         <note>If not optimizing, all triangle lists can list all triangles</note>
         <note>Animations can be grouped with the animation group ID value in the collision header - This allows a single switch to trigger multiple animations</note>
         <note>Level model instances are typically not used unless duplication of a specific model is needed - for example, in Entangled Path, the LEECH_A_LOD model is duplicated, rather than having multiple of the same model in the GMA/TPL</note>
+        <note>The first collision header cannot contain animation (Unless you like the idea of animating only the display of party balls, not collision)</note>
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
         <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
         <flag id="i" info="4 byte integer" image="Int32.png" />
@@ -178,7 +179,7 @@
             <entry length="2" flags="sn" info="Initial Y rotation" />
             <entry length="2" flags="sn" info="Initial Z rotation" />
             <entry length="2" flags="s" info="Animation loop type/seesaw (Looping animation: 0x0000, Play once animation: 0x0001, Seesaw: 0x0002 - Seesaws rotate around the X axis if not rotated)" />
-            <entry length="4" flags="on" info="Offset to animation header" link="#spec-lzFormat2-section-animationHeader" />
+            <entry length="4" flags="on" info="Offset to animation header (Animation does not work with the first collision header - see notes for details)" link="#spec-lzFormat2-section-animationHeader" />
             <entry length="4" flags="fn" info="Conveyor X speed" />
             <entry length="4" flags="fn" info="Conveyor Y speed" />
             <entry length="4" flags="fn" info="Conveyor Z speed" />
@@ -433,7 +434,7 @@
         </section>
 
         <section id="animationKeyframe" name="Animation Keyframe">
-            <entry length="4" flags="i" info="Easing (Linear: 0x00000001, Ease: 0x00000002)" />
+            <entry length="4" flags="i" info="Easing (Constant: 0x00000000, Linear: 0x00000001, Ease: 0x00000002)" />
             <entry length="4" flags="f" info="Time (Seconds)" />
             <entry length="4" flags="f" info="Value (Translation, rotation, or R/G/B amount, depending on where the keyframe is referenced from)" />
             <entry length="8" flags="un" info="Unknown/Null" />
