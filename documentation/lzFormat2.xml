@@ -19,7 +19,7 @@
         <note>If not optimizing, all triangle lists can list all triangles</note>
         <note>Animations can be grouped with the animation group ID value in the collision header - This allows a single switch to trigger multiple animations</note>
         <note>Level model instances are typically not used unless duplication of a specific model is needed - for example, in Entangled Path, the LEECH_A_LOD model is duplicated, rather than having multiple of the same model in the GMA/TPL</note>
-        <note>The first collision header cannot contain animation (Unless you like the idea of animating only the display of party balls, not collision)</note>
+        <note>The first collision header cannot contain animation (Unless you like the idea of animating only the display of party balls/bananas, not collision)</note>
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
         <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
         <flag id="i" info="4 byte integer" image="Int32.png" />
