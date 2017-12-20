@@ -99,8 +99,8 @@
 			<entry length="1" flags="b" info="Flags (upper byte)"/>
 			<entry length="1" flags="b" info="Stage tilt X (lower byte)"/>
 			<entry length="1" flags="b" info="Stage tilt X (upper byte)"/>
-			<entry length="1" flags="b" info="Stage tilt Y (lower byte)"/>
-			<entry length="1" flags="b" info="Stage tilt Y (upper byte)"/>
+			<entry length="1" flags="b" info="Stage tilt Z (lower byte)"/>
+			<entry length="1" flags="b" info="Stage tilt Z (upper byte)"/>
         </section>
     </spec>
 </specSheet>
