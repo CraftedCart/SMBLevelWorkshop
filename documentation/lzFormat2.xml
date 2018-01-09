@@ -178,7 +178,7 @@
             <entry length="2" flags="sn" info="Initial X rotation" />
             <entry length="2" flags="sn" info="Initial Y rotation" />
             <entry length="2" flags="sn" info="Initial Z rotation" />
-            <entry length="2" flags="s" info="Animation loop type/seesaw (Looping animation: 0x0000, Play once animation: 0x0001, Seesaw: 0x0002 - Seesaws rotate around the X axis if not rotated)" />
+            <entry length="2" flags="s" info="Animation loop type/seesaw (Looping animation: 0x0000, Play once animation: 0x0001, Seesaw: 0x0002 - Seesaws rotate around the Z axis if not rotated)" />
             <entry length="4" flags="on" info="Offset to animation header (Animation does not work with the first collision header - see notes for details)" link="#spec-lzFormat2-section-animationHeader" />
             <entry length="4" flags="fn" info="Conveyor X speed" />
             <entry length="4" flags="fn" info="Conveyor Y speed" />
