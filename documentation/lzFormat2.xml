@@ -20,6 +20,7 @@
         <note>Animations can be grouped with the animation group ID value in the collision header - This allows a single switch to trigger multiple animations</note>
         <note>Level model instances are typically not used unless duplication of a specific model is needed - for example, in Entangled Path, the LEECH_A_LOD model is duplicated, rather than having multiple of the same model in the GMA/TPL</note>
         <note>The first collision header cannot contain animation (Unless you like the idea of animating only the display of party balls/bananas, not collision)</note>
+        <note>The center of rotation in the collision header may not work as one may expect. Setting the center of rotation will translate the object(s) by the negative of what was set (Effectively making the object appear to jump to 0, 0, 0 usually). Position keyframes are then used to move the object back to its desired location.</note>
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
         <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
         <flag id="i" info="4 byte integer" image="Int32.png" />
@@ -172,9 +173,9 @@
         </section>
 
         <section id="collisionHeader" name="Collision Header">
-            <entry length="4" flags="fn" info="Center of rotation X position" />
-            <entry length="4" flags="fn" info="Center of rotation Y position" />
-            <entry length="4" flags="fn" info="Center of rotation Z position" />
+            <entry length="4" flags="fn" info="Center of rotation X position (Center of rotation may not work as you may expect - see notes for more info)" />
+            <entry length="4" flags="fn" info="Center of rotation Y position (Center of rotation may not work as you may expect - see notes for more info)" />
+            <entry length="4" flags="fn" info="Center of rotation Z position (Center of rotation may not work as you may expect - see notes for more info)" />
             <entry length="2" flags="sn" info="Initial X rotation" />
             <entry length="2" flags="sn" info="Initial Y rotation" />
             <entry length="2" flags="sn" info="Initial Z rotation" />
