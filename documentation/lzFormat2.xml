@@ -15,6 +15,7 @@
         <note>By dividing the triangles into spatial sections, it allows the game to not test every triangle every frame</note>
         <note>The grid spans from startX, startZ to startX + stepX * stepXCount, startZ + stepZ * stepZCount</note>
         <note>startX/Z: -256, stepX/Z: 32, stepX/ZCount: 16 is known to work</note>
+        <note>For clarification as to how a collision triangle is stored, the first coordinate is (X1, Y1, Z1), the second coordinate is calculated as (X1 + DX2X1, Y1 + DY2Y1, Z1) then rotated about first point by Z, then Y, then X. The third coordinate is calculated similarly, from (X1 + DX3X1, Y1 + DY3Y1, Z1), rotated by the same angles</note>
         <note>The collision grid pointers should point to different triangle lists, even if they have the same contents</note>
         <note>If not optimizing, all triangle lists can list all triangles</note>
         <note>Animations can be grouped with the animation group ID value in the collision header - This allows a single switch to trigger multiple animations</note>
@@ -297,7 +298,7 @@
             <entry length="2" flags="s" info="Y rotation from XY plane" />
             <entry length="2" flags="s" info="Z rotation from XY plane" />
             <entry length="2" flags="n" info="Null" />
-            <entry length="4" flags="f" info="DX2X1 (Delta X position for the 2nd triangle point from the 1st point, taking rotation into account)" />
+            <entry length="4" flags="f" info="DX2X1 (Delta X position for the 2nd triangle point from the 1st point, before rotation is applied)" />
             <entry length="4" flags="f" info="DY2Y1" />
             <entry length="4" flags="f" info="DX3X1" />
             <entry length="4" flags="f" info="DY3Y1" />
