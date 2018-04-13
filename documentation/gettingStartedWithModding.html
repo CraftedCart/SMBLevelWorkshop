@@ -1,0 +1,170 @@
+<style>
+	.list-heading {
+		font-weight: bold;
+	}
+
+	ul {
+		list-style-type: disc;
+	}
+</style>
+
+<h1>Getting Started with modding Super Monkey Ball</h1>
+
+<h2>Creating custom stages</h2>
+
+<h3>A brief primer</h3>
+
+<p>So you want to create custom levels (Also known as stages) for Super Monkey Ball 2? Well here's a guide on how to do so!</p>
+<p>First of all, it would be good to know what a stage is made up of. There are three files that compose one: a GMA, TPL, and LZ.</p>
+
+<ul>
+	<li>GMA: This defines your visual 3D model</li>
+	<li>TPL: This contains textures for your visual model</li>
+	<li>LZ: This defines your stage config (Where the player starts, where the goals are, stage animations, etc.) as well as the collision</li>
+</ul>
+
+<p>The second thing you should know is that Super Monkey Ball 2 is the most supported game in the community - tools for Super Monkey Ball 1 are nowhere near as mature, and Super Monkey Ball Deluxe is a pain to work with due to the lack of emulator support (In addition to the texture encoding having not been figured out yet).</p>
+
+<h3>Some files to leave downloading in the background</h3>
+
+If you would rather start your downloads now as opposed to when progressing through guide, here's a list of software and other files you'll need.
+
+<ul>
+	<li class="list-heading">A 3D modelling application (Pick one)</li>
+	<ul>
+		<li>Wings3D: <a href="http://www.wings3d.com/">http://www.wings3d.com/</a> - Easy to use, well supported around the community, but can be a bit limiting/janky</li>
+		<li>Blender: <a href="https://www.blender.org/">https://www.blender.org/</a> - Steep learning curve, decently supported around the community, and very powerful</li>
+		<li>Something else - Any 3D modeller that can export an OBJ should work, however you may find it harder to fetch support from the community</li>
+	</ul>
+
+	<li class="list-heading">GxModelViewer: <a href="https://bobjrsenior.pw/smb/">https://bobjrsenior.pw/smb/</a> - This will be used to generate your GMA/TPL files</li>
+	<ul>
+		<li>The partial Deluxe support is the recommended download - it's more up to date than the NoGui one</li>
+		<li>The NoGui one should only be used if you want to be able to script GMA/TPL generation</li>
+		<li>If you are on macOS, you will need wine to run this. If you are on Linux, you can either use wine or compile it yourself using mono.</li>
+	</ul>
+
+	<li class="list-heading">SMB Level Workshop - This will be used to generate LZ files</li>
+	<ul>
+		<li>SMB Level Workshop 1 (Download link in the nav bar) is recommended for users unfamiliar with Blender - Development of this has been abandoned however</li>
+		<li>SMB Level Workshop 2 is the successor to Workshop 1 - The editor is not usable yet, but you can create config files and export LZs from the command line</li>
+		<ul>
+			<li>This is recommended for users familiar with Blender, as there is a plugin to generate configs from within there</li>
+			<li>Please ask in Discord for Workshop 2 downloads</li>
+			<li>BlendToSMBStage - the Blender plugin: <a href="https://github.com/CraftedCart/BlendToSMBStage">https://github.com/CraftedCart/BlendToSMBStage</a></li>
+		</ul>
+	</ul>
+
+	<li class="list-heading">GCRebuilder: <a href="https://www.romhacking.net/utilities/619/">https://www.romhacking.net/utilities/619/</a> - A tool to patch GameCube ISOs</li>
+
+	<li class="list-heading">A Super Monkey Ball 2 ISO</li>
+
+	<li class="list-heading">Dolphin Emulator: <a href="https://dolphin-emu.org/">https://dolphin-emu.org/</a></li>
+</ul>
+
+<h3>Modeling and texturing your stage</h3>
+
+<img class="img-responsive" src="/SMBLevelWorkshop/img/blender.png"><br>
+
+<p>Using your 3D modeller of choice, construct a stage and export an OBJ. Not much advice can be given in this section as 3D modelling is a huge topic and guidance will vary between different modelling software. There are, however, a few guidelines to follow when creating stages</p>
+
+<ul>
+	<li class="list-heading">Make sure your model is triangulated when exporting</li>
+	<ul>
+		<li>Certain tools do not auto-triangulate your model when importing</li>
+	</ul>
+
+	<li class="list-heading">Be weary of your triangle count</li>
+	<ul>
+		<li>If you're using Workshop 1, try to keep under 2,500 triangles</li>
+		<li>If you're using Workshop 2, stages up to 16,000 triangles have been known to work - your mileage may vary however</li>
+	</ul>
+
+	<li class="list-heading">Texture space is limited</li>
+	<ul>
+		<li>The maximum recommended texture size is 256x256 - even then you might have to be sparing with the number of 256x256 textures you use</li>
+	</ul>
+
+	<li class="list-heading">Ensure your texture dimensions are powers of two</li>
+	<ul>
+		<li>The X and Y dimensions need not be equal - just make sure they are powers of two (Like 32, 64, 128, 256, etc.)</li>
+	</ul>
+</ul>
+
+<h3>Configuring your stage</h3>
+
+<img class="img-responsive" src="/SMBLevelWorkshop/img/ws1.png"><br>
+
+<p>Next up, you will need to configure your stage. This involves defining where the player starts, where goals are, and any stage animation. If you are using Workshop 1, there is a getting started guide on the sidebar. If you are a Blender user and want to configure your stage in there, a tutorial can be found here: <a href="https://www.youtube.com/watch?v=zK1IjKKz2OM">https://www.youtube.com/watch?v=zK1IjKKz2OM</a>.</p>
+
+By the end of this you should have an LZ file.
+
+<h3>Generating your GMA/TPL</h3>
+
+<img class="img-responsive" src="/SMBLevelWorkshop/img/gxmv.png"><br>
+
+You now need to generate a GMA and TPL for your stage - thankfully this is dead simple. Fire up GxModelViewer, hit "Import OBJ", load in your model, and hit "Export GMA As" and "Export TPL As".
+
+<div class="alert alert-warning" role="alert">
+	<span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
+	Never overwrite a file with GxModelViewer - often it will end up corrupting the files and crash the game. Always use Save As and create a new file.
+</div>
+
+<h3>Patching the game</h3>
+
+<img class="img-responsive" src="/SMBLevelWorkshop/img/gcr.png"><br>
+
+<p>The final step: getting your level in game.</p>
+
+<p>If you don't already have an extracted root of SMB 2, you will need to create one first. Launch GCRebuilder, open up a clean SMB 2 ISO (Image &gt; Open), then right click on root and export it somewhere.</p>
+
+<p>Where you extracted your root, you will need to replace the GMA/TPL/LZ files to patch in your stage, located in /stage. Note that the stage order in /stage is not sequential - you may need to look up what stage ID maps to what stage in-game to find out what to replace (<a href="https://pastebin.com/90BERE6p">https://pastebin.com/90BERE6p</a>). Also note that the LZ naming is not identical to the GMA/TPL naming. You need to name your files stxxx.gma/.tpl, and STAGExxx.lz.</p>
+
+<p>After you've replaced the files on your filesystem, you will need to open GCRebuilder again. This time, open the extracted root (Root &gt; Open), then save (Root &gt; Save) <strong>and rebuild</strong> (Root &gt; Rebuild) the ISO. Once you're done waiting for it to rebuild, you should have a new ISO with your custom stage in it, ready to play.</p>
+
+<img class="img-responsive" src="/SMBLevelWorkshop/img/alpine.png"><br>
+
+<h3>FAQ</h3>
+
+<h4>Is there a Discord group?</h4>
+
+<p>Yes, yes there is.</p>
+<p><a href="https://discord.gg/CEYjvDj">https://discord.gg/CEYjvDj</a></p>
+
+<h4>My stage crashes the game</h4>
+
+<p>Dolphin's log will often pinpoint the cause of crashing. Go to View &gt; Show Log Configuration, and enable all categories, then go to View &gt; Show Log, and crash the game with the log visible.</p>
+<p>If the log reveals that the game is out of memory, try reducing your texture sizes or lowering the number of triangles in your model. Furthermore, using Workshop 2 to generate an LZ will do a <strong>far</strong> better job at saving memory when compared Workshop 1 or the original smbcnv tools.</p>
+
+<h4>I insta-win the stage</h4>
+
+<p><small>That's not a question, silly!</small></p>
+<p>See the Rmac glitch page - link on the sidebar</p>
+
+<h4>How do I rename stages in-game?</h4>
+
+<p>You need to modify /stgname/usa.str. Open this file in a plain text editor (Not Windows Notepad - it cannot handle line endings well) and modify the name there. Each line number + 1 corresponds to the stage ID (Eg: Line 2 corresponds to st001, line 3 = st002, line 4 = st003, etc.)</p>
+
+<h4>Is transparency allowed in stage textures?</h4>
+
+<p>Yes, but we don't know how to get it working in-game.</p>
+
+<h4>How do I enable debug mode in-game?</h4>
+
+<p>You'll need an Action Replay (AR) code to enable debug mode, which provides access to a level selector, the ability to skip stages, a wealth of test options, and more.</p>
+
+<pre><code>185BC473 00000003
+005BC473 00000003</code></pre>
+
+To add this in Dolphin Emu, right click on your ISO, goto properties, AR Codes, and add it there. Also ensure that you have cheats enabled under Dolphin's config.
+
+<h4>SMB Level Workshop lingers around in Task Manager after I close the window</h4>
+
+<p>This is a known issue but won't be patched as Workshop 1 has been abandoned. You may want to check and kill Workshop 1 yourself when you're done with it.</p>
+
+<h4>Vim or Emacs?</h4>
+
+<p>Neovim</p>
+
+<!-- vim: set noexpandtab spell: -->
+

@@ -24,8 +24,11 @@
 	});
 
 	var pages = {
+		"gettingStartedWithModding": {
+			"name": "Getting Started with Monkey Ball modding"
+		},
 		"gettingStarted": {
-			"name": "Getting Started"
+			"name": "Getting Started with SMB Level Workshop"
 		},
 		"lzFormat1": {
 			"name": "SMB 1 LZ File Format"
