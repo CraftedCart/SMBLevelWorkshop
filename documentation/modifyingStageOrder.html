@@ -184,5 +184,147 @@
 <h3>Challenge Mode</h3>
 
 <p>
-	Challenge mode is currently unknown.
+	Stage orders and their extra data are stored within <code>/mkb2.main_loop.rel</code>.
 </p>
+
+<pre><code>A difficulty is made of a list of entries followed by an end of entries
+
+Each level entry begins with
+0x0 - 02000000
+0x4 - 0000 `append` (stg id)
+
+Normal entry (0x54 = 84 bytes)
+0x8 thru 0x37 - zeroes? (0x30 = 48 zeroes)
+0x38 - 01000000
+0x3C - 00000001
+0x40 thru 0x53 - zeroes? (0x14 = 20 zeroes)
+
+Final level entry (0x54 = 84 bytes)
+0x8 thru 0x37 - zeroes? (0x30 = 48 zeroes)
+0x38 - 01020000
+0x3C - 00000000
+0x40 thru 0x53 - zeroes? (0x14 = 20 zeroes)
+
+Entry with different time (0x70 = 112 bytes)
+0x8 thru 0x1B - zeroes? (0x14 = 20 zeroes)
+0x1C - 02010000
+0x20 - 0000 `append` (time alloted)
+0x24 thru 0x53 - zeroes? (0x30 = 48 zeroes)
+0x54 - 01000000
+0x58 - 00000001
+0x5C thru 0x6F - zeroes? (0x14 = 20 zeroes)
+
+Normal entry
+Twelve block
+01000000
+00000001
+Five block
+
+Final level entry
+Twelve block
+01020000
+00000000
+Five block
+
+Entry with different time
+Five block
+02010000
+0000 ++ time alloted
+Twelve block
+01000000
+00000001
+Five block
+
+Entry with green goal (SMB2)
+Twelve block
+02000000
+00000000
+Five block
+01000000
+00000001
+Twelve block
+02000000
+00000001
+Five block
+01000000
+00000002
+Five block
+
+SMB1 Expert 2
+Five block
+02010000
+00000708
+Twelve block
+00020000
+00000042 --Blue goal id in lz
+Five block
+01000000
+00000001
+Twelve block
+00020000
+00000052 --Red goal
+Five block
+01000000
+00000003
+Five block
+
+
+End of entries
+0x0 - 03000000
+0x4 thru 0x1B - zeroes?
+
+General format for entry (psuedocode)
+print 02000000
+print (0000 + stg id)
+if (timeAlotted != 60.00 sec) {
+	fiveBlock()
+	print (0000 + time alotted)
+}
+if (isLastLevel) {
+	twelveBlock()
+	print 01020000
+	print 00000000
+}
+else if (goals.length == 1) {
+	twelveBlock()
+	print 01000000
+	print (000000 + goals[0].jumpDistance)
+}
+else {
+	for (goal in goals) {
+		twelveBlock()
+		print 00020000
+		print 000000 + goal.type (0x00 for blue, 0x01 for green, 0x02 for red in SMB2)
+		fiveBlock()
+		print 01000000
+		print 000000 + goal.jumpDistance
+	}
+}
+fiveBlock()
+	
+
+2C7874 table
+3E440105
+00033550 -- Beginner 
+00040105 (Connector)
+000338B4 -- Advanced
+00040105
+... so on
+
+Entries!
+3550 BE (at 2C787A)
+38B4 AD (at 2C7882)
+45D4 EX
+5C94 BEEX
+6068 ADEX
+63E8 EXEX
+6880 MA
+6C54 MAEX
+6C54
+71CC Empty
+71CC
+71CC
+</code></pre>
+
+-TwixNinja411
+
