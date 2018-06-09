@@ -187,7 +187,10 @@
 	Stage orders and their extra data are stored within <code>/mkb2.main_loop.rel</code>.
 </p>
 
-<pre><code>A difficulty is made of a list of entries followed by an end of entries
+<pre><code>-The challenge mode entries start at 0x2075B0
+-A difficulty is made of a list of entries followed by an end of entries
+-A twelve block is 48 zero bytes (12 zero words) while a five block is 20 zero bytes
+-Thanks to miss mecha and bobjrsenior for their work in challenge mode entry stuff
 
 Each level entry begins with
 0x0 - 02000000
@@ -214,7 +217,8 @@ Entry with different time (0x70 = 112 bytes)
 0x58 - 00000001
 0x5C thru 0x6F - zeroes? (0x14 = 20 zeroes)
 
-Normal entry
+
+Normal entry (after the stage id part)
 Twelve block
 01000000
 00000001
@@ -237,13 +241,13 @@ Five block
 
 Entry with green goal (SMB2)
 Twelve block
-02000000
+00020000
 00000000
 Five block
 01000000
 00000001
 Twelve block
-02000000
+00020000
 00000001
 Five block
 01000000
@@ -256,7 +260,7 @@ Five block
 00000708
 Twelve block
 00020000
-00000042 --Blue goal id in lz
+00000042 --Blue goal id for SMB1 and in lz
 Five block
 01000000
 00000001
@@ -272,6 +276,11 @@ Five block
 End of entries
 0x0 - 03000000
 0x4 thru 0x1B - zeroes?
+
+
+Free Fall, Jump Machine, and most other levels with green/red goals are not normal. They have the extra goal data
+Coin Slots, Switches, Passage, and maybe others have normal data, despite having a green goal
+
 
 General format for entry (psuedocode)
 print 02000000
@@ -303,9 +312,9 @@ else {
 fiveBlock()
 	
 
-2C7874 table
+2C7874 table (this table tells us the first entry of each difficulty
 3E440105
-00033550 -- Beginner
+00033550 -- Beginner 
 00040105 (Connector)
 000338B4 -- Advanced
 00040105
@@ -321,7 +330,7 @@ Entries!
 6880 MA
 6C54 MAEX
 6C54
-71CC Empty
+71CC Unused difficulty (intended to be a Super Master?)
 71CC
 71CC
 </code></pre>
