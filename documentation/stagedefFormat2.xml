@@ -181,7 +181,7 @@
             <entry length="2" flags="sn" info="Initial Y rotation" />
             <entry length="2" flags="sn" info="Initial Z rotation" />
             <entry length="2" flags="s" info="Animation loop type/seesaw (Looping animation: 0x0000, Play once animation: 0x0001, Seesaw: 0x0002 - Seesaws rotate around the Z axis if not rotated)" />
-            <entry length="4" flags="on" info="Offset to animation header (Animation does not work with the first collision header - see notes for details)" link="#spec-lzFormat2-section-animationHeader" />
+            <entry length="4" flags="on" info="Offset to animation header (Animation does not work with the first collision header - see notes for details)" link="#spec-stagedefFormat2-section-animationHeader" />
             <entry length="4" flags="fn" info="Conveyor X speed" />
             <entry length="4" flags="fn" info="Conveyor Y speed" />
             <entry length="4" flags="fn" info="Conveyor Z speed" />
@@ -194,7 +194,7 @@
             <entry length="4" flags="i" info="Collision grid step X count" />
             <entry length="4" flags="i" info="Collision grid step Z count" />
             <entry length="4" flags="in" info="Number of goals" link="#spec-stagedefFormat2-section-goal" />
-            <entry length="4" flags="oN" info="Offset to the goal list (Null is not ok if this is the first collision header - if the first collision header contains no goals, it still must point to a goal list, else the points glitch will occur and finishing will crash a console)" link="#spec-lzFormat2-section-goal" />
+            <entry length="4" flags="oN" info="Offset to the goal list (Null is not ok if this is the first collision header - if the first collision header contains no goals, it still must point to a goal list, else the points glitch will occur and finishing will crash a console)" link="#spec-stagedefFormat2-section-goal" />
             <entry length="4" flags="in" info="Number of bumpers" link="#spec-stagedefFormat2-section-bumper" />
             <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-stagedefFormat2-section-bumper" />
             <entry length="4" flags="in" info="Number of jamabars" link="#spec-stagedefFormat2-section-jamabar" />
@@ -322,7 +322,7 @@
             <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 15, 0)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
             <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 0, 1)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
             <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 1, 1)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
-            <entry length="0" flags="o" info="... Repeat this for however many collision grid tiles there are (The above is an example of grid with 16 tiles along the X axis)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="0" flags="o" info="... Repeat this for however many collision grid tiles there are (The above is an example of grid with 16 tiles along the X axis)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
         </section>
 
         <section id="coneCollisionObject" name="Cone Collision Object">
