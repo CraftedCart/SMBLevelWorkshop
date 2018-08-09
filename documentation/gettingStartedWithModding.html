@@ -15,12 +15,12 @@
 <h3>A brief primer</h3>
 
 <p>So you want to create custom levels (Also known as stages) for Super Monkey Ball 2? Well here's a guide on how to do so!</p>
-<p>First of all, it would be good to know what a stage is made up of. There are three files that compose one: a GMA, TPL, and LZ.</p>
+<p>First of all, it would be good to know what a stage is made up of. There are three files that compose one: a GMA, TPL, and StageDef/LZ.</p>
 
 <ul>
 	<li>GMA: This defines your visual 3D model</li>
 	<li>TPL: This contains textures for your visual model</li>
-	<li>LZ: This defines your stage config (Where the player starts, where the goals are, stage animations, etc.) as well as the collision</li>
+	<li>StageDef: This defines your stage config (Where the player starts, where the goals are, stage animations, etc.) as well as the collision. It must be compressed into an LZ to be used in the game.</li>
 </ul>
 
 <p>The second thing you should know is that Super Monkey Ball 2 is the most supported game in the community - tools for Super Monkey Ball 1 are nowhere near as mature, and Super Monkey Ball Deluxe is a pain to work with due to the lack of emulator support (In addition to the texture encoding having not been figured out yet).</p>
@@ -44,7 +44,7 @@ If you would rather start your downloads now as opposed to when progressing thro
 		<li>If you are on macOS, you will need wine to run this. If you are on Linux, you can either use wine or compile it yourself using mono.</li>
 	</ul>
 
-	<li class="list-heading">SMB Level Workshop - This will be used to generate LZ files</li>
+	<li class="list-heading">SMB Level Workshop - This will be used to generate StageDef/LZ files</li>
 	<ul>
 		<li>SMB Level Workshop 1 (Download link in the nav bar) is recommended for users unfamiliar with Blender - Development of this has been abandoned however</li>
 		<li>SMB Level Workshop 2 is the successor to Workshop 1: <a href="https://bintray.com/craftedcart/the-workshop/smblevelworkshop2-beta/">https://bintray.com/craftedcart/the-workshop/smblevelworkshop2-beta/</a></li>
