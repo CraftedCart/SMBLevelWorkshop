@@ -30,11 +30,11 @@
 		"gettingStarted": {
 			"name": "Getting Started with SMB Level Workshop"
 		},
-		"lzFormat1": {
-			"name": "SMB 1 LZ File Format"
+		"stagedefFormat1": {
+			"name": "SMB 1 StageDef File Format"
 		},
-		"lzFormat2": {
-			"name": "SMB 2 LZ File Format"
+		"stagedefFormat2": {
+			"name": "SMB 2 StageDef File Format"
 		},
 		"gmaFormat": {
 			"name": "GMA File Format"
