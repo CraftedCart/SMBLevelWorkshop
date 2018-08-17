@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Command for SMBLevelWorkshop docs: specformatter <dash><dash>table-class table stagedefFormat2.xml stagedefFormat2.html -->
+<!-- But of course, replace <dash><dash> with two dashes - XML has a compatibility rule preventing <dash><dash> from being in comments -->
+<specSheet>
+    <spec id="tplFormat12" name="SMB 1 and 2 TPL Format" linkImage="Link.png">
+
+        <note>Sizes for formats are in bits, everything else in bytes</note>
+
+        <flag id="n" info="Ok to be left as null" image="NullOk.png" />
+        <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
+        <flag id="i" info="4 byte integer" image="Int32.png" />
+        <flag id="f" info="4 byte float" image="Float32.png" />
+        <flag id="s" info="2 byte short" image="Short16.png" />
+        <flag id="b" info="1 byte" image="Byte8.png"/>
+        <flag id="h" info="1 nibble (1/2 byte)" image="Nibble4.png"/>
+        <flag id="o" info="4 byte file offset" image="Offset32.png"/>
+        <flag id="c" info="4 byte RGBA Color" image="ColorRGBA4.png"/>
+        <flag id="u" info="Unknown" image="Unknown.png" />
+
+        <section id="fileHeader" name="File Header">
+            <entry length="4" flags="i" info="Number of images" />
+            <entry length="0" flags="" info="Rest of header repeated for each image" />
+            <entry length="4" flags="i" info="Texture format" link="http://wiki.tockdom.com/wiki/Image_Formats#Image_Formats" />
+            <entry length="4" flags="0" info="Texture data offset" link="#spec-tplFormat12-section-texture" />
+            <entry length="2" flags="s" info="Width of texture" />
+            <entry length="2" flags="s" info="Height of texture" />
+            <entry length="2" flags="s" info="Number of mipmaps" />
+            <entry length="2" flags="s" info="0x1234" />
+        </section>
+
+        <section id="texture" name="Texture">
+            <entry length="Variable" info="Texture Data" />
+        </section>
+
+        <section id="i4" name="I4 Format">
+            <entry length="4" flags="h" info="Tone intensity. Times 0x11 for RGB" />
+        </section>
+
+        <section id="i8" name="I8 Format">
+            <entry length="8" flags="b" info="Tone intensity" />
+        </section>
+
+        <section id="ia4" name="IA4 Format">
+            <entry length="4" flags="h" info="Alpha intensity. Times 0x11 for RGBA" />
+            <entry length="4" flags="h" info="Tone intensity. Times 0x11 for RGBA" />
+        </section>
+
+        <section id="ia8" name="IA8 Format">
+            <entry length="8" flags="b" info="Alpha intensity" />
+            <entry length="8" flags="b" info="Tone intensity" />
+        </section>
+
+        <section id="rgb565" name="RGB565 Format">
+            <entry length="5" flags="" info="Red intensity. Times 0x8 for RGB" />
+            <entry length="6" flags="" info="Green intensity. Times 0x4 for RGB" />
+            <entry length="5" flags="" info="Blue intensity. Times 0x8 for RGB" />
+        </section>
+
+        <section id="rgb5a3-a" name="RGB5A3 With Alpha">
+            <entry length="1" flags="" info="Alpha bit, set to 1" />
+            <entry length="2" flags="" info="Alpha intensity. Times 0x20 for RGBA" />
+            <entry length="4" flag="h" info="Red intensity. Times 0x11 for RGBA" />
+            <entry length="4" flag="h" info="Green intensity. Times 0x11 for RGBA" />
+            <entry length="4" flag="h" info="Blue intensity. Times 0x11 for RGBA" />
+        </section>
+
+        <section id="rgba5a3-na" name="RGB5A3 Without Alpha">
+            <entry length="1" flags="" info="Alpha bit, set to 0" />
+            <entry length="5" flags="" info="Red intensity. Times 0x8 for RGB" />
+            <entry length="5" flags="" info="Green intensity. Times 0x8 for RGB" />
+            <entry length="5" flags="" info="Blue intensity. Times 0x8 for RGB" />
+        </section>
+
+        <section id="rgba32" name="RGBA32 Format">
+            <entry length="8" flags="b" info="Alpha intensity" />
+            <entry length="8" flags="b" info="Red intensity" />
+            <entry length="0" flags="b" info="... Repeat above 2 for half the block" />
+            <entry length="8" flags="b" info="Green intensity" />
+            <entry length="8" flags="b" info="Blue intensity" />
+            <entry length="0" flags="b" info="... Repeat above 2 for second half of the block" />
+        </section>
+
+        <section id="c4" name="C4/CI4 Format">
+            <entry length="4" flags="h" info="Palette index" />
+        </section>
+
+        <section id="c8" name="C8/CI8 Format">
+            <entry length="8" flags="b" info="Palette index" />
+        </section>
+
+        <section id="c12x2" name="C14X2/CI14X2 Format">
+            <entry length="2" flags="n" info="Ignored" />
+            <entry length="12" flags="" info="Palette index" />
+        </section>
+
+        <section id="cmpr" name="CMPR Format">
+            <entry length="16" flags="s" info="First RGB565 color" />
+            <entry length="16" flags="s" info="Second RGB 565 color" />
+            <entry length="2" flags="" info="pixel index into palette" />
+            <entry length="0" flags="" info="... 63 more indices" />
+        </section>
+    </spec>
+</specSheet>
