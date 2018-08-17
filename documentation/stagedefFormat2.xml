@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Command for SMBLevelWorkshop docs: specformatter <dash><dash>table-class table lzFormat2.xml lzFormat2.html -->
+<!-- Command for SMBLevelWorkshop docs: specformatter <dash><dash>table-class table stagedefFormat2.xml stagedefFormat2.html -->
 <!-- But of course, replace <dash><dash> with two dashes - XML has a compatibility rule preventing <dash><dash> from being in comments -->
 <specSheet>
-    <spec id="lzFormat2" name="SMB 2 LZ Format" linkImage="Link.png">
+    <spec id="stagedefFormat2" name="SMB 2 StageDef Format (Formerly .lz.raw)" linkImage="Link.png">
         <note>All values are in big endian for SMB 2, or little endian for SMB Deluxe</note>
-        <note>The LZ file is compressed using a variation of LZSS</note>
+        <note>The StageDef file is compressed using a variation of LZSS</note>
         <note>All strings are null terminated ASCII strings</note>
         <note>Try to keep things 4 byte aligned if possible (based on the specs, it seems to be built like this)</note>
         <note>Object names need to be put somewhere in the file</note>
@@ -32,50 +32,50 @@
 
         <section id="fileHeader" name="File Header">
             <entry length="8" flags="" info="0x00000000447A0000" />
-            <entry length="4" flags="in" info="Number of collision headers" link="#spec-lzFormat2-section-collisionHeader" />
-            <entry length="4" flags="oN" info="Offset to the collision header list" link="#spec-lzFormat2-section-collisionHeader" />
-            <entry length="4" flags="o" info="Offset to start position data" link="#spec-lzFormat2-section-startPosition" />
-            <entry length="4" flags="o" info="Offset to fallout position data" link="#spec-lzFormat2-section-falloutPosition" />
-            <entry length="4" flags="in" info="Number of goals" link="#spec-lzFormat2-section-goal" />
-            <entry length="4" flags="oN" info="Offset to the goal list" link="#spec-lzFormat2-section-goal" />
-            <entry length="4" flags="in" info="Number of bumpers" link="#spec-lzFormat2-section-bumper" />
-            <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-lzFormat2-section-bumper" />
-            <entry length="4" flags="in" info="Number of jamabars" link="#spec-lzFormat2-section-jamabar" />
-            <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-lzFormat2-section-jamabar" />
-            <entry length="4" flags="in" info="Number of bananas" link="#spec-lzFormat2-section-banana" />
-            <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-lzFormat2-section-banana" />
-            <entry length="4" flags="in" info="Number of cone collision objects" link="#spec-lzFormat2-section-coneCollisionObject" />
-            <entry length="4" flags="oN" info="Offset to the cone collision object list" link="#spec-lzFormat2-section-coneCollisionObject" />
-            <entry length="4" flags="in" info="Number of sphere collision objects" link="#spec-lzFormat2-section-sphereCollisionObject" />
-            <entry length="4" flags="oN" info="Offset to the sphere collision object list" link="#spec-lzFormat2-section-sphereCollisionObject" />
-            <entry length="4" flags="in" info="Number of cylinder collision objects" link="#spec-lzFormat2-section-cylinderCollisionObject" />
-            <entry length="4" flags="oN" info="Offset to the cylinder collision object list" link="#spec-lzFormat2-section-cylinderCollisionObject" />
-            <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
-            <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
-            <entry length="4" flags="in" info="Number of background models" link="#spec-lzFormat2-section-backgroundModel" />
-            <entry length="4" flags="oN" info="Offset to the background model list" link="#spec-lzFormat2-section-backgroundModel" />
-            <entry length="4" flags="in" info="Number of mystery 8s" link="#spec-lzFormat2-section-mystery8" />
-            <entry length="4" flags="oN" info="Offset to the mystery 8 list" link="#spec-lzFormat2-section-mystery8" />
+            <entry length="4" flags="in" info="Number of collision headers" link="#spec-stagedefFormat2-section-collisionHeader" />
+            <entry length="4" flags="oN" info="Offset to the collision header list" link="#spec-stagedefFormat2-section-collisionHeader" />
+            <entry length="4" flags="o" info="Offset to start position data" link="#spec-stagedefFormat2-section-startPosition" />
+            <entry length="4" flags="o" info="Offset to fallout position data" link="#spec-stagedefFormat2-section-falloutPosition" />
+            <entry length="4" flags="in" info="Number of goals" link="#spec-stagedefFormat2-section-goal" />
+            <entry length="4" flags="oN" info="Offset to the goal list" link="#spec-stagedefFormat2-section-goal" />
+            <entry length="4" flags="in" info="Number of bumpers" link="#spec-stagedefFormat2-section-bumper" />
+            <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-stagedefFormat2-section-bumper" />
+            <entry length="4" flags="in" info="Number of jamabars" link="#spec-stagedefFormat2-section-jamabar" />
+            <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-stagedefFormat2-section-jamabar" />
+            <entry length="4" flags="in" info="Number of bananas" link="#spec-stagedefFormat2-section-banana" />
+            <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-stagedefFormat2-section-banana" />
+            <entry length="4" flags="in" info="Number of cone collision objects" link="#spec-stagedefFormat2-section-coneCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the cone collision object list" link="#spec-stagedefFormat2-section-coneCollisionObject" />
+            <entry length="4" flags="in" info="Number of sphere collision objects" link="#spec-stagedefFormat2-section-sphereCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the sphere collision object list" link="#spec-stagedefFormat2-section-sphereCollisionObject" />
+            <entry length="4" flags="in" info="Number of cylinder collision objects" link="#spec-stagedefFormat2-section-cylinderCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the cylinder collision object list" link="#spec-stagedefFormat2-section-cylinderCollisionObject" />
+            <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-stagedefFormat2-section-falloutVolume" />
+            <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-stagedefFormat2-section-falloutVolume" />
+            <entry length="4" flags="in" info="Number of background models" link="#spec-stagedefFormat2-section-backgroundModel" />
+            <entry length="4" flags="oN" info="Offset to the background model list" link="#spec-stagedefFormat2-section-backgroundModel" />
+            <entry length="4" flags="in" info="Number of mystery 8s" link="#spec-stagedefFormat2-section-mystery8" />
+            <entry length="4" flags="oN" info="Offset to the mystery 8 list" link="#spec-stagedefFormat2-section-mystery8" />
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="" info="0x00000001" />
-            <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
-            <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
+            <entry length="4" flags="in" info="Number of reflective level models" link="#spec-stagedefFormat2-section-reflectiveLevelModel" />
+            <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-stagedefFormat2-section-reflectiveLevelModel" />
             <entry length="12" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="in" info="Number of level model instances (For use with duplicated level models)" link="#spec-lzFormat2-section-levelModelInstance" />
-            <entry length="4" flags="oN" info="Offset to the level model instance list" link="#spec-lzFormat2-section-levelModelInstance" />
-            <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
-            <entry length="4" flags="oN" info="Offset to the level model pointer type A list" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
-            <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
-            <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
+            <entry length="4" flags="in" info="Number of level model instances (For use with duplicated level models)" link="#spec-stagedefFormat2-section-levelModelInstance" />
+            <entry length="4" flags="oN" info="Offset to the level model instance list" link="#spec-stagedefFormat2-section-levelModelInstance" />
+            <entry length="4" flags="in" info="Number of level models" link="#spec-stagedefFormat2-section-levelModelPointerTypeA" />
+            <entry length="4" flags="oN" info="Offset to the level model pointer type A list" link="#spec-stagedefFormat2-section-levelModelPointerTypeA" />
+            <entry length="4" flags="in" info="Number of level models" link="#spec-stagedefFormat2-section-levelModelPointerTypeB" />
+            <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-stagedefFormat2-section-levelModelPointerTypeB" />
             <entry length="12" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="in" info="Number of switches" link="#spec-lzFormat2-section-switch" />
-            <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-lzFormat2-section-switch" />
-            <entry length="4" flags="on" info="Offset to the fog animation header" link="#spec-lzFormat2-section-fogAnimationHeader" />
-            <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
-            <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
-            <entry length="4" flags="on" info="Offset to fog" link="#spec-lzFormat2-section-fog" />
+            <entry length="4" flags="in" info="Number of switches" link="#spec-stagedefFormat2-section-switch" />
+            <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-stagedefFormat2-section-switch" />
+            <entry length="4" flags="on" info="Offset to the fog animation header" link="#spec-stagedefFormat2-section-fogAnimationHeader" />
+            <entry length="4" flags="in" info="Number of wormholes" link="#spec-stagedefFormat2-section-wormhole" />
+            <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-stagedefFormat2-section-wormhole" />
+            <entry length="4" flags="on" info="Offset to fog" link="#spec-stagedefFormat2-section-fog" />
             <entry length="20" flags="n" info="Unknown/Null" />
-            <entry length="4" flags="on" info="Offset to mystery 3" link="#spec-lzFormat2-section-mystery3" />
+            <entry length="4" flags="on" info="Offset to mystery 3" link="#spec-stagedefFormat2-section-mystery3" />
             <entry length="1988" flags="un" info="Unknown/Null" />
         </section>
 
@@ -157,7 +157,7 @@
             <entry length="2" flags="s" info="Y rotation" />
             <entry length="2" flags="s" info="Z rotation" />
             <entry length="2" flags="s" info="Switch type (Play: 0x0000, Pause: 0x0001, Play backwards: 0x0002, Fast forward: 0x0003, Rewind: 0x0004)" />
-            <entry length="2" flags="s" info="Animation group IDs affected" link="#spec-lzFormat2-section-collisionHeader" />
+            <entry length="2" flags="s" info="Animation group IDs affected" link="#spec-stagedefFormat2-section-collisionHeader" />
             <entry length="2" flags="n" info="Null" />
         </section>
 
@@ -170,7 +170,7 @@
             <entry length="2" flags="s" info="Y rotation" />
             <entry length="2" flags="s" info="Z rotation" />
             <entry length="2" flags="n" info="Null" />
-            <entry length="4" flags="o" info="Offset to destination wormhole" link="#spec-lzFormat2-section-wormhole" />
+            <entry length="4" flags="o" info="Offset to destination wormhole" link="#spec-stagedefFormat2-section-wormhole" />
         </section>
 
         <section id="collisionHeader" name="Collision Header">
@@ -181,62 +181,62 @@
             <entry length="2" flags="sn" info="Initial Y rotation" />
             <entry length="2" flags="sn" info="Initial Z rotation" />
             <entry length="2" flags="s" info="Animation loop type/seesaw (Looping animation: 0x0000, Play once animation: 0x0001, Seesaw: 0x0002 - Seesaws rotate around the Z axis if not rotated)" />
-            <entry length="4" flags="on" info="Offset to animation header (Animation does not work with the first collision header - see notes for details)" link="#spec-lzFormat2-section-animationHeader" />
+            <entry length="4" flags="on" info="Offset to animation header (Animation does not work with the first collision header - see notes for details)" link="#spec-stagedefFormat2-section-animationHeader" />
             <entry length="4" flags="fn" info="Conveyor X speed" />
             <entry length="4" flags="fn" info="Conveyor Y speed" />
             <entry length="4" flags="fn" info="Conveyor Z speed" />
-            <entry length="4" flags="o" info="Offset to the collision triangle list" link="#spec-lzFormat2-section-collisionTriangle" />
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list pointer" link="#spec-lzFormat2-section-collisionGridTriangleListPointer" />
+            <entry length="4" flags="o" info="Offset to the collision triangle list" link="#spec-stagedefFormat2-section-collisionTriangle" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list pointer" link="#spec-stagedefFormat2-section-collisionGridTriangleListPointer" />
             <entry length="4" flags="f" info="Collision grid start X" />
             <entry length="4" flags="f" info="Collision grid start Z" />
             <entry length="4" flags="f" info="Collision grid step X" />
             <entry length="4" flags="f" info="Collision grid step Z" />
             <entry length="4" flags="i" info="Collision grid step X count" />
             <entry length="4" flags="i" info="Collision grid step Z count" />
-            <entry length="4" flags="in" info="Number of goals" link="#spec-lzFormat2-section-goal" />
-            <entry length="4" flags="oN" info="Offset to the goal list (Null is not ok if this is the first collision header - if the first collision header contains no goals, it still must point to a goal list, else the points glitch will occur and finishing will crash a console)" link="#spec-lzFormat2-section-goal" />
-            <entry length="4" flags="in" info="Number of bumpers" link="#spec-lzFormat2-section-bumper" />
-            <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-lzFormat2-section-bumper" />
-            <entry length="4" flags="in" info="Number of jamabars" link="#spec-lzFormat2-section-jamabar" />
-            <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-lzFormat2-section-jamabar" />
-            <entry length="4" flags="in" info="Number of bananas" link="#spec-lzFormat2-section-banana" />
-            <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-lzFormat2-section-banana" />
-            <entry length="4" flags="in" info="Number of cone collision objects" link="#spec-lzFormat2-section-coneCollisionObject" />
-            <entry length="4" flags="oN" info="Offset to the cone collision object list" link="#spec-lzFormat2-section-coneCollisionObject" />
-            <entry length="4" flags="in" info="Number of sphere collision objects" link="#spec-lzFormat2-section-sphereCollisionObject" />
-            <entry length="4" flags="oN" info="Offset to the sphere collision object list" link="#spec-lzFormat2-section-sphereCollisionObject" />
-            <entry length="4" flags="in" info="Number of cylinder collision objects" link="#spec-lzFormat2-section-cylinderCollisionObject" />
-            <entry length="4" flags="oN" info="Offset to the cylinder collision object list" link="#spec-lzFormat2-section-cylinderCollisionObject" />
-            <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-lzFormat2-section-falloutVolume" />
-            <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-lzFormat2-section-falloutVolume" />
-            <entry length="4" flags="in" info="Number of reflective level models" link="#spec-lzFormat2-section-reflectiveLevelModel" />
-            <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-lzFormat2-section-reflectiveLevelModel" />
-            <entry length="4" flags="in" info="Number of level model instances (For use with duplicated level models)" link="#spec-lzFormat2-section-levelModelInstance" />
-            <entry length="4" flags="oN" info="Offset to the level model instance list" link="#spec-lzFormat2-section-levelModelInstance" />
-            <entry length="4" flags="in" info="Number of level models" link="#spec-lzFormat2-section-falloutVolume" />
-            <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-lzFormat2-section-levelModelPointerTypeB" />
+            <entry length="4" flags="in" info="Number of goals" link="#spec-stagedefFormat2-section-goal" />
+            <entry length="4" flags="oN" info="Offset to the goal list (Null is not ok if this is the first collision header - if the first collision header contains no goals, it still must point to a goal list, else the points glitch will occur and finishing will crash a console)" link="#spec-stagedefFormat2-section-goal" />
+            <entry length="4" flags="in" info="Number of bumpers" link="#spec-stagedefFormat2-section-bumper" />
+            <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-stagedefFormat2-section-bumper" />
+            <entry length="4" flags="in" info="Number of jamabars" link="#spec-stagedefFormat2-section-jamabar" />
+            <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-stagedefFormat2-section-jamabar" />
+            <entry length="4" flags="in" info="Number of bananas" link="#spec-stagedefFormat2-section-banana" />
+            <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-stagedefFormat2-section-banana" />
+            <entry length="4" flags="in" info="Number of cone collision objects" link="#spec-stagedefFormat2-section-coneCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the cone collision object list" link="#spec-stagedefFormat2-section-coneCollisionObject" />
+            <entry length="4" flags="in" info="Number of sphere collision objects" link="#spec-stagedefFormat2-section-sphereCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the sphere collision object list" link="#spec-stagedefFormat2-section-sphereCollisionObject" />
+            <entry length="4" flags="in" info="Number of cylinder collision objects" link="#spec-stagedefFormat2-section-cylinderCollisionObject" />
+            <entry length="4" flags="oN" info="Offset to the cylinder collision object list" link="#spec-stagedefFormat2-section-cylinderCollisionObject" />
+            <entry length="4" flags="in" info="Number of fallout volumes" link="#spec-stagedefFormat2-section-falloutVolume" />
+            <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-stagedefFormat2-section-falloutVolume" />
+            <entry length="4" flags="in" info="Number of reflective level models" link="#spec-stagedefFormat2-section-reflectiveLevelModel" />
+            <entry length="4" flags="oN" info="Offset to the reflective level model list" link="#spec-stagedefFormat2-section-reflectiveLevelModel" />
+            <entry length="4" flags="in" info="Number of level model instances (For use with duplicated level models)" link="#spec-stagedefFormat2-section-levelModelInstance" />
+            <entry length="4" flags="oN" info="Offset to the level model instance list" link="#spec-stagedefFormat2-section-levelModelInstance" />
+            <entry length="4" flags="in" info="Number of level models" link="#spec-stagedefFormat2-section-falloutVolume" />
+            <entry length="4" flags="oN" info="Offset to the level model pointer type B list" link="#spec-stagedefFormat2-section-levelModelPointerTypeB" />
             <entry length="8" flags="un" info="Unknown/Null" />
             <entry length="2" flags="sn" info="Animation group ID (For use with switches - Must be non-zero if you want to assign a group ID)" />
             <entry length="2" flags="n" info="Null" />
-            <entry length="4" flags="in" info="Number of switches" link="#spec-lzFormat2-section-switch" />
-            <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-lzFormat2-section-switch" />
+            <entry length="4" flags="in" info="Number of switches" link="#spec-stagedefFormat2-section-switch" />
+            <entry length="4" flags="oN" info="Offset to the switch list" link="#spec-stagedefFormat2-section-switch" />
             <entry length="4" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="on" info="Offset to mystery 5" link="#spec-lzFormat2-section-mystery5" />
+            <entry length="4" flags="on" info="Offset to mystery 5" link="#spec-stagedefFormat2-section-mystery5" />
             <entry length="4" flags="fN" info="Seesaw sensitivity (Higher is more sensitive, negative makes the seesaw reversed)" />
             <entry length="4" flags="fN" info="Seesaw reset stiffness (Lower is looser)" />
             <entry length="4" flags="fN" info="Seesaw bounds of rotation (Higher is less)" />
-            <entry length="4" flags="in" info="Number of wormholes" link="#spec-lzFormat2-section-wormhole" />
-            <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-lzFormat2-section-wormhole" />
+            <entry length="4" flags="in" info="Number of wormholes" link="#spec-stagedefFormat2-section-wormhole" />
+            <entry length="4" flags="oN" info="Offset to the wormhole list" link="#spec-stagedefFormat2-section-wormhole" />
             <entry length="4" flags="in" info="Initial animation state (Playing: 0x00000000, Paused: 0x00000001, Playing backwards: 0x00000002, Fast forward: 0x00000003, Rewind: 0x00000004 - Same as switch types - A play once animation should not be initially playing)" />
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
-            <entry length="4" flags="on" info="Offset to texture scroll data" link="#spec-lzFormat2-section-textureScroll" />
+            <entry length="4" flags="on" info="Offset to texture scroll data" link="#spec-stagedefFormat2-section-textureScroll" />
             <entry length="960" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="levelModelPointerTypeA" name="Level Model Pointer Type A">
             <entry length="8" flags="" info="0x0000000000000001" />
-            <entry length="4" flags="o" info="Offset to level model Type A" link="#spec-lzFormat2-section-levelModel" />
+            <entry length="4" flags="o" info="Offset to level model Type A" link="#spec-stagedefFormat2-section-levelModel" />
         </section>
 
         <section id="levelModel" name="Level Model">
@@ -246,11 +246,11 @@
         </section>
 
         <section id="levelModelPointerTypeB" name="Level Model Pointer Type B">
-            <entry length="4" flags="o" info="Offset to level model pointer Type A" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+            <entry length="4" flags="o" info="Offset to level model pointer Type A" link="#spec-stagedefFormat2-section-levelModelPointerTypeA" />
         </section>
 
         <section id="levelModelInstance" name="Level Model Instance">
-            <entry length="4" flags="oN" info="Offset to the level model pointer type A" link="#spec-lzFormat2-section-levelModelPointerTypeA" />
+            <entry length="4" flags="oN" info="Offset to the level model pointer type A" link="#spec-stagedefFormat2-section-levelModelPointerTypeA" />
             <entry length="4" flags="f" info="X position" />
             <entry length="4" flags="f" info="Y position" />
             <entry length="4" flags="f" info="Z position" />
@@ -282,9 +282,9 @@
             <entry length="4" flags="f" info="X Scale" />
             <entry length="4" flags="f" info="Y Scale" />
             <entry length="4" flags="f" info="Z Scale" />
-            <entry length="4" flags="on" info="Offset to the background animation header" link="#spec-lzFormat2-section-backgroundAnimationHeader" />
-            <entry length="4" flags="on" info="Offset to the background animation header 2" link="#spec-lzFormat2-section-backgroundAnimationHeader2" />
-            <entry length="4" flags="on" info="Offset to the effect header" link="#spec-lzFormat2-section-effectHeader" />
+            <entry length="4" flags="on" info="Offset to the background animation header" link="#spec-stagedefFormat2-section-backgroundAnimationHeader" />
+            <entry length="4" flags="on" info="Offset to the background animation header 2" link="#spec-stagedefFormat2-section-backgroundAnimationHeader2" />
+            <entry length="4" flags="on" info="Offset to the effect header" link="#spec-stagedefFormat2-section-effectHeader" />
         </section>
 
         <section id="collisionTriangle" name="Collision Triangle">
@@ -309,20 +309,20 @@
         </section>
 
         <section id="collisionGridTriangleList" name="Collision Grid Triangle List">
-            <entry length="2" flags="s" info="Triangle index" link="#spec-lzFormat2-section-collisionTriangle" />
+            <entry length="2" flags="s" info="Triangle index" link="#spec-stagedefFormat2-section-collisionTriangle" />
             <entry length="0" flags="s" info="... (Triangle index is repeated)" />
             <entry length="2" flags="s" info="0xFFFF to terminate a list" />
         </section>
 
         <section id="collisionGridTriangleListPointer" name="Collision Grid Triangle List Pointer">
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 0, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 1, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 2, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
-            <entry length="0" flags="o" info="..." link="#spec-lzFormat2-section-collisionGridTriangleList" />
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 15, 0)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 0, 1)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
-            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 1, 1)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
-            <entry length="0" flags="o" info="... Repeat this for however many collision grid tiles there are (The above is an example of grid with 16 tiles along the X axis)" link="#spec-lzFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 0, 0)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 1, 0)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 2, 0)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
+            <entry length="0" flags="o" info="..." link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 15, 0)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 0, 1)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
+            <entry length="4" flags="o" info="Offset to the collision grid triangle list (Grid tile 1, 1)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
+            <entry length="0" flags="o" info="... Repeat this for however many collision grid tiles there are (The above is an example of grid with 16 tiles along the X axis)" link="#spec-stagedefFormat2-section-collisionGridTriangleList" />
         </section>
 
         <section id="coneCollisionObject" name="Cone Collision Object">
@@ -359,18 +359,18 @@
         </section>
 
         <section id="animationHeader" name="Animation Header">
-            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="16" flags="un" info="Unknown/Null" />
         </section>
 
@@ -378,61 +378,61 @@
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
             <entry length="8" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="16" flags="un" info="Unknown/Null" />
         </section>
 
         <section id="backgroundAnimationHeader2" name="Background Animation Header 2">
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 1] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 1] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 2] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 2] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 9] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 9] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 10] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 10] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 11] keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 11] keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 1] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 1] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 2] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 2] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 9] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 9] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 10] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 10] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown [Set 11] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown [Set 11] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
         </section>
 
         <section id="fogAnimationHeader" name="Fog Animation Header">
-            <entry length="4" flags="in" info="Number of start distance keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the start distance keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of end distance keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the end distance keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of red color value keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the red color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of green color value keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the green color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="in" info="Number of blue color value keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oN" info="Offset to the blue color value keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="inu" info="Number of unknown keyframes" link="#spec-lzFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown keyframe list" link="#spec-lzFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of start distance keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the start distance keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of end distance keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the end distance keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of red color value keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the red color value keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of green color value keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the green color value keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of blue color value keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the blue color value keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="inu" info="Number of unknown keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oNu" info="Offset to the unknown keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
         </section>
 
         <section id="animationKeyframe" name="Animation Keyframe">
@@ -454,11 +454,11 @@
         </section>
 
         <section id="effectHeader" name="Effect Header">
-            <entry length="4" flags="in" info="Number of effect 1 keyframes" link="#spec-lzFormat2-section-effect1" />
-            <entry length="4" flags="oN" info="Offset to the effect 1 list" link="#spec-lzFormat2-section-effect1" />
-            <entry length="4" flags="in" info="Number of effect 2 keyframes" link="#spec-lzFormat2-section-effect2" />
-            <entry length="4" flags="oN" info="Offset to the effect 2 list" link="#spec-lzFormat2-section-effect2" />
-            <entry length="4" flags="on" info="Offset to the texture scroll" link="#spec-lzFormat2-section-textureScroll" />
+            <entry length="4" flags="in" info="Number of effect 1 keyframes" link="#spec-stagedefFormat2-section-effect1" />
+            <entry length="4" flags="oN" info="Offset to the effect 1 list" link="#spec-stagedefFormat2-section-effect1" />
+            <entry length="4" flags="in" info="Number of effect 2 keyframes" link="#spec-stagedefFormat2-section-effect2" />
+            <entry length="4" flags="oN" info="Offset to the effect 2 list" link="#spec-stagedefFormat2-section-effect2" />
+            <entry length="4" flags="on" info="Offset to the texture scroll" link="#spec-stagedefFormat2-section-textureScroll" />
             <entry length="28" flags="un" info="Unknown/Null" />
         </section>
 

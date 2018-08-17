@@ -1,7 +1,7 @@
 (function() {
 	var app = angular.module("documentationApp", [], function($locationProvider) {
-        $locationProvider.html5Mode(true);
-  	});
+		$locationProvider.html5Mode(true);
+	});
 
 	app.controller("DocumentationController", function($scope, $location) {
 		this.pages = pages;
@@ -15,6 +15,13 @@
 		};
 
 		$scope.getPageLink = function() {
+			//Redirects
+			if ($location.search().page == "lzFormat1") {
+				$location.search().page = "stagedefFormat1";
+			} else if ($location.search().page == "lzFormat2") {
+				$location.search().page = "stagedefFormat2";
+			}
+
 			return "/SMBLevelWorkshop/documentation/" + $location.search().page + ".html";
 		};
 
@@ -30,11 +37,11 @@
 		"gettingStarted": {
 			"name": "Getting Started with SMB Level Workshop"
 		},
-		"lzFormat1": {
-			"name": "SMB 1 LZ File Format"
+		"stagedefFormat1": {
+			"name": "SMB 1 StageDef File Format"
 		},
-		"lzFormat2": {
-			"name": "SMB 2 LZ File Format"
+		"stagedefFormat2": {
+			"name": "SMB 2 StageDef File Format"
 		},
 		"gmaFormat": {
 			"name": "GMA File Format"
@@ -68,3 +75,4 @@
 		}
 	};
 })();
+
