@@ -1,7 +1,7 @@
 (function() {
 	var app = angular.module("documentationApp", [], function($locationProvider) {
-        $locationProvider.html5Mode(true);
-  	});
+		$locationProvider.html5Mode(true);
+	});
 
 	app.controller("DocumentationController", function($scope, $location) {
 		this.pages = pages;
@@ -15,6 +15,13 @@
 		};
 
 		$scope.getPageLink = function() {
+			//Redirects
+			if ($location.search().page == "lzFormat1") {
+				$location.search().page = "stagedefFormat1";
+			} else if ($location.search().page == "lzFormat2") {
+				$location.search().page = "stagedefFormat2";
+			}
+
 			return "/SMBLevelWorkshop/documentation/" + $location.search().page + ".html";
 		};
 
@@ -68,3 +75,4 @@
 		}
 	};
 })();
+
