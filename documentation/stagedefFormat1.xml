@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Command for SMBLevelWorkshop docs: specformatter <dash><dash>table-class table stagedefFormat2.xml stagedefFormat2.html -->
+<!-- But of course, replace <dash><dash> with two dashes - XML has a compatibility rule preventing <dash><dash> from being in comments -->
+<specSheet>
+    <spec id="stagedefFormat1" name="SMB 2 StageDef Formate (Formerly .lz.raw)" linkImage="Link.png">
+        <note>All offsets written to file are relative to the beginning of the file</note>
+        <note>Try to keep things 4 byte aligned if possible other than the collision grid triangle list (based on the specs, it seems to be built like this)</note>
+        <note>Objects names need to be put somewhere in the file</note>
+        <note>Put an extra 4 zero bytes after the level models?</note>
+        <note>Normal levels only have one start position, minigames can have more</note>
+        <note>Reflective objects must not have textures, and must be planar</note>
+        <note>The order you write objects into the file can matter</note>
+        <note>Recommended order (it works, other orders may work as well)</note>
+        <note>File Header, Start positions, Fallout Y, Other config items, Collision field headers, collision triangles, Collision grid triangle list, Collision grid pointers, Level models, Reflective models, Background models, Object name offset, Object name ASCII</note>
+        <note>The Collision Grid is used for optimization</note>
+        <note>- Collisions are divided into a matrix based on triangle position</note>
+        <note>- The matrix elements start at (startX + (stepX * i), startZ + (stepZ * j)) position</note>
+        <note>- Each collision grid pointer is used for a different element in the matrix</note>
+        <note>- By dividing the triangles into spatial sections, it allows the game to not test every triangle every frame</note>
+        <note>- Have 256 collision grid pointers that point to different triangle lists</note>
+        <note>- If not optimizing, triangle lists can just count through the number of triangles</note>
+        <note>The center of rotation in the collision header may not work as one may expect. Setting the center of rotation will translate the object(s) by the negative of what was set (Effectively making the object appear to jump to 0, 0, 0 usually). Position keyframes are then used to move the object back to its desired location.</note>
+
+        <flag id="n" info="Ok to be left as null" image="NullOk.png" />
+        <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
+        <flag id="i" info="4 byte integer" image="Int32.png" />
+        <flag id="f" info="4 byte float" image="Float32.png" />
+        <flag id="s" info="2 byte short" image="Short16.png" />
+        <flag id="o" info="4 byte file offset" image="Offset32.png" />
+        <flag id="u" info="Unknown" image="Unknown.png" />
+
+        <section id="fileHeader" name="File Header">
+            <entry length="8" flags="" info="0x00000000, 0x00000064" />
+            <entry length="4" flags="in" info="Number of collision headers" link="#spec-stagedefFormat1-section-collisionHeader" />
+            <entry length="4" flags="oN" info="Offset to the collision header list" link="#spec-stagedefFormat1-section-collisionHeader" />
+            <entry length="4" flags="i" info="Size of header (always 0xA0), offset to starting position data" link="#spec-stagedefFormat1-section-startPosition" />
+            <entry length="4" flags="f" info="Offset to fallout plane Y coordinate, this value minus 0xA0 divided by 0x14 gives the number of start positions" />
+            <entry length="4" flags="i" info="Number of goals" link="#spec-stagedefFormat1-section-goal" />
+            <entry length="4" flags="i" info="Offset to the goal list" link="#spec-stagedefFormat1-section-goal" />
+            <entry length="4" flags="iu" info="Number of goals, duplicate. Unknown purpose" link="#spec-stagedefFormat1-section-goal" />
+            <entry length="4" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of bumpers" link="#spec-stagedefFormat1-section-bumper" />
+            <entry length="4" flags="oN" info="Offset to the bumper list" link="#spec-stagedefFormat1-section-bumper" />
+            <entry length="4" flags="in" info="Number of jamabars" link="#spec-stagedefFormat1-section-jamabar" />
+            <entry length="4" flags="oN" info="Offset to the jamabar list" link="#spec-stagedefFormat1-section-jamabar" />
+            <entry length="4" flags="in" info="Number of bananas" link="#spec-stagedefFormat1-section-banana" />
+            <entry length="4" flags="oN" info="Offset to the banana list" link="#spec-stagedefFormat1-section-banana" />
+            <entry length="16" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="uin" info="Unknown/Number of something?" />
+            <entry length="4" flags="uoN" info="Unknown/Offset to list of something?" />
+            <entry length="4" flags="in" info="Number of level models" link="#spec-stagedefFormat1-section-levelModel" />
+            <entry length="4" flags="oN" info="Offset to the level model list" link="#spec-stagedefFormat1-section-levelModel" />
+            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="in" info="Number of background models" link="#spec-stagedefFormat1-section-backgroundModel" />
+            <entry length="4" flags="oN" info="Offset to the background model list" link="#spec-stagedefFormat1-section-backgroundModel" />
+            <entry length="4" flags="uin" info="Unknown/Number of something?" />
+            <entry length="4" flags="uoN" info="Offset to list of something?" />
+            <entry length="8" flags="u" info="Levels have 0x00000000 0x00000001 here" />
+            <entry length="4" flags="in" info="Number of reflective objects" link="#spec-stagedefFormat1-section-reflective" />
+            <entry length="4" flags="oN" info="Offset to list of reflective objects" link="#spec-stagedefFormat1-section-reflective" />
+            <entry length="24" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="startPosition" name="Start Position">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+        </section>
+
+        <section id="goal" name="Goal">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="s" info="Type of goal (0x4200 is blue, 0x4700 is green, 0x5200 is red)" />
+        </section>
+
+        <section id="bumper" name="Bumper">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X scale" />
+            <entry length="4" flags="f" info="Y scale" />
+            <entry length="4" flags="f" info="Z scale" />
+        </section>
+
+        <section id="jamabar" name="Jamabar">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X scale" />
+            <entry length="4" flags="f" info="Y scale" />
+            <entry length="4" flags="f" info="Z scale" />
+        </section>
+
+        <section id="banana" name="Banana">
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="4" flags="i" info="Type of banana (Single: 0x00000000, Bunch: 0x00000001)" />
+        </section>
+
+        <section id="collisionHeader" name="Collision Header">
+            <entry length="4" flags="fn" info="Center of rotation X position (may not work as you expect - check the notes)" />
+            <entry length="4" flags="fn" info="Center of rotation Y position (may not work as you expect - check the notes)" />
+            <entry length="4" flags="fn" info="Center of rotation Z position (may not work as you expect - check the notes)" />
+            <entry length="4" flags="in" info="Initial X rotation" />
+            <entry length="4" flags="in" info="Initial Y rotation" />
+            <entry length="4" flags="in" info="Initial Z rotation" />
+            <entry length="2" flags="usn" info="Unknown/Null/Possibly animation loop type" />
+            <entry length="4" flags="on" info="Offset to animation header" link="#spec-stagedefFormat1-section-animationHeader" />
+            <entry length="4" flags="o" info="Offset to model reference (points to pointer to name string" />
+            <entry length="4" flags="o" info="Offset to triangle list" link="#spec-stagedefFormat1-section-collisionTriangle" />
+            <entry length="4" flags="o" info="Offset to collision grid list pointers" link="#spec-stagedefFormat1-section-collisionGridTriangleListPointer" />
+            <entry length="4" flags="f" info="Start X for collision grid" />
+            <entry length="4" flags="f" info="Start Z for collision grid" />
+            <entry length="4" flags="f" info="Step X for collision grid" />
+            <entry length="4" flags="f" info="Step Y for collision grid" />
+            <entry length="4" flags="ui" info="0x00000010" />
+            <entry length="4" flags="ui" info="0x00000010" />
+            <entry length="136" flags="" info="Copy of file header, starts from offset 0x18 in the original header, includes only the objects/entities that move with the collision, which obviously excludes background models (put 0 for number/offset for those excluded)" />
+        </section>
+
+        <section id="levelModel" name="Level Model">
+            <entry length="4" flags="i" info="0x00000001" />
+            <entry length="4" flags="o" info="Offset to the model name to use" />
+            <entry length="4" flags="n" info="Null" />
+        </section>
+
+        <section id="backgroundModel" name="Background Model">
+            <entry length="4" flags="ui" info="0x0000001F" />
+            <entry length="4" flags="o" info="Offset to model name to use" />
+            <entry length="4" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X position" />
+            <entry length="4" flags="f" info="Y position" />
+            <entry length="4" flags="f" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X scale" />
+            <entry length="4" flags="f" info="Y scale" />
+            <entry length="4" flags="f" info="Z scale" />
+            <entry length="12" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="reflective" name="Reflective Model">
+            <entry length="4" flags="o" info="Offset to model name to use" />
+            <entry length="4" flags="n" info="Null" />
+        </section>
+
+        <section id="collisionTriangle" name="Collision Triangle">
+            <!-- TODO -->
+            <entry length="4" flags="f" info="X1 position" />
+            <entry length="4" flags="f" info="Y1 position" />
+            <entry length="4" flags="f" info="Z1 position" />
+            <entry length="4" flags="f" info="X normal" />
+            <entry length="4" flags="f" info="Y normal" />
+            <entry length="4" flags="f" info="Z normal" />
+            <entry length="2" flags="s" info="X rotation from XY plane" />
+            <entry length="2" flags="s" info="Y rotation from XY plane" />
+            <entry length="2" flags="s" info="Z rotation from XY plane" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="DX2X1" />
+            <entry length="4" flags="f" info="DY2Y1" />
+            <entry length="4" flags="f" info="DX3X1" />
+            <entry length="4" flags="f" info="DY3Y1" />
+            <entry length="4" flags="f" info="X tangent" />
+            <entry length="4" flags="f" info="Y tangent" />
+            <entry length="4" flags="f" info="X bitangent" />
+            <entry length="4" flags="f" info="Y bitangent" />
+        </section>
+
+        <section id="collisionGridTriangleList" name="Collision Grid Triangle List">
+            <entry length="2" flags="s" info="Triangle index" />
+            <entry length="0" flags="s" info="... (Triangle index is repeated)" />
+            <entry length="2" flags="s" info="0xFFFF to terminate the list" />
+        </section>
+
+        <section id="collisionGridTriangleListPointer" name="Collision Grid Triangle List Pointer">
+            <entry length="4" flags="o" info="Pointer to a triangle list" link="#spec-stagedefFormat1-section-collisionGridTriangleList" />
+        </section>
+
+        <section id="animationHeader" name="Animation Header">
+            <entry length="4" flags="i" info="Number of frames for X rotation" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="o" info="Offset to X rotation frames" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="i" info="Number of frames for Y rotation" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="o" info="Offset to Y rotation frames" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="i" info="Number of frames for Z rotation" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="o" info="Offset to Z rotation frames" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="i" info="Number of frames for X translation" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="o" info="Offset to X translation frames" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="i" info="Number of frames for Y translation" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="o" info="Offset to Y translation frames" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="i" info="Number of frames for Z translation" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="4" flags="o" info="Offset to Z translation frames" link="#spec-stagedefFormat1-section-animationFrame" />
+            <entry length="24" flags="un" info="Unknown/Null" />
+        </section>
+
+        <section id="animationFrame" name="Animation Frame">
+            <entry length="4" flags="ui" info="0x00000002" />
+            <entry length="4" flags="f" info="Time, in percent alloted time? (starts at 0 and goes to 100)" />
+            <entry length="4" flags="f" info="Rotation in degrees or translation in units" />
+            <entry length="4" flags="un" info="Unknown, Null works" />
+            <entry length="4" flags="un" info="Unknown, Null works" />
+        </section>
+    </spec>
+</specSheet>
