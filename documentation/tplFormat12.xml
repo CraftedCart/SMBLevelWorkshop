@@ -5,23 +5,36 @@
     <spec id="tplFormat12" name="SMB 1 and 2 TPL Format" linkImage="Link.png">
 
         <note>Sizes for formats are in bits, everything else in bytes</note>
+        <note>Images are formated into blocks, the block size is specific to each format in width by height format:</note>
+        <note>- I4: 8x8</note>
+        <note>- I8: 8x4</note>
+        <note>- IA4: 8x4</note>
+        <note>- IA8: 4x4</note>
+        <note>- RGB565: 4x4</note>
+        <note>- RGB5A3: 4x4</note>
+        <note>- RGBA32: 4x4</note>
+        <note>- C4: 8x8</note>
+        <note>- C8: 8x4</note>
+        <note>- C14X2: 4x4</note>
+        <note>- CMPR: 8x8</note>
+        <note>Blocks are arranged from left to right, top to bottom. If the image doesn't align with the blocks, the extra size will just be represented by null pixels in the block.</note>
 
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
-        <flag id="N" info="Ok to be left as null if the number of objects is 0/referenced item is not set" image="NullOkIf.png" />
-        <flag id="i" info="4 byte integer" image="Int32.png" />
-        <flag id="f" info="4 byte float" image="Float32.png" />
         <flag id="s" info="2 byte short" image="Short16.png" />
         <flag id="b" info="1 byte" image="Byte8.png"/>
         <flag id="h" info="1 nibble (1/2 byte)" image="Nibble4.png"/>
+        <flag id="t" info="1 bit" image="Bit1.png" />
         <flag id="o" info="4 byte file offset" image="Offset32.png"/>
-        <flag id="c" info="4 byte RGBA Color" image="ColorRGBA4.png"/>
         <flag id="u" info="Unknown" image="Unknown.png" />
 
         <section id="fileHeader" name="File Header">
             <entry length="4" flags="i" info="Number of images" />
-            <entry length="0" flags="" info="Rest of header repeated for each image" />
+            <entry length="0" flags="" info="Texture headers (One for each texture)" />
+        </section>
+
+        <section id="textureHeader" name="Texture Header">
             <entry length="4" flags="i" info="Texture format" link="http://wiki.tockdom.com/wiki/Image_Formats#Image_Formats" />
-            <entry length="4" flags="0" info="Texture data offset" link="#spec-tplFormat12-section-texture" />
+            <entry length="4" flags="o" info="Texture data offset" link="#spec-tplFormat12-section-texture" />
             <entry length="2" flags="s" info="Width of texture" />
             <entry length="2" flags="s" info="Height of texture" />
             <entry length="2" flags="s" info="Number of mipmaps" />
@@ -29,7 +42,8 @@
         </section>
 
         <section id="texture" name="Texture">
-            <entry length="Variable" info="Texture Data" />
+            <entry length="32" info="Texture Block" />
+            <entry length="0" info="... Continued blocks till end of texture" />
         </section>
 
         <section id="i4" name="I4 Format">
@@ -57,7 +71,7 @@
         </section>
 
         <section id="rgb5a3-a" name="RGB5A3 With Alpha">
-            <entry length="1" flags="" info="Alpha bit, set to 1" />
+            <entry length="1" flags="t" info="Alpha bit, set to 1" />
             <entry length="2" flags="" info="Alpha intensity. Times 0x20 for RGBA" />
             <entry length="4" flag="h" info="Red intensity. Times 0x11 for RGBA" />
             <entry length="4" flag="h" info="Green intensity. Times 0x11 for RGBA" />
@@ -65,7 +79,7 @@
         </section>
 
         <section id="rgba5a3-na" name="RGB5A3 Without Alpha">
-            <entry length="1" flags="" info="Alpha bit, set to 0" />
+            <entry length="1" flags="t" info="Alpha bit, set to 0" />
             <entry length="5" flags="" info="Red intensity. Times 0x8 for RGB" />
             <entry length="5" flags="" info="Green intensity. Times 0x8 for RGB" />
             <entry length="5" flags="" info="Blue intensity. Times 0x8 for RGB" />
