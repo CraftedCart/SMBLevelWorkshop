@@ -112,7 +112,7 @@
             <entry length="16" flags="s" info="First RGB565 color" />
             <entry length="16" flags="s" info="Second RGB 565 color" />
             <entry length="2" flags="" info="pixel index into palette" />
-            <entry length="0" flags="" info="... 63 more indices" />
+            <entry length="126" flags="" info="... 63 more indices" />
         </section>
     </spec>
 </specSheet>
