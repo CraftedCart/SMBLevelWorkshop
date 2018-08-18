@@ -20,6 +20,7 @@
         <note>Blocks are arranged from left to right, top to bottom. If the image doesn't align with the blocks, the extra size will just be represented by null pixels in the block.</note>
 
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
+        <flag id="i" info="4 byte integer" image="Int32.png" />
         <flag id="s" info="2 byte short" image="Short16.png" />
         <flag id="b" info="1 byte" image="Byte8.png"/>
         <flag id="h" info="1 nibble (1/2 byte)" image="Nibble4.png"/>
@@ -29,7 +30,7 @@
 
         <section id="fileHeader" name="File Header">
             <entry length="4" flags="i" info="Number of images" />
-            <entry length="0" flags="" info="Texture headers (One for each texture)" />
+            <entry length="0" info="Texture headers (One for each texture)" />
         </section>
 
         <section id="textureHeader" name="Texture Header">
