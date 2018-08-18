@@ -73,7 +73,7 @@
 
         <section id="rgb5a3-a" name="RGB5A3 With Alpha">
             <entry length="1" flags="t" info="Alpha bit, set to 1" />
-            <entry length="2" flags="" info="Alpha intensity. Times 0x20 for RGBA" />
+            <entry length="3" flags="" info="Alpha intensity. Times 0x20 for RGBA" />
             <entry length="4" flag="h" info="Red intensity. Times 0x11 for RGBA" />
             <entry length="4" flag="h" info="Green intensity. Times 0x11 for RGBA" />
             <entry length="4" flag="h" info="Blue intensity. Times 0x11 for RGBA" />
