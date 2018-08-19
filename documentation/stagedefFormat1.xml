@@ -13,12 +13,14 @@
         <note>Recommended order (it works, other orders may work as well)</note>
         <note>File Header, Start positions, Fallout Y, Other config items, Collision field headers, collision triangles, Collision grid triangle list, Collision grid pointers, Level models, Reflective models, Background models, Object name offset, Object name ASCII</note>
         <note>The Collision Grid is used for optimization</note>
-        <note>- Collisions are divided into a matrix based on triangle position</note>
-        <note>- The matrix elements start at (startX + (stepX * i), startZ + (stepZ * j)) position</note>
-        <note>- Each collision grid pointer is used for a different element in the matrix</note>
-        <note>- By dividing the triangles into spatial sections, it allows the game to not test every triangle every frame</note>
-        <note>- Have 256 collision grid pointers that point to different triangle lists</note>
-        <note>- If not optimizing, triangle lists can just count through the number of triangles</note>
+        <note-list>
+            <note>Collisions are divided into a matrix based on triangle position</note>
+            <note>The matrix elements start at (startX + (stepX * i), startZ + (stepZ * j)) position</note>
+            <note>Each collision grid pointer is used for a different element in the matrix</note>
+            <note>By dividing the triangles into spatial sections, it allows the game to not test every triangle every frame</note>
+            <note>Have 256 collision grid pointers that point to different triangle lists</note>
+            <note>If not optimizing, triangle lists can just count through the number of triangles</note>
+        </note-list>
         <note>The center of rotation in the collision header may not work as one may expect. Setting the center of rotation will translate the object(s) by the negative of what was set (Effectively making the object appear to jump to 0, 0, 0 usually). Position keyframes are then used to move the object back to its desired location.</note>
 
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
