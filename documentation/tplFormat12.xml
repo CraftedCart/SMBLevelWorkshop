@@ -6,17 +6,19 @@
 
         <note>Sizes for formats are in bits, everything else in bytes</note>
         <note>Images are formated into blocks, the block size is specific to each format in width by height format:</note>
-        <note>- I4: 8x8</note>
-        <note>- I8: 8x4</note>
-        <note>- IA4: 8x4</note>
-        <note>- IA8: 4x4</note>
-        <note>- RGB565: 4x4</note>
-        <note>- RGB5A3: 4x4</note>
-        <note>- RGBA32: 4x4</note>
-        <note>- C4: 8x8</note>
-        <note>- C8: 8x4</note>
-        <note>- C14X2: 4x4</note>
-        <note>- CMPR: 8x8</note>
+        <note-list>
+            <note>I4: 8x8</note>
+            <note>I8: 8x4</note>
+            <note>IA4: 8x4</note>
+            <note>IA8: 4x4</note>
+            <note>RGB565: 4x4</note>
+            <note>RGB5A3: 4x4</note>
+            <note>RGBA32: 4x4</note>
+            <note>C4: 8x8</note>
+            <note>C8: 8x4</note>
+            <note>C14X2: 4x4</note>
+            <note>CMPR: 8x8</note>
+        </note-list>
         <note>Blocks are arranged from left to right, top to bottom. If the image doesn't align with the blocks, the extra size will just be represented by null pixels in the block.</note>
 
         <flag id="n" info="Ok to be left as null" image="NullOk.png" />
