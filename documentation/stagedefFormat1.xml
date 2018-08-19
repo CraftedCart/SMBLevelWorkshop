@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Command for SMBLevelWorkshop docs: specformatter <dash><dash>table-class table stagedefFormat2.xml stagedefFormat2.html -->
+<!-- Command for SMBLevelWorkshop docs: specformatter <dash><dash>table-class table stagedefFormat1.xml stagedefFormat1.html -->
 <!-- But of course, replace <dash><dash> with two dashes - XML has a compatibility rule preventing <dash><dash> from being in comments -->
 <specSheet>
-    <spec id="stagedefFormat1" name="SMB 2 StageDef Format (Formerly .lz.raw)" linkImage="Link.png">
+    <spec id="stagedefFormat1" name="SMB 1 StageDef Format (Formerly .lz.raw)" linkImage="Link.png">
         <note>All offsets written to file are relative to the beginning of the file</note>
         <note>Try to keep things 4 byte aligned if possible other than the collision grid triangle list (based on the specs, it seems to be built like this)</note>
         <note>Objects names need to be put somewhere in the file</note>
