@@ -1,0 +1,62 @@
+<h2>File header</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td>0x04</td>
+		<td>Number of Textures</td>
+	</tr>
+	<tr>
+		<th>Note: Repeat rest of header for each texture</th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td><code>0x04</code></td>
+		<td><a href="http://wiki.tockdom.com/wiki/Image_Formats#Image_Formats">Texture type</a></td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td><code>0x04</code></td>
+		<td><a href="#Texture">Texture data offset</a></td>
+	</tr>
+		<tr>
+		<td>8</td>
+		<td><code>0x02</code></td>
+		<td>Width of texture</td>
+	</tr>
+		<tr>
+		<td>10</td>
+		<td><code>0x02</code></td>
+		<td>Height of texture</td>
+	</tr>
+		<tr>
+		<td>12</td>
+		<td><code>0x02</code></td>
+		<td>Number of mipmaps</td>
+	</tr>
+		<tr>
+		<td>14</td>
+		<td><code>0x02</code></td>
+		<td><code>0x1234</code></td>
+	</tr>
+</table><br />
+
+<h2 id="Texture">Texture</h2><br />
+<table class="table">
+	<tr>
+		<th>Relative Offset (decimal)</th>
+		<th>No. Bytes (hex)</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>0</td>
+		<td>Varies</td>
+		<td>Texture Data</td>
+	</tr>
+</table><br />
