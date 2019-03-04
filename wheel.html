@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SPIIN THE WHEEEELLLL</title>
+  </head>
+  <body>
+    <p>Thanks Bites</p>
+    <button onclick="spin()">SPIIN THE WHEEEELLLL</button>
+    <div style="position: relative">
+      <img id="wheel" src="img/roulette_of_creativity.png" style="position: absolute">
+      <img src="img/wheelarrow.png" style="position: absolute">
+    </div>
+
+    <script>
+     var elem = document.getElementById("wheel");
+     var degrees = 0.0;
+     var rotSpeed = 0.0;
+
+     function rotate() {
+       elem.style.transform = "rotate(" + degrees + "deg)";
+
+       degrees += rotSpeed;
+       if (degrees > 360) {
+         degrees = 0;
+       }
+
+       rotSpeed -= 0.1;
+
+       if (rotSpeed <= 0.0) {
+         rotSpeed = 0.0;
+       } else {
+         looper = setTimeout(rotate, 16);
+       }
+     }
+
+     function spin() {
+       rotSpeed = 10.0 + Math.random() * 40.0;
+       rotate();
+     }
+    </script>
+  </body>
+</html>
