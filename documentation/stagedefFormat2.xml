@@ -290,7 +290,7 @@
         <section id="foregroundModel" name="Foreground model">
             <entry length="4" flags="" info="Unknown - typically 0x0000001F, sometimes 0x00000007 or 0x0000000F" />
             <entry length="4" flags="o" info="Offset to the model name to use" />
-            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="fu" info="X position" />
             <entry length="4" flags="fu" info="Y position" />
             <entry length="4" flags="fu" info="Z position" />
