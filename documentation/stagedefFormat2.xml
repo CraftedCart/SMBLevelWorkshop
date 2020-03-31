@@ -54,8 +54,8 @@
             <entry length="4" flags="oN" info="Offset to the fallout volume list" link="#spec-stagedefFormat2-section-falloutVolume" />
             <entry length="4" flags="in" info="Number of background models" link="#spec-stagedefFormat2-section-backgroundModel" />
             <entry length="4" flags="oN" info="Offset to the background model list" link="#spec-stagedefFormat2-section-backgroundModel" />
-            <entry length="4" flags="in" info="Number of mystery 8s" link="#spec-stagedefFormat2-section-mystery8" />
-            <entry length="4" flags="oN" info="Offset to the mystery 8 list" link="#spec-stagedefFormat2-section-mystery8" />
+            <entry length="4" flags="in" info="Number of foreground models" link="#spec-stagedefFormat2-section-foregroundModel" />
+            <entry length="4" flags="oN" info="Offset to the foreground model list" link="#spec-stagedefFormat2-section-foregroundModel" />
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="" info="0x00000001" />
             <entry length="4" flags="in" info="Number of reflective level models" link="#spec-stagedefFormat2-section-reflectiveLevelModel" />
@@ -283,8 +283,27 @@
             <entry length="4" flags="f" info="Y Scale" />
             <entry length="4" flags="f" info="Z Scale" />
             <entry length="4" flags="on" info="Offset to the background animation header" link="#spec-stagedefFormat2-section-backgroundAnimationHeader" />
-            <entry length="4" flags="on" info="Offset to the background animation header 2" link="#spec-stagedefFormat2-section-backgroundAnimationHeader2" />
+            <entry length="4" flags="on" info="Offset to the background/foreground animation header 2" link="#spec-stagedefFormat2-section-backgroundAnimationHeader2" />
             <entry length="4" flags="on" info="Offset to the effect header" link="#spec-stagedefFormat2-section-effectHeader" />
+        </section>
+
+        <section id="foregroundModel" name="Foreground model">
+            <entry length="4" flags="" info="Unknown - typically 0x0000001F, sometimes 0x00000007 or 0x0000000F" />
+            <entry length="4" flags="o" info="Offset to the model name to use" />
+            <entry length="24" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="fu" info="X position" />
+            <entry length="4" flags="fu" info="Y position" />
+            <entry length="4" flags="fu" info="Z position" />
+            <entry length="2" flags="s" info="X rotation" />
+            <entry length="2" flags="s" info="Y rotation" />
+            <entry length="2" flags="s" info="Z rotation" />
+            <entry length="2" flags="n" info="Null" />
+            <entry length="4" flags="f" info="X Scale" />
+            <entry length="4" flags="f" info="Y Scale" />
+            <entry length="4" flags="f" info="Z Scale" />
+            <entry length="4" flags="un" info="Unknown" />
+            <entry length="4" flags="on" info="Offset to the background/foreground animation header 2" link="#spec-stagedefFormat2-section-backgroundAnimationHeader2" />
+            <entry length="4" flags="on" info="Unknown" />
         </section>
 
         <section id="collisionTriangle" name="Collision Triangle">
@@ -393,13 +412,15 @@
             <entry length="16" flags="un" info="Unknown/Null" />
         </section>
 
-        <section id="backgroundAnimationHeader2" name="Background Animation Header 2">
+        <section id="backgroundAnimationHeader2" name="Background/Foreground Animation Header 2">
             <entry length="4" flags="un" info="Unknown/Null" />
             <entry length="4" flags="f" info="Animation loop point (Seconds - Set to a large value to &quot;disable&quot; looping)" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 1] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 1] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 2] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 2] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of X scale keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the X scale keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Y scale keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Y scale keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="in" info="Number of Z scale keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
+            <entry length="4" flags="oN" info="Offset to the Z scale keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="in" info="Number of X rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="oN" info="Offset to the X rotation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="in" info="Number of Y rotation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
@@ -412,8 +433,6 @@
             <entry length="4" flags="oN" info="Offset to the Y translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="in" info="Number of Z translation keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="oN" info="Offset to the Z translation keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
-            <entry length="4" flags="inu" info="Number of unknown [Set 9] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
-            <entry length="4" flags="oNu" info="Offset to the unknown [Set 9] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="inu" info="Number of unknown [Set 10] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="oNu" info="Offset to the unknown [Set 10] keyframe list" link="#spec-stagedefFormat2-section-animationKeyframe" />
             <entry length="4" flags="inu" info="Number of unknown [Set 11] keyframes" link="#spec-stagedefFormat2-section-animationKeyframe" />
@@ -500,16 +519,6 @@
             <entry length="4" flags="fu" info="Unknown float" />
             <entry length="4" flags="fu" info="Unknown float" />
             <entry length="4" flags="fu" info="Unknown float" />
-        </section>
-
-        <section id="mystery8" name="Mystery 8">
-            <entry length="4" flags="" info="0x0000001F" />
-            <entry length="4" flags="o" info="Offset to the model name to use" />
-            <entry length="24" flags="un" info="Unknown/Null" />
-            <entry length="4" flags="fu" info="Unknown float (Probably)" />
-            <entry length="4" flags="fu" info="Unknown float (Probably)" />
-            <entry length="4" flags="fu" info="Unknown float (Probably)" />
-            <entry length="16" flags="un" info="Unknown/Null" />
         </section>
     </spec>
 </specSheet>
