@@ -458,7 +458,8 @@
             <entry length="4" flags="i" info="Easing (Constant: 0x00000000, Linear: 0x00000001, Ease: 0x00000002)" />
             <entry length="4" flags="f" info="Time (Seconds)" />
             <entry length="4" flags="f" info="Value (Translation, rotation, or R/G/B amount, depending on where the keyframe is referenced from)" />
-            <entry length="8" flags="un" info="Unknown/Null" />
+            <entry length="4" flags="f" info="Tangent in (left tangent handle for eased interpolation) - leave at 0 for a flat tangent" />
+            <entry length="4" flags="f" info="Tangent out (right tangent handle for eased interpolation) - leave at 0 for a flat tangent" />
         </section>
 
         <section id="fog" name="Fog">
